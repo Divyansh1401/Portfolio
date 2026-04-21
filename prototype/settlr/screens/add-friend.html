@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Add Friend</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      background: var(--surface-primary);
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+    /* ── Search Input ── */
+    .search-wrap {
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
+      background: var(--surface-primary);
+      flex-shrink: 0;
+    }
+    .search-input {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      height: 44px;
+      padding: 0 var(--spacing-16);
+      background: var(--input-bg);
+      border: var(--border-small) solid var(--input-border-default);
+      border-radius: var(--radius-full);
+      width: 100%;
+      cursor: text;
+      transition: border-color 0.15s ease;
+    }
+    .search-input:focus-within {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+    .search-input__icon {
+      flex-shrink: 0;
+      color: var(--input-fg-default);
+      display: flex;
+      align-items: center;
+    }
+    .search-input__icon i { font-size: var(--icon-sm); }
+    .search-input input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      color: var(--text-primary);
+      outline: none;
+    }
+    .search-input input::placeholder { color: var(--input-fg-default); }
+
+    /* ── Invite Card ── */
+    .invite-card {
+      margin: var(--spacing-12) var(--spacing-16);
+      padding: var(--spacing-16);
+      background: var(--surface-card);
+      border-radius: var(--radius-12);
+      border: var(--border-small) solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+    .invite-card__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+      line-height: var(--line-height-20);
+    }
+    .invite-card__subtitle {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+      line-height: var(--line-height-18);
+      margin-top: calc(-1 * var(--spacing-8));
+    }
+    .invite-link-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+    }
+    .invite-link-box {
+      flex: 1;
+      height: 40px;
+      padding: 0 var(--spacing-12);
+      background: var(--surface-primary);
+      border: var(--border-small) solid var(--border-default);
+      border-radius: var(--radius-8);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .invite-link-box span {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .copy-btn {
+      height: 40px;
+      padding: 0 var(--spacing-16);
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-fg);
+      border: none;
+      border-radius: var(--radius-8);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      cursor: pointer;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+    }
+    .copy-btn:active { background: var(--btn-secondary-bg-pressed); }
+    .copy-btn i { font-size: var(--icon-sm); }
+
+    .invite-card__divider {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+    }
+    .invite-card__divider::before,
+    .invite-card__divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-default);
+    }
+    .invite-card__divider span {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+    .share-row {
+      display: flex;
+      gap: var(--spacing-8);
+    }
+    .share-btn {
+      flex: 1;
+      height: 40px;
+      padding: 0 var(--spacing-12);
+      background: var(--surface-primary);
+      border: var(--border-small) solid var(--border-default);
+      border-radius: var(--radius-8);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-4);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .share-btn:active { background: var(--surface-primary); opacity: 0.7; }
+    .share-btn i { font-size: var(--font-size-16); color: var(--text-brand); }
+
+    /* ── QR Code section ── */
+    .qr-section {
+      margin: 0 var(--spacing-16) var(--spacing-8);
+      padding: var(--spacing-16);
+      background: var(--surface-card);
+      border-radius: var(--radius-12);
+      border: var(--border-small) solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-16);
+    }
+    .qr-placeholder {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-8);
+      background: var(--surface-primary);
+      border: var(--border-small) solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text-brand);
+    }
+    .qr-placeholder i { font-size: 32px; }
+    .qr-text { flex: 1; }
+    .qr-text__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+      line-height: var(--line-height-20);
+    }
+    .qr-text__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+      line-height: var(--line-height-18);
+      margin-top: var(--spacing-2);
+    }
+    .qr-text__id {
+      font-family: var(--font-display);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+      margin-top: var(--spacing-4);
+    }
+
+    /* ── Section Header ── */
+    .section-header {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-4);
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.54px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Person Row ── */
+    .person-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .person-row:active { background: var(--contact-bg-selected); }
+    .person-row:last-child { border-bottom: none; }
+
+    .person-row__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-bold);
+      flex-shrink: 0;
+    }
+    .person-row__text { flex: 1; min-width: 0; }
+    .person-row__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--contact-name);
+      line-height: var(--line-height-20);
+    }
+    .person-row__meta {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--contact-subtext);
+      line-height: var(--line-height-18);
+    }
+    .person-row__action {
+      flex-shrink: 0;
+    }
+    .add-btn {
+      height: 32px;
+      padding: 0 var(--spacing-16);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      border: none;
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+    .add-btn:active { background: var(--btn-primary-bg-pressed); }
+    .add-btn--added {
+      background: var(--surface-primary);
+      color: var(--text-tertiary);
+      border: var(--border-small) solid var(--border-default);
+    }
+    .add-btn--added:active { background: var(--surface-primary); }
+
+    /* ── Scrollable Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--spacing-32);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="people" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Add Friend</span>
+  </header>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon"><i class="ph ph-magnifying-glass"></i></span>
+      <input type="text" placeholder="Search name, phone or @settlrid" autofocus>
+    </div>
+  </div>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="content">
+
+    <!-- Invite via link -->
+    <div class="invite-card">
+      <p class="invite-card__title">Invite via link</p>
+      <p class="invite-card__subtitle">Share your personal invite link and start splitting instantly</p>
+      <div class="invite-link-row">
+        <div class="invite-link-box">
+          <span>settlr.app/invite/divyansh</span>
+        </div>
+        <button class="copy-btn" onclick="copyLink(this)">
+          <i class="ph ph-copy"></i>
+          Copy
+        </button>
+      </div>
+      <div class="invite-card__divider"><span>or share via</span></div>
+      <div class="share-row">
+        <button class="share-btn">
+          <i class="ph ph-whatsapp-logo"></i>
+          WhatsApp
+        </button>
+        <button class="share-btn">
+          <i class="ph ph-envelope"></i>
+          Message
+        </button>
+        <button class="share-btn">
+          <i class="ph ph-share-network"></i>
+          More
+        </button>
+      </div>
+    </div>
+
+    <!-- QR Code -->
+    <div class="qr-section">
+      <div class="qr-placeholder">
+        <i class="ph ph-qr-code"></i>
+      </div>
+      <div class="qr-text">
+        <p class="qr-text__title">Your QR Code</p>
+        <p class="qr-text__sub">Friends can scan to add you directly</p>
+        <p class="qr-text__id">@divyansh</p>
+      </div>
+      <button class="copy-btn" style="flex-shrink:0">
+        <i class="ph ph-download-simple"></i>
+      </button>
+    </div>
+
+    <!-- On Settlr (suggested contacts) -->
+    <p class="section-header">On Settlr</p>
+    <div>
+
+      <div class="person-row">
+        <div class="person-row__avatar">SM</div>
+        <div class="person-row__text">
+          <p class="person-row__name">Smita Joshi</p>
+          <p class="person-row__meta">@smitajoshi · Joined today</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
+        </div>
+      </div>
+
+      <div class="person-row">
+        <div class="person-row__avatar">AK</div>
+        <div class="person-row__text">
+          <p class="person-row__name">Arjun Kumar</p>
+          <p class="person-row__meta">@arjunk · 2 mutual friends</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
+        </div>
+      </div>
+
+      <div class="person-row">
+        <div class="person-row__avatar">DP</div>
+        <div class="person-row__text">
+          <p class="person-row__name">Deepika Pillai</p>
+          <p class="person-row__meta">@deepika · 1 mutual friend</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- From Contacts (not yet on Settlr) -->
+    <p class="section-header">Invite from Contacts</p>
+    <div>
+
+      <div class="person-row">
+        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
+          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
+        </div>
+        <div class="person-row__text">
+          <p class="person-row__name">Rohit Mehta</p>
+          <p class="person-row__meta">+91 98765 11111</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn">Invite</button>
+        </div>
+      </div>
+
+      <div class="person-row">
+        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
+          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
+        </div>
+        <div class="person-row__text">
+          <p class="person-row__name">Sunita Rao</p>
+          <p class="person-row__meta">+91 87654 22222</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn">Invite</button>
+        </div>
+      </div>
+
+      <div class="person-row">
+        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
+          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
+        </div>
+        <div class="person-row__text">
+          <p class="person-row__name">Manish Tiwari</p>
+          <p class="person-row__meta">+91 76543 33333</p>
+        </div>
+        <div class="person-row__action">
+          <button class="add-btn">Invite</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    function copyLink(btn) {
+      navigator.clipboard?.writeText('https://settlr.app/invite/divyansh');
+      btn.innerHTML = '<i class="ph ph-check"></i> Copied!';
+      setTimeout(() => { btn.innerHTML = '<i class="ph ph-copy"></i> Copy'; }, 2000);
+    }
+
+    function toggleAdd(btn) {
+      const isAdded = btn.classList.contains('add-btn--added');
+      if (isAdded) {
+        btn.classList.remove('add-btn--added');
+        btn.textContent = '+ Add';
+      } else {
+        btn.classList.add('add-btn--added');
+        btn.textContent = '✓ Added';
+      }
+    }
+  </script>
+
+</body>
+</html>

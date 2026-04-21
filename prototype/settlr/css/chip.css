@@ -1,0 +1,66 @@
+/* ============================================
+   Settlr — Chip Component
+   Sizes: SM, MD, LG
+   States: On, Off
+   ============================================ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-width: var(--border-small);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+/* ---- Off (default) ---- */
+.chip {
+  background-color: var(--chip-bg-off);
+  border-color: var(--chip-border-off);
+  color: var(--chip-fg-off);
+}
+
+/* ---- On (selected) ---- */
+.chip.is-active,
+.chip--on {
+  background-color: var(--chip-bg-on);
+  border-color: var(--chip-border-on);
+  color: var(--chip-fg-on);
+}
+
+/* ---- Icon inherits foreground ---- */
+.chip svg,
+.chip img {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* ---- Sizes ---- */
+.chip--sm {
+  padding: var(--spacing-8) var(--spacing-12);
+  gap: var(--spacing-4);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+}
+
+.chip--md {
+  padding: var(--spacing-8) var(--spacing-16);
+  gap: var(--spacing-4);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+}
+
+.chip--lg {
+  padding: var(--spacing-12) var(--spacing-20);
+  gap: var(--spacing-8);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-24);
+}

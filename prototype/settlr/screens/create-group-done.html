@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Group Created!</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ── Success Content ── */
+    .success-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-32) var(--spacing-24);
+      gap: var(--spacing-16);
+      text-align: center;
+    }
+
+    /* ── Group Icon ── */
+    .success-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-24);
+      background: var(--type-chip-bg-on);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    }
+    .success-icon__emoji {
+      font-size: 44px;
+      line-height: 1;
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* ── Heading ── */
+    .success-heading {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: var(--weight-black);
+      letter-spacing: -0.84px;
+      line-height: 34px;
+      color: var(--top-app-bar-title);
+      animation: fadeUp 0.4s ease 0.6s both;
+    }
+
+    /* ── Group Info ── */
+    .success-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-8);
+      animation: fadeUp 0.4s ease 0.8s both;
+    }
+    .success-name {
+      font-family: var(--font-display);
+      font-size: var(--font-size-20);
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.40px;
+      color: var(--text-primary);
+    }
+    .success-type {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      background: var(--btn-icon-bg);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-secondary);
+    }
+
+    /* ── Members List ── */
+    .members-preview {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-8);
+      width: 100%;
+      padding: var(--spacing-16);
+      border-radius: var(--radius-16);
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+      animation: fadeUp 0.4s ease 1s both;
+    }
+    .members-preview__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .members-preview__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .members-preview__count {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+    }
+    .members-preview__row {
+      display: flex;
+      gap: var(--spacing-8);
+      flex-wrap: wrap;
+    }
+    .member-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 10px 4px 4px;
+      background: var(--member-pill-bg);
+      border-radius: var(--radius-full);
+    }
+    .member-pill__avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: var(--weight-semibold);
+    }
+    .member-pill__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--member-pill-fg);
+    }
+
+    /* ── Timestamp ── */
+    .success-timestamp {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      color: var(--contact-settled-fg);
+      margin-top: var(--spacing-4);
+      animation: fadeUp 0.4s ease 1.1s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Confetti ── */
+    .confetti {
+      position: fixed;
+      inset: 0;
+      max-width: 393px;
+      margin: 0 auto;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .confetti__dot {
+      position: absolute;
+      border-radius: var(--radius-full);
+      animation: confettiFall 2s ease-out both;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(120px) rotate(360deg) scale(0.3); }
+    }
+
+    /* ── Bottom Actions ── */
+    .bottom-actions {
+      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+      animation: fadeUp 0.4s ease 1.3s both;
+    }
+    .btn-view {
+      display: flex;
+      width: 100%;
+      height: 52px;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-semibold);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-view:active { background: var(--btn-primary-bg-pressed); }
+    .btn-add {
+      display: flex;
+      width: 100%;
+      height: 52px;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-semibold);
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add:active { background: var(--btn-secondary-bg-pressed); }
+    .btn-home {
+      display: flex;
+      width: 100%;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--btn-ghost-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Confetti ── -->
+  <div class="confetti">
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 15%; top: 20%; background: var(--color-olive-300); animation-delay: 0.3s;"></div>
+    <div class="confetti__dot" style="width: 6px; height: 6px; left: 30%; top: 15%; background: var(--color-green-300); animation-delay: 0.5s;"></div>
+    <div class="confetti__dot" style="width: 10px; height: 10px; left: 55%; top: 18%; background: var(--color-olive-400); animation-delay: 0.4s;"></div>
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 75%; top: 22%; background: var(--color-green-200); animation-delay: 0.6s;"></div>
+    <div class="confetti__dot" style="width: 6px; height: 6px; left: 85%; top: 16%; background: var(--color-olive-200); animation-delay: 0.35s;"></div>
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 45%; top: 12%; background: var(--color-green-400); animation-delay: 0.55s;"></div>
+  </div>
+
+  <!-- ── Success Content ── -->
+  <div class="success-content">
+
+    <!-- Group Icon -->
+    <div class="success-icon">
+      <span class="success-icon__emoji" id="js-emoji">📝</span>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="success-heading">Group Created!</h1>
+
+    <!-- Group Info -->
+    <div class="success-info">
+      <p class="success-name" id="js-name">—</p>
+      <span class="success-type" id="js-type">—</span>
+    </div>
+
+    <!-- Members Preview -->
+    <div class="members-preview">
+      <div class="members-preview__header">
+        <span class="members-preview__label">Members</span>
+        <span class="members-preview__count" id="js-count">—</span>
+      </div>
+      <div class="members-preview__row" id="js-members"></div>
+    </div>
+
+    <p class="success-timestamp" id="js-timestamp">—</p>
+  </div>
+
+  <!-- ── Bottom Actions ── -->
+  <div class="bottom-actions">
+    <a id="js-view" href="home-dashboard" class="btn-view">View Group</a>
+    <a id="js-add-expense" href="add-amount" class="btn-add">Add First Expense</a>
+    <a href="home-dashboard" class="btn-home">Go Home</a>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    (function () {
+      var ctx = JSON.parse(sessionStorage.getItem('settlr_new_group') || '{}');
+      var me = Store.getCurrentUser();
+
+      document.getElementById('js-emoji').textContent = ctx.emoji || '📝';
+      document.getElementById('js-name').textContent = ctx.name || 'New Group';
+      var typeLabel = (ctx.emoji || '') + ' ' + (ctx.type ? ctx.type.charAt(0).toUpperCase() + ctx.type.slice(1) : 'Other');
+      document.getElementById('js-type').textContent = typeLabel;
+
+      var memberIds = ctx.memberIds || [me.id];
+      document.getElementById('js-count').textContent = memberIds.length + ' ' + (memberIds.length === 1 ? 'person' : 'people');
+
+      document.getElementById('js-members').innerHTML = memberIds.map(function(id) {
+        var isMe = id === me.id;
+        var name = isMe ? 'You' : '';
+        var initials = isMe ? (me.initials || 'ME') : '';
+        if (!isMe) {
+          var c = Store.getContact(id);
+          if (c) { name = c.name.split(' ')[0]; initials = c.initials; }
+          else { name = id; initials = id.slice(0,2).toUpperCase(); }
+        }
+        return '<div class="member-pill">' +
+          '<div class="member-pill__avatar">' + initials + '</div>' +
+          '<span class="member-pill__name">' + name + '</span>' +
+        '</div>';
+      }).join('');
+
+      var now = new Date();
+      var ts = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) +
+               ' · ' + now.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+      document.getElementById('js-timestamp').textContent = 'Created ' + ts;
+
+      if (ctx.groupId) {
+        document.getElementById('js-view').href = 'group-detail?id=' + ctx.groupId;
+        document.getElementById('js-add-expense').href = 'add-amount';
+      }
+
+      sessionStorage.removeItem('settlr_new_group');
+    }());
+  </script>
+
+</body>
+</html>

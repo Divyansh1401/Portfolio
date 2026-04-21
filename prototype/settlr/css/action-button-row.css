@@ -1,0 +1,19 @@
+/* ============================================
+   Settlr — Action Button Row Component
+   Figma: node 207:15824
+   ============================================ */
+
+.action-btn-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-top: var(--border-small) solid var(--action-btn-row-border);
+  background-color: var(--action-btn-row-bg);
+  width: 100%;
+}
+
+/* Buttons grow equally to fill the row */
+.action-btn-row .btn {
+  flex: 1;
+}

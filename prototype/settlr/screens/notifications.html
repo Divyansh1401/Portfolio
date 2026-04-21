@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Notifications</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      background: var(--surface-primary);
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+    /* ── Top Bar ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16);
+      background: var(--surface-primary);
+      flex-shrink: 0;
+    }
+    .top-bar__back {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--btn-icon-bg);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--btn-icon-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .top-bar__back:active { background: var(--btn-icon-bg-pressed); }
+    .top-bar__back i { font-size: var(--icon-md); }
+    .top-bar__title {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: var(--font-size-20);
+      font-weight: var(--weight-bold);
+      line-height: var(--line-height-26);
+      letter-spacing: -0.40px;
+      color: var(--top-app-bar-title);
+    }
+    .top-bar__action {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-4) var(--spacing-8);
+      border-radius: var(--radius-8);
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+    .top-bar__action:active { background: var(--contact-bg-selected); }
+
+    /* ── Filter Chips Row ── */
+    .chips-row {
+      display: flex;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-12);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+      border-bottom: var(--border-small) solid var(--border-default);
+    }
+    .chips-row::-webkit-scrollbar { display: none; }
+
+    /* ── Scrollable Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--spacing-32);
+    }
+
+    /* ── Date Group Heading ── */
+    .group-heading {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .group-heading__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.54px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .group-heading__count {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+
+    /* ── Notification Item ── */
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .notif-item:active { background: var(--contact-bg-selected); }
+    .notif-item--unread { background: var(--card-create-bg); }
+    .notif-item--unread:active { background: var(--contact-bg-selected); }
+
+    /* Unread dot */
+    .notif-item--unread::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: var(--spacing-16);
+      transform: translateY(-50%);
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-full);
+      background: var(--text-brand);
+      flex-shrink: 0;
+    }
+
+    .notif-item__icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .notif-item__icon-wrap i { font-size: var(--icon-md); }
+    /* Icon type colors */
+    .notif-item__icon-wrap--expense {
+      background: var(--expense-owe-bg);
+      color: var(--expense-owe-fg);
+    }
+    .notif-item__icon-wrap--settlement {
+      background: var(--expense-lent-bg);
+      color: var(--expense-lent-fg);
+    }
+    .notif-item__icon-wrap--group {
+      background: var(--label-info-bg);
+      color: var(--label-info-fg);
+    }
+    .notif-item__icon-wrap--reminder {
+      background: var(--label-warning-bg);
+      color: var(--label-warning-fg);
+    }
+    .notif-item__icon-wrap--system {
+      background: var(--card-create-bg);
+      color: var(--text-brand);
+    }
+
+    .notif-item__body {
+      flex: 1;
+      min-width: 0;
+      padding-right: var(--spacing-12);
+    }
+    .notif-item__text {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-22);
+      color: var(--text-primary);
+    }
+    .notif-item__text strong {
+      font-weight: var(--weight-semibold);
+    }
+    .notif-item__text .notif-amount {
+      font-family: var(--font-display);
+      font-weight: var(--weight-semibold);
+    }
+    .notif-item__text .notif-amount--owe { color: var(--expense-owe-fg); }
+    .notif-item__text .notif-amount--lent { color: var(--expense-lent-fg); }
+    .notif-item__meta {
+      margin-top: var(--spacing-4);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+    }
+    .notif-item__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+      line-height: var(--line-height-18);
+    }
+    .notif-item__group-tag {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-medium);
+      color: var(--text-brand);
+      background: var(--card-create-bg);
+      padding: 1px var(--spacing-8);
+      border-radius: var(--radius-full);
+      border: var(--border-small) solid var(--card-create-border);
+      line-height: var(--line-height-18);
+      white-space: nowrap;
+    }
+
+    /* ── Action Row (inside notification, e.g. settle up) ── */
+    .notif-item__actions {
+      display: flex;
+      gap: var(--spacing-8);
+      margin-top: var(--spacing-8);
+    }
+
+    /* ── Empty State ── */
+    .empty-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px var(--spacing-32);
+      gap: var(--spacing-12);
+      text-align: center;
+    }
+    .empty-wrap__icon {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      background: var(--empty-state-illus-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--empty-state-illus-fg);
+      font-size: 28px;
+    }
+    .empty-wrap__title {
+      font-family: var(--font-display);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-bold);
+      color: var(--empty-state-title-fg);
+      letter-spacing: -0.32px;
+    }
+    .empty-wrap__body {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-regular);
+      color: var(--empty-state-body-fg);
+      line-height: var(--line-height-20);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-bar">
+    <a href="home-dashboard" class="top-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-bar__title">Notifications</span>
+    <button class="top-bar__action" id="js-mark-all" onclick="markAllRead()">Mark all read</button>
+  </header>
+
+  <!-- ── Filter Chips ── -->
+  <div class="chips-row">
+    <button class="chip chip--sm is-active" data-filter="all">All</button>
+    <button class="chip chip--sm" data-filter="expense">
+      <span class="chip__icon"><i class="ph ph-receipt"></i></span>
+      Expenses
+    </button>
+    <button class="chip chip--sm" data-filter="settlement">
+      <span class="chip__icon"><i class="ph ph-handshake"></i></span>
+      Settlements
+    </button>
+    <button class="chip chip--sm" data-filter="group">
+      <span class="chip__icon"><i class="ph ph-users"></i></span>
+      Groups
+    </button>
+    <button class="chip chip--sm" data-filter="reminder">
+      <span class="chip__icon"><i class="ph ph-bell"></i></span>
+      Reminders
+    </button>
+  </div>
+
+  <!-- ── Notification Feed ── -->
+  <main class="content">
+
+    <!-- Today -->
+    <div class="group-heading">
+      <span class="group-heading__label">Today</span>
+      <span class="group-heading__count">3 unread</span>
+    </div>
+
+    <!-- Unread: Someone added expense -->
+    <div class="notif-item notif-item--unread" data-type="expense">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--expense">
+        <i class="ph ph-receipt"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Priya Sharma</strong> added "Dinner at Olive Garden" and you owe
+          <span class="notif-amount notif-amount--owe">₹283</span>
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">2 min ago</span>
+          <span class="notif-item__group-tag">Goa Trip</span>
+        </div>
+        <div class="notif-item__actions">
+          <a href="expense-detail" class="btn btn--secondary btn--sm">View</a>
+          <a href="settle-select" class="btn btn--primary btn--sm">Settle up</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unread: Settlement received -->
+    <div class="notif-item notif-item--unread" data-type="settlement">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--settlement">
+        <i class="ph ph-handshake"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Rahul Verma</strong> settled
+          <span class="notif-amount notif-amount--lent">₹650</span> with you via UPI
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">1 hr ago</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unread: Added to group -->
+    <div class="notif-item notif-item--unread" data-type="group">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--group">
+        <i class="ph ph-users-three"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Ananya Gupta</strong> added you to <strong>"Goa Trip 2025"</strong> · 6 members
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">3 hr ago</span>
+        </div>
+        <div class="notif-item__actions">
+          <a href="group-detail" class="btn btn--secondary btn--sm">View Group</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Yesterday -->
+    <div class="group-heading">
+      <span class="group-heading__label">Yesterday</span>
+    </div>
+
+    <!-- Read: Expense reminder -->
+    <div class="notif-item" data-type="reminder">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--reminder">
+        <i class="ph ph-clock-countdown"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          Reminder: You still owe <strong>Karthik Nair</strong>
+          <span class="notif-amount notif-amount--owe">₹1,200</span> for "Hotel booking"
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Yesterday, 8:00 PM</span>
+          <span class="notif-item__group-tag">Coorg Weekend</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read: Another expense added -->
+    <div class="notif-item" data-type="expense">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--expense">
+        <i class="ph ph-receipt"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Neha Patel</strong> added "Petrol" and you owe
+          <span class="notif-amount notif-amount--owe">₹175</span>
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Yesterday, 4:22 PM</span>
+          <span class="notif-item__group-tag">Coorg Weekend</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read: You were settled with -->
+    <div class="notif-item" data-type="settlement">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--settlement">
+        <i class="ph ph-check-circle"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          All settled! <strong>Coorg Weekend</strong> group has no pending balances.
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Yesterday, 11:30 AM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- This Week -->
+    <div class="group-heading">
+      <span class="group-heading__label">This Week</span>
+    </div>
+
+    <!-- Read: New friend joined -->
+    <div class="notif-item" data-type="group">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--system">
+        <i class="ph ph-user-plus"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Smita Joshi</strong> joined Settlr. Add her to your expenses!
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Mon, 3:15 PM</span>
+        </div>
+        <div class="notif-item__actions">
+          <a href="add-friend" class="btn btn--secondary btn--sm">Add Friend</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read: Expense edited -->
+    <div class="notif-item" data-type="expense">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--expense">
+        <i class="ph ph-pencil-simple"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Vikram Singh</strong> edited "Flight tickets" — your share changed to
+          <span class="notif-amount notif-amount--owe">₹4,350</span>
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Mon, 10:00 AM</span>
+          <span class="notif-item__group-tag">Goa Trip</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read: Expense deleted -->
+    <div class="notif-item" data-type="expense">
+      <div class="notif-item__icon-wrap notif-item__icon-wrap--reminder">
+        <i class="ph ph-trash"></i>
+      </div>
+      <div class="notif-item__body">
+        <p class="notif-item__text">
+          <strong>Priya Sharma</strong> deleted "Movie tickets" from <strong>Weekend Fun</strong>
+        </p>
+        <div class="notif-item__meta">
+          <span class="notif-item__time">Sun, 7:45 PM</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Filter chips toggle (single-select)
+    const chips = document.querySelectorAll('.chip[data-filter]');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        const filter = chip.dataset.filter;
+        filterNotifications(filter);
+      });
+    });
+
+    function filterNotifications(filter) {
+      const items = document.querySelectorAll('.notif-item[data-type]');
+      items.forEach(item => {
+        const type = item.dataset.type;
+        item.style.display = (filter === 'all' || type === filter) ? '' : 'none';
+      });
+      // Hide group headings if all items in group are hidden
+      document.querySelectorAll('.group-heading').forEach(heading => {
+        let next = heading.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('group-heading')) {
+          if (next.style.display !== 'none') hasVisible = true;
+          next = next.nextElementSibling;
+        }
+        heading.style.display = hasVisible ? '' : 'none';
+      });
+    }
+
+    function markAllRead() {
+      document.querySelectorAll('.notif-item--unread').forEach(item => {
+        item.classList.remove('notif-item--unread');
+      });
+      document.getElementById('js-mark-all').style.display = 'none';
+      // Update group heading count
+      document.querySelectorAll('.group-heading__count').forEach(el => el.remove());
+    }
+  </script>
+
+</body>
+</html>

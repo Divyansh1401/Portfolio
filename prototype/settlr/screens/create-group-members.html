@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Add Members</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Top Bar ── */
+    .top-bar__count {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+      background: var(--type-chip-bg-on);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      padding: var(--spacing-8) var(--spacing-16);
+      flex-shrink: 0;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: 0 var(--spacing-16);
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--input-bg);
+      border: var(--border-medium) solid transparent;
+      transition: all 0.15s ease;
+    }
+    .search-box:focus-within {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+    .search-box__icon {
+      font-size: 18px;
+      color: var(--input-fg-default);
+      flex-shrink: 0;
+    }
+    .search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      color: var(--text-primary);
+    }
+    .search-box input::placeholder {
+      color: var(--input-fg-default);
+    }
+
+    /* ── Selected Members Row ── */
+    .selected-row {
+      display: flex;
+      padding: var(--spacing-4) var(--spacing-16) var(--spacing-8);
+      gap: var(--spacing-8);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .selected-row::-webkit-scrollbar { display: none; }
+
+    .sel-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 10px 4px 4px;
+      background: var(--container-bg-selected);
+      border: var(--border-small) solid var(--card-create-border);
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sel-chip:active { background: var(--type-chip-bg-on); }
+    .sel-chip__avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: var(--weight-semibold);
+    }
+    .sel-chip__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      color: var(--btn-secondary-fg);
+    }
+    .sel-chip__x {
+      font-size: var(--font-size-14);
+      color: var(--text-tertiary);
+      margin-left: 2px;
+    }
+
+    /* ── Invite Banner ── */
+    .invite-banner {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      margin: 0 var(--spacing-16) var(--spacing-8);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-radius: var(--radius-12);
+      background: var(--container-bg-selected);
+      border: var(--border-small) dashed var(--toast-brand-border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .invite-banner:active {
+      background: var(--type-chip-bg-on);
+    }
+    .invite-banner__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--type-chip-bg-on);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .invite-banner__icon i {
+      font-size: 18px;
+      color: var(--text-brand);
+    }
+    .invite-banner__text {
+      flex: 1;
+    }
+    .invite-banner__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--btn-secondary-fg);
+    }
+    .invite-banner__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+
+    /* ── Contact List ── */
+    .contact-list {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--border-subtle);
+      cursor: pointer;
+      transition: background 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .contact-row:active { background: var(--btn-icon-bg); }
+    .contact-row.is-selected {
+      background: var(--contact-bg-selected);
+    }
+
+    .contact-row__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      flex-shrink: 0;
+    }
+    .contact-row__text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+    .contact-row__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .contact-row__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+
+    /* Checkbox */
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      border: var(--border-large) solid var(--control-border-default);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .contact-row.is-selected .check {
+      background: var(--control-bg-selected);
+      border-color: var(--control-border-selected);
+    }
+    .check__icon {
+      font-size: var(--font-size-12);
+      color: var(--control-dot);
+      opacity: 0;
+    }
+    .contact-row.is-selected .check__icon {
+      opacity: 1;
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
+      flex-shrink: 0;
+    }
+    .btn-create {
+      display: flex;
+      width: 100%;
+      height: 52px;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: var(--weight-semibold);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-create:active { background: var(--btn-primary-bg-pressed); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="create-group-name" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Add Members</span>
+    <span class="top-bar__count" id="js-count">0 selected</span>
+  </header>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <i class="ph ph-magnifying-glass search-box__icon"></i>
+      <input type="text" placeholder="Search contacts...">
+    </div>
+  </div>
+
+  <!-- ── Selected Members ── -->
+  <div class="selected-row" id="js-chips"></div>
+
+  <!-- ── Invite by Link ── -->
+  <div class="invite-banner">
+    <div class="invite-banner__icon">
+      <i class="ph ph-plus"></i>
+    </div>
+    <div class="invite-banner__text">
+      <div class="invite-banner__title">Invite via link</div>
+      <div class="invite-banner__sub">Share a join link with friends</div>
+    </div>
+  </div>
+
+  <!-- ── Contact List (rendered by JS) ── -->
+  <div class="contact-list" id="js-contact-list"></div>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="bottom-cta">
+    <button id="js-create" class="btn-create btn-create--disabled" style="opacity:0.4;pointer-events:none;">Create Group</button>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    (function () {
+      var ctx = JSON.parse(sessionStorage.getItem('settlr_new_group') || '{}');
+      if (!ctx.name) { location.replace('create-group-name'); return; }
+
+      var CHECK = '<i class="ph ph-check check__icon"></i>';
+      var selectedIds = {};
+      var contacts = Store.getContacts();
+      var listEl = document.getElementById('js-contact-list');
+      var chipsEl = document.getElementById('js-chips');
+      var countEl = document.getElementById('js-count');
+      var createBtn = document.getElementById('js-create');
+      var searchInput = document.querySelector('.search-box input');
+
+      function rowHTML(c) {
+        return '<div class="contact-row" data-id="' + c.id + '" data-name="' + c.name + '" data-initials="' + c.initials + '">' +
+          '<div class="contact-row__avatar">' + c.initials + '</div>' +
+          '<div class="contact-row__text">' +
+            '<span class="contact-row__name">' + c.name + '</span>' +
+            '<span class="contact-row__sub">Tap to add</span>' +
+          '</div>' +
+          '<div class="check">' + CHECK + '</div>' +
+        '</div>';
+      }
+
+      function renderList(filter) {
+        filter = (filter || '').toLowerCase();
+        var fc = contacts.filter(function(c) { return !filter || c.name.toLowerCase().includes(filter); });
+        listEl.innerHTML = '<div class="section-label">Contacts</div>' + fc.map(rowHTML).join('');
+        listEl.querySelectorAll('.contact-row').forEach(function(row) {
+          var id = row.getAttribute('data-id');
+          if (selectedIds[id]) row.classList.add('is-selected');
+          row.addEventListener('click', function() { toggle(id, row.getAttribute('data-name'), row.getAttribute('data-initials')); });
+        });
+      }
+
+      function toggle(id, name, initials) {
+        if (selectedIds[id]) {
+          delete selectedIds[id];
+        } else {
+          selectedIds[id] = { name: name, initials: initials };
+        }
+        renderList(searchInput.value);
+        renderChips();
+        updateCount();
+      }
+
+      function renderChips() {
+        var ids = Object.keys(selectedIds);
+        chipsEl.innerHTML = ids.map(function(id) {
+          var info = selectedIds[id];
+          return '<div class="sel-chip" data-cid="' + id + '">' +
+            '<div class="sel-chip__avatar">' + info.initials + '</div>' +
+            '<span class="sel-chip__name">' + info.name.split(' ')[0] + '</span>' +
+            '<i class="ph ph-x sel-chip__x"></i>' +
+          '</div>';
+        }).join('');
+        chipsEl.querySelectorAll('.sel-chip').forEach(function(chip) {
+          chip.addEventListener('click', function() {
+            delete selectedIds[chip.getAttribute('data-cid')];
+            renderList(searchInput.value);
+            renderChips();
+            updateCount();
+          });
+        });
+      }
+
+      function updateCount() {
+        var n = Object.keys(selectedIds).length;
+        countEl.textContent = n + ' selected';
+        if (n > 0) {
+          createBtn.style.opacity = '';
+          createBtn.style.pointerEvents = '';
+        } else {
+          createBtn.style.opacity = '0.4';
+          createBtn.style.pointerEvents = 'none';
+        }
+      }
+
+      createBtn.addEventListener('click', function() {
+        var me = Store.getCurrentUser();
+        var memberIds = [me.id].concat(Object.keys(selectedIds));
+        var newId = Store.addGroup({
+          name: ctx.name,
+          type: ctx.type || 'other',
+          emoji: ctx.emoji || '📝',
+          memberIds: memberIds
+        });
+        ctx.groupId = newId;
+        ctx.memberIds = memberIds;
+        sessionStorage.setItem('settlr_new_group', JSON.stringify(ctx));
+        location.href = 'create-group-done';
+      });
+
+      searchInput.addEventListener('input', function() { renderList(this.value); });
+      renderList();
+    }());
+  </script>
+
+</body>
+</html>

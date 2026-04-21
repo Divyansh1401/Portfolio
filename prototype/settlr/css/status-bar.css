@@ -1,0 +1,28 @@
+/* ── Status Bar ──────────────────────────────────────────── */
+/* Simulated iOS status bar for mobile mockup screens        */
+
+.status-bar {
+  height: var(--spacing-48); /* 48px — closest token to 44px native iOS bar */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-16);
+  background: var(--surface-primary);
+}
+
+.status-bar__time {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+  letter-spacing: -0.5px; /* no token equivalent — design-specific */
+  color: var(--text-primary);
+}
+
+.status-bar__icons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--text-primary);
+}

@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Dev utility scripts
+fix.py
+fix_css.py
+patch.py
+launch.command
+
+# Draft / experiment files
+_archive/
+_experiments/
+
+# Screenshot captures
+screenshots/

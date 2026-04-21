@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Split</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/amount-input.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Scrollable content ── */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 100px;
+    }
+
+    /* ── Split header ── */
+    .split-header {
+      padding: var(--spacing-16);
+      display: flex; flex-direction: column; gap: var(--spacing-16);
+      background: var(--surface-card);
+    }
+    .split-summary {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--spacing-8); padding: var(--spacing-12);
+      background: var(--card-create-bg); border-radius: var(--radius-8);
+    }
+    .split-summary__amount {
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+    }
+    .split-summary__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-regular);
+      color: var(--text-secondary);
+    }
+
+    /* ── Participant list ── */
+    .participant-list {
+      display: flex; flex-direction: column;
+      background: var(--surface-card);
+    }
+    .participant-item {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+    }
+    .participant-item:last-child { border-bottom: none; }
+    .participant-item__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .participant-item__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--contact-name);
+    }
+    .participant-item__share {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--contact-subtext);
+    }
+    .participant-item__amount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 40px;
+      padding: var(--spacing-8);
+      background: var(--amount-input-bg);
+      border: var(--border-small) solid transparent;
+      border-radius: var(--radius-8);
+    }
+    .participant-item__amount-value {
+      font-family: var(--font-display);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.32px;
+      color: var(--amount-input-fg-disabled);
+    }
+
+    /* ── Total bar ── */
+    .total-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16);
+      background: var(--btn-icon-bg);
+      border-top: var(--border-medium) solid var(--border-default);
+    }
+    .total-bar__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-secondary);
+    }
+    .total-bar__ok {
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--expense-lent-fg);
+    }
+    .total-bar__err {
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--expense-owe-fg);
+    }
+
+    /* Amount input in split context */
+    .participant-item .amount-input { width: 120px; flex-shrink: 0; }
+
+    /* ── Paid By ── */
+    .paid-by {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-medium) solid var(--border-subtle);
+      background: var(--surface-primary);
+    }
+    .paid-by__avatars {
+      display: flex;
+    }
+    .paid-by__avatars .avatar:not(:first-child) {
+      margin-left: calc(-1 * var(--spacing-8));
+      border: var(--border-large) solid var(--surface-card);
+    }
+    .paid-by__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .paid-by__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+    .paid-by__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+
+    /* ── Avatar ── */
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      background: var(--avatar-bg);
+      color: var(--avatar-fg);
+      font-family: var(--font-body);
+      flex-shrink: 0;
+    }
+    .avatar-md {
+      width: 40px; height: 40px;
+      font-size: var(--font-size-16); font-weight: var(--weight-bold);
+    }
+
+    /* ── Checkbox ── */
+    .checkbox {
+      width: 20px; height: 20px;
+      border-radius: var(--radius-4);
+      border: var(--border-medium) solid var(--input-border-default);
+      background: var(--surface-card);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .checkbox--checked {
+      background: var(--control-bg-selected);
+      border-color: var(--control-border-selected);
+    }
+    .checkbox--checked::after {
+      content: '';
+      width: 10px; height: 6px;
+      border-left: var(--border-large) solid var(--surface-card);
+      border-bottom: var(--border-large) solid var(--surface-card);
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    /* ── Payer Bottom Sheet ── */
+    .sheet-overlay {
+      position: fixed; inset: 0;
+      background: var(--overlay-35);
+      z-index: 100;
+      display: none;
+      align-items: flex-end; justify-content: center;
+    }
+    .sheet-overlay--open { display: flex; }
+    .sheet {
+      width: 393px; max-height: 75dvh;
+      background: var(--sheet-bg);
+      border-radius: var(--radius-16) var(--radius-16) 0 0;
+      border-top: var(--border-large) solid var(--sheet-border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .sheet__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-16);
+      flex-shrink: 0;
+    }
+    .sheet__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-18);
+      font-weight: var(--weight-bold);
+      line-height: var(--line-height-26);
+      color: var(--sheet-header);
+    }
+    .sheet__close {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      background: var(--border-subtle); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); font-size: var(--icon-sm);
+    }
+    .sheet__list {
+      overflow-y: auto; flex: 1;
+    }
+
+    /* Payer row inside sheet */
+    .payer-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+    }
+    .payer-row:last-child { border-bottom: none; }
+    .payer-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .payer-row__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .payer-row__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+    .payer-row__input {
+      width: 90px; height: 36px;
+      padding: 0 var(--spacing-8);
+      background: var(--input-bg);
+      border: var(--border-medium) solid var(--input-border-default);
+      border-radius: var(--radius-8);
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+      text-align: right; outline: none;
+      transition: all 0.15s;
+    }
+    .payer-row__input:focus {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+    .payer-row__input--disabled {
+      opacity: var(--opacity-medium);
+      pointer-events: none;
+    }
+
+    /* Sheet total */
+    .sheet-total {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16);
+      border-top: var(--border-medium) solid var(--border-default);
+      background: var(--surface-primary);
+      flex-shrink: 0;
+    }
+    .sheet-total__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-secondary);
+    }
+    .sheet-total__value--ok {
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--expense-lent-fg);
+    }
+    .sheet-total__value--err {
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--expense-owe-fg);
+    }
+
+    /* Sheet done button */
+    .sheet-cta {
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+      flex-shrink: 0;
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      position: fixed;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 393px; max-width: 100%;
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+      background: var(--surface-card);
+      border-top: var(--border-small) solid var(--border-subtle);
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="add-group" class="top-app-bar__back" aria-label="Back">
+      <i class="ph ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Split</span>
+  </header>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+  </div>
+
+  <div class="scroll-content">
+
+    <!-- Paid By -->
+    <div class="paid-by" onclick="openPayerSheet()">
+      <div class="paid-by__avatars" id="js-paid-avatars"></div>
+      <div class="paid-by__text">
+        <span class="paid-by__label">Paid by</span>
+        <span class="paid-by__name" id="js-paid-name">—</span>
+      </div>
+      <button class="btn btn--secondary btn--sm">Change</button>
+    </div>
+
+    <!-- Split method & summary -->
+    <div class="split-header">
+      <div class="segment-control">
+        <button class="segment-item segment-item--active">Equally</button>
+        <button class="segment-item">Amount</button>
+        <button class="segment-item">%</button>
+        <button class="segment-item">Shares</button>
+      </div>
+      <div class="split-summary">
+        <span class="split-summary__amount" id="js-per-person">—</span>
+        <span class="split-summary__label" id="js-per-person-label">per person</span>
+      </div>
+    </div>
+
+    <!-- Participants (rendered by JS) -->
+    <div class="participant-list" id="js-participants"></div>
+
+    <!-- Total bar -->
+    <div class="total-bar">
+      <span class="total-bar__label">Total</span>
+      <span class="total-bar__ok" id="js-total">—</span>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="bottom-cta">
+    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next</button>
+  </div>
+
+  <!-- PAYER BOTTOM SHEET -->
+  <div class="sheet-overlay" id="payer-sheet" onclick="closePayerSheet()">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet__header">
+        <span class="sheet__title">Paid by</span>
+        <button class="sheet__close" onclick="closePayerSheet()" aria-label="Close">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="sheet__list" id="js-payer-list"></div>
+      <div class="sheet-cta">
+        <button class="btn btn--primary btn--lg btn--full" onclick="closePayerSheet()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    function openPayerSheet() {
+      document.getElementById('payer-sheet').classList.add('sheet-overlay--open');
+    }
+    function closePayerSheet() {
+      document.getElementById('payer-sheet').classList.remove('sheet-overlay--open');
+    }
+
+    (function () {
+      var ctx = JSON.parse(sessionStorage.getItem('settlr_new_expense') || '{}');
+      if (!ctx.totalAmount || !ctx.splitAmong) { location.replace('add-amount'); return; }
+
+      var me = Store.getCurrentUser();
+      var participantIds = ctx.splitAmong;
+      var paidById = ctx.paidById || participantIds[0];
+      var total = ctx.totalAmount;
+      var splitMode = 'equal';
+      var customSplits = {};
+      var nextBtn = document.getElementById('js-next');
+
+      function r2(n) { return Math.round(n * 100) / 100; }
+      function fmt(n) {
+        return '₹' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(r2(n));
+      }
+      function getInfo(id) {
+        if (id === me.id) return { name: 'You', initials: me.initials || 'ME' };
+        var c = Store.getContact(id);
+        return c ? { name: c.name.split(' ')[0], initials: c.initials } : { name: id, initials: id.slice(0,2).toUpperCase() };
+      }
+
+      function initSplits(mode) {
+        var n = participantIds.length;
+        if (mode === 'amount') {
+          var base = r2(total / n);
+          var last = r2(total - base * (n - 1));
+          participantIds.forEach(function(id, i) { customSplits[id] = i === n - 1 ? last : base; });
+        } else if (mode === 'percent') {
+          var basePct = Math.floor(100 / n);
+          participantIds.forEach(function(id, i) { customSplits[id] = i === n - 1 ? 100 - basePct * (n - 1) : basePct; });
+        } else if (mode === 'shares') {
+          participantIds.forEach(function(id) { if (!customSplits[id]) customSplits[id] = 1; });
+        }
+      }
+
+      function getAmountForId(id) {
+        if (splitMode === 'equal') return r2(total / participantIds.length);
+        if (splitMode === 'amount') return r2(parseFloat(customSplits[id]) || 0);
+        if (splitMode === 'percent') return r2(total * (parseFloat(customSplits[id]) || 0) / 100);
+        if (splitMode === 'shares') {
+          var ts = participantIds.reduce(function(s, i) { return s + (parseFloat(customSplits[i]) || 1); }, 0);
+          return r2(total * ((parseFloat(customSplits[id]) || 1) / ts));
+        }
+      }
+
+      function runningTotal() {
+        if (splitMode === 'amount') return r2(participantIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
+        if (splitMode === 'percent') return r2(participantIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
+        return total;
+      }
+
+      function isValid() {
+        if (splitMode === 'equal' || splitMode === 'shares') return true;
+        if (splitMode === 'amount') return Math.abs(runningTotal() - total) < 0.02;
+        if (splitMode === 'percent') return Math.abs(runningTotal() - 100) < 0.5;
+      }
+
+      function updateTotalBar() {
+        var el = document.getElementById('js-total');
+        var valid = isValid();
+        if (splitMode === 'equal' || splitMode === 'shares') {
+          el.textContent = fmt(total) + ' \u2713';
+          el.className = 'total-bar__ok';
+        } else if (splitMode === 'amount') {
+          var s = runningTotal();
+          el.textContent = fmt(s) + ' / ' + fmt(total) + (valid ? ' \u2713' : '');
+          el.className = valid ? 'total-bar__ok' : 'total-bar__err';
+        } else if (splitMode === 'percent') {
+          var s = runningTotal();
+          el.textContent = s + '% / 100%' + (valid ? ' \u2713' : '');
+          el.className = valid ? 'total-bar__ok' : 'total-bar__err';
+        }
+        nextBtn.style.opacity = valid ? '' : String(0.4);
+        nextBtn.style.pointerEvents = valid ? '' : 'none';
+      }
+
+      function inputCol(id) {
+        var val = customSplits[id] !== undefined ? customSplits[id] : 0;
+        var step = splitMode === 'shares' ? '1' : '0.01';
+        var inp = '<input class="amount-input__field" type="number" min="0" step="' + step + '" data-pid="' + id + '" value="' + val + '">';
+        if (splitMode === 'amount')  return '<div class="amount-input amount-input--currency"><span class="amount-input__icon"><i class="ph ph-currency-inr"></i></span>' + inp + '</div>';
+        if (splitMode === 'percent') return '<div class="amount-input amount-input--percent">' + inp + '<span class="amount-input__icon"><i class="ph ph-percent"></i></span></div>';
+        if (splitMode === 'shares')  return '<div class="amount-input amount-input--shares">' + inp + '<span class="amount-input__icon"><i class="ph ph-chart-pie-slice"></i></span></div>';
+      }
+
+      function renderParticipants() {
+        var pp = r2(total / participantIds.length);
+        var summaryLabels = { equal: fmt(pp), amount: 'Custom', percent: '% split', shares: 'By shares' };
+        var showLabel = { equal: true, amount: false, percent: false, shares: false };
+        document.getElementById('js-per-person').textContent = summaryLabels[splitMode];
+        document.getElementById('js-per-person-label').style.display = showLabel[splitMode] ? '' : 'none';
+
+        document.getElementById('js-participants').innerHTML = participantIds.map(function(id) {
+          var p = getInfo(id);
+          var isPayer = id === paidById;
+          var amtForId = getAmountForId(id);
+          var shareLabel = isPayer ? 'Paid ' + fmt(total) : 'Owes ' + fmt(amtForId);
+          var amtCol = splitMode === 'equal'
+            ? '<div class="participant-item__amount"><span class="participant-item__amount-value">' + fmt(amtForId) + '</span></div>'
+            : inputCol(id);
+          return '<div class="participant-item">' +
+            '<div class="checkbox checkbox--checked"></div>' +
+            '<div class="avatar avatar-md">' + p.initials + '</div>' +
+            '<div class="participant-item__text">' +
+              '<span class="participant-item__name">' + p.name + '</span>' +
+              '<span class="participant-item__share js-share-lbl" data-pid="' + id + '">' + shareLabel + '</span>' +
+            '</div>' +
+            amtCol +
+          '</div>';
+        }).join('');
+
+        if (splitMode !== 'equal') {
+          document.querySelectorAll('#js-participants .amount-input__field').forEach(function(inp) {
+            inp.addEventListener('input', function() {
+              var pid = inp.getAttribute('data-pid');
+              customSplits[pid] = parseFloat(inp.value) || 0;
+              var lbl = document.querySelector('.js-share-lbl[data-pid="' + pid + '"]');
+              if (lbl) {
+                var amt = getAmountForId(pid);
+                lbl.textContent = pid === paidById ? 'Paid ' + fmt(total) : 'Owes ' + fmt(amt);
+              }
+              updateTotalBar();
+            });
+            inp.addEventListener('focus', function() { if (this.value === '0') this.select(); });
+          });
+        }
+        updateTotalBar();
+      }
+
+      function renderPayerBar() {
+        var payer = getInfo(paidById);
+        document.getElementById('js-paid-avatars').innerHTML = '<div class="avatar avatar-md">' + payer.initials + '</div>';
+        document.getElementById('js-paid-name').textContent = payer.name;
+      }
+
+      function renderPayerSheet() {
+        document.getElementById('js-payer-list').innerHTML = participantIds.map(function(id) {
+          var p = getInfo(id);
+          var sel = id === paidById;
+          return '<div class="payer-row" data-pid="' + id + '" style="cursor:pointer;' + (sel ? 'background:var(--contact-bg-selected);' : '') + '">' +
+            '<div class="' + (sel ? 'checkbox checkbox--checked' : 'checkbox') + '"></div>' +
+            '<div class="avatar avatar-md">' + p.initials + '</div>' +
+            '<div class="payer-row__text"><span class="payer-row__name">' + p.name + '</span></div>' +
+          '</div>';
+        }).join('');
+        document.querySelectorAll('#js-payer-list .payer-row').forEach(function(row) {
+          row.addEventListener('click', function() {
+            paidById = row.getAttribute('data-pid');
+            renderPayerBar();
+            renderPayerSheet();
+            renderParticipants();
+          });
+        });
+      }
+
+      // Segment buttons
+      var modeMap = ['equal', 'amount', 'percent', 'shares'];
+      document.querySelectorAll('.segment-item').forEach(function(btn, i) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.segment-item').forEach(function(b) { b.classList.remove('segment-item--active'); });
+          btn.classList.add('segment-item--active');
+          splitMode = modeMap[i];
+          initSplits(splitMode);
+          renderParticipants();
+        });
+      });
+
+      nextBtn.addEventListener('click', function() {
+        ctx.paidById = paidById;
+        ctx.splitMethod = splitMode;
+        if (splitMode === 'equal') {
+          ctx.perPerson = r2(total / participantIds.length);
+          delete ctx.splitAmounts;
+        } else {
+          var amounts = {};
+          participantIds.forEach(function(id) { amounts[id] = getAmountForId(id); });
+          ctx.splitAmounts = amounts;
+          ctx.perPerson = null;
+        }
+        sessionStorage.setItem('settlr_new_expense', JSON.stringify(ctx));
+        location.href = 'add-review';
+      });
+
+      renderPayerBar();
+      renderPayerSheet();
+      renderParticipants();
+    }());
+  </script>
+
+</body>
+</html>

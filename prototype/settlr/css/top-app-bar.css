@@ -1,0 +1,47 @@
+/* ============================================
+   Settlr — Top App Bar Component
+   Figma: node 206:15660
+   ============================================ */
+
+.top-app-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--top-app-bar-bg);
+  width: 100%;
+}
+
+/* Title — left-aligned, fills remaining space */
+.top-app-bar__title {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--font-size-24);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-28);
+  letter-spacing: -0.96px;
+  color: var(--top-app-bar-title);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "Done" ghost text action (Variant2) */
+.top-app-bar__done {
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+  color: var(--btn-ghost-fg);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Modifier: adds a bottom border (use when bar sits over flat content) */
+.top-app-bar--bordered {
+  border-bottom: var(--border-small) solid var(--nav-bar-border);
+}

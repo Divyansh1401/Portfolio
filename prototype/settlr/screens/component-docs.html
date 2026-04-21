@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settlr — Component Documentation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Single design system import: all tokens + all component CSS -->
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    /* ============================================================
+       DOC LAYOUT — only for the documentation page scaffold.
+       Uses .docs-* prefix to avoid component class collisions.
+       ============================================================ */
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body.docs {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      color: var(--color-neutral-900);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Sidebar ── */
+    .docs-sidebar {
+      width: 260px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--spacing-24) var(--spacing-16);
+      border-right: 1px solid var(--color-neutral-200);
+      background: var(--color-gray-0);
+      flex-shrink: 0;
+    }
+    .docs-sidebar__title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-olive-600);
+      margin-bottom: var(--spacing-24);
+      letter-spacing: -0.4px;
+    }
+    .docs-sidebar__group {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      color: var(--color-neutral-400);
+      margin-top: var(--spacing-16);
+      margin-bottom: var(--spacing-8);
+      padding-left: var(--spacing-12);
+    }
+    .docs-sidebar__link {
+      display: block;
+      padding: 5px var(--spacing-12);
+      border-radius: var(--radius-8);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-neutral-600);
+      text-decoration: none;
+      margin-bottom: 1px;
+    }
+    .docs-sidebar__link:hover { background: var(--color-olive-50); color: var(--color-olive-700); }
+
+    /* ── Main Content ── */
+    .docs-main {
+      flex: 1;
+      padding: var(--spacing-32) var(--spacing-48);
+      overflow-y: auto;
+      min-width: 0;
+    }
+    .docs-hero {
+      margin-bottom: var(--spacing-48);
+    }
+    .docs-hero__title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1.28px;
+      color: var(--color-olive-800);
+      margin-bottom: var(--spacing-8);
+    }
+    .docs-hero__desc {
+      font-size: 14px;
+      color: var(--color-neutral-500);
+      line-height: 23px;
+    }
+
+    .docs-section {
+      margin-bottom: var(--spacing-48);
+      scroll-margin-top: var(--spacing-32);
+    }
+    .docs-section__title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-neutral-900);
+      letter-spacing: -0.66px;
+      margin-bottom: var(--spacing-4);
+    }
+    .docs-section__desc {
+      font-size: 13px;
+      color: var(--color-neutral-500);
+      line-height: 21px;
+      margin-bottom: var(--spacing-20);
+    }
+    .docs-section__desc code {
+      display: inline;
+      padding: 1px 5px;
+      background: var(--color-neutral-100);
+      border-radius: var(--radius-4);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11.5px;
+      color: var(--color-olive-600);
+    }
+
+    .docs-subsection {
+      margin-bottom: var(--spacing-24);
+    }
+    .docs-subsection__title {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      margin-bottom: var(--spacing-12);
+    }
+
+    .docs-specimen {
+      background: var(--color-gray-0);
+      border: 1px solid var(--color-neutral-200);
+      border-radius: var(--radius-12);
+      padding: var(--spacing-20);
+      margin-bottom: var(--spacing-12);
+    }
+    .docs-specimen__row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-16);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-16);
+    }
+    .docs-specimen__row:last-child { margin-bottom: 0; }
+    .docs-specimen__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-neutral-400);
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+    .docs-specimen__col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+    .docs-specimen--constrained {
+      max-width: 393px;
+    }
+
+    /* ============================================================
+       SCREEN-LEVEL COMPONENT CSS
+       These components don't have their own files in css/.
+       Copied from the screen files where they're defined.
+       ============================================================ */
+
+    /* ── Search Input ── */
+    .search-input {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      height: 44px;
+      padding: 0 var(--spacing-16);
+      background: var(--color-neutral-100);
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius-full);
+      width: 100%;
+    }
+    .search-input__icon { flex-shrink: 0; color: var(--color-neutral-400); display: flex; align-items: center; }
+    .search-input__icon svg { width: 16px; height: 16px; }
+    .search-input input { flex: 1; border: none; background: transparent; font-family: var(--font-body); font-size: 14px; color: var(--color-neutral-900); outline: none; }
+    .search-input input::placeholder { color: var(--color-neutral-400); }
+
+    /* ── Step Dots ── */
+    .steps { display: flex; align-items: center; justify-content: center; gap: 6px; padding: var(--spacing-8) 0; }
+    .step-dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--color-neutral-300); }
+    .step-dot--active { background: var(--color-olive-600); width: 24px; border-radius: 4px; }
+    .step-dot--done { background: var(--color-olive-600); }
+
+    /* ── Category Chip ── */
+    .cat-chip {
+      display: inline-flex; align-items: center; gap: var(--spacing-4);
+      padding: 6px 12px; border-radius: var(--radius-full);
+      border: 1.5px solid var(--color-neutral-300); background: var(--color-gray-0);
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      color: var(--color-neutral-700); cursor: pointer; flex-shrink: 0;
+    }
+    .cat-chip.is-selected { background: var(--color-olive-600); border-color: var(--color-olive-600); color: var(--color-gray-0); }
+
+    /* ── Type Chip (emoji variant for docs) ── */
+    .type-chip__emoji { font-size: 24px; line-height: 1; }
+
+    /* ── Currency Badge ── */
+    .currency-badge {
+      display: inline-flex; align-items: center; gap: var(--spacing-4);
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--color-neutral-100); font-family: var(--font-body);
+      font-size: 12px; font-weight: 500; color: var(--color-neutral-600);
+    }
+
+    /* Member Pill — now uses css/avatar.css */
+
+    /* ── Transaction Item ── */
+    .txn-item {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: 14px 16px; background: var(--color-gray-0);
+      border-bottom: 1px solid var(--color-neutral-200); text-decoration: none;
+    }
+    .txn-item__avatar {
+      width: 48px; height: 48px; border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+      font-family: var(--font-body); font-size: 15px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .txn-item__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .txn-item__name { font-size: 15px; font-weight: 600; line-height: 20px; color: var(--color-neutral-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .txn-item__subtitle { font-size: 13px; color: var(--color-neutral-500); line-height: 18px; }
+    .txn-item__right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 2px; }
+    .txn-item__badge { font-size: 12px; font-weight: 500; line-height: 16px; }
+    .txn-item__amount { font-family: var(--font-display); font-size: 16px; font-weight: 700; line-height: 20px; }
+    .txn-item--lent .txn-item__badge, .txn-item--lent .txn-item__amount { color: var(--expense-lent-fg); }
+    .txn-item--owe .txn-item__badge, .txn-item--owe .txn-item__amount { color: var(--expense-owe-fg); }
+    .txn-item--settled .txn-item__badge, .txn-item--settled .txn-item__amount { color: var(--color-neutral-400); }
+
+    /* ── Balance Row ── */
+    .balance-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: 14px 16px; border-bottom: 1px solid var(--color-neutral-200);
+    }
+    .balance-row__avatar {
+      width: 44px; height: 44px; border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .balance-row__text { flex: 1; font-size: 14px; color: var(--color-neutral-700); line-height: 20px; }
+    .balance-row__text strong { color: var(--color-neutral-900); font-weight: 600; }
+    .balance-row__amount { flex-shrink: 0; font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+    .balance-row__amount--lent { color: var(--expense-lent-fg); }
+    .balance-row__amount--owe { color: var(--expense-owe-fg); }
+
+    /* ── Detail Row ── */
+    .detail-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) 0; border-bottom: 1px solid var(--color-neutral-200);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row__icon {
+      width: 40px; height: 40px; border-radius: var(--radius-8);
+      background: var(--color-neutral-100); display: flex; align-items: center;
+      justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .detail-row__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .detail-row__label { font-size: 12px; color: var(--color-neutral-500); line-height: 19px; }
+    .detail-row__value { font-size: 14px; font-weight: 600; color: var(--color-neutral-900); }
+    .detail-row__chevron { width: 18px; height: 18px; color: var(--color-neutral-400); flex-shrink: 0; }
+
+    /* ── Selector Row ── */
+    .selector-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16); border-radius: var(--radius-12);
+      background: var(--color-gray-0); border: 1px solid var(--color-neutral-200); cursor: pointer;
+    }
+    .selector-row__icon {
+      width: 36px; height: 36px; border-radius: var(--radius-8);
+      background: var(--color-neutral-100); display: flex; align-items: center;
+      justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .selector-row__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .selector-row__label { font-size: 12px; color: var(--color-neutral-500); }
+    .selector-row__value { font-size: 14px; font-weight: 600; color: var(--color-neutral-900); }
+    .selector-row__chevron { width: 18px; height: 18px; color: var(--color-neutral-400); flex-shrink: 0; }
+
+    /* ── Split Person ── */
+    .split-person { display: flex; align-items: center; gap: var(--spacing-12); padding: var(--spacing-8) 0; }
+    .split-person__avatar {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-body); font-size: 11px; font-weight: 600; flex-shrink: 0;
+    }
+    .split-person__name { flex: 1; font-size: 14px; font-weight: 600; color: var(--color-neutral-900); }
+    .split-person__amount { font-size: 14px; font-weight: 600; }
+    .split-person__amount--self { color: var(--color-neutral-500); }
+    .split-person__amount--lent { color: var(--expense-lent-fg); }
+    .split-person__amount--owe { color: var(--expense-owe-fg); }
+
+    /* ── Summary Card ── */
+    .summary-card {
+      display: flex; flex-direction: column; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-24) var(--spacing-16); border-radius: var(--radius-16);
+      background: var(--color-gray-0); border: 1px solid var(--color-neutral-200); text-align: center;
+    }
+    .summary-card__avatar {
+      width: 56px; height: 56px; border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+      font-family: var(--font-display); font-size: 20px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .summary-card__name { font-size: 16px; font-weight: 700; color: var(--color-neutral-900); }
+    .summary-card__amount { font-family: var(--font-display); font-size: 28px; font-weight: 900; letter-spacing: -1.12px; color: var(--expense-owe-fg); }
+    .summary-card__label { font-size: 13px; color: var(--color-neutral-500); margin-top: -8px; }
+
+    /* ── Notes Card ── */
+    .notes-card {
+      padding: var(--spacing-12) var(--spacing-16); border-radius: var(--radius-12); background: var(--color-neutral-100);
+    }
+    .notes-card__label { font-size: 11px; font-weight: 600; letter-spacing: 1.76px; text-transform: uppercase; color: var(--color-neutral-500); margin-bottom: var(--spacing-4); }
+    .notes-card__text { font-size: 14px; line-height: 23px; color: var(--color-neutral-700); }
+
+    /* ── Feature Card ── */
+    .feature-card {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16); border-radius: var(--radius-12);
+      background: var(--color-gray-0); border: 1px solid var(--color-neutral-200);
+    }
+    .feature-card__icon {
+      width: 40px; height: 40px; border-radius: var(--radius-8);
+      display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .feature-card__icon--olive { background: var(--color-olive-100); }
+    .feature-card__icon--green { background: var(--color-green-100); }
+    .feature-card__icon--neutral { background: var(--color-neutral-100); }
+    .feature-card__text { display: flex; flex-direction: column; gap: 2px; }
+    .feature-card__title { font-size: 14px; font-weight: 600; color: var(--color-neutral-900); }
+    .feature-card__desc { font-size: 12px; line-height: 19px; color: var(--color-neutral-500); }
+
+    /* ── Method Option ── */
+    .method-option {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: 14px 16px; border-radius: var(--radius-12);
+      border: 1.5px solid var(--color-neutral-300); background: var(--color-gray-0); cursor: pointer;
+    }
+    .method-option.is-selected { background: var(--color-olive-50); border-color: var(--color-olive-600); }
+    .method-option__icon {
+      width: 40px; height: 40px; border-radius: var(--radius-8);
+      background: var(--color-neutral-100); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .method-option.is-selected .method-option__icon { background: var(--color-olive-100); }
+    .method-option__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .method-option__label { font-size: 14px; font-weight: 600; color: var(--color-neutral-900); }
+    .method-option__desc { font-size: 12px; color: var(--color-neutral-500); }
+    .method-option__radio {
+      width: 20px; height: 20px; border-radius: var(--radius-full);
+      border: 2px solid var(--color-neutral-300); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .method-option.is-selected .method-option__radio { border-color: var(--color-olive-600); background: var(--color-olive-600); }
+    .method-option__radio-dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--color-gray-0); opacity: 0; }
+    .method-option.is-selected .method-option__radio-dot { opacity: 1; }
+
+    /* ── Photo Upload ── */
+    .photo-upload {
+      width: 96px; height: 96px; border-radius: var(--radius-24);
+      background: var(--color-olive-100); border: 2px dashed var(--color-olive-300);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: var(--spacing-4); cursor: pointer;
+    }
+    .photo-upload__icon { width: 28px; height: 28px; color: var(--color-olive-500); }
+    .photo-upload__text { font-size: 10px; font-weight: 500; color: var(--color-olive-600); letter-spacing: 0.5px; text-transform: uppercase; }
+
+    /* ── Date Heading ── */
+    .date-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16); width: 100%;
+    }
+    .date-heading__label { font-size: 12px; font-weight: 600; line-height: 18px; color: var(--color-neutral-900); }
+
+    /* ── Section Label ── */
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.76px;
+      text-transform: uppercase; color: var(--color-neutral-500);
+    }
+
+    /* ── Section Divider ── */
+    .section-divider { height: 8px; background: var(--color-neutral-100); border-radius: var(--radius-4); }
+
+    /* ── Expense Hero ── */
+    .expense-hero {
+      display: flex; flex-direction: column; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-24); border-radius: var(--radius-16);
+      background: var(--color-gray-0); border: 1px solid var(--color-neutral-200); text-align: center;
+    }
+    .expense-hero__category {
+      display: inline-flex; align-items: center; gap: var(--spacing-4);
+      padding: 4px 12px; border-radius: var(--radius-full);
+      background: var(--color-neutral-100); font-size: 12px; font-weight: 500; color: var(--color-neutral-600);
+    }
+    .expense-hero__amount { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: -1.44px; color: var(--color-neutral-900); }
+    .expense-hero__desc { font-size: 16px; font-weight: 700; color: var(--color-neutral-900); }
+    .expense-hero__date { font-size: 12px; color: var(--color-neutral-400); }
+    .expense-hero__balance {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16); border-radius: var(--radius-8);
+      background: var(--expense-lent-bg); width: 100%;
+    }
+    .expense-hero__balance-label { font-size: 13px; font-weight: 600; color: var(--expense-lent-fg); }
+    .expense-hero__balance-amount { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.32px; color: var(--expense-lent-fg); }
+
+    /* ── Amount Input ── */
+    .amount-input-wrap {
+      display: flex; align-items: center; justify-content: center; gap: var(--spacing-4);
+    }
+    .amount-input-wrap__symbol { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: -1.44px; color: var(--color-neutral-900); }
+    .amount-input-wrap input {
+      border: none; outline: none; background: transparent;
+      font-family: var(--font-display); font-size: 36px; font-weight: 700;
+      letter-spacing: -1.44px; color: var(--color-neutral-900); text-align: center; width: 180px;
+    }
+
+    /* ── Success Check ── */
+    .success-check {
+      width: 88px; height: 88px; border-radius: var(--radius-full);
+      background: var(--color-green-100); display: flex; align-items: center; justify-content: center;
+    }
+    .success-check svg { width: 44px; height: 44px; color: var(--color-green-500); }
+
+    /* ── docs-only icon-btn stub (for Top App Bar specimens) ── */
+    .docs-icon-btn {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      background: var(--btn-icon-bg); border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--btn-icon-fg); flex-shrink: 0;
+    }
+    .docs-icon-btn svg { width: 20px; height: 20px; }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      padding: var(--spacing-12) var(--spacing-24); display: flex; flex-direction: column; gap: var(--spacing-12);
+    }
+    .bottom-cta .btn-primary-full {
+      display: flex; width: 100%; height: 52px; align-items: center; justify-content: center;
+      border-radius: var(--radius-full); border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 16px; font-weight: 600;
+      background: var(--btn-primary-bg); color: var(--btn-primary-fg); text-decoration: none;
+    }
+    .bottom-cta .btn-ghost-full {
+      display: flex; width: 100%; height: 44px; align-items: center; justify-content: center;
+      border: none; background: transparent; cursor: pointer;
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      color: var(--color-olive-600); text-decoration: none;
+    }
+  </style>
+</head>
+<body class="docs">
+
+  <!-- ════════════════════════════════════════════
+       SIDEBAR
+       ════════════════════════════════════════════ -->
+  <aside class="docs-sidebar">
+    <div class="docs-sidebar__title">Settlr DS</div>
+
+    <div class="docs-sidebar__group">Primitives</div>
+    <a class="docs-sidebar__link" href="#buttons">Button</a>
+    <a class="docs-sidebar__link" href="#icon-buttons">Icon Button</a>
+    <a class="docs-sidebar__link" href="#chips">Chip</a>
+    <a class="docs-sidebar__link" href="#category-chips">Category Chip</a>
+    <a class="docs-sidebar__link" href="#type-chips">Type Chip</a>
+    <a class="docs-sidebar__link" href="#labels">Labels / Badges</a>
+    <a class="docs-sidebar__link" href="#avatars">Avatar</a>
+    <a class="docs-sidebar__link" href="#avatar-stacks">Avatar Stack</a>
+    <a class="docs-sidebar__link" href="#currency-badge">Currency Badge</a>
+    <a class="docs-sidebar__link" href="#member-pill">Member Pill</a>
+
+    <div class="docs-sidebar__group">Form Controls</div>
+    <a class="docs-sidebar__link" href="#input-field">Input Field</a>
+    <a class="docs-sidebar__link" href="#search-input">Search Input</a>
+    <a class="docs-sidebar__link" href="#radio-control">Radio Control</a>
+    <a class="docs-sidebar__link" href="#radio-item">Radio Item</a>
+    <a class="docs-sidebar__link" href="#radio-item-boxed">Radio Item Boxed</a>
+    <a class="docs-sidebar__link" href="#radio-item-boxed-illus">Radio Item Boxed — Illus</a>
+    <a class="docs-sidebar__link" href="#checkbox-control">Checkbox Control</a>
+    <a class="docs-sidebar__link" href="#checkbox-item">Checkbox Item</a>
+    <a class="docs-sidebar__link" href="#otp-input">OTP Input</a>
+    <a class="docs-sidebar__link" href="#method-option">Method Option</a>
+    <a class="docs-sidebar__link" href="#photo-upload">Photo Upload</a>
+
+    <div class="docs-sidebar__group">List Items</div>
+    <a class="docs-sidebar__link" href="#person-item">Person Item</a>
+    <a class="docs-sidebar__link" href="#expense-item">Expense Item</a>
+    <a class="docs-sidebar__link" href="#transaction-item">Transaction Item</a>
+    <a class="docs-sidebar__link" href="#settlement-item">Settlement Item</a>
+    <a class="docs-sidebar__link" href="#balance-row">Balance Row</a>
+    <a class="docs-sidebar__link" href="#detail-row">Detail Row</a>
+    <a class="docs-sidebar__link" href="#selector-row">Selector Row</a>
+    <a class="docs-sidebar__link" href="#split-person">Split Person</a>
+
+    <div class="docs-sidebar__group">Cards</div>
+    <a class="docs-sidebar__link" href="#group-card">Group Card</a>
+    <a class="docs-sidebar__link" href="#create-card">Create Card</a>
+    <a class="docs-sidebar__link" href="#summary-card">Summary Card</a>
+    <a class="docs-sidebar__link" href="#notes-card">Notes Card</a>
+    <a class="docs-sidebar__link" href="#feature-card">Feature Card</a>
+
+    <div class="docs-sidebar__group">Navigation</div>
+    <a class="docs-sidebar__link" href="#bottom-nav">Bottom Nav</a>
+    <a class="docs-sidebar__link" href="#segment-control">Segment Control</a>
+    <a class="docs-sidebar__link" href="#top-app-bar">Top App Bar</a>
+    <a class="docs-sidebar__link" href="#step-dots">Step Dots</a>
+
+    <div class="docs-sidebar__group">Layout</div>
+    <a class="docs-sidebar__link" href="#heading">Heading</a>
+    <a class="docs-sidebar__link" href="#action-button-row">Action Button Row</a>
+    <a class="docs-sidebar__link" href="#fab">FAB</a>
+    <a class="docs-sidebar__link" href="#bottom-sheet">Bottom Sheet</a>
+
+    <div class="docs-sidebar__group">Feedback</div>
+    <a class="docs-sidebar__link" href="#success-state">Success State</a>
+
+    <div class="docs-sidebar__group">Content Blocks</div>
+    <a class="docs-sidebar__link" href="#date-heading">Date Heading</a>
+    <a class="docs-sidebar__link" href="#section-label">Section Label</a>
+    <a class="docs-sidebar__link" href="#section-divider">Section Divider</a>
+    <a class="docs-sidebar__link" href="#expense-hero">Expense Hero</a>
+    <a class="docs-sidebar__link" href="#amount-input">Amount Input</a>
+    <a class="docs-sidebar__link" href="#bottom-cta">Bottom CTA</a>
+  </aside>
+
+  <!-- ════════════════════════════════════════════
+       MAIN CONTENT
+       ════════════════════════════════════════════ -->
+  <main class="docs-main">
+
+    <div class="docs-hero">
+      <h1 class="docs-hero__title">Settlr Design System</h1>
+      <p class="docs-hero__desc">All components and their variants — 47 components across 8 categories. This page imports <code>css/index.css</code> for all design tokens and component styles.</p>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         A. PRIMITIVES
+         ════════════════════════════════════════ -->
+
+    <!-- 1. Button -->
+    <section class="docs-section" id="buttons">
+      <h2 class="docs-section__title">Button</h2>
+      <p class="docs-section__desc">Primary action buttons. Classes: <code>.btn</code> <code>.btn--primary</code> <code>.btn--secondary</code> <code>.btn--ghost</code> <code>.btn--destructive</code> <code>.btn--sm</code> <code>.btn--md</code> <code>.btn--lg</code> <code>.btn--full</code></p>
+
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">Types × Sizes</h3>
+        <div class="docs-specimen">
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Primary</span>
+            <button class="btn btn--sm btn--primary"><span class="btn__content">Small</span></button>
+            <button class="btn btn--md btn--primary"><span class="btn__content">Medium</span></button>
+            <button class="btn btn--lg btn--primary"><span class="btn__content">Large</span></button>
+          </div>
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Secondary</span>
+            <button class="btn btn--sm btn--secondary"><span class="btn__content">Small</span></button>
+            <button class="btn btn--md btn--secondary"><span class="btn__content">Medium</span></button>
+            <button class="btn btn--lg btn--secondary"><span class="btn__content">Large</span></button>
+          </div>
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Ghost</span>
+            <button class="btn btn--sm btn--ghost"><span class="btn__content"><span class="btn__label">Small</span></span></button>
+            <button class="btn btn--md btn--ghost"><span class="btn__content"><span class="btn__label">Medium</span></span></button>
+            <button class="btn btn--lg btn--ghost"><span class="btn__content"><span class="btn__label">Large</span></span></button>
+          </div>
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Destructive</span>
+            <button class="btn btn--sm btn--destructive"><span class="btn__content">Small</span></button>
+            <button class="btn btn--md btn--destructive"><span class="btn__content">Medium</span></button>
+            <button class="btn btn--lg btn--destructive"><span class="btn__content">Large</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">States</h3>
+        <div class="docs-specimen">
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Pressed</span>
+            <button class="btn btn--md btn--primary is-pressed"><span class="btn__content">Pressed</span></button>
+            <button class="btn btn--md btn--secondary is-pressed"><span class="btn__content">Pressed</span></button>
+            <button class="btn btn--md btn--destructive is-pressed"><span class="btn__content">Pressed</span></button>
+          </div>
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Disabled</span>
+            <button class="btn btn--md btn--primary" disabled><span class="btn__content">Disabled</span></button>
+            <button class="btn btn--md btn--secondary" disabled><span class="btn__content">Disabled</span></button>
+            <button class="btn btn--md btn--destructive" disabled><span class="btn__content">Disabled</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">With Icons</h3>
+        <div class="docs-specimen">
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Icon + Label</span>
+            <button class="btn btn--md btn--primary"><span class="btn__content"><span class="btn__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></span>Add expense</span></button>
+            <button class="btn btn--md btn--secondary"><span class="btn__content"><span class="btn__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>Settle up</span></button>
+          </div>
+          <div class="docs-specimen__row">
+            <span class="docs-specimen__label">Full width</span>
+            <div style="width:360px;">
+              <button class="btn btn--lg btn--primary btn--full"><span class="btn__content">Full width button</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Icon Button -->
+    <section class="docs-section" id="icon-buttons">
+      <h2 class="docs-section__title">Icon Button</h2>
+      <p class="docs-section__desc">Circular icon-only buttons. Classes: <code>.icon-btn</code> <code>.icon-btn--sm</code> <code>.icon-btn--md</code> <code>.icon-btn--lg</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">SM 40px</span>
+          <button class="icon-btn icon-btn--sm" aria-label="Back"><svg class="icon-btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 4L7 10L13 16"/></svg></button>
+          <span class="docs-specimen__label">MD 52px</span>
+          <button class="icon-btn icon-btn--md" aria-label="Add"><svg class="icon-btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg></button>
+          <span class="docs-specimen__label">LG 64px</span>
+          <button class="icon-btn icon-btn--lg" aria-label="Settings"><svg class="icon-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Chip -->
+    <section class="docs-section" id="chips">
+      <h2 class="docs-section__title">Chip</h2>
+      <p class="docs-section__desc">Selectable pill toggles. Classes: <code>.chip</code> <code>.chip--sm</code> <code>.chip--md</code> <code>.chip--lg</code> <code>.is-active</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Off</span>
+          <span class="chip chip--sm">Small</span>
+          <span class="chip chip--md">Medium</span>
+          <span class="chip chip--lg">Large</span>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">On</span>
+          <span class="chip chip--sm is-active">Small</span>
+          <span class="chip chip--md is-active">Medium</span>
+          <span class="chip chip--lg is-active">Large</span>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">With icon</span>
+          <span class="chip chip--sm is-active"><span class="chip__icon"><svg viewBox="0 0 14 14" fill="currentColor"><path d="M7 7a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H2z"/></svg></span>Individual</span>
+          <span class="chip chip--sm">Group</span>
+          <span class="chip chip--sm">Active</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Category Chip -->
+    <section class="docs-section" id="category-chips">
+      <h2 class="docs-section__title">Category Chip</h2>
+      <p class="docs-section__desc">Expense category selection pills. Classes: <code>.cat-chip</code> <code>.is-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="cat-chip is-selected">🍽 Food</span>
+          <span class="cat-chip">✈️ Travel</span>
+          <span class="cat-chip">🛍 Shopping</span>
+          <span class="cat-chip">📄 Bills</span>
+          <span class="cat-chip">📦 Other</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Type Chip -->
+    <section class="docs-section" id="type-chips">
+      <h2 class="docs-section__title">Type Chip</h2>
+      <p class="docs-section__desc">Group type selection grid. Classes: <code>.type-chip</code> <code>.is-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <div class="type-chip is-selected"><span class="type-chip__emoji">✈️</span><span class="type-chip__name">Trip</span></div>
+          <div class="type-chip"><span class="type-chip__emoji">🏠</span><span class="type-chip__name">Home</span></div>
+          <div class="type-chip"><span class="type-chip__emoji">🍕</span><span class="type-chip__name">Food</span></div>
+          <div class="type-chip"><span class="type-chip__emoji">💼</span><span class="type-chip__name">Work</span></div>
+          <div class="type-chip"><span class="type-chip__emoji">🎉</span><span class="type-chip__name">Event</span></div>
+          <div class="type-chip"><span class="type-chip__emoji">❤️</span><span class="type-chip__name">Couple</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Labels / Badges -->
+    <section class="docs-section" id="labels">
+      <h2 class="docs-section__title">Labels / Badges</h2>
+      <p class="docs-section__desc">Status badges. Classes: <code>.label</code> <code>.label--success</code> <code>.label--warning</code> <code>.label--error</code> <code>.label--info</code> <code>.label--default</code> <code>.label--sm</code> <code>.label--md</code> <code>.label--lg</code></p>
+      <p class="docs-section__desc">Expense status (text-only): <code>.label--expense</code> + <code>.label--owe</code> <code>.label--lent</code> <code>.label--settled</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Statuses</span>
+          <span class="label label--md label--success">Success</span>
+          <span class="label label--md label--warning">Warning</span>
+          <span class="label label--md label--error">Error</span>
+          <span class="label label--md label--info">Info</span>
+          <span class="label label--md label--default">Default</span>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Sizes</span>
+          <span class="label label--sm label--success">SM</span>
+          <span class="label label--md label--success">MD</span>
+          <span class="label label--lg label--success">LG</span>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Expense</span>
+          <span class="label label--expense label--owe">You owe</span>
+          <span class="label label--expense label--lent">You lent</span>
+          <span class="label label--expense label--settled">Settled</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Avatar -->
+    <section class="docs-section" id="avatars">
+      <h2 class="docs-section__title">Avatar</h2>
+      <p class="docs-section__desc">Circular avatars. Classes: <code>.avatar</code> <code>.avatar--xs</code> <code>.avatar--sm</code> <code>.avatar--md</code> <code>.avatar--lg</code> <code>.avatar--initials</code> <code>.avatar--photo</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Initials</span>
+          <div class="avatar avatar--xs avatar--initials">JW</div>
+          <div class="avatar avatar--sm avatar--initials">JW</div>
+          <div class="avatar avatar--md avatar--initials">JW</div>
+          <div class="avatar avatar--lg avatar--initials">JW</div>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Photo</span>
+          <div class="avatar avatar--md avatar--photo"><img src="https://i.pravatar.cc/80?img=3" alt=""></div>
+          <div class="avatar avatar--lg avatar--photo"><img src="https://i.pravatar.cc/112?img=5" alt=""></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Avatar Stack -->
+    <section class="docs-section" id="avatar-stacks">
+      <h2 class="docs-section__title">Avatar Stack</h2>
+      <p class="docs-section__desc">Overlapping avatars with subtract effect (box-shadow ring). Classes: <code>.avatar-stack</code> <code>.avatar-stack--xs/sm/md/lg</code> <code>.avatar-stack__item</code> <code>.avatar-stack__overflow</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">XS + label</span>
+          <div class="avatar-stack-group">
+            <div class="avatar-stack avatar-stack--xs"><div class="avatar-stack__item">RK</div><div class="avatar-stack__item">PS</div><div class="avatar-stack__item">AJ</div><div class="avatar-stack__overflow">+5</div></div>
+            <span class="avatar-stack-group__label">8 members</span>
+          </div>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">SM</span>
+          <div class="avatar-stack avatar-stack--sm"><div class="avatar-stack__item">RK</div><div class="avatar-stack__item">PS</div><div class="avatar-stack__item">AJ</div><div class="avatar-stack__overflow">+5</div></div>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">MD</span>
+          <div class="avatar-stack avatar-stack--md"><div class="avatar-stack__item">RK</div><div class="avatar-stack__item">PS</div><div class="avatar-stack__item">AJ</div><div class="avatar-stack__overflow">+5</div></div>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">LG</span>
+          <div class="avatar-stack avatar-stack--lg"><div class="avatar-stack__item">RK</div><div class="avatar-stack__item">PS</div><div class="avatar-stack__item">AJ</div><div class="avatar-stack__overflow">+5</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Currency Badge -->
+    <section class="docs-section" id="currency-badge">
+      <h2 class="docs-section__title">Currency Badge</h2>
+      <p class="docs-section__desc">Currency indicator pill. Class: <code>.currency-badge</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="currency-badge">₹ INR</span>
+          <span class="currency-badge">$ USD</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Member Pill -->
+    <section class="docs-section" id="member-pill">
+      <h2 class="docs-section__title">Member Pill</h2>
+      <p class="docs-section__desc">Avatar chip: avatar + name, optionally removable. Classes: <code>.member-pill</code> <code>.member-pill__name</code> <code>.member-pill__remove</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">YO</div>
+            <span class="member-pill__name">You</span>
+          </div>
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">RA</div>
+            <span class="member-pill__name">Rahul</span>
+          </div>
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">PS</div>
+            <span class="member-pill__name">Priya</span>
+          </div>
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">AK</div>
+            <span class="member-pill__name">Arjun</span>
+          </div>
+        </div>
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Removable</span>
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">YO</div>
+            <span class="member-pill__name">You</span>
+            <span class="member-pill__remove">✕</span>
+          </div>
+          <div class="member-pill">
+            <div class="avatar avatar--sm avatar--initials">RA</div>
+            <span class="member-pill__name">Rahul</span>
+            <span class="member-pill__remove">✕</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         B. FORM CONTROLS
+         ════════════════════════════════════════ -->
+
+    <!-- 11. Input Field -->
+    <section class="docs-section" id="input-field">
+      <h2 class="docs-section__title">Input Field</h2>
+      <p class="docs-section__desc">Text inputs with states. Classes: <code>.input-field</code> <code>.input-field--active</code> <code>.input-field--filled</code> <code>.input-field--error</code> <code>.input-field--disabled</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-16);">
+          <div class="input-field"><label class="input-field__label">Empty</label><div class="input-field__box"><input type="text" placeholder="Placeholder text"></div><span class="input-field__helper">Helper text</span></div>
+          <div class="input-field input-field--error"><label class="input-field__label">Error</label><div class="input-field__box"><input type="text" value="Invalid value"></div><span class="input-field__helper">This field is required</span></div>
+          <div class="input-field input-field--disabled"><label class="input-field__label">Disabled</label><div class="input-field__box"><input type="text" placeholder="Disabled" disabled></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. Search Input -->
+    <section class="docs-section" id="search-input">
+      <h2 class="docs-section__title">Search Input</h2>
+      <p class="docs-section__desc">Search bar with icon. Classes: <code>.search-input</code> <code>.search-input__icon</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:360px;">
+          <div class="search-input">
+            <span class="search-input__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M13 13l-2.5-2.5"/></svg></span>
+            <input type="text" placeholder="Search people">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. Radio Control -->
+    <section class="docs-section" id="radio-control">
+      <h2 class="docs-section__title">Radio Control</h2>
+      <p class="docs-section__desc">Standalone 16px radio circle. Classes: <code>.radio-control</code> <code>.is-selected</code> <code>.radio-control--disabled</code> <code>.radio-control--disabled-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Default</span><div class="radio-control"><div class="radio-control__dot"></div></div>
+          <span class="docs-specimen__label">Selected</span><div class="radio-control is-selected"><div class="radio-control__dot"></div></div>
+          <span class="docs-specimen__label">Disabled</span><div class="radio-control radio-control--disabled"><div class="radio-control__dot"></div></div>
+          <span class="docs-specimen__label">Disabled Selected</span><div class="radio-control radio-control--disabled-selected"><div class="radio-control__dot"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. Radio Item -->
+    <section class="docs-section" id="radio-item">
+      <h2 class="docs-section__title">Radio Item</h2>
+      <p class="docs-section__desc">Radio + label. Classes: <code>.radio-item</code> <code>.radio-item--disabled</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="gap: var(--spacing-8);">
+          <label class="radio-item"><div class="radio-control"><div class="radio-control__dot"></div></div><span class="radio-item__label">Default option</span></label>
+          <label class="radio-item"><div class="radio-control is-selected"><div class="radio-control__dot"></div></div><span class="radio-item__label">Selected option</span></label>
+          <label class="radio-item radio-item--disabled"><div class="radio-control radio-control--disabled"><div class="radio-control__dot"></div></div><span class="radio-item__label">Disabled option</span></label>
+          <label class="radio-item radio-item--disabled"><div class="radio-control radio-control--disabled-selected"><div class="radio-control__dot"></div></div><span class="radio-item__label">Disabled selected option</span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. Radio Item Boxed -->
+    <section class="docs-section" id="radio-item-boxed">
+      <h2 class="docs-section__title">Radio Item Boxed</h2>
+      <p class="docs-section__desc">Boxed radio with description. Classes: <code>.radio-item-boxed</code> <code>.is-selected</code> <code>.radio-item-boxed--disabled</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-12);">
+          <div class="radio-item-boxed"><div class="radio-control"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split equally</span><span class="radio-item-boxed__description">Everyone pays the same amount</span></div></div>
+          <div class="radio-item-boxed is-selected"><div class="radio-control is-selected"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by percentage</span><span class="radio-item-boxed__description">Set custom percentages</span></div></div>
+          <div class="radio-item-boxed radio-item-boxed--disabled"><div class="radio-control radio-control--disabled"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by shares</span><span class="radio-item-boxed__description">Coming soon</span></div></div>
+          <div class="radio-item-boxed radio-item-boxed--disabled"><div class="radio-control radio-control--disabled-selected"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by shares</span><span class="radio-item-boxed__description">Previously selected, now locked</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15b. Radio Item Boxed — Illustration -->
+    <section class="docs-section" id="radio-item-boxed-illus">
+      <h2 class="docs-section__title">Radio Item Boxed — Illustration</h2>
+      <p class="docs-section__desc">Illustration + text + radio on right. Classes: <code>.radio-item-boxed</code> <code>.radio-item-boxed--illus</code> <code>.is-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-12);">
+          <div class="radio-item-boxed radio-item-boxed--illus">
+            <div class="radio-item-boxed__illus"></div>
+            <div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split equally</span><span class="radio-item-boxed__description">Everyone pays the same amount</span></div>
+            <div class="radio-control"><div class="radio-control__dot"></div></div>
+          </div>
+          <div class="radio-item-boxed radio-item-boxed--illus is-selected">
+            <div class="radio-item-boxed__illus"></div>
+            <div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by percentage</span><span class="radio-item-boxed__description">Set custom percentages</span></div>
+            <div class="radio-control is-selected"><div class="radio-control__dot"></div></div>
+          </div>
+          <div class="radio-item-boxed radio-item-boxed--illus radio-item-boxed--disabled">
+            <div class="radio-item-boxed__illus"></div>
+            <div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by shares</span><span class="radio-item-boxed__description">Coming soon</span></div>
+            <div class="radio-control radio-control--disabled"><div class="radio-control__dot"></div></div>
+          </div>
+          <div class="radio-item-boxed radio-item-boxed--illus radio-item-boxed--disabled">
+            <div class="radio-item-boxed__illus"></div>
+            <div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by shares</span><span class="radio-item-boxed__description">Previously selected, now locked</span></div>
+            <div class="radio-control radio-control--disabled-selected"><div class="radio-control__dot"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15c. Checkbox Control -->
+    <section class="docs-section" id="checkbox-control">
+      <h2 class="docs-section__title">Checkbox Control</h2>
+      <p class="docs-section__desc">16px square checkbox. Classes: <code>.checkbox-control</code> <code>.is-selected</code> <code>.is-disabled</code></p>
+      <div class="docs-specimen">
+        <div style="display:flex; gap: var(--spacing-32); align-items: flex-start;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap: var(--spacing-8);">
+            <div class="checkbox-control"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="docs-specimen__label" style="min-width:0; text-align:center;">Default</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap: var(--spacing-8);">
+            <div class="checkbox-control is-selected"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="docs-specimen__label" style="min-width:0; text-align:center;">Selected</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap: var(--spacing-8);">
+            <div class="checkbox-control is-disabled"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="docs-specimen__label" style="min-width:0; text-align:center;">Disabled</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap: var(--spacing-8);">
+            <div class="checkbox-control is-disabled is-selected"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="docs-specimen__label" style="min-width:0; text-align:center;">Disabled Selected</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15d. Checkbox Item -->
+    <section class="docs-section" id="checkbox-item">
+      <h2 class="docs-section__title">Checkbox Item</h2>
+      <p class="docs-section__desc">Checkbox control + label row. Figma: <code>271:8528</code>. Classes: <code>.checkbox-item</code> <code>.checkbox-item__label</code> <code>.is-selected</code> <code>.is-disabled</code></p>
+      <div class="docs-specimen">
+        <div style="display:flex; gap: var(--spacing-32); align-items: flex-start;">
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap: var(--spacing-8);">
+            <div class="checkbox-item">
+              <div class="checkbox-control"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="checkbox-item__label">Option label</span>
+            </div>
+            <span class="docs-specimen__label">Default</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap: var(--spacing-8);">
+            <div class="checkbox-item is-selected">
+              <div class="checkbox-control is-selected"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="checkbox-item__label">Option label</span>
+            </div>
+            <span class="docs-specimen__label">Selected</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap: var(--spacing-8);">
+            <div class="checkbox-item is-disabled">
+              <div class="checkbox-control is-disabled"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="checkbox-item__label">Option label</span>
+            </div>
+            <span class="docs-specimen__label">Disabled</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap: var(--spacing-8);">
+            <div class="checkbox-item is-disabled is-selected">
+              <div class="checkbox-control is-disabled is-selected"><svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="checkbox-item__label">Option label</span>
+            </div>
+            <span class="docs-specimen__label">Disabled Selected</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. OTP Input -->
+    <section class="docs-section" id="otp-input">
+      <h2 class="docs-section__title">OTP Input</h2>
+      <p class="docs-section__desc">Single digit + 6-digit group. Classes: <code>.otp-digit</code> <code>.otp-group</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="docs-specimen__label">Digits</span>
+          <input class="otp-digit" maxlength="1" placeholder="0">
+          <input class="otp-digit otp-digit--filled" maxlength="1" value="7">
+          <input class="otp-digit otp-digit--error" maxlength="1" value="3">
+          <input class="otp-digit otp-digit--disabled" maxlength="1" value="5" disabled>
+        </div>
+      </div>
+      <div class="docs-specimen" style="max-width:360px;">
+        <div class="otp-group">
+          <label class="otp-group__label">Verification Code</label>
+          <div class="otp-group__digits">
+            <input class="otp-digit otp-digit--filled" maxlength="1" value="4">
+            <input class="otp-digit otp-digit--filled" maxlength="1" value="2">
+            <input class="otp-digit otp-digit--filled" maxlength="1" value="0">
+            <input class="otp-digit" maxlength="1" placeholder="0">
+            <input class="otp-digit" maxlength="1" placeholder="0">
+            <input class="otp-digit" maxlength="1" placeholder="0">
+          </div>
+          <span class="otp-group__helper">Enter the code sent to your phone</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17. Method Option -->
+    <section class="docs-section" id="method-option">
+      <h2 class="docs-section__title">Method Option</h2>
+      <p class="docs-section__desc">Payment method selection. Classes: <code>.method-option</code> <code>.is-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-12);">
+          <div class="method-option is-selected"><div class="method-option__icon">💳</div><div class="method-option__text"><div class="method-option__label">UPI</div><div class="method-option__desc">Pay via UPI apps</div></div><div class="method-option__radio"><div class="method-option__radio-dot"></div></div></div>
+          <div class="method-option"><div class="method-option__icon">💵</div><div class="method-option__text"><div class="method-option__label">Cash</div><div class="method-option__desc">Paid in cash</div></div><div class="method-option__radio"><div class="method-option__radio-dot"></div></div></div>
+          <div class="method-option"><div class="method-option__icon">🏦</div><div class="method-option__text"><div class="method-option__label">Bank Transfer</div><div class="method-option__desc">Direct bank transfer</div></div><div class="method-option__radio"><div class="method-option__radio-dot"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18. Photo Upload -->
+    <section class="docs-section" id="photo-upload">
+      <h2 class="docs-section__title">Photo Upload</h2>
+      <p class="docs-section__desc">Dashed upload area. Class: <code>.photo-upload</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <div class="photo-upload">
+            <svg class="photo-upload__icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="22" height="18" rx="3"/><circle cx="10" cy="12" r="2.5"/><path d="M25 19l-5.5-5.5a2 2 0 00-2.83 0L5 25"/></svg>
+            <span class="photo-upload__text">Photo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         C. LIST ITEMS
+         ════════════════════════════════════════ -->
+
+    <!-- 19. Person Item -->
+    <section class="docs-section" id="person-item">
+      <h2 class="docs-section__title">Person Item</h2>
+      <p class="docs-section__desc">Contact list row. Classes: <code>.person-item</code> <code>.is-selected</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="person-item"><div class="person-item__avatar"><div class="avatar avatar--md avatar--initials">RK</div></div><div class="person-item__text"><span class="person-item__name">Rahul Kumar</span><span class="person-item__subtext">+91 98765 43210</span></div><div class="person-item__action"><svg class="person-item__action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div></div>
+          <div class="person-item is-selected"><div class="person-item__avatar"><div class="avatar avatar--md avatar--initials">AJ</div></div><div class="person-item__text"><span class="person-item__name">Ankit Joshi</span><span class="person-item__subtext">ankit@email.com</span></div><div class="person-item__action"><div class="radio-control is-selected"><div class="radio-control__dot"></div></div></div></div>
+          <div class="person-item"><div class="person-item__avatar"><div class="avatar avatar--md avatar--initials">NK</div></div><div class="person-item__text"><span class="person-item__name">Neha Kapoor</span><span class="person-item__subtext">neha@email.com</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20. Expense Item -->
+    <section class="docs-section" id="expense-item">
+      <h2 class="docs-section__title">Expense Item</h2>
+      <p class="docs-section__desc">Expense list row. Classes: <code>.expense-item</code> <code>.expense-item--lent</code> <code>.expense-item--owe</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="expense-item expense-item--lent"><div class="expense-item__illustration"></div><div class="expense-item__text"><span class="expense-item__title">Dinner at Thalassa</span><span class="expense-item__subtitle">Rahul Paid · Nov 14, 2025</span></div><div class="expense-item__amount"><span class="expense-item__amount-value">₹1,222</span><span class="expense-item__badge">you lent</span></div></div>
+          <div class="expense-item expense-item--owe"><div class="expense-item__illustration"></div><div class="expense-item__text"><span class="expense-item__title">Uber to Airport</span><span class="expense-item__subtitle">Jenny Paid · Nov 12, 2025</span></div><div class="expense-item__amount"><span class="expense-item__amount-value">₹450</span><span class="expense-item__badge">you owe</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21. Transaction Item -->
+    <section class="docs-section" id="transaction-item">
+      <h2 class="docs-section__title">Transaction Item</h2>
+      <p class="docs-section__desc">Group transaction row with avatar. Classes: <code>.txn-item</code> <code>.txn-item--lent</code> <code>.txn-item--owe</code> <code>.txn-item--settled</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="txn-item txn-item--lent"><div class="txn-item__avatar">JW</div><div class="txn-item__text"><span class="txn-item__name">Johnnie Walker</span><span class="txn-item__subtitle">829338-192</span></div><div class="txn-item__right"><span class="txn-item__badge">You Lent</span><span class="txn-item__amount">₹1,222</span></div></div>
+          <div class="txn-item txn-item--owe"><div class="txn-item__avatar">JK</div><div class="txn-item__text"><span class="txn-item__name">Jenny Kim</span><span class="txn-item__subtitle">829338-201</span></div><div class="txn-item__right"><span class="txn-item__badge">You owe</span><span class="txn-item__amount">₹2,100</span></div></div>
+          <div class="txn-item txn-item--settled"><div class="txn-item__avatar">SD</div><div class="txn-item__text"><span class="txn-item__name">Sam Desai</span><span class="txn-item__subtitle">Settled</span></div><div class="txn-item__right"><span class="txn-item__badge">Settled</span><span class="txn-item__amount">₹980</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22. Settlement Item -->
+    <section class="docs-section" id="settlement-item">
+      <h2 class="docs-section__title">Settlement Item</h2>
+      <p class="docs-section__desc">Person with balance + action. Classes: <code>.settlement-item</code> <code>.settlement-item__amount--lent</code> <code>.settlement-item__amount--owe</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="settlement-item"><div class="avatar avatar--md avatar--initials">RK</div><div class="settlement-item__info"><span class="settlement-item__name">Rahul Kumar</span><span class="settlement-item__amount settlement-item__amount--lent">Owes you ₹1,200</span></div><button class="btn btn--sm btn--secondary"><span class="btn__content">Remind</span></button></div>
+          <div class="settlement-item"><div class="avatar avatar--md avatar--initials">AJ</div><div class="settlement-item__info"><span class="settlement-item__name">Ankit Joshi</span><span class="settlement-item__amount settlement-item__amount--owe">You Owe ₹800</span></div><button class="btn btn--sm btn--primary"><span class="btn__content">Settle Up</span></button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23. Balance Row -->
+    <section class="docs-section" id="balance-row">
+      <h2 class="docs-section__title">Balance Row</h2>
+      <p class="docs-section__desc">Group balance summary. Classes: <code>.balance-row</code> <code>.balance-row__amount--lent</code> <code>.balance-row__amount--owe</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="balance-row"><div class="balance-row__avatar">RM</div><div class="balance-row__text"><strong>Rahul M.</strong> owes you</div><span class="balance-row__amount balance-row__amount--lent">₹1,500</span></div>
+          <div class="balance-row"><div class="balance-row__avatar">AP</div><div class="balance-row__text">You owe <strong>Ankit P.</strong></div><span class="balance-row__amount balance-row__amount--owe">₹320</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 24. Detail Row -->
+    <section class="docs-section" id="detail-row">
+      <h2 class="docs-section__title">Detail Row</h2>
+      <p class="docs-section__desc">Info row with icon + label + value. Classes: <code>.detail-row</code> <code>.detail-row__icon</code> <code>.detail-row__chevron</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px; padding: 0 16px;">
+          <div class="detail-row"><div class="detail-row__icon">🏝</div><div class="detail-row__text"><span class="detail-row__label">Group</span><span class="detail-row__value">Goa Trip</span></div><svg class="detail-row__chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 4l6 6-6 6"/></svg></div>
+          <div class="detail-row"><div class="detail-row__icon">💳</div><div class="detail-row__text"><span class="detail-row__label">Paid by</span><span class="detail-row__value">You paid ₹850</span></div></div>
+          <div class="detail-row"><div class="detail-row__icon">📅</div><div class="detail-row__text"><span class="detail-row__label">Date</span><span class="detail-row__value">17 March 2026</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 25. Selector Row -->
+    <section class="docs-section" id="selector-row">
+      <h2 class="docs-section__title">Selector Row</h2>
+      <p class="docs-section__desc">Tappable selection row for forms. Classes: <code>.selector-row</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-12);">
+          <div class="selector-row"><div class="selector-row__icon">💳</div><div class="selector-row__text"><span class="selector-row__label">Paid by</span><span class="selector-row__value">You paid ₹850</span></div><svg class="selector-row__chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 4l6 6-6 6"/></svg></div>
+          <div class="selector-row"><div class="selector-row__icon">🏝</div><div class="selector-row__text"><span class="selector-row__label">Group</span><span class="selector-row__value">Goa Trip</span></div><svg class="selector-row__chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 4l6 6-6 6"/></svg></div>
+          <div class="selector-row"><div class="selector-row__icon">��</div><div class="selector-row__text"><span class="selector-row__label">Split method</span><span class="selector-row__value">Equal split · 4 people</span></div><svg class="selector-row__chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 4l6 6-6 6"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 26. Split Person -->
+    <section class="docs-section" id="split-person">
+      <h2 class="docs-section__title">Split Person</h2>
+      <p class="docs-section__desc">Split breakdown row. Classes: <code>.split-person</code> <code>.split-person__amount--self</code> <code>.split-person__amount--lent</code> <code>.split-person__amount--owe</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px;">
+          <div class="split-person"><div class="split-person__avatar">DR</div><span class="split-person__name">You</span><span class="split-person__amount split-person__amount--self">₹212.50</span></div>
+          <div class="split-person"><div class="split-person__avatar">RA</div><span class="split-person__name">Rahul Arora</span><span class="split-person__amount split-person__amount--lent">owes ₹212.50</span></div>
+          <div class="split-person"><div class="split-person__avatar">PS</div><span class="split-person__name">Priya Sharma</span><span class="split-person__amount split-person__amount--owe">owes ₹212.50</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         D. CARDS
+         ════════════════════════════════════════ -->
+
+    <!-- 27. Group Card -->
+    <section class="docs-section" id="group-card">
+      <h2 class="docs-section__title">Group Card</h2>
+      <p class="docs-section__desc">Group with image + balance. Classes: <code>.card-group</code> <code>.card-group--lent</code> <code>.card-group--owe</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <div class="card-group card-group--lent" style="width:150px;"><div class="card-group__image" style="height:96px;"></div><div class="card-group__content"><span class="card-group__name">Goa Trip</span><span class="card-group__members">4 members</span><span class="card-group__amount">₹24,624</span></div></div>
+          <div class="card-group card-group--owe" style="width:150px;"><div class="card-group__image" style="height:96px;"></div><div class="card-group__content"><span class="card-group__name">Toronto Trip</span><span class="card-group__members">3 members</span><span class="card-group__amount">₹12,312</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 28. Create Card -->
+    <section class="docs-section" id="create-card">
+      <h2 class="docs-section__title">Create Card</h2>
+      <p class="docs-section__desc">Dashed new-group card. Class: <code>.card-create</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <div class="card-create" style="width:150px; height:180px;"><div class="card-create__icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg></div><span class="card-create__text">Create new group</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 29. Summary Card -->
+    <section class="docs-section" id="summary-card">
+      <h2 class="docs-section__title">Summary Card</h2>
+      <p class="docs-section__desc">Settlement summary. Classes: <code>.summary-card</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:360px;">
+          <div class="summary-card"><div class="summary-card__avatar">JW</div><div class="summary-card__name">Johnnie Walker</div><div class="summary-card__amount">₹1,220</div><div class="summary-card__label">Settlement amount</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 30. Notes Card -->
+    <section class="docs-section" id="notes-card">
+      <h2 class="docs-section__title">Notes Card</h2>
+      <p class="docs-section__desc">Text notes block. Classes: <code>.notes-card</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:360px;">
+          <div class="notes-card"><div class="notes-card__label">Notes</div><div class="notes-card__text">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time!</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 31. Feature Card -->
+    <section class="docs-section" id="feature-card">
+      <h2 class="docs-section__title">Feature Card</h2>
+      <p class="docs-section__desc">Onboarding feature highlights. Classes: <code>.feature-card</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-12);">
+          <div class="feature-card"><div class="feature-card__icon feature-card__icon--olive">👥</div><div class="feature-card__text"><div class="feature-card__title">Create Groups</div><div class="feature-card__desc">Organize trips, roommates, or any shared expenses</div></div></div>
+          <div class="feature-card"><div class="feature-card__icon feature-card__icon--green">💸</div><div class="feature-card__text"><div class="feature-card__title">Split Expenses</div><div class="feature-card__desc">Divide bills equally, by amount, or by percentage</div></div></div>
+          <div class="feature-card"><div class="feature-card__icon feature-card__icon--neutral">🤝</div><div class="feature-card__text"><div class="feature-card__title">Settle Up</div><div class="feature-card__desc">Track who owes what and settle debts easily</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         E. NAVIGATION
+         ════════════════════════════════════════ -->
+
+    <!-- 32. Bottom Nav -->
+    <section class="docs-section" id="bottom-nav">
+      <h2 class="docs-section__title">Bottom Nav</h2>
+      <p class="docs-section__desc">Tab bar + FAB. Classes: <code>.bottom-nav</code> <code>.bottom-nav__tab</code> <code>.bottom-nav__tab-icon</code> <code>.bottom-nav__tab-label</code> <code>.is-active</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:393px; width:100%;">
+          <nav class="bottom-nav">
+            <a class="bottom-nav__tab is-active">
+              <span class="bottom-nav__tab-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 8.5V17a1 1 0 001 1h5v-5h4v5h5a1 1 0 001-1V8.5L10 2z"/></svg></span>
+              <span class="bottom-nav__tab-label">Home</span>
+            </a>
+            <a class="bottom-nav__tab">
+              <span class="bottom-nav__tab-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-7 8a7 7 0 0114 0H3z"/></svg></span>
+              <span class="bottom-nav__tab-label">People</span>
+            </a>
+            <a class="bottom-nav__tab">
+              <span class="bottom-nav__tab-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm1 4.5v4.25l3 1.75-.75 1.3L10 12V6.5h1z"/></svg></span>
+              <span class="bottom-nav__tab-label">Activity</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- 33. Segment Control -->
+    <section class="docs-section" id="segment-control">
+      <h2 class="docs-section__title">Segment Control</h2>
+      <p class="docs-section__desc">Tab-style segments. Classes: <code>.segment-control</code> <code>.segment-item</code> <code>.is-active</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:393px;">
+          <div class="segment-control"><button class="segment-item is-active">Transactions</button><button class="segment-item">Balances</button><button class="segment-item">Totals</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 34. Top App Bar -->
+    <section class="docs-section" id="top-app-bar">
+      <h2 class="docs-section__title">Top App Bar</h2>
+      <p class="docs-section__desc">Screen header. Classes: <code>.top-app-bar</code> <code>.top-app-bar__title</code> <code>.top-app-bar__done</code> <code>.top-app-bar--bordered</code></p>
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">Default — back + title + icon action</h3>
+        <div class="docs-specimen">
+          <div style="max-width:393px; width:100%;">
+            <nav class="top-app-bar">
+              <button class="docs-icon-btn" aria-label="Back"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M13 4L7 10L13 16"/></svg></button>
+              <span class="top-app-bar__title">Screen Title</span>
+              <button class="docs-icon-btn" aria-label="More"><svg viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="4" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="16" r="1.5"/></svg></button>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">Variant2 — back + title + Done</h3>
+        <div class="docs-specimen">
+          <div style="max-width:393px; width:100%;">
+            <nav class="top-app-bar">
+              <button class="docs-icon-btn" aria-label="Back"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M13 4L7 10L13 16"/></svg></button>
+              <span class="top-app-bar__title">Add expense</span>
+              <button class="top-app-bar__done">Done</button>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="docs-subsection">
+        <h3 class="docs-subsection__title">Bordered modifier</h3>
+        <div class="docs-specimen">
+          <div style="max-width:393px; width:100%;">
+            <nav class="top-app-bar top-app-bar--bordered">
+              <button class="docs-icon-btn" aria-label="Back"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M13 4L7 10L13 16"/></svg></button>
+              <span class="top-app-bar__title">Settlr</span>
+              <div class="avatar avatar--md avatar--initials">JW</div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 35. Step Dots -->
+    <section class="docs-section" id="step-dots">
+      <h2 class="docs-section__title">Step Dots</h2>
+      <p class="docs-section__desc">Multi-step progress indicator. Classes: <code>.steps</code> <code>.step-dot</code> <code>.step-dot--active</code> <code>.step-dot--done</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="gap: var(--spacing-16);">
+          <div><span class="docs-specimen__label" style="display:block;margin-bottom:8px;">Step 1 of 3</span><div class="steps"><div class="step-dot step-dot--active"></div><div class="step-dot"></div><div class="step-dot"></div></div></div>
+          <div><span class="docs-specimen__label" style="display:block;margin-bottom:8px;">Step 2 of 4</span><div class="steps"><div class="step-dot step-dot--done"></div><div class="step-dot step-dot--active"></div><div class="step-dot"></div><div class="step-dot"></div></div></div>
+          <div><span class="docs-specimen__label" style="display:block;margin-bottom:8px;">Step 3 of 4</span><div class="steps"><div class="step-dot step-dot--done"></div><div class="step-dot step-dot--done"></div><div class="step-dot step-dot--active"></div><div class="step-dot"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         F. LAYOUT
+         ════════════════════════════════════════ -->
+
+    <!-- 36. Heading -->
+    <section class="docs-section" id="heading">
+      <h2 class="docs-section__title">Heading</h2>
+      <p class="docs-section__desc">Section heading. Classes: <code>.heading</code> <code>.heading__text</code> <code>.heading__action</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px;">
+          <div class="heading"><span class="heading__text">Recent groups</span></div>
+          <div class="heading"><span class="heading__text">Activity</span><div class="heading__action"><button class="btn btn--ghost"><span class="btn__content"><span class="btn__label">View all</span><span class="btn__icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="7 4 13 10 7 16"/></svg></span></span></button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 37. Action Button Row -->
+    <section class="docs-section" id="action-button-row">
+      <h2 class="docs-section__title">Action Button Row</h2>
+      <p class="docs-section__desc">Footer action bar. Class: <code>.action-btn-row</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:393px; gap: var(--spacing-16);">
+          <div class="action-btn-row"><button class="btn btn--lg btn--secondary"><span class="btn__content">Add Expense</span></button><button class="btn btn--lg btn--primary"><span class="btn__content">Settle Up</span></button></div>
+          <div class="action-btn-row"><button class="btn btn--lg btn--primary btn--full"><span class="btn__content">Settle Up</span></button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 38. FAB -->
+    <section class="docs-section" id="fab">
+      <h2 class="docs-section__title">FAB</h2>
+      <p class="docs-section__desc">Floating action button. Class: <code>.fab</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <button class="fab" style="position:relative;" aria-label="Add expense"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         G. OVERLAYS & FEEDBACK
+         ════════════════════════════════════════ -->
+
+    <!-- 39. Bottom Sheet -->
+    <section class="docs-section" id="bottom-sheet">
+      <h2 class="docs-section__title">Bottom Sheet</h2>
+      <p class="docs-section__desc">Modal sheet. Classes: <code>.sheet</code> <code>.sheet__handle</code> <code>.sheet__header</code> <code>.sheet__content</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:393px; border-radius:16px 16px 0 0; overflow:hidden; border:1px solid var(--color-neutral-200);">
+          <div class="sheet" style="position:relative; animation:none;">
+            <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+            <div class="sheet__header"><span class="sheet__title">Select split method</span><button class="sheet__close" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+            <div class="sheet__content" style="padding:16px; min-height:120px;">
+              <div class="radio-item-boxed is-selected" style="margin-bottom:12px;"><div class="radio-control is-selected"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split equally</span></div></div>
+              <div class="radio-item-boxed"><div class="radio-control"><div class="radio-control__dot"></div></div><div class="radio-item-boxed__text"><span class="radio-item-boxed__label">Split by percentage</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 40. Success State -->
+    <section class="docs-section" id="success-state">
+      <h2 class="docs-section__title">Success State</h2>
+      <p class="docs-section__desc">Celebration checkmark. Class: <code>.success-check</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row" style="gap:var(--spacing-24);">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:var(--spacing-12);">
+            <div class="success-check"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="10,22 19,31 34,14"/></svg></div>
+            <span style="font-family:var(--font-display); font-size:24px; font-weight:900; color:var(--color-green-500); letter-spacing:-0.72px;">Settled!</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+         H. CONTENT BLOCKS
+         ════════════════════════════════════════ -->
+
+    <!-- 42. Date Heading -->
+    <section class="docs-section" id="date-heading">
+      <h2 class="docs-section__title">Date Heading</h2>
+      <p class="docs-section__desc">Timeline date divider. Class: <code>.date-heading</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:393px;">
+          <div class="date-heading"><span class="date-heading__label">Today</span></div>
+          <div class="date-heading"><span class="date-heading__label">Mar 15, 2026</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 43. Section Label -->
+    <section class="docs-section" id="section-label">
+      <h2 class="docs-section__title">Section Label</h2>
+      <p class="docs-section__desc">Uppercase overline. Class: <code>.section-label</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__row">
+          <span class="section-label">Payment Method</span>
+          <span class="section-label">Split Breakdown</span>
+          <span class="section-label">Members</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 44. Section Divider -->
+    <section class="docs-section" id="section-divider">
+      <h2 class="docs-section__title">Section Divider</h2>
+      <p class="docs-section__desc">Thick background separator. Class: <code>.section-divider</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:393px;">
+          <p style="padding:12px 0; font-size:13px; color:var(--color-neutral-500);">Content above</p>
+          <div class="section-divider"></div>
+          <p style="padding:12px 0; font-size:13px; color:var(--color-neutral-500);">Content below</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 45. Expense Hero -->
+    <section class="docs-section" id="expense-hero">
+      <h2 class="docs-section__title">Expense Hero</h2>
+      <p class="docs-section__desc">Expense detail hero card. Classes: <code>.expense-hero</code></p>
+      <div class="docs-specimen">
+        <div style="max-width:360px;">
+          <div class="expense-hero">
+            <span class="expense-hero__category">🍽 Food</span>
+            <div class="expense-hero__amount">₹850</div>
+            <div class="expense-hero__desc">Dinner at Olive</div>
+            <div class="expense-hero__date">17 March 2026 · 8:42 PM</div>
+            <div class="expense-hero__balance"><span class="expense-hero__balance-label">You get back</span><span class="expense-hero__balance-amount">₹637.50</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 46. Amount Input -->
+    <section class="docs-section" id="amount-input">
+      <h2 class="docs-section__title">Amount Input</h2>
+      <p class="docs-section__desc">Large currency input. Classes: <code>.currency-badge</code> <code>.amount-input-wrap</code></p>
+      <div class="docs-specimen">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:var(--spacing-8); padding:var(--spacing-16) 0;">
+          <span class="currency-badge">₹ INR</span>
+          <div class="amount-input-wrap"><span class="amount-input-wrap__symbol">₹</span><input type="text" inputmode="decimal" value="850"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 47. Bottom CTA -->
+    <section class="docs-section" id="bottom-cta">
+      <h2 class="docs-section__title">Bottom CTA</h2>
+      <p class="docs-section__desc">Full-width bottom actions. Class: <code>.bottom-cta</code></p>
+      <div class="docs-specimen">
+        <div class="docs-specimen__col" style="max-width:360px; gap: var(--spacing-16);">
+          <div class="bottom-cta"><a class="btn-primary-full">Let's Go!</a><a class="btn-ghost-full">Skip &amp; Explore</a></div>
+          <div class="bottom-cta"><a class="btn-primary-full">Save Changes</a></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

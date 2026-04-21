@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Divyansh Rastogi — Alter Ego</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Unbounded:wght@900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design Tokens ─────────────────────────────── */
+    :root {
+      /* Light side tokens (kept for reference / nav symmetry) */
+      --c-orange:   #EA7623;
+
+      /* Dark side palette */
+      --c-bg:       #0D0E0C;   /* deep dark ground */
+      --c-bg2:      #141510;   /* slightly lighter surface */
+      --c-bg3:      #1C1D19;   /* card / section bg */
+      --c-text:     #EDECEA;   /* primary text on dark */
+      --c-muted:    #7A7975;   /* secondary / muted text */
+      --c-dim:      #3A3B37;   /* borders, dividers */
+      --c-accent:   #EA7623;   /* same orange accent */
+
+      --f-heading: 'Montserrat', sans-serif;
+      --f-body:    'Plus Jakarta Sans', sans-serif;
+
+      --radius-sm:   8px;
+      --radius-md:   16px;
+      --radius-pill: 100px;
+      --nav-h:       64px;
+    }
+
+    /* ─── Reset ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--f-body);
+      background: var(--c-bg);
+      color: var(--c-text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+    img { display: block; max-width: 100%; }
+
+    /* ─── Custom Cursor ──────────────────────────────── */
+    #cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--c-accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.25s ease, height 0.25s ease;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--c-accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: left 0.12s ease, top 0.12s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+      opacity: 0.5;
+    }
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { width: 20px; height: 20px; }
+
+    /* ─── Nav ────────────────────────────────────────── */
+    #main-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      gap: 12px;
+      background: var(--c-bg);
+      border-bottom: 1px solid rgba(237,236,234,0.06);
+      z-index: 500;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    #main-nav.scrolled {
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .nav-name {
+      font-family: var(--f-heading);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--c-text);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.1s linear, transform 0.1s linear;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .nav-buttons { display: flex; gap: 12px; align-items: center; }
+
+    .btn {
+      font-family: var(--f-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 9px 22px;
+      border-radius: var(--radius-pill);
+      cursor: none;
+      letter-spacing: 0.01em;
+      transition: all 0.2s ease;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid rgba(237,236,234,0.3);
+      color: var(--c-text);
+    }
+    .btn-outline:hover {
+      background: rgba(237,236,234,0.08);
+      border-color: rgba(237,236,234,0.6);
+    }
+    .btn-filled {
+      background: var(--c-accent);
+      border: 1.5px solid var(--c-accent);
+      color: #fff;
+    }
+    .btn-filled:hover { background: #d46820; border-color: #d46820; }
+
+    /* ─── Hero ───────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--nav-h) + 80px) 80px 80px;
+    }
+
+    .hero-left { display: flex; flex-direction: column; gap: 0; }
+
+    .hero-name {
+      font-family: var(--f-heading);
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--c-text);
+      margin-bottom: 14px;
+    }
+
+    .hero-tagline {
+      font-size: 15px;
+      color: var(--c-muted);
+      margin-bottom: 56px;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .edu-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--c-muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .edu-list { display: flex; gap: 28px; flex-wrap: wrap; }
+
+    .edu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .edu-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--c-bg3);
+      border-radius: 6px;
+      border: 1px solid var(--c-dim);
+      flex-shrink: 0;
+    }
+
+    .edu-text h4 {
+      font-family: var(--f-heading);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-text);
+    }
+    .edu-text p { font-size: 11px; color: var(--c-muted); margin-top: 1px; }
+
+    /* Hero right */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-photo-wrap {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 20px 64px;
+      background: var(--c-bg3);
+      border-radius: 3px;
+      box-shadow:
+        0 8px 40px rgba(0,0,0,0.5),
+        0 2px 8px rgba(0,0,0,0.3),
+        inset 0 0 0 1px rgba(237,236,234,0.05);
+      transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.7s ease;
+      max-width: 420px;
+      width: 100%;
+      transform: rotate(-1.2deg);
+    }
+    .hero-photo-wrap:hover {
+      transform: rotate(0deg) scale(1.01) !important;
+      box-shadow:
+        0 16px 56px rgba(0,0,0,0.6),
+        0 4px 12px rgba(0,0,0,0.4),
+        inset 0 0 0 1px rgba(237,236,234,0.08);
+    }
+
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--c-dim);
+      border-radius: 0;
+      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── Section: scroll anchor label ──────────────── */
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 500;
+      color: var(--c-muted);
+      opacity: 0.5;
+      margin-bottom: 24px;
+    }
+
+    /* ─── Section shells ─────────────────────────────── */
+    .ego-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 80px;
+      position: relative;
+      border-top: 1px solid var(--c-dim);
+    }
+
+    .ego-section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 80px;
+    }
+
+    .ego-section-num {
+      font-family: var(--f-heading);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--c-accent);
+      opacity: 0.8;
+    }
+
+    .ego-section-title {
+      font-family: var(--f-heading);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      color: var(--c-text);
+    }
+
+    /* ─── Placeholder card (project slot) ───────────── */
+    .ego-placeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .ego-placeholder-card {
+      aspect-ratio: 4/3;
+      background: var(--c-bg3);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--c-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: none;
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ego-placeholder-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 80%, rgba(234,118,35,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ego-placeholder-card:hover {
+      border-color: rgba(234,118,35,0.3);
+      background: var(--c-bg2);
+    }
+
+    .placeholder-icon {
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--c-dim);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-muted);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .ego-placeholder-card:hover .placeholder-icon {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+    }
+
+    .placeholder-label {
+      font-size: 12px;
+      color: var(--c-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* ─── Full-bleed single placeholder ─────────────── */
+    .ego-placeholder-full {
+      width: 100%;
+      aspect-ratio: 16/7;
+      background: var(--c-bg3);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--c-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ego-placeholder-full::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(234,118,35,0.03) 0%, transparent 60%);
+    }
+
+    .placeholder-coming {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--c-muted);
+      opacity: 0.4;
+      font-weight: 600;
+    }
+
+    .placeholder-title {
+      font-family: var(--f-heading);
+      font-size: clamp(18px, 2vw, 26px);
+      font-weight: 800;
+      color: var(--c-muted);
+      opacity: 0.25;
+      letter-spacing: -0.02em;
+    }
+
+    /* ─── Filmmaking section ────────────────────────── */
+    .film-section {
+      border-top: 1px solid var(--c-dim);
+      padding-top: 120px;
+    }
+
+    .film-section-header {
+      text-align: center;
+      padding: 0 80px 64px;
+    }
+
+    .film-section-title {
+      font-family: var(--f-heading);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+
+    .film-section-sub {
+      font-size: 15px;
+      color: var(--c-muted);
+      font-style: italic;
+    }
+
+    .film-cards {
+      display: flex;
+      height: 72vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .film-card {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+      transition: flex 0.45s ease-in-out;
+      background: var(--c-bg3);
+    }
+
+    .film-card.expanded { flex: 3; }
+
+    .film-card-poster {
+      position: absolute;
+      inset: 0;
+      background: var(--c-dim);
+      transition: transform 0.45s ease-in-out;
+    }
+    /* Slightly different shade per card for visual separation */
+    .film-card:nth-child(2) .film-card-poster { background: #2e2f2b; }
+    .film-card:nth-child(3) .film-card-poster { background: #252622; }
+
+    .film-card:hover .film-card-poster { transform: scale(1.03); }
+
+    .film-card-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%);
+    }
+
+    .film-card-info {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 28px 28px 32px;
+      gap: 12px;
+    }
+
+    .film-card-name {
+      font-family: var(--f-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--c-text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .film-card-desc {
+      font-size: 12px;
+      color: rgba(237,236,234,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .film-card-role {
+      font-size: 12px;
+      color: rgba(237,236,234,0.45);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+      padding-bottom: 2px;
+    }
+
+    /* Text fades in when expanded, out when compressed */
+    .film-card:not(.expanded) .film-card-name,
+    .film-card:not(.expanded) .film-card-desc,
+    .film-card:not(.expanded) .film-card-role {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .film-card.expanded .film-card-name,
+    .film-card.expanded .film-card-desc,
+    .film-card.expanded .film-card-role {
+      opacity: 1;
+      transition: opacity 0.3s ease 0.18s;
+    }
+
+    /* ─── Photography section ───────────────────────── */
+    .photo-section {
+      border-top: 1px solid var(--c-dim);
+      padding-top: 120px;
+    }
+
+    .photo-section-header {
+      text-align: center;
+      padding: 0 80px 64px;
+    }
+
+    .photo-section-title {
+      font-family: var(--f-heading);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+
+    .photo-section-sub {
+      font-size: 15px;
+      color: var(--c-muted);
+      font-style: italic;
+    }
+
+    /* Stage */
+    .photo-stage {
+      position: relative;
+      width: 100%;
+      height: 72vh;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Horizontal nav line */
+    .photo-nav-line {
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 1px;
+      background: rgba(237,236,234,0.1);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Arrow nav buttons */
+    .photo-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 42px;
+      border-radius: 100px;
+      background: rgba(237,236,234,0.06);
+      border: 1px solid rgba(237,236,234,0.12);
+      color: rgba(237,236,234,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      z-index: 20;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 0 13px;
+      transition: background 0.25s, border-color 0.25s, color 0.25s, padding 0.3s ease;
+    }
+    .photo-nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .photo-nav-prev { left: 32px; }
+    .photo-nav-next { right: 32px; }
+
+    .photo-nav-btn:hover {
+      background: rgba(237,236,234,0.11);
+      border-color: rgba(237,236,234,0.28);
+      color: var(--c-text);
+    }
+
+    /* "View all" label — hidden by default, expands on right-arrow hover */
+    .photo-nav-label {
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-width 0.32s ease, opacity 0.22s ease, margin-left 0.32s ease;
+      margin-left: 0;
+    }
+    .photo-nav-next:hover { padding: 0 16px 0 14px; }
+    .photo-nav-next:hover .photo-nav-label {
+      max-width: 80px;
+      opacity: 1;
+      margin-left: 6px;
+    }
+
+    /* Image wrap — absolutely positioned, JS drives transform */
+    .photo-img-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: calc(72vh * 0.75);   /* 3:4 portrait */
+      will-change: transform, opacity;
+      transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+      opacity: 0;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .photo-img-wrap .photo-fill {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    .photo-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      pointer-events: none;
+      transition: opacity 0.35s ease-in-out;
+      opacity: 0;
+    }
+
+    /* Bottom spacer after stage */
+    .photo-stage-spacer { height: 80px; }
+
+    /* ─── Photo gallery overlay ──────────────────────── */
+    .photo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+      pointer-events: none;
+    }
+    .photo-overlay.is-open { pointer-events: all; }
+
+    .photo-overlay-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .photo-overlay.is-open .photo-overlay-backdrop { opacity: 1; }
+
+    .photo-overlay-panel {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: calc(100vw * 5 / 6);
+      background: var(--c-bg);
+      border-radius: 20px 0 0 20px;
+      border-left: 1px solid var(--c-dim);
+      transform: translateX(100%);
+      transition: transform 0.65s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto;
+      box-shadow: -16px 0 80px rgba(0,0,0,0.5);
+      padding: 80px;
+    }
+    .photo-overlay.is-open .photo-overlay-panel { transform: translateX(0); }
+
+    .photo-overlay-close {
+      position: fixed;
+      top: 36px; right: 20px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--c-bg3);
+      border: 1px solid var(--c-dim);
+      color: var(--c-text);
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none;
+      z-index: 870;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease 0.42s, background 0.2s;
+    }
+    .photo-overlay.is-open .photo-overlay-close { pointer-events: all; opacity: 1; }
+    .photo-overlay-close:hover { background: var(--c-dim); }
+
+    .photo-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .photo-gallery-item {
+      aspect-ratio: 3/4;
+      background: var(--c-bg3);
+      border-radius: 8px;
+      border: 1px solid var(--c-dim);
+      overflow: hidden;
+    }
+
+    .photo-gallery-item .photo-fill {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* ─── Art & More section ────────────────────────── */
+    .art-section {
+      border-top: 1px solid var(--c-dim);
+      padding-top: 120px;
+    }
+
+    .art-section-header {
+      text-align: center;
+      padding: 0 80px 64px;
+    }
+
+    .art-section-title {
+      font-family: var(--f-heading);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+
+    .art-section-sub {
+      font-size: 15px;
+      color: var(--c-muted);
+      font-style: italic;
+    }
+
+    /* Two-col layout */
+    .art-layout {
+      display: grid;
+      grid-template-columns: 65fr 35fr;
+      height: 75vh;
+    }
+
+    /* Left: Preview */
+    .art-preview {
+      position: relative;
+      overflow: hidden;
+      background: var(--c-bg2);
+    }
+
+    /* A/B double-buffer frames */
+    .art-frame {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 350ms ease-in-out;
+    }
+    .art-frame.active { opacity: 1; }
+
+    .art-fill { width: 100%; height: 100%; display: block; }
+
+    /* Circle arrow buttons */
+    .art-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid rgba(237,236,234,0.25);
+      color: rgba(237,236,234,0.55);
+      display: flex; align-items: center; justify-content: center;
+      cursor: none;
+      z-index: 10;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .art-nav-btn svg { width: 16px; height: 16px; }
+    .art-nav-prev { left: 24px; }
+    .art-nav-next { right: 24px; }
+    .art-nav-btn:hover {
+      background: rgba(237,236,234,0.08);
+      border-color: rgba(237,236,234,0.5);
+      color: var(--c-text);
+    }
+
+    /* Progress indicator */
+    .art-progress {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: rgba(237,236,234,0.35);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Right: Side panel */
+    .art-panel {
+      overflow-y: auto;
+      background: var(--c-bg3);
+      border-left: 1px solid var(--c-dim);
+      padding: 28px 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--c-dim) transparent;
+    }
+
+    .art-cat-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--c-muted);
+      opacity: 0.5;
+      margin-bottom: 12px;
+      padding-left: 2px;
+    }
+
+    .art-thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 28px;
+    }
+
+    .art-thumb {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: none;
+      position: relative;
+      transition: transform 0.15s ease;
+      outline: 1.5px solid transparent;
+      outline-offset: 2px;
+    }
+    .art-thumb:hover { transform: scale(1.04); }
+    .art-thumb.active {
+      outline-color: var(--c-accent);
+      transform: scale(1.04);
+    }
+    .art-thumb .art-fill { transition: filter 0.2s ease; }
+    .art-thumb:hover .art-fill { filter: brightness(1.15); }
+
+    /* ─── More section — simple list ────────────────── */
+    .more-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .more-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--c-dim);
+      cursor: none;
+      transition: padding-left 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .more-item:first-child { border-top: 1px solid var(--c-dim); }
+    .more-item:hover { padding-left: 12px; }
+
+    .more-item-left { display: flex; align-items: center; gap: 24px; }
+
+    .more-item-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--c-accent);
+      opacity: 0.7;
+      min-width: 28px;
+    }
+
+    .more-item-title {
+      font-family: var(--f-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--c-text);
+      opacity: 0.7;
+      letter-spacing: -0.01em;
+    }
+
+    .more-item-tag {
+      font-size: 11px;
+      color: var(--c-muted);
+      background: var(--c-bg3);
+      border: 1px solid var(--c-dim);
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+    }
+
+    .more-item-arrow {
+      color: var(--c-muted);
+      transition: transform 0.2s, color 0.2s;
+    }
+    .more-item:hover .more-item-arrow {
+      transform: translateX(4px);
+      color: var(--c-accent);
+    }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    footer {
+      padding: 48px 80px;
+      background: var(--c-bg);
+      border-top: 1px solid var(--c-dim);
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .footer-brand h3 {
+      font-family: var(--f-heading);
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--c-text);
+    }
+
+    .footer-brand p { font-size: 12px; color: var(--c-muted); opacity: 0.6; line-height: 1.6; }
+
+    .footer-col h4 {
+      font-family: var(--f-heading);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      opacity: 0.4;
+      margin-bottom: 14px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: var(--c-text);
+      text-decoration: none;
+      opacity: 0.5;
+      margin-bottom: 8px;
+      cursor: none;
+      transition: opacity 0.2s;
+    }
+    .footer-col a:hover { opacity: 1; }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+      padding-top: 32px;
+      border-top: 1px solid rgba(237,236,234,0.06);
+      font-size: 11px;
+      color: var(--c-muted);
+      opacity: 0.3;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ─── Scroll reveal ──────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Preserve polaroid rotation */
+    .hero-photo-wrap.reveal        { transform: translateY(32px) rotate(-1.2deg); }
+    .hero-photo-wrap.reveal.visible { transform: translateY(0)    rotate(-1.2deg); opacity: 1; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── Nav ── -->
+  <nav id="main-nav">
+    <span class="nav-name">Divyansh Rastogi</span>
+    <div class="nav-buttons">
+      <button class="btn btn-outline" id="resumeTrigger">Resume</button>
+      <button class="btn btn-filled">Let's connect</button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-left">
+      <h1 class="hero-name reveal">Divyansh Rastogi</h1>
+      <p class="hero-tagline reveal">Product Designer — design systems, AI workflows &amp; handoff-ready prototyping.</p>
+
+      <p class="edu-label reveal">Education</p>
+      <div class="edu-list reveal">
+        <div class="edu-item">
+          <div class="edu-logo"></div>
+          <div class="edu-text">
+            <h4>IDC, IIT Bombay</h4>
+            <p>Bachelor of Design · AIR 5</p>
+          </div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-logo"></div>
+          <div class="edu-text">
+            <h4>Monash University</h4>
+            <p>Semester Exchange, Australia</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-photo-wrap reveal">
+        <div class="photo-placeholder">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0.3;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--c-text)" stroke-width="1.5">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 01 — FILMMAKING
+  ══════════════════════════════════════════════════ -->
+  <section class="film-section" id="films">
+    <div class="film-section-header reveal">
+      <h2 class="film-section-title">Filmmaking</h2>
+      <p class="film-section-sub">My motivation for film</p>
+    </div>
+
+    <div class="film-cards" id="filmCards">
+      <div class="film-card expanded" data-index="0">
+        <div class="film-card-poster"></div>
+        <div class="film-card-overlay">
+          <div class="film-card-info">
+            <div class="film-card-left">
+              <p class="film-card-name">Film name</p>
+              <p class="film-card-desc">Description for project 1</p>
+            </div>
+            <span class="film-card-role">Role</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="film-card" data-index="1">
+        <div class="film-card-poster"></div>
+        <div class="film-card-overlay">
+          <div class="film-card-info">
+            <div class="film-card-left">
+              <p class="film-card-name">Film name</p>
+              <p class="film-card-desc">Description for project 2</p>
+            </div>
+            <span class="film-card-role">Role</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="film-card" data-index="2">
+        <div class="film-card-poster"></div>
+        <div class="film-card-overlay">
+          <div class="film-card-info">
+            <div class="film-card-left">
+              <p class="film-card-name">Film name</p>
+              <p class="film-card-desc">Description for project 3</p>
+            </div>
+            <span class="film-card-role">Role</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 02 — PHOTOGRAPHY
+  ══════════════════════════════════════════════════ -->
+  <section class="photo-section" id="photography">
+    <div class="photo-section-header reveal">
+      <h2 class="photo-section-title">Photography</h2>
+      <p class="photo-section-sub">My motivation for photography</p>
+    </div>
+
+    <div class="photo-stage" id="photoStage">
+      <div class="photo-nav-line"></div>
+
+      <!-- Left arrow: previous image -->
+      <button class="photo-nav-btn photo-nav-prev" id="photoNavPrev" aria-label="Previous">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M10 12L6 8l4-4"/>
+        </svg>
+      </button>
+
+      <!-- Right arrow: expands to "View all" on hover → opens gallery -->
+      <button class="photo-nav-btn photo-nav-next" id="photoNavNext" aria-label="View all">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M6 4l4 4-4 4"/>
+        </svg>
+        <span class="photo-nav-label">View all</span>
+      </button>
+
+      <!-- 8 placeholder image wraps — JS positions via transform -->
+      <div class="photo-img-wrap" data-photo="0">
+        <div class="photo-fill" style="background:#3a3b37;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="1">
+        <div class="photo-fill" style="background:#343531;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="2">
+        <div class="photo-fill" style="background:#2e2f2b;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="3">
+        <div class="photo-fill" style="background:#393a36;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="4">
+        <div class="photo-fill" style="background:#323330;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="5">
+        <div class="photo-fill" style="background:#3c3d39;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="6">
+        <div class="photo-fill" style="background:#2c2d29;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+      <div class="photo-img-wrap" data-photo="7">
+        <div class="photo-fill" style="background:#363732;"></div>
+        <div class="photo-img-overlay"></div>
+      </div>
+    </div>
+
+    <div class="photo-stage-spacer"></div>
+  </section>
+
+  <!-- ── Photo gallery overlay ── -->
+  <div class="photo-overlay" id="photoOverlay">
+    <div class="photo-overlay-backdrop" id="photoBackdrop"></div>
+    <button class="photo-overlay-close" id="photoOverlayClose">✕</button>
+    <div class="photo-overlay-panel">
+      <h2 style="font-family:var(--f-heading);font-size:24px;font-weight:800;color:var(--c-text);margin-bottom:8px;">Photography</h2>
+      <p style="font-size:13px;color:var(--c-muted);margin-bottom:40px;">All images</p>
+      <div class="photo-gallery-grid" id="photoGalleryGrid"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 03 — ART & MORE
+  ══════════════════════════════════════════════════ -->
+  <section class="art-section" id="art">
+    <div class="art-section-header reveal">
+      <h2 class="art-section-title">Art &amp; More</h2>
+      <p class="art-section-sub">My motivation for art</p>
+    </div>
+
+    <div class="art-layout">
+      <!-- Left: Preview canvas (A/B double-buffer crossfade) -->
+      <div class="art-preview" id="artPreview">
+        <div class="art-frame active" id="artFrameA">
+          <div class="art-fill" id="artFillA"></div>
+        </div>
+        <div class="art-frame" id="artFrameB">
+          <div class="art-fill" id="artFillB"></div>
+        </div>
+
+        <!-- Circle arrow buttons -->
+        <button class="art-nav-btn art-nav-prev" id="artNavPrev" aria-label="Previous">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M10 12L6 8l4-4"/>
+          </svg>
+        </button>
+        <button class="art-nav-btn art-nav-next" id="artNavNext" aria-label="Next">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M6 4l4 4-4 4"/>
+          </svg>
+        </button>
+
+        <!-- Progress "N / total" -->
+        <div class="art-progress" id="artProgress">1 / 6</div>
+      </div>
+
+      <!-- Right: Scrollable side panel — populated by JS from ART_CATS -->
+      <div class="art-panel" id="artPanel"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 04 — MORE
+  ══════════════════════════════════════════════════ -->
+  <section class="ego-section" id="more">
+    <div class="ego-section-header reveal">
+      <span class="ego-section-num">04</span>
+      <h2 class="ego-section-title">More</h2>
+    </div>
+
+    <div class="more-list reveal">
+      <a class="more-item" href="#">
+        <div class="more-item-left">
+          <span class="more-item-num">01</span>
+          <span class="more-item-title">Music & Sound</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span class="more-item-tag">Coming soon</span>
+          <span class="more-item-arrow">→</span>
+        </div>
+      </a>
+      <a class="more-item" href="#">
+        <div class="more-item-left">
+          <span class="more-item-num">02</span>
+          <span class="more-item-title">Writing</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span class="more-item-tag">Coming soon</span>
+          <span class="more-item-arrow">→</span>
+        </div>
+      </a>
+      <a class="more-item" href="#">
+        <div class="more-item-left">
+          <span class="more-item-num">03</span>
+          <span class="more-item-title">Other experiments</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span class="more-item-tag">Coming soon</span>
+          <span class="more-item-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-brand">
+      <h3>Divyansh Rastogi</h3>
+      <p>Filmmaker · Photographer · Artist</p>
+    </div>
+    <div class="footer-col">
+      <h4>Sections</h4>
+      <a href="#films">Films</a>
+      <a href="#photography">Photography</a>
+      <a href="#art">Art</a>
+      <a href="#more">More</a>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <a href="https://linkedin.com/in/divyanshriitb" target="_blank">LinkedIn</a>
+      <a href="https://www.behance.net/divyansh_rastogi" target="_blank">Behance</a>
+      <a href="mailto:divyanshr.iitb@gmail.com">Email</a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Divyansh Rastogi</span>
+      <span>The other side</span>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Art section data ── */
+    const ART_CATS = [
+      {
+        id: 'traditional',
+        label: 'Traditional Art',
+        items: [
+          { bg: '#4a4b47' }, { bg: '#424340' }, { bg: '#464743' },
+          { bg: '#3e3f3b' }, { bg: '#484a45' }, { bg: '#404239' },
+        ]
+      },
+      {
+        id: 'cyanotype',
+        label: 'Cyanotype',
+        items: [
+          { bg: '#1e2d3a' }, { bg: '#243340' }, { bg: '#1a2835' },
+        ]
+      },
+      {
+        id: 'digital',
+        label: '3D Renders / Digital',
+        items: [
+          { bg: '#362f3e' }, { bg: '#2f2938' }, { bg: '#3c3545' }, { bg: '#292333' },
+        ]
+      },
+    ];
+    const ART_DURATION = { traditional: 350, cyanotype: 420, digital: 200 };
+
+    (() => {
+      /* ── Custom cursor ── */
+      const cur = document.getElementById('cursor');
+      const ring = document.getElementById('cursor-ring');
+      let mx = 0, my = 0, rx = 0, ry = 0;
+
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cur.style.left = mx + 'px';
+        cur.style.top  = my + 'px';
+      });
+
+      (function lerp() {
+        rx += (mx - rx) * 0.14;
+        ry += (my - ry) * 0.14;
+        ring.style.left = rx + 'px';
+        ring.style.top  = ry + 'px';
+        requestAnimationFrame(lerp);
+      })();
+
+      /* ── Nav scroll shadow + name fade ── */
+      const nav = document.getElementById('main-nav');
+      const navName = nav.querySelector('.nav-name');
+      const hero = document.querySelector('.hero');
+
+      window.addEventListener('scroll', () => {
+        const heroH = hero.offsetHeight;
+        const scrollY = window.scrollY;
+        const t = scrollY / heroH;
+
+        nav.classList.toggle('scrolled', scrollY > 20);
+
+        // Name fades in between 10–40% scroll
+        const nameProg = Math.min(Math.max((t - 0.1) / 0.3, 0), 1);
+        navName.style.opacity = nameProg;
+        navName.style.transform = `translateY(${6 - nameProg * 6}px)`;
+      }, { passive: true });
+
+      /* ── Film card expand ── */
+      const filmCards = document.querySelectorAll('.film-card');
+      const filmContainer = document.getElementById('filmCards');
+
+      filmCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          filmCards.forEach(c => c.classList.remove('expanded'));
+          card.classList.add('expanded');
+        });
+      });
+
+      filmContainer.addEventListener('mouseleave', () => {
+        filmCards.forEach(c => c.classList.remove('expanded'));
+        filmCards[0].classList.add('expanded');
+      });
+
+      /* ── Photography cursor scrub ── */
+      const photoStage = document.getElementById('photoStage');
+      const photoWraps = [...document.querySelectorAll('.photo-img-wrap')];
+      const TOTAL = photoWraps.length;
+      const CARD_OFFSET = 36;    /* px offset per depth level */
+      const OVERLAY_STEP = 0.22; /* overlay opacity per depth level */
+      let activePhoto = 0;
+
+      function renderPhotos(idx) {
+        const stageW = photoStage.offsetWidth;
+        const cardW  = photoWraps[0].offsetWidth;
+        const centerX = stageW / 2 - cardW / 2;
+
+        photoWraps.forEach((wrap, i) => {
+          const overlay = wrap.querySelector('.photo-img-overlay');
+
+          if (i === idx) {
+            wrap.style.transform = `translateX(${centerX}px)`;
+            wrap.style.opacity   = '1';
+            wrap.style.zIndex    = TOTAL + 1;
+            overlay.style.opacity = '0';
+          } else if (i < idx) {
+            const depth = idx - i;
+            const shift = centerX - depth * CARD_OFFSET;
+            const dark  = Math.min(depth * OVERLAY_STEP, 0.7);
+            wrap.style.transform  = `translateX(${shift}px)`;
+            wrap.style.opacity    = '1';
+            wrap.style.zIndex     = TOTAL + 1 - depth;
+            overlay.style.opacity = String(dark);
+          } else {
+            /* future images — hidden */
+            wrap.style.opacity = '0';
+            wrap.style.zIndex  = '0';
+          }
+        });
+      }
+
+      /* Initial render (first image centred, rest hidden) */
+      renderPhotos(0);
+
+      photoStage.addEventListener('mousemove', e => {
+        const rect = photoStage.getBoundingClientRect();
+        const x    = e.clientX - rect.left;
+        const idx  = Math.min(Math.floor((x / rect.width) * TOTAL), TOTAL - 1);
+        if (idx !== activePhoto) {
+          activePhoto = idx;
+          renderPhotos(activePhoto);
+        }
+      });
+
+      photoStage.addEventListener('mouseleave', () => {
+        activePhoto = 0;
+        renderPhotos(0);
+      });
+
+      /* ── Photo nav arrows ── */
+      const photoNavPrev = document.getElementById('photoNavPrev');
+      const photoNavNext = document.getElementById('photoNavNext');
+
+      photoNavPrev.addEventListener('click', () => {
+        activePhoto = Math.max(0, activePhoto - 1);
+        renderPhotos(activePhoto);
+      });
+
+      /* ── Photo gallery overlay ── */
+      const photoOverlay  = document.getElementById('photoOverlay');
+      const photoBackdrop = document.getElementById('photoBackdrop');
+      const photoClose    = document.getElementById('photoOverlayClose');
+      const photoGrid     = document.getElementById('photoGalleryGrid');
+
+      function openPhotoGallery() {
+        photoGrid.innerHTML = photoWraps.map(wrap => {
+          const fill = wrap.querySelector('.photo-fill');
+          return `<div class="photo-gallery-item"><div class="photo-fill" style="${fill.getAttribute('style')}"></div></div>`;
+        }).join('');
+        photoOverlay.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      /* Right arrow always opens gallery (hover reveals "View all" label as hint) */
+      photoNavNext.addEventListener('click', openPhotoGallery);
+
+      function closePhotoOverlay() {
+        photoOverlay.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+
+      photoClose.addEventListener('click', closePhotoOverlay);
+      photoBackdrop.addEventListener('click', closePhotoOverlay);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closePhotoOverlay(); });
+
+      /* ── Scroll reveal ── */
+      const reveals = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), i * 60);
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(el => revealObserver.observe(el));
+
+      /* ── Art & More section ── */
+      (function initArt() {
+        const fillA    = document.getElementById('artFillA');
+        const fillB    = document.getElementById('artFillB');
+        const frameA   = document.getElementById('artFrameA');
+        const frameB   = document.getElementById('artFrameB');
+        const panel    = document.getElementById('artPanel');
+        const progress = document.getElementById('artProgress');
+        if (!fillA) return; // safety guard
+
+        let activeFrame = 'a';
+        let artCat      = ART_CATS[0].id;
+        let artIdx      = 0;
+        let autoTimer   = null;
+        let idleTimer   = null;
+
+        /* Build side panel from ART_CATS */
+        panel.innerHTML = ART_CATS.map(cat =>
+          `<div class="art-category" data-cat="${cat.id}">
+            <p class="art-cat-label">${cat.label}</p>
+            <div class="art-thumb-grid">
+              ${cat.items.map((item, i) =>
+                `<div class="art-thumb${cat.id === ART_CATS[0].id && i === 0 ? ' active' : ''}"
+                      data-cat="${cat.id}" data-idx="${i}">
+                  <div class="art-fill" style="background:${item.bg};"></div>
+                </div>`
+              ).join('')}
+            </div>
+          </div>`
+        ).join('');
+
+        /* Crossfade to a new item */
+        function showItem(catId, idx, userTriggered) {
+          const cat  = ART_CATS.find(c => c.id === catId);
+          const item = cat.items[idx];
+          const dur  = ART_DURATION[catId] || 350;
+
+          const inactiveFill  = activeFrame === 'a' ? fillB  : fillA;
+          const inactiveFrame = activeFrame === 'a' ? frameB : frameA;
+          const activeFrameEl = activeFrame === 'a' ? frameA : frameB;
+
+          inactiveFill.style.background = item.bg;
+          inactiveFrame.style.transition = `opacity ${dur}ms ease-in-out`;
+          activeFrameEl.style.transition = `opacity ${dur}ms ease-in-out`;
+
+          inactiveFrame.classList.add('active');
+          activeFrameEl.classList.remove('active');
+          activeFrame = activeFrame === 'a' ? 'b' : 'a';
+
+          artCat = catId;
+          artIdx = idx;
+
+          progress.textContent = `${idx + 1} / ${cat.items.length}`;
+
+          panel.querySelectorAll('.art-thumb').forEach(th => {
+            th.classList.toggle('active',
+              th.dataset.cat === catId && parseInt(th.dataset.idx) === idx
+            );
+          });
+
+          if (userTriggered) pauseAutoplay();
+        }
+
+        /* Autoplay: cycles within current category */
+        function startAutoplay() {
+          if (autoTimer) clearInterval(autoTimer);
+          autoTimer = setInterval(() => {
+            const cat = ART_CATS.find(c => c.id === artCat);
+            showItem(artCat, (artIdx + 1) % cat.items.length, false);
+          }, 3500);
+        }
+
+        function pauseAutoplay() {
+          if (autoTimer)  { clearInterval(autoTimer); autoTimer = null; }
+          if (idleTimer)  { clearTimeout(idleTimer); }
+          idleTimer = setTimeout(startAutoplay, 4000);
+        }
+
+        /* Thumbnail click — primary control */
+        panel.addEventListener('click', e => {
+          const thumb = e.target.closest('.art-thumb');
+          if (!thumb) return;
+          showItem(thumb.dataset.cat, parseInt(thumb.dataset.idx), true);
+        });
+
+        /* Arrow nav — secondary control */
+        document.getElementById('artNavPrev').addEventListener('click', () => {
+          const cat = ART_CATS.find(c => c.id === artCat);
+          showItem(artCat, (artIdx - 1 + cat.items.length) % cat.items.length, true);
+        });
+        document.getElementById('artNavNext').addEventListener('click', () => {
+          const cat = ART_CATS.find(c => c.id === artCat);
+          showItem(artCat, (artIdx + 1) % cat.items.length, true);
+        });
+
+        /* Init */
+        fillA.style.background = ART_CATS[0].items[0].bg;
+        progress.textContent   = `1 / ${ART_CATS[0].items.length}`;
+        startAutoplay();
+      })();
+
+    })();
+  </script>
+</body>
+</html>

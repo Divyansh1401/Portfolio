@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Action Button Row — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-900: #1A1810;
+      --color-gray-0:    #FFFFFF;
+      --color-gray-200:  #D8DCE3;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+      --color-green-50:  #E8FAF0;
+      --color-green-500: #357A42;
+      --color-coral-50:  #FBF0EE;
+      --color-coral-500: #9E4C39;
+
+      --btn-primary-bg:         var(--color-olive-600);
+      --btn-primary-bg-pressed: var(--color-olive-700);
+      --btn-primary-fg:         var(--color-gray-0);
+      --btn-secondary-bg:       var(--color-olive-200);
+      --btn-secondary-bg-pressed: var(--color-olive-300);
+      --btn-secondary-fg:       var(--color-olive-700);
+      --btn-ghost-fg:           var(--color-olive-600);
+
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+
+      --radius-full: 9999px;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --weight-semibold: 600;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-32);
+      padding: var(--spacing-32) var(--spacing-16);
+    }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-300);
+      width: 393px;
+      margin-bottom: var(--spacing-8);
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 393px;
+      background: var(--color-gray-0);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(14,6,24,0.14), 0 4px 8px rgba(14,6,24,0.08);
+    }
+
+    /* Placeholder content above the bar */
+    .screen-body {
+      padding: var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+    .placeholder-line {
+      height: 12px;
+      background: var(--color-neutral-100);
+      border-radius: var(--radius-full);
+    }
+    .placeholder-line--short  { width: 50%; }
+    .placeholder-line--medium { width: 75%; }
+    .placeholder-line--full   { width: 100%; }
+
+    /* ── BUTTON BASE ──────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-family: var(--font-body);
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn--md {
+      height: 44px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: var(--weight-semibold);
+    }
+    .btn--primary {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+    }
+    .btn--primary:active { background: var(--btn-primary-bg-pressed); }
+    .btn--secondary {
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-fg);
+    }
+    .btn--secondary:active { background: var(--btn-secondary-bg-pressed); }
+
+    /* ── ACTION BUTTON ROW ────────────────────── */
+    .action-btn-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-12) var(--spacing-16);
+      background: var(--color-gray-0);
+      border-top: 1px solid var(--color-neutral-200);
+      width: 100%;
+    }
+
+    /* Each button stretches equally */
+    .action-btn-row .btn {
+      flex: 1;
+    }
+
+    /* ── VARIANT: Single primary full-width ────── */
+    .action-btn-row--single .btn {
+      width: 100%;
+    }
+
+    /* ── VARIANT: With safe area bottom (on-device) */
+    .action-btn-row--safe {
+      padding-bottom: calc(var(--spacing-12) + 20px);
+    }
+
+    /* ── SETTLE UP ONLY (no add expense) ─────── */
+    .action-btn-row--settle-only .btn {
+      width: 100%;
+    }
+
+    /* ── ICON inside button ───────────────────── */
+    .btn__content {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-8);
+    }
+    .btn__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ── BALANCE SUMMARY (context above buttons) */
+    .balance-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16);
+      background: var(--color-gray-0);
+      border-top: 1px solid var(--color-neutral-200);
+    }
+    .balance-summary__lent {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-green-500);
+    }
+    .balance-summary__owe {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-coral-500);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Variant 1: Add Expense + Settle Up (equal halves) ── -->
+  <p class="section-label">Add Expense + Settle Up</p>
+  <div class="phone">
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+    <div class="action-btn-row">
+      <button class="btn btn--md btn--secondary">
+        <span class="btn__content">
+          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Add Expense
+        </span>
+      </button>
+      <button class="btn btn--md btn--primary">
+        <span class="btn__content">
+          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Settle Up
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Variant 2: Settle Up only (full width) ── -->
+  <p class="section-label">Settle Up only</p>
+  <div class="phone">
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+    <div class="action-btn-row action-btn-row--single">
+      <button class="btn btn--md btn--primary" style="width:100%">
+        <span class="btn__content">
+          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Settle Up
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Variant 3: With balance summary row above ── -->
+  <p class="section-label">With balance summary</p>
+  <div class="phone">
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+    <div class="balance-summary">
+      <span class="balance-summary__lent">You lent ₹2,400</span>
+      <span class="balance-summary__owe">You owe ₹600</span>
+    </div>
+    <div class="action-btn-row">
+      <button class="btn btn--md btn--secondary">
+        <span class="btn__content">
+          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Add Expense
+        </span>
+      </button>
+      <button class="btn btn--md btn--primary">
+        <span class="btn__content">
+          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Settle Up
+        </span>
+      </button>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Detail — Full Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-400: #BEB48A;
+      --color-neutral-500: #9A9070;
+      --color-neutral-600: #756C55;
+      --color-neutral-700: #524C3B;
+      --color-neutral-800: #332F25;
+      --color-neutral-900: #1A1810;
+      --color-gray-0:    #FFFFFF;
+      --color-gray-100:  #ECEFF1;
+      --color-gray-200:  #D8DCE3;
+      --color-olive-50:  #F2F4EB;
+      --color-olive-100: #DDE3C8;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-400: #6E8742;
+      --color-olive-500: #4E6629;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+      --color-olive-800: #182008;
+      --color-green-50:  #E8FAF0;
+      --color-green-100: #C2EECF;
+      --color-green-500: #357A42;
+      --color-coral-50:  #FBF0EE;
+      --color-coral-100: #F5D8D2;
+      --color-coral-500: #9E4C39;
+
+      --btn-primary-bg:           var(--color-olive-600);
+      --btn-primary-bg-pressed:   var(--color-olive-700);
+      --btn-primary-fg:           var(--color-gray-0);
+      --btn-secondary-bg:         var(--color-olive-200);
+      --btn-secondary-bg-pressed: var(--color-olive-300);
+      --btn-secondary-fg:         var(--color-olive-700);
+      --contact-avatar-bg:        var(--color-olive-200);
+      --contact-avatar-fg:        var(--color-olive-600);
+      --contact-divider:          var(--color-neutral-200);
+      --contact-name:             var(--color-neutral-900);
+
+      --spacing-2:  2px;
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+      --spacing-64: 64px;
+
+      --radius-4:    4px;
+      --radius-8:    8px;
+      --radius-12:   12px;
+      --radius-full: 9999px;
+      --font-display: 'Unbounded', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --weight-regular:  400;
+      --weight-medium:   500;
+      --weight-semibold: 600;
+      --weight-bold:     700;
+      --weight-black:    900;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+      font-family: var(--font-body);
+    }
+
+    /* ── PHONE SHELL ──────────────────────────── */
+    .phone {
+      width: 393px;
+      min-height: 852px;
+      background: var(--color-gray-0);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(14,6,24,0.20), 0 8px 16px rgba(14,6,24,0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ── TOP APP BAR — overlaid on banner ─────── */
+    .top-app-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      background: transparent;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+    }
+    .top-app-bar__btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--color-neutral-100);
+      border: none; cursor: pointer;
+      color: var(--color-neutral-900);
+      flex-shrink: 0;
+    }
+    .top-app-bar__title {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: var(--weight-bold);
+      line-height: 24px; letter-spacing: -0.36px;
+      color: var(--color-neutral-900);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── BANNER ───────────────────────────────── */
+    .group-banner {
+      width: 100%; height: 240px;
+      background: var(--color-gray-200);
+      flex-shrink: 0;
+    }
+
+    /* ── GROUP INFO ROW ───────────────────────── */
+    .group-info {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: var(--spacing-16);
+      gap: var(--spacing-12);
+      background: var(--color-gray-0);
+      border-bottom: 1px solid var(--contact-divider);
+    }
+
+    /* Left: avatar stack + members + date */
+    .group-info__left {
+      display: flex; flex-direction: column; gap: var(--spacing-4);
+      flex: 1; min-width: 0;
+    }
+    .group-info__members-row {
+      display: flex; align-items: center; gap: var(--spacing-8);
+    }
+
+    /* Avatar stack (XS, inline) */
+    .avatar-stack { display: flex; align-items: center; }
+    .avatar-stack__item {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: var(--radius-full);
+      font-size: 7px; font-weight: var(--weight-semibold);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+      border: 2px solid var(--color-gray-0);
+    }
+    .avatar-stack__item + .avatar-stack__item { margin-left: -5px; }
+    .avatar-stack__overflow {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: var(--radius-full);
+      font-size: 7px; font-weight: var(--weight-semibold);
+      background: var(--color-gray-100); color: var(--color-neutral-600);
+      border: 2px solid var(--color-gray-0); margin-left: -5px;
+    }
+    .group-info__member-count {
+      font-size: 14px; font-weight: var(--weight-semibold);
+      color: var(--color-neutral-900);
+    }
+    .group-info__date {
+      font-size: 12px; font-weight: var(--weight-regular);
+      color: var(--color-neutral-500);
+    }
+
+    /* Right: balance amount + label badge */
+    .group-info__right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-4);
+      flex-shrink: 0;
+    }
+    .group-info__balance {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: var(--weight-bold);
+      line-height: 1; letter-spacing: -0.44px;
+    }
+    .group-info__balance--lent { color: var(--color-green-500); }
+    .group-info__balance--owe  { color: var(--color-coral-500); }
+
+    .balance-label {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: var(--weight-semibold);
+      white-space: nowrap;
+    }
+    .balance-label--lent { background: var(--color-green-100); color: var(--color-green-500); }
+    .balance-label--owe  { background: var(--color-coral-100); color: var(--color-coral-500); }
+
+    /* ── SEGMENT CONTROL ─────────────────────── */
+    .segment-control {
+      display: flex; align-items: center;
+      gap: 4px; padding: 3px;
+      background: var(--color-neutral-200);
+      border-radius: var(--radius-12);
+      margin: var(--spacing-16);
+    }
+    .segment-item {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 8px 12px;
+      font-family: var(--font-body);
+      font-size: 13px; font-weight: var(--weight-semibold);
+      color: var(--color-neutral-600);
+      border-radius: var(--radius-8); cursor: pointer;
+      border: none; background: transparent;
+    }
+    .segment-item--active {
+      background: var(--color-gray-0);
+      color: var(--color-neutral-900);
+      box-shadow: 0 1px 3px rgba(14,6,24,0.08);
+    }
+
+    /* ── SCROLLABLE CONTENT ───────────────────── */
+    .screen__content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 88px; /* space for action row */
+    }
+
+    /* ── SECTION DATE DIVIDER ─────────────────── */
+    .date-divider {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-8);
+      font-size: 14px; font-weight: var(--weight-semibold);
+      color: var(--color-neutral-900);
+      background: var(--color-gray-0);
+    }
+
+    /* ── TRANSACTION ITEM (new layout) ───────── */
+    .txn-item {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: 1px solid var(--contact-divider);
+      background: var(--color-gray-0);
+    }
+
+    .avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; border-radius: var(--radius-full);
+      font-family: var(--font-body); font-weight: var(--weight-semibold);
+      background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
+    }
+    .avatar--md { width: 40px; height: 40px; font-size: 14px; }
+
+    .txn-item__info {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .txn-item__name {
+      font-size: 14px; font-weight: var(--weight-semibold);
+      color: var(--color-neutral-900); line-height: 20px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .txn-item__meta {
+      font-size: 12px; color: var(--color-neutral-500); line-height: 18px;
+    }
+
+    .txn-item__right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-4);
+      flex-shrink: 0;
+    }
+    .txn-item__amount {
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: var(--weight-bold);
+      line-height: 1; letter-spacing: -0.15px;
+    }
+    .txn-item__amount--lent { color: var(--color-green-500); }
+    .txn-item__amount--owe  { color: var(--color-coral-500); }
+
+    .txn-badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: var(--radius-full);
+      font-size: 10px; font-weight: var(--weight-semibold);
+    }
+    .txn-badge--lent { background: var(--color-green-100); color: var(--color-green-500); }
+    .txn-badge--owe  { background: var(--color-coral-100); color: var(--color-coral-500); }
+    .txn-item__time  { font-size: 10px; color: var(--color-neutral-400); font-weight: var(--weight-medium); }
+
+    /* ── BUTTONS ──────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--spacing-8); border: none; border-radius: var(--radius-full);
+      cursor: pointer; font-family: var(--font-body); white-space: nowrap; flex-shrink: 0;
+    }
+    .btn--lg { height: 52px; padding: 12px 20px; font-size: 16px; font-weight: var(--weight-bold); }
+    .btn--primary   { background: var(--btn-primary-bg);   color: var(--btn-primary-fg); }
+    .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
+
+    /* ── ACTION BUTTON ROW ────────────────────── */
+    .action-btn-row {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: var(--spacing-16);
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-24);
+      border-top: 1px solid var(--color-neutral-200);
+      background: var(--color-gray-0);
+    }
+
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ── TOP APP BAR (overlaid on banner) ───── -->
+  <nav class="top-app-bar">
+    <button class="top-app-bar__btn" aria-label="Go back">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12 15L7 10L12 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <span class="top-app-bar__title">Goa trip</span>
+    <button class="top-app-bar__btn" aria-label="Settings">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 10.5a.5.5 0 100-1 .5.5 0 000 1z" stroke="currentColor" stroke-width="1.5"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.28 2.5a1 1 0 00-.97.75l-.33 1.2a5.97 5.97 0 00-1.23.71l-1.21-.37a1 1 0 00-1.15.49L2.1 6.73a1 1 0 00.2 1.24l.92.82a6.1 6.1 0 000 1.42l-.93.82a1 1 0 00-.2 1.24l1.31 2.25a1 1 0 001.15.49l1.2-.37c.39.27.8.5 1.24.71l.33 1.2a1 1 0 00.97.75h2.62a1 1 0 00.97-.75l.33-1.2a5.97 5.97 0 001.23-.71l1.21.37a1 1 0 001.15-.49l1.31-2.25a1 1 0 00-.2-1.24l-.92-.82a6.1 6.1 0 000-1.42l.93-.82a1 1 0 00.2-1.24l-1.31-2.25a1 1 0 00-1.15-.49l-1.2.37a5.97 5.97 0 00-1.24-.71l-.33-1.2a1 1 0 00-.97-.75H8.28z" stroke="currentColor" stroke-width="1.25"/>
+        <circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- ── BANNER ──────────────────────────────── -->
+  <div class="group-banner"></div>
+
+  <!-- ── GROUP INFO ROW ─────────────────────── -->
+  <div class="group-info">
+    <div class="group-info__left">
+      <div class="group-info__members-row">
+        <div class="avatar-stack">
+          <div class="avatar-stack__item">RK</div>
+          <div class="avatar-stack__item">PS</div>
+          <div class="avatar-stack__item">AJ</div>
+          <div class="avatar-stack__overflow">+5</div>
+        </div>
+        <span class="group-info__member-count">8 members</span>
+      </div>
+      <p class="group-info__date">Created on 12th Feb 23</p>
+    </div>
+    <div class="group-info__right">
+      <span class="group-info__balance group-info__balance--owe">₹1,200</span>
+      <span class="balance-label balance-label--owe">Overall you Lent</span>
+    </div>
+  </div>
+
+  <!-- ── SCROLLABLE CONTENT ─────────────────── -->
+  <div class="screen__content">
+
+    <!-- Segment control -->
+    <div class="segment-control">
+      <button class="segment-item segment-item--active">Transactions</button>
+      <button class="segment-item">Balances</button>
+    </div>
+
+    <!-- This week -->
+    <div class="date-divider">This week</div>
+
+    <!-- Option A: time inline with subtitle -->
+    <div class="txn-item">
+      <div class="avatar avatar--md">BG</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Beverage Group</p>
+        <p class="txn-item__meta">3 members · 2:30 PM</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--lent">₹1,500</span>
+        <span class="txn-badge txn-badge--lent">You Lent</span>
+      </div>
+    </div>
+
+    <div class="txn-item">
+      <div class="avatar avatar--md">JD</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Dinner at Thalassa</p>
+        <p class="txn-item__meta">Paid by Rahul · 11:00 AM</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--owe">₹950</span>
+        <span class="txn-badge txn-badge--owe">You Owe</span>
+      </div>
+    </div>
+
+    <div class="txn-item">
+      <div class="avatar avatar--md">BE</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Beverage Enthusiasts</p>
+        <p class="txn-item__meta">3 members · 9:15 AM</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--lent">₹1,750</span>
+        <span class="txn-badge txn-badge--lent">You Lent</span>
+      </div>
+    </div>
+
+    <!-- Last week -->
+    <div class="date-divider">Last week</div>
+
+    <!-- Option B: time below the badge -->
+    <div class="txn-item">
+      <div class="avatar avatar--md">GJ</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Scuba Diving</p>
+        <p class="txn-item__meta">Paid by you · 6 people</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--owe">₹1,000</span>
+        <span class="txn-badge txn-badge--owe">You Owe</span>
+        <span class="txn-item__time">Mon, 6:00 PM</span>
+      </div>
+    </div>
+
+    <div class="txn-item">
+      <div class="avatar avatar--md">CC</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Craft Beer Crew</p>
+        <p class="txn-item__meta">3 members</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--lent">₹800</span>
+        <span class="txn-badge txn-badge--lent">You Lent</span>
+        <span class="txn-item__time">Mon, 3:45 PM</span>
+      </div>
+    </div>
+
+    <div class="txn-item">
+      <div class="avatar avatar--md">MC</div>
+      <div class="txn-item__info">
+        <p class="txn-item__name">Airport Taxi</p>
+        <p class="txn-item__meta">Paid by Ankit · 3 people</p>
+      </div>
+      <div class="txn-item__right">
+        <span class="txn-item__amount txn-item__amount--owe">₹600</span>
+        <span class="txn-badge txn-badge--owe">You Owe</span>
+        <span class="txn-item__time">Sun, 8:20 AM</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ACTION BUTTON ROW ───────────────────── -->
+  <div class="action-btn-row">
+    <button class="btn btn--lg btn--secondary">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Add Expense
+    </button>
+    <button class="btn btn--lg btn--primary">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Settle Up
+    </button>
+  </div>
+
+
+</div>
+</body>
+</html>

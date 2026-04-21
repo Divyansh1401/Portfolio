@@ -1,0 +1,242 @@
+/* ============================================
+   Settlr Design System — Semantic / Component Tokens
+   All values alias to primitives in colors.css
+   ============================================ */
+
+:root {
+  /* ---- Button: Primary ---- */
+  --btn-primary-bg:         var(--color-olive-600);
+  --btn-primary-bg-pressed: var(--color-olive-700);
+  --btn-primary-fg:         var(--color-gray-0);
+
+  /* ---- Button: Secondary ---- */
+  --btn-secondary-bg:         var(--color-olive-200);
+  --btn-secondary-bg-pressed: var(--color-olive-300);
+  --btn-secondary-fg:         var(--color-olive-700);
+
+  /* ---- Button: Ghost ---- */
+  --btn-ghost-fg: var(--color-olive-600);
+
+  /* ---- Button: Destructive ---- */
+  --btn-destructive-bg:         var(--color-coral-400);
+  --btn-destructive-bg-pressed: var(--color-coral-500);
+  --btn-destructive-fg:         var(--color-gray-0);
+
+  /* ---- Button: Icon ---- */
+  --btn-icon-bg:         var(--color-neutral-100);
+  --btn-icon-bg-pressed: var(--color-neutral-200);
+  --btn-icon-fg:         var(--color-neutral-900);
+
+  /* ---- Action Button Row ---- */
+  --action-btn-row-bg:     var(--color-neutral-100);
+  --action-btn-row-border: var(--color-neutral-200);
+
+  /* ---- Type Chip ---- */
+  --type-chip-bg-off:     var(--color-neutral-50);
+  --type-chip-border-off: var(--color-neutral-400);
+  --type-chip-fg-off:     var(--color-neutral-800);
+  --type-chip-bg-on:      var(--color-olive-100);
+  --type-chip-border-on:  var(--color-olive-700);
+  --type-chip-fg-on:      var(--color-neutral-900);
+
+  /* ---- Chip ---- */
+  --chip-bg-off:     var(--color-neutral-100);
+  --chip-bg-on:      var(--color-olive-600);
+  --chip-border-off: var(--color-neutral-300);
+  --chip-border-on:  var(--color-olive-600);
+  --chip-fg-off:     var(--color-neutral-800);
+  --chip-fg-on:      var(--color-gray-0);
+
+  /* ---- Label / Status Badge ---- */
+  --label-success-bg: var(--color-green-100);
+  --label-success-fg: var(--color-green-600);
+  --label-warning-bg: var(--color-yellow-100);
+  --label-warning-fg: var(--color-yellow-600);
+  --label-error-bg:   var(--color-coral-100);
+  --label-error-fg:   var(--color-coral-700);
+  --label-info-bg:    var(--color-jay-100);
+  --label-info-fg:    var(--color-jay-600);
+  --label-neutral-bg: var(--color-gray-100);
+  --label-neutral-fg: var(--color-gray-700);
+
+  /* ---- Input ---- */
+  --input-bg:             var(--color-neutral-100);
+  --input-bg-focused:     var(--color-gray-0);
+  --input-bg-error:       var(--color-coral-50);
+  --input-fg-default:     var(--color-neutral-400);
+  --input-fg-active:      var(--color-neutral-900);
+  --input-border-default: var(--color-neutral-300);
+  --input-border-focused: var(--color-olive-600);
+  --input-border-error:   var(--color-coral-400);
+  --input-label:          var(--color-neutral-700);
+  --input-helper:         var(--color-neutral-500);
+  --input-helper-error:   var(--color-coral-600);
+
+  /* ---- OTP Input ---- */
+  --otp-caret: var(--color-olive-600);
+
+  /* ---- Radio / Checkbox Control ---- */
+  --control-bg-default:           transparent;
+  --control-bg-selected:          var(--color-olive-600);
+  --control-bg-disabled:          var(--color-gray-100);
+  --control-bg-disabled-selected: var(--color-gray-300);
+  --control-border-default:       var(--color-neutral-300);
+  --control-border-selected:      var(--color-olive-600);
+  --control-border-disabled:      var(--color-gray-200);
+  --control-dot:                  var(--color-gray-0);
+  --control-label:                var(--color-neutral-800);
+  --control-description:          var(--color-neutral-500);
+  --control-label-disabled:       var(--color-gray-400);
+
+  /* ---- Radio Container (Boxed) ---- */
+  --container-bg-default:      var(--color-gray-0);
+  --container-bg-selected:     var(--color-olive-50);
+  --container-border-default:  var(--color-neutral-300);
+  --container-border-selected: var(--color-olive-600);
+  --container-border-disabled: var(--color-gray-200);
+
+  /* ---- Radio Item Boxed — Illustration ---- */
+  --radio-illus-placeholder-bg: var(--color-neutral-200);
+
+  /* ---- Type Chip — Illustration placeholder ---- */
+  --type-chip-illus-placeholder-bg: var(--color-neutral-200);
+
+  /* ---- Tab / Segment ---- */
+  --tab-bg-track:    var(--color-neutral-200);
+  --tab-bg-active:   var(--color-gray-0);
+  --tab-border-active: var(--color-neutral-300);
+  --tab-fg-active:   var(--color-neutral-900);
+  --tab-fg-default:  var(--color-neutral-600);
+  --tab-fg-disabled: var(--color-neutral-300);
+
+  /* ---- Sheet / Modal ---- */
+  --sheet-bg:      var(--color-neutral-50);
+  --sheet-border:  var(--color-olive-600);
+  --sheet-header:  var(--color-neutral-900);
+  --sheet-icon:    var(--color-neutral-900);
+  --sheet-slot-bg: var(--color-neutral-200);
+  --sheet-divider: var(--color-neutral-300);
+
+  /* ---- Avatar (standalone) ---- */
+  --avatar-bg:   var(--color-olive-200);
+  --avatar-fg:   var(--color-olive-600);
+  --avatar-ring: var(--color-gray-0);
+
+  /* ---- Member Pill / Avatar Chip ---- */
+  --member-pill-bg: var(--color-neutral-100);
+  --member-pill-fg: var(--color-neutral-800);
+
+  /* ---- Avatar Stack ---- */
+  --avatar-stack-overflow-bg: var(--color-gray-100);
+  --avatar-stack-overflow-fg: var(--color-neutral-600);
+  --avatar-stack-label-fg:    var(--color-neutral-500);
+  /* Overlap (negative margin) per size — component-specific, no spacing primitive */
+  --avatar-stack-overlap-xs:  -6px;
+  --avatar-stack-overlap-sm:  calc(-1 * var(--spacing-8));
+  --avatar-stack-overlap-md:  calc(-1 * var(--spacing-12));
+  --avatar-stack-overlap-lg:  calc(-1 * var(--spacing-16));
+
+  /* ---- Contact / Person Item ---- */
+  --contact-bg-default:  transparent;
+  --contact-bg-selected: var(--color-olive-50);
+  --contact-avatar-bg:   var(--color-olive-200);
+  --contact-avatar-fg:   var(--color-olive-600);
+  --contact-name:        var(--color-neutral-900);
+  --contact-subtext:     var(--color-neutral-600);
+  --contact-icon:        var(--color-neutral-700);
+  --contact-divider:     var(--color-neutral-300);
+  --contact-settled-fg:  var(--color-neutral-400);
+
+  /* ---- FAB ---- */
+  --fab-bg: var(--color-olive-300);
+  --fab-fg: var(--color-olive-700);
+
+  /* ---- Navigation Bar ---- */
+  --nav-bar-bg:         var(--color-gray-0);
+  --nav-bar-border:     var(--color-neutral-200);
+  --nav-tab-bg-active:  var(--color-gray-200);
+  --nav-tab-fg-active:  var(--color-neutral-900);
+  --nav-tab-fg-default: var(--color-neutral-900);
+
+  /* ---- List ---- */
+  --list-remove-bg: var(--color-coral-100);
+  --list-remove-fg: var(--color-coral-500);
+
+  /* ---- Expense ---- */
+  --expense-lent-fg:    var(--color-green-500);
+  --expense-lent-bg:    var(--color-green-50);
+  --expense-owe-fg:     var(--color-coral-500);
+  --expense-owe-bg:     var(--color-coral-50);
+  --expense-settled-fg: var(--color-neutral-500);
+  --expense-item-illus-bg: var(--color-gray-200);
+
+  /* ---- Card / Group ---- */
+  --card-group-owe-border:  var(--color-coral-100);
+  --card-group-lent-border: var(--color-green-100);
+  --card-group-image-bg:    var(--color-neutral-200);
+  --card-group-lent-bg:     var(--color-green-50);
+  --card-group-owe-bg:      var(--color-coral-50);
+  --card-create-bg:         var(--color-olive-50);
+  --card-create-icon-bg:    var(--color-olive-100);
+  --card-create-fg:         var(--color-olive-500);
+  --card-create-border:     var(--color-olive-200);
+
+  /* ---- Heading ---- */
+  --heading-fg: var(--color-neutral-900);
+
+  /* ---- Top App Bar ---- */
+  --top-app-bar-bg:    var(--color-neutral-50);
+  --top-app-bar-title: var(--color-olive-800);
+
+  /* ---- Screen-Level Semantics ---- */
+  --surface-primary:   var(--color-neutral-50);
+  --surface-card:      var(--color-gray-0);
+  --text-primary:      var(--color-neutral-900);
+  --text-secondary:    var(--color-neutral-600);
+  --text-tertiary:     var(--color-neutral-500);
+  --text-brand:        var(--color-olive-600);
+  --text-inverse:      var(--color-gray-0);
+  --border-default:    var(--color-neutral-300);
+  --border-subtle:     var(--color-neutral-200);
+
+  /* ---- Toast ---- */
+  --toast-neutral-bg:     var(--color-gray-100);
+  --toast-neutral-fg:     var(--color-gray-700);
+  --toast-neutral-border: var(--color-gray-300);
+  --toast-brand-bg:       var(--color-olive-100);
+  --toast-brand-fg:       var(--color-olive-800);
+  --toast-brand-border:   var(--color-olive-300);
+  --toast-success-bg:     var(--color-green-100);
+  --toast-success-fg:     var(--color-green-700);
+  --toast-success-border: var(--color-green-300);
+  --toast-warning-bg:     var(--color-yellow-100);
+  --toast-warning-fg:     var(--color-yellow-700);
+  --toast-warning-border: var(--color-yellow-300);
+  --toast-error-bg:       var(--color-coral-100);
+  --toast-error-fg:       var(--color-coral-700);
+  --toast-error-border:   var(--color-coral-300);
+  --toast-info-bg:        var(--color-jay-100);
+  --toast-info-fg:        var(--color-jay-700);
+  --toast-info-border:    var(--color-jay-300);
+
+  /* ---- Empty State ---- */
+  --empty-state-illus-bg:  var(--color-olive-50);
+  --empty-state-illus-fg:  var(--color-olive-300);
+  --empty-state-title-fg:  var(--color-neutral-800);
+  --empty-state-body-fg:   var(--color-neutral-500);
+
+  /* ---- FAQ / Accordion ---- */
+  --faq-border:       var(--border-default);
+  --faq-question-fg:  var(--color-neutral-800);
+  --faq-answer-fg:    var(--text-secondary);
+  --faq-icon-fg:      var(--color-neutral-800);
+
+  /* ---- Amount Input ---- */
+  --amount-input-bg:             var(--color-neutral-100);
+  --amount-input-bg-focused:     var(--color-gray-0);
+  --amount-input-border:         var(--color-neutral-400);
+  --amount-input-border-focused: var(--color-olive-600);
+  --amount-input-fg:             var(--color-neutral-900);
+  --amount-input-fg-disabled:    var(--color-neutral-600);
+  --amount-input-icon-fg:        var(--color-neutral-600);
+}

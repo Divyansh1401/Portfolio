@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Select People</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+
+    /* ── Search ── */
+    .search-wrap {
+      padding: var(--spacing-8) var(--spacing-16);
+      flex-shrink: 0;
+    }
+    .search-field {
+      position: relative;
+    }
+    .search-field__icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: var(--icon-md); color: var(--input-fg-default);
+      pointer-events: none;
+    }
+    .search-field__input {
+      width: 100%; height: 48px;
+      padding: 0 var(--spacing-16) 0 40px;
+      background: var(--input-bg);
+      border: var(--border-medium) solid transparent;
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-20);
+      color: var(--text-primary); outline: none;
+      transition: all 0.15s;
+    }
+    .search-field__input::placeholder { color: var(--input-fg-default); }
+    .search-field__input:focus {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+
+    /* ── Selected Chips Row ── */
+    .selected-row {
+      display: none;
+      padding: 0 var(--spacing-16) var(--spacing-8);
+      gap: var(--spacing-8);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .selected-row::-webkit-scrollbar { display: none; }
+    .selected-row--visible { display: flex; }
+
+    .sel-chip {
+      display: inline-flex; align-items: center; gap: var(--spacing-4);
+      padding: var(--spacing-4) var(--spacing-8) var(--spacing-4) var(--spacing-4);
+      background: var(--card-create-bg);
+      border: var(--border-small) solid var(--card-create-border);
+      border-radius: var(--radius-full);
+      flex-shrink: 0; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sel-chip:active { background: var(--type-chip-bg-on); }
+    .sel-chip .avatar { width: 22px; height: 22px; font-size: var(--font-size-10); }
+    .sel-chip__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--btn-secondary-fg);
+    }
+    .sel-chip__x {
+      font-size: var(--font-size-12); color: var(--text-tertiary);
+      margin-left: var(--spacing-2);
+    }
+
+    /* ── List ── */
+    .people-list {
+      flex: 1; overflow-y: auto;
+      padding-bottom: 160px;
+    }
+    .section-header {
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
+      color: var(--text-tertiary);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.92px;
+      text-transform: uppercase;
+      line-height: var(--line-height-16);
+      position: sticky; top: 0;
+      background: var(--surface-primary);
+      z-index: 2;
+    }
+
+    /* Group row */
+    .group-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+      cursor: pointer; transition: background 0.1s;
+    }
+    .group-row:active { background: var(--surface-primary); }
+    .group-row--selected {
+      background: var(--contact-bg-selected);
+    }
+    .group-row__icon {
+      width: 40px; height: 40px; border-radius: var(--radius-8);
+      background: var(--btn-icon-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--icon-md); flex-shrink: 0;
+    }
+    .group-row--selected .group-row__icon {
+      background: var(--type-chip-bg-on);
+    }
+    .group-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .group-row__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--contact-name);
+    }
+    .group-row__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--contact-subtext);
+    }
+    .group-row__chevron {
+      font-size: var(--icon-md); color: var(--input-fg-default); flex-shrink: 0;
+    }
+    .group-row--selected .group-row__chevron { color: var(--text-brand); }
+
+    /* Contact row */
+    .contact-row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+      cursor: pointer; transition: background 0.1s;
+    }
+    .contact-row:active { background: var(--surface-primary); }
+    .contact-row--selected { background: var(--contact-bg-selected); }
+    .contact-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .contact-row__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--contact-name);
+    }
+    .contact-row__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--contact-subtext);
+    }
+
+    /* Avatar */
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      background: var(--avatar-bg);
+      color: var(--avatar-fg);
+      font-family: var(--font-body);
+      flex-shrink: 0;
+    }
+    .avatar-md {
+      width: 40px; height: 40px;
+      font-size: var(--font-size-16); font-weight: var(--weight-bold);
+    }
+
+    /* Checkbox */
+    .checkbox {
+      width: 20px; height: 20px;
+      border-radius: var(--radius-4);
+      border: var(--border-medium) solid var(--input-border-default);
+      background: var(--surface-card);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .checkbox--checked {
+      background: var(--control-bg-selected);
+      border-color: var(--control-border-selected);
+    }
+    .checkbox--checked::after {
+      content: '';
+      width: 10px; height: 6px;
+      border-left: 2px solid var(--surface-card);
+      border-bottom: 2px solid var(--surface-card);
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    /* ── Fixed bottom dock ── */
+    .bottom-dock {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface-card);
+      border-top: var(--border-small) solid var(--border-subtle);
+      display: flex; flex-direction: column;
+      max-width: 393px; margin: 0 auto;
+    }
+
+    /* Save-as-group row */
+    .save-group-row {
+      display: flex; flex-direction: column;
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .save-group-row__trigger {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .save-group-row__icon {
+      width: 36px; height: 36px; border-radius: var(--radius-8);
+      background: var(--card-create-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--icon-sm); flex-shrink: 0;
+    }
+    .save-group-row__text { flex: 1; }
+    .save-group-row__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-18);
+      color: var(--text-primary);
+    }
+    .save-group-row__sub {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-17);
+      color: var(--text-tertiary);
+    }
+    .save-group-row__check {
+      width: 20px; height: 20px; border-radius: var(--radius-4);
+      border: var(--border-medium) solid var(--input-border-default);
+      background: var(--surface-card);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .save-group-row__check--on {
+      background: var(--btn-primary-bg);
+      border-color: var(--btn-primary-bg);
+    }
+    .save-group-row__check i { display: none; }
+    .save-group-row__check--on i { display: block; }
+
+    /* Group name input (shown when checked) */
+    .save-group-row__form {
+      display: none;
+      padding: 0 var(--spacing-16) var(--spacing-12);
+      gap: var(--spacing-8);
+    }
+    .save-group-row__form--visible { display: flex; }
+
+    .save-group-input {
+      flex: 1; height: 40px;
+      padding: 0 var(--spacing-12);
+      background: var(--surface-primary);
+      border: var(--border-medium) solid var(--input-border-default);
+      border-radius: var(--radius-8);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-18);
+      color: var(--text-primary); outline: none;
+    }
+    .save-group-input::placeholder { color: var(--input-fg-default); }
+    .save-group-input:focus { border-color: var(--input-border-focused); background: var(--input-bg-focused); }
+
+    /* Error state for group name input */
+    .save-group-input--error { border-color: var(--input-border-error); background: var(--input-bg-error); }
+
+    /* CTA inside dock */
+    .dock-cta {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+    }
+
+    /* Disabled CTA */
+    .btn--disabled {
+      opacity: var(--opacity-strong); pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="add-amount" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Select People</span>
+  </header>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-field">
+      <i class="ph ph-magnifying-glass search-field__icon"></i>
+      <input type="text" class="search-field__input" placeholder="Search groups or friends..." autofocus>
+    </div>
+  </div>
+
+  <!-- Selected People Chips -->
+  <div class="selected-row" id="selected-chips"></div>
+
+  <!-- Combined List (rendered by JS) -->
+  <div class="people-list" id="js-list"></div>
+
+  <!-- Fixed Bottom Dock -->
+  <div class="bottom-dock">
+
+    <!-- Save as group -->
+    <div class="save-group-row">
+      <div class="save-group-row__trigger" onclick="toggleSaveGroup()">
+        <div class="save-group-row__icon">&#128101;</div>
+        <div class="save-group-row__text">
+          <div class="save-group-row__title">Save as a group</div>
+          <div class="save-group-row__sub">Quick access next time</div>
+        </div>
+        <div class="save-group-row__check" id="save-check">
+          <i class="ph-bold ph-check" style="font-size:var(--font-size-10);color:var(--btn-primary-fg);display:none;"></i>
+        </div>
+      </div>
+      <div class="save-group-row__form" id="save-group-form">
+        <input type="text" class="save-group-input" id="group-name-input" placeholder="Group name e.g. Goa Trip…">
+        <p class="input-field__helper input-field__helper--error" id="group-name-error" style="display:none;">Please enter a group name.</p>
+      </div>
+    </div>
+
+    <!-- Next CTA -->
+    <div class="dock-cta">
+      <button id="js-next" class="btn btn--primary btn--lg btn--full btn--disabled">Next</button>
+    </div>
+
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    function toggleSaveGroup() {
+      var check = document.getElementById('save-check');
+      var form = document.getElementById('save-group-form');
+      var isOn = check.classList.toggle('save-group-row__check--on');
+      form.classList.toggle('save-group-row__form--visible', isOn);
+      if (isOn) form.querySelector('input').focus();
+    }
+
+    (function () {
+      var expCtx = JSON.parse(sessionStorage.getItem('settlr_new_expense') || '{}');
+      if (!expCtx.totalAmount) { location.replace('add-amount'); return; }
+
+      var CHEVRON = '<i class="ph ph-caret-right group-row__chevron"></i>';
+      var selectedGroupId = null;
+      var selectedContactIds = {};
+
+      var listEl    = document.getElementById('js-list');
+      var chipsRow  = document.getElementById('selected-chips');
+      var nextBtn   = document.getElementById('js-next');
+      var searchInput = document.querySelector('.search-field__input');
+
+      var groups   = Store.getGroups();
+      var contacts = Store.getContacts();
+
+      function groupHTML(g) {
+        var mc = g.memberIds.length;
+        return '<div class="group-row" data-group-id="' + g.id + '">' +
+          '<div class="group-row__icon">' + (g.emoji || '👥') + '</div>' +
+          '<div class="group-row__text">' +
+            '<span class="group-row__name">' + g.name + '</span>' +
+            '<span class="group-row__sub">' + mc + ' member' + (mc !== 1 ? 's' : '') + '</span>' +
+          '</div>' + CHEVRON + '</div>';
+      }
+
+      function contactHTML(c) {
+        return '<div class="contact-row" data-contact-id="' + c.id + '">' +
+          '<div class="avatar avatar-md">' + c.initials + '</div>' +
+          '<div class="contact-row__text">' +
+            '<span class="contact-row__name">' + c.name + '</span>' +
+            '<span class="contact-row__sub">Tap to add</span>' +
+          '</div>' +
+          '<div class="checkbox"></div>' +
+        '</div>';
+      }
+
+      function renderList(filter) {
+        filter = (filter || '').toLowerCase();
+        var html = '';
+        var fg = groups.filter(function(g) { return !filter || g.name.toLowerCase().includes(filter); });
+        var fc = contacts.filter(function(c) { return !filter || c.name.toLowerCase().includes(filter); });
+        if (fg.length) {
+          html += '<div class="section-header">Groups</div>';
+          fg.forEach(function(g) { html += groupHTML(g); });
+        }
+        if (fc.length) {
+          html += '<div class="section-header">Friends</div>';
+          fc.forEach(function(c) { html += contactHTML(c); });
+        }
+        listEl.innerHTML = html;
+
+        listEl.querySelectorAll('.group-row').forEach(function(row) {
+          var id = row.getAttribute('data-group-id');
+          if (id === selectedGroupId) row.classList.add('group-row--selected');
+          row.addEventListener('click', function() { selectGroup(id); });
+        });
+
+        listEl.querySelectorAll('.contact-row').forEach(function(row) {
+          var id = row.getAttribute('data-contact-id');
+          if (selectedContactIds[id]) {
+            row.classList.add('contact-row--selected');
+            row.querySelector('.checkbox').classList.add('checkbox--checked');
+          }
+          row.addEventListener('click', function() { toggleContact(id, row.querySelector('.contact-row__name').textContent.trim()); });
+        });
+      }
+
+      function selectGroup(id) {
+        selectedContactIds = {};
+        chipsRow.innerHTML = '';
+        chipsRow.classList.remove('selected-row--visible');
+        selectedGroupId = (selectedGroupId === id) ? null : id;
+        renderList(searchInput.value);
+        updateNext();
+      }
+
+      function toggleContact(id, name) {
+        selectedGroupId = null;
+        if (selectedContactIds[id]) {
+          delete selectedContactIds[id];
+        } else {
+          selectedContactIds[id] = name;
+        }
+        renderChips();
+        renderList(searchInput.value);
+        updateNext();
+      }
+
+      function renderChips() {
+        var ids = Object.keys(selectedContactIds);
+        if (!ids.length) {
+          chipsRow.innerHTML = '';
+          chipsRow.classList.remove('selected-row--visible');
+          return;
+        }
+        chipsRow.classList.add('selected-row--visible');
+        chipsRow.innerHTML = ids.map(function(id) {
+          var name = selectedContactIds[id];
+          var initials = name.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+          return '<div class="sel-chip" data-cid="' + id + '">' +
+            '<div class="avatar">' + initials + '</div>' +
+            '<span class="sel-chip__name">' + name.split(' ')[0] + '</span>' +
+            '<i class="ph ph-x sel-chip__x"></i>' +
+          '</div>';
+        }).join('');
+        chipsRow.querySelectorAll('.sel-chip').forEach(function(chip) {
+          chip.addEventListener('click', function() {
+            delete selectedContactIds[chip.getAttribute('data-cid')];
+            renderChips();
+            renderList(searchInput.value);
+            updateNext();
+          });
+        });
+      }
+
+      function updateNext() {
+        var has = selectedGroupId || Object.keys(selectedContactIds).length > 0;
+        nextBtn.classList.toggle('btn--disabled', !has);
+      }
+
+      nextBtn.addEventListener('click', function() {
+        var me = Store.getCurrentUser().id;
+        if (selectedGroupId) {
+          var g = groups.find(function(gr) { return gr.id === selectedGroupId; });
+          expCtx.groupId = selectedGroupId;
+          expCtx.splitAmong = g ? g.memberIds.slice() : [me];
+          if (!expCtx.splitAmong.includes(me)) expCtx.splitAmong.unshift(me);
+          expCtx.paidById = me;
+          delete expCtx.contactIds;
+        } else {
+          var cids = Object.keys(selectedContactIds);
+          expCtx.contactIds = cids;
+          expCtx.splitAmong = [me].concat(cids);
+          expCtx.paidById = me;
+          delete expCtx.groupId;
+        }
+        sessionStorage.setItem('settlr_new_expense', JSON.stringify(expCtx));
+        location.href = 'add-split';
+      });
+
+      searchInput.addEventListener('input', function() { renderList(this.value); });
+      renderList();
+    }());
+  </script>
+
+</body>
+</html>

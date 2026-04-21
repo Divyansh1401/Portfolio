@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Edit Group</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar (overlaid on hero) ── */
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      z-index: 10;
+    }
+    .status-bar__time {
+      font: 600 15px/20px -apple-system, 'SF Pro Text', sans-serif;
+      letter-spacing: -0.5px;
+      color: var(--surface-card);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--surface-card);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(160deg, var(--avatar-bg) 0%, var(--avatar-fg) 60%, var(--top-app-bar-title) 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%);
+    }
+    .hero__actions {
+      position: absolute;
+      top: 52px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      z-index: 5;
+    }
+    .hero-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .hero-btn:active { background: var(--surface-primary); }
+    .hero-btn i { font-size: 20px; }
+
+    /* ── Group Avatar (overlapping hero) ── */
+    .group-avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: -48px;
+      position: relative;
+      z-index: 2;
+    }
+    .group-avatar-btn {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .group-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-full);
+      background: var(--avatar-bg);
+      border: 4px solid var(--surface-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      line-height: 1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .group-avatar-btn:active .group-avatar { opacity: 0.8; }
+    .group-avatar__edit-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      border: 2px solid var(--surface-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
+    .group-avatar__edit-badge i { font-size: 12px; }
+
+    /* ── Scrollable Form ── */
+    .form-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: var(--spacing-16) var(--spacing-16) 140px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-24);
+    }
+
+    /* ── Field ── */
+    .field { display: flex; flex-direction: column; gap: var(--spacing-4); }
+    .field__label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 19px;
+      color: var(--input-label);
+    }
+    .field__input {
+      width: 100%;
+      height: 48px;
+      padding: 0 var(--spacing-16);
+      border-radius: var(--radius-12);
+      border: 1px solid var(--input-border-default);
+      background: var(--input-bg);
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--input-fg-active);
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .field__input::placeholder { color: var(--input-fg-default); font-weight: 400; }
+    .field__input:focus {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+
+    /* ── Type Grid ── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-8);
+    }
+    .type-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: var(--spacing-12) var(--spacing-8);
+      border-radius: var(--radius-12);
+      border: 1px solid var(--type-chip-border-off);
+      background: var(--type-chip-bg-off);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.15s ease;
+    }
+    .type-chip:active { opacity: 0.7; }
+    .type-chip.is-selected {
+      background: var(--type-chip-bg-on);
+      border-color: var(--type-chip-border-on);
+    }
+    .type-chip__emoji { font-size: 24px; line-height: 1; }
+    .type-chip__name {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--type-chip-fg-off);
+      text-align: center;
+    }
+    .type-chip.is-selected .type-chip__name {
+      color: var(--type-chip-fg-on);
+      font-weight: 600;
+    }
+
+    /* ── Members List ── */
+    .members-list {
+      background: var(--surface-card);
+      border-radius: var(--radius-12);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .member-row:last-child { border-bottom: none; }
+    .member-row__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .member-row__avatar--you {
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-fg);
+    }
+    .member-row__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .member-row__name {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--contact-name);
+      line-height: 20px;
+    }
+    .member-row__role {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--contact-subtext);
+      line-height: 18px;
+    }
+    .member-row__remove {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: var(--list-remove-bg);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--list-remove-fg);
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .member-row__remove:active { opacity: 0.7; }
+    .member-row__remove i { font-size: 14px; }
+
+    /* ── Add Member Row ── */
+    .add-member-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .add-member-row:active { background: var(--surface-primary); }
+    .add-member-row__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--surface-primary);
+      border: 1px dashed var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+    .add-member-row__icon i { font-size: 18px; }
+    .add-member-row__label {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-brand);
+    }
+
+    /* ── Danger Zone ── */
+    .danger-card {
+      background: var(--expense-owe-bg);
+      border-radius: var(--radius-12);
+      overflow: hidden;
+      border: 1px solid var(--card-group-owe-border);
+    }
+    .danger-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-16);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .danger-row:active { opacity: 0.7; }
+    .danger-row__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-8);
+      background: var(--label-error-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .danger-row__icon i { font-size: 18px; color: var(--label-error-fg); }
+    .danger-row__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .danger-row__label {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--expense-owe-fg);
+      line-height: 20px;
+    }
+    .danger-row__sublabel {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--expense-owe-fg);
+      opacity: 0.7;
+      line-height: 18px;
+    }
+    .danger-row__chevron { color: var(--expense-owe-fg); opacity: 0.5; }
+    .danger-row__chevron i { font-size: 16px; }
+
+    /* ── Sticky Footer ── */
+    .sticky-footer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 393px;
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+      background: var(--surface-primary);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-8);
+      z-index: 20;
+    }
+    .btn-save {
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 600;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s ease;
+    }
+    .btn-save:active { background: var(--btn-primary-bg-pressed); }
+
+    /* ── Emoji Picker Sheet ── */
+    .sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.32);
+      z-index: 40;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .sheet-overlay.is-open { display: flex; }
+    .sheet {
+      background: var(--sheet-bg);
+      border-radius: var(--radius-24) var(--radius-24) 0 0;
+      width: 393px;
+      max-width: 100%;
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-32);
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .sheet__handle {
+      width: 36px;
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: var(--sheet-slot-bg);
+      margin: var(--spacing-8) auto var(--spacing-16);
+    }
+    .sheet__title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--sheet-header);
+      margin-bottom: var(--spacing-16);
+      text-align: center;
+    }
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-8);
+    }
+    .emoji-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-12);
+      border: 1px solid var(--border-subtle);
+      background: var(--surface-primary);
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.15s ease;
+    }
+    .emoji-btn:active { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
+    .emoji-btn.is-selected { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="currentColor" opacity="0.3"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="currentColor" opacity="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="currentColor" opacity="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.6C13.6 1.7 10.9 0.5 8 0.5C5.1 0.5 2.4 1.7 0.5 3.6L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="currentColor"/><path d="M8 5.6C9.6 5.6 11 6.3 12 7.4L13.4 6C12 4.6 10.1 3.7 8 3.7C5.9 3.7 4 4.6 2.6 6L4 7.4C5 6.3 6.4 5.6 8 5.6Z" fill="currentColor"/><circle cx="8" cy="10.5" r="1.5" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="currentColor" opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero__actions">
+      <a href="group-detail" class="hero-btn" aria-label="Back">
+        <i class="ph-bold ph-caret-left"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Group Avatar ── -->
+  <div class="group-avatar-wrap">
+    <button class="group-avatar-btn" id="js-avatar-btn" aria-label="Change group emoji">
+      <div class="group-avatar" id="js-group-avatar">
+        <span>🏖️</span>
+      </div>
+      <div class="group-avatar__edit-badge">
+        <i class="ph ph-pencil"></i>
+      </div>
+    </button>
+  </div>
+
+  <!-- ── Form Content ── -->
+  <div class="form-content">
+
+    <!-- Group Name -->
+    <div>
+      <div class="section-label">Group Name</div>
+      <div class="field">
+        <label class="field__label">What's this group called?</label>
+        <input type="text" class="field__input" id="js-group-name" value="Goa Trip" placeholder="e.g. Goa Trip…">
+      </div>
+    </div>
+
+    <!-- Group Type -->
+    <div>
+      <div class="section-label">Group Type</div>
+      <div class="type-grid" id="js-type-grid">
+        <div class="type-chip is-selected" data-type="trip" onclick="selectType(this)">
+          <span class="type-chip__emoji">✈️</span>
+          <span class="type-chip__name">Trip</span>
+        </div>
+        <div class="type-chip" data-type="home" onclick="selectType(this)">
+          <span class="type-chip__emoji">🏠</span>
+          <span class="type-chip__name">Home</span>
+        </div>
+        <div class="type-chip" data-type="food" onclick="selectType(this)">
+          <span class="type-chip__emoji">🍕</span>
+          <span class="type-chip__name">Food</span>
+        </div>
+        <div class="type-chip" data-type="sports" onclick="selectType(this)">
+          <span class="type-chip__emoji">⚽</span>
+          <span class="type-chip__name">Sports</span>
+        </div>
+        <div class="type-chip" data-type="couple" onclick="selectType(this)">
+          <span class="type-chip__emoji">💑</span>
+          <span class="type-chip__name">Couple</span>
+        </div>
+        <div class="type-chip" data-type="work" onclick="selectType(this)">
+          <span class="type-chip__emoji">💼</span>
+          <span class="type-chip__name">Work</span>
+        </div>
+        <div class="type-chip" data-type="family" onclick="selectType(this)">
+          <span class="type-chip__emoji">👨‍👩‍👧</span>
+          <span class="type-chip__name">Family</span>
+        </div>
+        <div class="type-chip" data-type="other" onclick="selectType(this)">
+          <span class="type-chip__emoji">🎉</span>
+          <span class="type-chip__name">Other</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members -->
+    <div>
+      <div class="section-label">Members · 5</div>
+      <div class="members-list">
+
+        <div class="member-row">
+          <div class="member-row__avatar member-row__avatar--you">DR</div>
+          <div class="member-row__text">
+            <span class="member-row__name">You (Divyansh)</span>
+            <span class="member-row__role">Admin · Cannot be removed</span>
+          </div>
+        </div>
+
+        <div class="member-row" data-member="rahul">
+          <div class="member-row__avatar">RK</div>
+          <div class="member-row__text">
+            <span class="member-row__name">Rahul Kumar</span>
+            <span class="member-row__role">Member</span>
+          </div>
+          <button class="member-row__remove" onclick="removeMember(this)" aria-label="Remove Rahul">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="priya">
+          <div class="member-row__avatar">PS</div>
+          <div class="member-row__text">
+            <span class="member-row__name">Priya Sharma</span>
+            <span class="member-row__role">Member</span>
+          </div>
+          <button class="member-row__remove" onclick="removeMember(this)" aria-label="Remove Priya">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="ankit">
+          <div class="member-row__avatar">AV</div>
+          <div class="member-row__text">
+            <span class="member-row__name">Ankit Verma</span>
+            <span class="member-row__role">Member</span>
+          </div>
+          <button class="member-row__remove" onclick="removeMember(this)" aria-label="Remove Ankit">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="kavya">
+          <div class="member-row__avatar">KR</div>
+          <div class="member-row__text">
+            <span class="member-row__name">Kavya Reddy</span>
+            <span class="member-row__role">Member</span>
+          </div>
+          <button class="member-row__remove" onclick="removeMember(this)" aria-label="Remove Kavya">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+
+        <!-- Add Member Row -->
+        <div class="add-member-row" onclick="addMember()">
+          <div class="add-member-row__icon">
+            <i class="ph ph-user-plus"></i>
+          </div>
+          <span class="add-member-row__label">Add a member</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div>
+      <div class="section-label">Danger Zone</div>
+      <div class="danger-card">
+        <div class="danger-row" onclick="confirmDelete()">
+          <div class="danger-row__icon">
+            <i class="ph ph-trash"></i>
+          </div>
+          <div class="danger-row__text">
+            <span class="danger-row__label">Delete Group</span>
+            <span class="danger-row__sublabel">Permanently remove this group and all its expenses</span>
+          </div>
+          <span class="danger-row__chevron"><i class="ph ph-caret-right"></i></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Sticky Footer ── -->
+  <div class="sticky-footer">
+    <button class="btn-save" onclick="saveGroup()">Save Changes</button>
+  </div>
+
+  <!-- ── Emoji Picker Sheet ── -->
+  <div class="sheet-overlay" id="js-emoji-overlay" onclick="closeEmojiPicker(event)">
+    <div class="sheet">
+      <div class="sheet__handle"></div>
+      <div class="sheet__title">Pick a Group Emoji</div>
+      <div class="emoji-grid">
+        <button class="emoji-btn is-selected" onclick="selectEmoji('🏖️')">🏖️</button>
+        <button class="emoji-btn" onclick="selectEmoji('✈️')">✈️</button>
+        <button class="emoji-btn" onclick="selectEmoji('🏠')">🏠</button>
+        <button class="emoji-btn" onclick="selectEmoji('🍕')">🍕</button>
+        <button class="emoji-btn" onclick="selectEmoji('🎉')">🎉</button>
+        <button class="emoji-btn" onclick="selectEmoji('⚽')">⚽</button>
+        <button class="emoji-btn" onclick="selectEmoji('🏔️')">🏔️</button>
+        <button class="emoji-btn" onclick="selectEmoji('🚗')">🚗</button>
+        <button class="emoji-btn" onclick="selectEmoji('🎵')">🎵</button>
+        <button class="emoji-btn" onclick="selectEmoji('📚')">📚</button>
+        <button class="emoji-btn" onclick="selectEmoji('💼')">💼</button>
+        <button class="emoji-btn" onclick="selectEmoji('👨‍👩‍👧')">👨‍👩‍👧</button>
+        <button class="emoji-btn" onclick="selectEmoji('🌴')">🌴</button>
+        <button class="emoji-btn" onclick="selectEmoji('🎭')">🎭</button>
+        <button class="emoji-btn" onclick="selectEmoji('🍻')">🍻</button>
+        <button class="emoji-btn" onclick="selectEmoji('🐾')">🐾</button>
+        <button class="emoji-btn" onclick="selectEmoji('🌍')">🌍</button>
+        <button class="emoji-btn" onclick="selectEmoji('💑')">💑</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Type selection
+    function selectType(el) {
+      document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+    }
+
+    // Remove member
+    function removeMember(btn) {
+      const row = btn.closest('.member-row');
+      row.style.transition = 'opacity 0.2s, transform 0.2s';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(16px)';
+      setTimeout(() => {
+        row.remove();
+        updateMemberCount();
+      }, 200);
+    }
+
+    function updateMemberCount() {
+      const count = document.querySelectorAll('.member-row').length;
+      document.querySelector('.section-label').textContent = `Members · ${count}`;
+    }
+
+    function addMember() {
+      window.location.href = 'create-group-members';
+    }
+
+    // Emoji picker
+    document.getElementById('js-avatar-btn').addEventListener('click', () => {
+      document.getElementById('js-emoji-overlay').classList.add('is-open');
+    });
+
+    function closeEmojiPicker(e) {
+      if (e.target === document.getElementById('js-emoji-overlay')) {
+        document.getElementById('js-emoji-overlay').classList.remove('is-open');
+      }
+    }
+
+    function selectEmoji(emoji) {
+      document.getElementById('js-group-avatar').innerHTML = `<span>${emoji}</span>`;
+      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('is-selected'));
+      event.currentTarget.classList.add('is-selected');
+      setTimeout(() => {
+        document.getElementById('js-emoji-overlay').classList.remove('is-open');
+      }, 150);
+    }
+
+    // Delete group confirmation
+    function confirmDelete() {
+      if (confirm('Delete "Goa Trip"? This cannot be undone.')) {
+        window.location.href = 'home-dashboard';
+      }
+    }
+
+    // Save group
+    function saveGroup() {
+      const btn = document.querySelector('.btn-save');
+      btn.textContent = 'Saved ✓';
+      btn.style.background = 'var(--expense-lent-fg)';
+      setTimeout(() => {
+        window.location.href = 'group-detail';
+      }, 600);
+    }
+  </script>
+
+</body>
+</html>

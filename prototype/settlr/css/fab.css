@@ -1,0 +1,37 @@
+/* ============================================
+   Settlr — FAB (Floating Action Button)
+   ============================================ */
+
+.fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 10px;
+  border-radius: var(--radius-full);
+  border: none;
+  background-color: var(--fab-bg);
+  color: var(--fab-fg);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Positioning */
+  position: fixed;
+  bottom: 88px; /* nav-pill: 16px padding + 56px pill height + 16px gap */
+  right: var(--spacing-16);
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab__icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}

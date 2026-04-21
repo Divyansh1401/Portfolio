@@ -1,0 +1,136 @@
+/* ============================================
+   Settlr — Radio / Checkbox Controls
+   States: Default, Selected, Disabled, Disabled-Selected
+   ============================================ */
+
+/* ---- Radio Control ---- */
+.radio-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: var(--border-small) solid var(--control-border-default);
+  background-color: var(--control-bg-default);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.radio-control__dot {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  border-radius: var(--radius-full);
+  background-color: var(--control-dot);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Selected */
+.radio-control.is-selected,
+.radio-control--selected {
+  background-color: var(--control-bg-selected);
+  border-color: var(--control-border-selected);
+}
+.radio-control.is-selected .radio-control__dot,
+.radio-control--selected .radio-control__dot {
+  opacity: 1;
+}
+
+/* Disabled */
+.radio-control--disabled {
+  background-color: var(--control-bg-disabled);
+  border-color: var(--control-border-disabled);
+  pointer-events: none;
+}
+
+/* Disabled Selected */
+.radio-control--disabled-selected {
+  background-color: var(--control-bg-disabled-selected);
+  border-color: var(--control-border-disabled);
+  pointer-events: none;
+}
+.radio-control--disabled-selected .radio-control__dot {
+  opacity: 1;
+}
+
+/* ---- Radio Item ---- */
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-4) 0;
+  cursor: pointer;
+}
+
+.radio-item__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--control-label);
+}
+
+.radio-item--disabled .radio-item__label {
+  color: var(--control-label-disabled);
+}
+
+/* ---- Radio Item Boxed ---- */
+.radio-item-boxed {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-8);
+  border: var(--border-small) solid var(--container-border-default);
+  background-color: var(--container-bg-default);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.radio-item-boxed.is-selected,
+.radio-item-boxed--selected {
+  background-color: var(--container-bg-selected);
+  border-color: var(--container-border-selected);
+  border-width: var(--border-large);
+}
+
+.radio-item-boxed--disabled {
+  border-color: var(--container-border-disabled);
+  pointer-events: none;
+}
+
+.radio-item-boxed__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  flex: 1;
+}
+
+.radio-item-boxed__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--control-label);
+}
+
+.radio-item-boxed__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-21);
+  color: var(--control-description);
+}
+
+/* ---- Radio Item Boxed — Illustration Variant ---- */
+/* Layout: [Illustration] [Text] [Radio Control] */
+.radio-item-boxed--illus .radio-item-boxed__illus {
+  width: var(--icon-xl);
+  height: var(--icon-xl);
+  border-radius: var(--radius-8);
+  background-color: var(--radio-illus-placeholder-bg);
+  flex-shrink: 0;
+}

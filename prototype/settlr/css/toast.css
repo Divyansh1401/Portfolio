@@ -1,0 +1,97 @@
+/* ============================================
+   Settlr — Toast Component
+   Figma: 292:8850
+   Colors: Neutral, Brand, Success, Warning, Error, Info
+   Booleans: Show Icon, Show Illustration, Show Title, Show Body
+   ============================================ */
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  width: 361px; /* 393px screen − 16px margin each side */
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid transparent;
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Color variants ---- */
+.toast--neutral {
+  background-color: var(--toast-neutral-bg);
+  color:            var(--toast-neutral-fg);
+  border-color:     var(--toast-neutral-border);
+}
+
+.toast--brand {
+  background-color: var(--toast-brand-bg);
+  color:            var(--toast-brand-fg);
+  border-color:     var(--toast-brand-border);
+}
+
+.toast--success {
+  background-color: var(--toast-success-bg);
+  color:            var(--toast-success-fg);
+  border-color:     var(--toast-success-border);
+}
+
+.toast--warning {
+  background-color: var(--toast-warning-bg);
+  color:            var(--toast-warning-fg);
+  border-color:     var(--toast-warning-border);
+}
+
+.toast--error {
+  background-color: var(--toast-error-bg);
+  color:            var(--toast-error-fg);
+  border-color:     var(--toast-error-border);
+}
+
+.toast--info {
+  background-color: var(--toast-info-bg);
+  color:            var(--toast-info-fg);
+  border-color:     var(--toast-info-border);
+}
+
+/* ---- Icon (16×16) — omit element to hide ---- */
+.toast__icon {
+  flex-shrink: 0;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  color: currentColor;
+}
+
+/* ---- Illustration (40×40) — omit element to hide ---- */
+.toast__illustration {
+  flex-shrink: 0;
+  border-radius: var(--radius-8);
+  overflow: hidden;
+  background-color: var(--expense-item-illus-bg);
+}
+
+/* ---- Text column ---- */
+.toast__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Title — Title/Title-SM (14px semibold) — omit element to hide ---- */
+.toast__title {
+  font-size:   var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+  color: currentColor;
+}
+
+/* ---- Body — Body/Body-SM (13px regular) ---- */
+.toast__body {
+  font-size:   var(--font-size-13);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-21);
+  color: currentColor;
+}

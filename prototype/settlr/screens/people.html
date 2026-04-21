@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — People</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    body {
+      background: var(--surface-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Filter Chips ── */
+    .chips-row {
+      display: flex;
+      gap: var(--spacing-8);
+      padding: 0 var(--spacing-16) var(--spacing-12);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+      border-bottom: var(--border-small) solid var(--border-default);
+    }
+    .chips-row::-webkit-scrollbar { display: none; }
+
+    /* ── Person List ── */
+    .person-list { display: flex; flex-direction: column; }
+
+    /* ── Scrollable Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 112px;
+    }
+
+    .fab i { font-size: var(--icon-lg); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <nav class="top-app-bar">
+    <span class="top-app-bar__title">People</span>
+    <a href="add-friend" class="btn btn--sm btn--secondary">Add Contact</a>
+  </nav>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon">
+        <i class="ph ph-magnifying-glass"></i>
+      </span>
+      <input type="text" placeholder="Search people">
+    </div>
+  </div>
+
+  <!-- ── Filter Chips ── -->
+  <div class="chips-row">
+    <button class="chip chip--sm is-active" data-filter="individual">Individual</button>
+    <button class="chip chip--sm" data-filter="group">Group</button>
+    <button class="chip chip--sm" data-filter="active">Active</button>
+    <button class="chip chip--sm" data-filter="lend">Lend</button>
+    <button class="chip chip--sm" data-filter="owe">Owe</button>
+  </div>
+
+  <!-- ── Scrollable List ── -->
+  <main class="content">
+    <div class="person-list" id="js-person-list">
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">JW</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Johnnie Walker</span>
+          <span class="person-item__subtext">829338-192</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">BG</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Beau Geste</span>
+          <span class="person-item__subtext">837291-203</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">KC</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Kendra Cole</span>
+          <span class="person-item__subtext">849205-314</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">SM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Sophie Miller</span>
+          <span class="person-item__subtext">865432-404</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">LA</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Liam Anderson</span>
+          <span class="person-item__subtext">872450-150</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">AR</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Avery Rivers</span>
+          <span class="person-item__subtext">711209-567</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">TM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Tessa Moore</span>
+          <span class="person-item__subtext">703918-678</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">GH</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Gavin Hayes</span>
+          <span class="person-item__subtext">921563-778</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">CF</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Clara Fields</span>
+          <span class="person-item__subtext">849203-887</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">ZM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Zoe Martin</span>
+          <span class="person-item__subtext">890231-998</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">DR</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Dylan Reed</span>
+          <span class="person-item__subtext">811054-119</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">KP</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Kylie Porter</span>
+          <span class="person-item__subtext">832950-230</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">HN</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Henry Nash</span>
+          <span class="person-item__subtext">760112-341</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">EB</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Ella Brooks</span>
+          <span class="person-item__subtext">812345-456</span>
+        </div>
+        <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
+      </a>
+
+    </div>
+
+    <div class="empty-state" id="empty-people" style="display:none;">
+      <div class="empty-state__illustration"></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No people yet</p>
+        <p class="empty-state__body">People you've shared expenses with will appear here.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Fixed Bottom: Nav Pill + FAB ── -->
+  <div class="bottom-nav-bar">
+    <nav class="bottom-nav">
+      <a href="home-dashboard" class="bottom-nav__tab">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
+          <span class="bottom-nav__tab-label">Home</span>
+        </div>
+      </a>
+      <a href="people" class="bottom-nav__tab is-active">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph-fill ph-user"></i></span>
+          <span class="bottom-nav__tab-label">People</span>
+        </div>
+      </a>
+      <a href="activity" class="bottom-nav__tab">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph ph-clock"></i></span>
+          <span class="bottom-nav__tab-label">Activity</span>
+        </div>
+      </a>
+    </nav>
+    <a href="add-amount" class="fab" aria-label="Add expense">
+      <i class="ph-bold ph-plus"></i>
+    </a>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/render.js"></script>
+  <script>
+    (function () {
+      var list       = document.getElementById('js-person-list');
+      var emptyState = document.getElementById('empty-people');
+
+      // ── Build item data ────────────────────────────────────
+
+      var contactItems = Store.getContacts().map(function (c) {
+        var bal      = Store.getContactBalance(c.id);
+        var hasTxns  = Store.hasContactTransactions(c.id);
+        var lastDate = Store.getLastTransactionDate(c.id);
+        return {
+          type:     'individual',
+          dir:      bal.direction,
+          lastDate: lastDate,
+          html:     Render.personItem(c, bal, hasTxns)
+        };
+      });
+
+      var groupItems = Store.getGroups().map(function (g) {
+        var bal      = Store.getGroupBalance(g.id);
+        var expenses = Store.getExpenses(g.id);
+        var hasTxns  = expenses.length > 0;
+        var lastDate = expenses.length > 0 ? expenses[0].date : null;
+        return {
+          type:     'group',
+          dir:      bal.direction,
+          lastDate: lastDate,
+          html:     Render.groupItem(g, bal, hasTxns)
+        };
+      });
+
+      // Sort by most recent transaction date — null (no history) goes last
+      var allItems = contactItems.concat(groupItems).sort(function (a, b) {
+        if (!a.lastDate && !b.lastDate) return 0;
+        if (!a.lastDate) return 1;
+        if (!b.lastDate) return -1;
+        return b.lastDate.localeCompare(a.lastDate);
+      });
+
+      // ── Render filtered list ───────────────────────────────
+
+      function renderList() {
+        var chips = document.querySelectorAll('.chip');
+        var active = {};
+        chips.forEach(function (c) {
+          active[c.dataset.filter] = c.classList.contains('is-active');
+        });
+
+        var noTypeFilter = !active.individual && !active.group;
+
+        var filtered = allItems.filter(function (item) {
+          // Type filter
+          if (!noTypeFilter) {
+            if (item.type === 'individual' && !active.individual) return false;
+            if (item.type === 'group'      && !active.group)      return false;
+          }
+          // Balance filter — if none active, show all
+          var noBalFilter = !active.active && !active.lend && !active.owe;
+          if (!noBalFilter) {
+            if (active.active && (item.dir === 'lent' || item.dir === 'owe')) return true;
+            if (active.lend   && item.dir === 'lent')  return true;
+            if (active.owe    && item.dir === 'owe')   return true;
+            return false;
+          }
+          return true;
+        });
+
+        var html = filtered.map(function (i) { return i.html; }).join('');
+        list.innerHTML = html;
+        emptyState.style.display = html ? 'none' : '';
+      }
+
+      // ── Chip toggle ────────────────────────────────────────
+
+      document.querySelectorAll('.chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          chip.classList.toggle('is-active');
+          renderList();
+        });
+      });
+
+      // ── URL filter ─────────────────────────────────────────
+
+      var params = new URLSearchParams(window.location.search);
+      var filter = params.get('filter');
+      if (filter) {
+        document.querySelectorAll('.chip').forEach(function (c) {
+          c.classList.remove('is-active');
+        });
+        var match = document.querySelector('.chip[data-filter="' + filter + '"]');
+        if (match) {
+          match.classList.add('is-active');
+          match.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+        }
+      }
+
+      // ── Initial render ─────────────────────────────────────
+      renderList();
+    }());
+  </script>
+
+</body>
+</html>

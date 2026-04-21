@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empty State — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-400: #BEB48A;
+      --color-neutral-500: #9A9070;
+      --color-neutral-600: #756C55;
+      --color-neutral-700: #524C3B;
+      --color-neutral-800: #332F25;
+      --color-neutral-900: #1A1810;
+      --color-gray-0:    #FFFFFF;
+      --color-olive-50:  #F2F4EB;
+      --color-olive-100: #DDE3C8;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+
+      --btn-primary-bg: var(--color-olive-600);
+      --btn-primary-fg: var(--color-gray-0);
+      --btn-secondary-bg: var(--color-olive-200);
+      --btn-secondary-fg: var(--color-olive-700);
+
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+      --spacing-48: 48px;
+
+      --radius-8:   8px;
+      --radius-16:  16px;
+      --radius-full: 9999px;
+      --font-display: 'Unbounded', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --weight-regular:  400;
+      --weight-medium:   500;
+      --weight-semibold: 600;
+      --weight-bold:     700;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-32);
+      padding: var(--spacing-32) var(--spacing-16);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      width: 393px;
+      margin-bottom: var(--spacing-8);
+    }
+
+    .phone {
+      width: 393px;
+      background: var(--color-gray-0);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(14,6,24,0.14), 0 4px 8px rgba(14,6,24,0.08);
+    }
+
+    /* ── BUTTON ───────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-8);
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-family: var(--font-body);
+      white-space: nowrap;
+    }
+    .btn--md {
+      height: 44px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: var(--weight-semibold);
+    }
+    .btn--primary   { background: var(--btn-primary-bg);   color: var(--btn-primary-fg); }
+    .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
+
+    /* ── EMPTY STATE ──────────────────────────── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--spacing-48) var(--spacing-32);
+      gap: var(--spacing-24);
+      width: 100%;
+    }
+
+    /* Illustration container */
+    .empty-state__illustration {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-16);
+      background: var(--color-olive-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .empty-state__illustration svg {
+      width: 48px;
+      height: 48px;
+      color: var(--color-olive-300);
+    }
+
+    /* Text block */
+    .empty-state__text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-8);
+      align-items: center;
+    }
+
+    .empty-state__title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: var(--weight-bold);
+      line-height: 24px;
+      letter-spacing: -0.36px;
+      color: var(--color-neutral-800);
+    }
+
+    .empty-state__body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: var(--weight-regular);
+      line-height: 22px;
+      color: var(--color-neutral-500);
+      max-width: 240px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── No groups ──────────────────────────── -->
+  <p class="section-label">No groups</p>
+  <div class="phone">
+    <div class="empty-state">
+      <div class="empty-state__illustration">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="8" y="14" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 14v-2a4 4 0 018 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24 26v-4M22 24h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No groups yet</p>
+        <p class="empty-state__body">Create a group to start splitting expenses with friends</p>
+      </div>
+      <button class="btn btn--md btn--primary">Create a group</button>
+    </div>
+  </div>
+
+  <!-- ── No expenses ────────────────────────── -->
+  <p class="section-label">No expenses</p>
+  <div class="phone">
+    <div class="empty-state">
+      <div class="empty-state__illustration">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="10" y="8" width="28" height="32" rx="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M17 20h14M17 26h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24 34v-4M22 32h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No expenses</p>
+        <p class="empty-state__body">Add your first expense to start tracking who owes what</p>
+      </div>
+      <button class="btn btn--md btn--primary">Add expense</button>
+    </div>
+  </div>
+
+  <!-- ── No friends ─────────────────────────── -->
+  <p class="section-label">No friends</p>
+  <div class="phone">
+    <div class="empty-state">
+      <div class="empty-state__illustration">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="20" cy="18" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 38c0-6.627 5.373-12 12-12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M34 28v8M30 32h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No friends yet</p>
+        <p class="empty-state__body">Add friends to split bills and track shared expenses</p>
+      </div>
+      <button class="btn btn--md btn--secondary">Add a friend</button>
+    </div>
+  </div>
+
+  <!-- ── No activity ────────────────────────── -->
+  <p class="section-label">No activity</p>
+  <div class="phone">
+    <div class="empty-state">
+      <div class="empty-state__illustration">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/>
+          <path d="M24 16v8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">All quiet here</p>
+        <p class="empty-state__body">Your recent activity will show up here</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

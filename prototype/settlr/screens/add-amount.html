@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Add Expense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/currency-chip.css">
+  <link rel="stylesheet" href="../css/bottom-sheet.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      height: 100dvh;
+      min-height: unset;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Content area ── */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 100px;
+    }
+
+    /* ── Amount Entry ── */
+    .amount-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-16);
+      padding: var(--spacing-32) var(--spacing-16) var(--spacing-24);
+    }
+
+    .amount-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+    }
+
+    .amount-prefix {
+      font-family: var(--font-display);
+      font-size: 44px;
+      font-weight: var(--weight-black);
+      line-height: 1;
+      letter-spacing: -1.76px;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .amount-field {
+      font-family: var(--font-display);
+      font-size: var(--font-size-64);
+      font-weight: var(--weight-black);
+      line-height: 1;
+      letter-spacing: -2.56px;
+      color: var(--text-primary);
+      background: transparent;
+      border: none;
+      outline: none;
+      min-width: 1ch;
+      width: 2ch;
+      max-width: calc(100vw - 80px);
+      padding: 0;
+      text-align: left;
+      caret-color: var(--text-brand);
+    }
+    .amount-field::placeholder { color: var(--border-default); }
+
+    /* ── Amount Error ── */
+    .amount-error {
+      padding: 0 var(--spacing-24);
+      width: 100%;
+    }
+
+    /* ── Title Input ── */
+    .title-area {
+      padding: 0 var(--spacing-32) var(--spacing-8);
+    }
+
+    .title-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: var(--border-medium) solid var(--border-default);
+      outline: none;
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-medium);
+      line-height: var(--line-height-24);
+      color: var(--text-primary);
+      text-align: center;
+      padding: var(--spacing-8) 0;
+      transition: border-color 0.15s;
+      caret-color: var(--text-brand);
+    }
+    .title-input::placeholder { color: var(--input-fg-default); }
+    .title-input:focus { border-bottom-color: var(--input-border-focused); }
+
+    /* ── Category Selector ── */
+    .category-area {
+      padding: var(--spacing-8) var(--spacing-32) var(--spacing-8);
+      display: flex;
+      justify-content: center;
+    }
+    .category-chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      height: 40px;
+      padding: 0 var(--spacing-16);
+      background: var(--chip-bg-off);
+      border: var(--border-small) solid var(--chip-border-off);
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--chip-fg-off);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .category-chip-btn.has-value {
+      background: var(--chip-bg-on);
+      border-color: var(--chip-border-on);
+      color: var(--chip-fg-on);
+    }
+    .category-chip-btn:active { opacity: 0.8; }
+    .category-chip-btn__emoji { font-size: var(--font-size-16); line-height: 1; }
+    .category-chip-btn i { font-size: var(--icon-sm); }
+
+    /* ── Category Sheet Grid ── */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+    }
+    .cat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: var(--spacing-12) var(--spacing-4);
+      border-radius: var(--radius-12);
+      border: var(--border-small) solid var(--border-subtle);
+      background: var(--surface-card);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cat-item:active { background: var(--contact-bg-selected); }
+    .cat-item.is-selected {
+      background: var(--contact-bg-selected);
+      border-color: var(--input-border-focused);
+    }
+    .cat-item__emoji { font-size: 24px; line-height: 1; }
+    .cat-item__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-medium);
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: var(--line-height-16);
+    }
+    .cat-item.is-selected .cat-item__label { color: var(--text-brand); }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 393px;
+      max-width: 100%;
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+      background: var(--surface-primary);
+      border-top: var(--border-small) solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-8);
+      transition: bottom 0.05s linear, padding-bottom 0.05s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="home-dashboard" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Add Expense</span>
+  </header>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <div class="content-area">
+    <!-- Amount -->
+    <div class="amount-area">
+      <button class="currency-chip" onclick="openCurrencySheet()">
+        &#8377; INR
+        <i class="ph ph-caret-down currency-chip__caret"></i>
+      </button>
+      <div class="amount-row">
+        <span class="amount-prefix">&#8377;</span>
+        <input
+          class="amount-field"
+          id="js-amount"
+          type="text"
+          inputmode="decimal"
+          placeholder="0"
+          autocomplete="off"
+        >
+      </div>
+      <div class="amount-error">
+        <p class="input-field__helper input-field__helper--error" id="amount-error" style="display:none;">Please enter a valid amount.</p>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title-area">
+      <input
+        class="title-input"
+        id="js-title"
+        type="text"
+        placeholder="What's this for?"
+        autocomplete="off"
+        enterkeyhint="next"
+      >
+    </div>
+
+    <!-- Category -->
+    <div class="category-area">
+      <button class="category-chip-btn" id="js-cat-btn" onclick="openCategorySheet()">
+        <span class="category-chip-btn__emoji">🏷️</span>
+        <span id="js-cat-label">Category</span>
+        <i class="ph ph-caret-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="bottom-cta" id="js-cta">
+    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next</button>
+  </div>
+
+  <!-- Category Selection Sheet -->
+  <div class="sheet-overlay" id="categorySheet" style="display:none;" onclick="closeCategorySheet(event)">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Category</span>
+        <button class="sheet__close" onclick="closeCategorySheet()" aria-label="Close">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="cat-grid" id="js-cat-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currency Selection Sheet -->
+  <div class="sheet-overlay" id="currencySheet" style="display:none;" onclick="closeCurrencySheet(event)">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Select Currency</span>
+        <button class="sheet__close" onclick="closeCurrencySheet()" aria-label="Close">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="sheet__content" id="currencyList" style="padding: var(--spacing-8) 0;"></div>
+    </div>
+  </div>
+
+  <script>
+    // ── Category sheet ──────────────────────────────
+    var CATEGORIES = [
+      { emoji: '🍽️', label: 'Food' },
+      { emoji: '✈️', label: 'Travel' },
+      { emoji: '🏠', label: 'Housing' },
+      { emoji: '🚗', label: 'Transport' },
+      { emoji: '🛒', label: 'Shopping' },
+      { emoji: '🎬', label: 'Entertainment' },
+      { emoji: '💊', label: 'Health' },
+      { emoji: '📱', label: 'Utilities' },
+      { emoji: '🎓', label: 'Education' },
+      { emoji: '🏋️', label: 'Fitness' },
+      { emoji: '🎁', label: 'Gifts' },
+      { emoji: '📝', label: 'Other' },
+    ];
+    var selectedCategory = { emoji: '📝', label: 'Other' };
+
+    function openCategorySheet() {
+      var grid = document.getElementById('js-cat-grid');
+      grid.innerHTML = CATEGORIES.map(function(c) {
+        var sel = c.label === selectedCategory.label ? ' is-selected' : '';
+        return '<div class="cat-item' + sel + '" onclick="selectCategory(\'' + c.label + '\')">' +
+          '<span class="cat-item__emoji">' + c.emoji + '</span>' +
+          '<span class="cat-item__label">' + c.label + '</span>' +
+        '</div>';
+      }).join('');
+      document.getElementById('categorySheet').style.display = 'flex';
+    }
+    function selectCategory(label) {
+      selectedCategory = CATEGORIES.find(function(c) { return c.label === label; });
+      var btn = document.getElementById('js-cat-btn');
+      btn.querySelector('.category-chip-btn__emoji').textContent = selectedCategory.emoji;
+      document.getElementById('js-cat-label').textContent = selectedCategory.label;
+      btn.classList.add('has-value');
+      closeCategorySheet();
+    }
+    function closeCategorySheet(e) {
+      if (e && e.target !== document.getElementById('categorySheet')) return;
+      document.getElementById('categorySheet').style.display = 'none';
+    }
+
+    // ── Currency sheet ──────────────────────────────
+    var CURRENCIES = [
+      { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+      { code: 'USD', symbol: '$', name: 'US Dollar' },
+      { code: 'EUR', symbol: '€', name: 'Euro' },
+      { code: 'GBP', symbol: '£', name: 'British Pound' },
+      { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+      { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
+    ];
+    var selectedCurrency = CURRENCIES[0];
+
+    function openCurrencySheet() {
+      var list = document.getElementById('currencyList');
+      list.innerHTML = CURRENCIES.map(function(c) {
+        return '<div onclick="selectCurrency(\'' + c.code + '\')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:var(--border-small) solid var(--border-subtle)">' +
+          '<div style="display:flex;align-items:center;gap:var(--spacing-12);">' +
+            '<span style="font-family:var(--font-body);font-size:var(--font-size-16);font-weight:var(--weight-semibold);color:var(--text-tertiary);width:28px;">' + c.symbol + '</span>' +
+            '<div><div style="font-family:var(--font-body);font-size:var(--font-size-14);font-weight:var(--weight-semibold);color:var(--text-primary);">' + c.code + '</div>' +
+            '<div style="font-family:var(--font-body);font-size:var(--font-size-12);font-weight:var(--weight-regular);color:var(--text-tertiary);">' + c.name + '</div></div>' +
+          '</div>' +
+          (c.code === selectedCurrency.code ? '<i class="ph-bold ph-check" style="font-size:var(--icon-md);color:var(--text-brand);"></i>' : '') +
+        '</div>';
+      }).join('');
+      document.getElementById('currencySheet').style.display = 'flex';
+    }
+    function selectCurrency(code) {
+      selectedCurrency = CURRENCIES.find(function(c) { return c.code === code; });
+      document.querySelector('.currency-chip').firstChild.textContent = selectedCurrency.symbol + '\u00A0' + selectedCurrency.code + '\u00A0';
+      document.querySelector('.amount-prefix').textContent = selectedCurrency.symbol;
+      closeCurrencySheet();
+    }
+    function closeCurrencySheet(e) {
+      if (e && e.target !== document.getElementById('currencySheet')) return;
+      document.getElementById('currencySheet').style.display = 'none';
+    }
+
+    // ── Amount input auto-resize ─────────────────────
+    var amtInput = document.getElementById('js-amount');
+    function resizeAmt() {
+      amtInput.style.width = Math.max(1, amtInput.value.length || 1) + 'ch';
+    }
+    amtInput.addEventListener('input', resizeAmt);
+    resizeAmt();
+
+    // Tab from amount to title
+    amtInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        e.preventDefault();
+        document.getElementById('js-title').focus();
+      }
+    });
+
+    // ── Keyboard-aware CTA ───────────────────────────
+    var cta = document.getElementById('js-cta');
+    function onViewportResize() {
+      var vv = window.visualViewport;
+      var keyboardH = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      if (keyboardH > 50) {
+        cta.style.bottom = keyboardH + 'px';
+        cta.style.paddingBottom = 'var(--spacing-12)';
+      } else {
+        cta.style.bottom = '0px';
+        cta.style.paddingBottom = 'var(--spacing-32)';
+      }
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', onViewportResize);
+      window.visualViewport.addEventListener('scroll', onViewportResize);
+    }
+
+    // ── Next ────────────────────────────────────────
+    document.getElementById('js-next').addEventListener('click', function() {
+      var amountError = document.getElementById('amount-error');
+      var amt = parseFloat(amtInput.value);
+      if (!amt || amt <= 0) {
+        amountError.style.display = 'block';
+        amtInput.closest('.amount-area') && amtInput.focus();
+        return;
+      }
+      amountError.style.display = 'none';
+      var title = document.getElementById('js-title').value.trim();
+      if (!title) { alert('Add a title for this expense'); return; }
+      sessionStorage.setItem('settlr_new_expense', JSON.stringify({
+        totalAmount: amt,
+        title: title,
+        category: selectedCategory.label,
+        emoji: selectedCategory.emoji,
+        date: new Date().toISOString().slice(0, 10)
+      }));
+      location.href = 'add-group';
+    });
+  </script>
+
+</body>
+</html>

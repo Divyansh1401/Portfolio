@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Welcome!</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+    /* ── Welcome Content ── */
+    .welcome-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-32) var(--spacing-24);
+      gap: var(--spacing-24);
+      text-align: center;
+      position: relative;
+    }
+
+    /* ── Celebration Icon ── */
+    .welcome-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-full);
+      background: var(--type-chip-bg-on);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    }
+    .welcome-icon__emoji {
+      font-size: 44px;
+      line-height: 1;
+      animation: wiggle 0.5s ease 0.8s both;
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes wiggle {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(-12deg); }
+      50% { transform: rotate(12deg); }
+      75% { transform: rotate(-6deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* ── Text ── */
+    .welcome-heading {
+      font-family: var(--font-display);
+      font-size: var(--font-size-32);
+      font-weight: var(--weight-black);
+      line-height: var(--line-height-36);
+      letter-spacing: -1.28px;
+      color: var(--top-app-bar-title);
+      animation: fadeUp 0.5s ease 0.6s both;
+    }
+    .welcome-subheading {
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-27);
+      color: var(--text-secondary);
+      max-width: 300px;
+      animation: fadeUp 0.5s ease 0.8s both;
+    }
+
+    /* ── Feature Cards ── */
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+      width: 100%;
+      padding: 0 var(--spacing-8);
+      animation: fadeUp 0.5s ease 1s both;
+    }
+    .feature-card {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-radius: var(--radius-12);
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+    }
+    .feature-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--icon-md);
+      flex-shrink: 0;
+    }
+    .feature-card__icon--groups {
+      background: var(--type-chip-bg-on);
+    }
+    .feature-card__icon--split {
+      background: var(--label-success-bg);
+    }
+    .feature-card__icon--settle {
+      background: var(--btn-icon-bg);
+    }
+    .feature-card__text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+    .feature-card__title {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .feature-card__desc {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-19);
+      color: var(--text-tertiary);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Confetti (decorative) ── */
+    .confetti {
+      position: fixed;
+      inset: 0;
+      max-width: 393px;
+      margin: 0 auto;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .confetti__dot {
+      position: absolute;
+      border-radius: var(--radius-full);
+      animation: confettiFall 2.5s ease-out both;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(140px) rotate(360deg) scale(0.2); }
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+      animation: fadeUp 0.5s ease 1.2s both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-explore {
+      display: flex;
+      width: 100%;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Confetti ── -->
+  <div class="confetti">
+    <div class="confetti__dot" style="width: 10px; height: 10px; left: 12%; top: 18%; background: var(--fab-bg); animation-delay: 0.3s;"></div>
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 28%; top: 12%; background: var(--expense-lent-fg); animation-delay: 0.5s;"></div>
+    <div class="confetti__dot" style="width: 6px; height: 6px; left: 52%; top: 15%; background: var(--text-brand); animation-delay: 0.4s;"></div>
+    <div class="confetti__dot" style="width: 10px; height: 10px; left: 72%; top: 20%; background: var(--label-success-fg); animation-delay: 0.6s;"></div>
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 88%; top: 14%; background: var(--btn-secondary-bg); animation-delay: 0.35s;"></div>
+    <div class="confetti__dot" style="width: 6px; height: 6px; left: 42%; top: 10%; background: var(--expense-lent-bg); animation-delay: 0.55s;"></div>
+    <div class="confetti__dot" style="width: 10px; height: 10px; left: 8%; top: 24%; background: var(--type-chip-border-off); animation-delay: 0.7s;"></div>
+    <div class="confetti__dot" style="width: 8px; height: 8px; left: 62%; top: 26%; background: var(--label-success-bg); animation-delay: 0.45s;"></div>
+  </div>
+
+  <!-- ── Welcome Content ── -->
+  <div class="welcome-content">
+    <div class="welcome-icon">
+      <span class="welcome-icon__emoji">🎉</span>
+    </div>
+
+    <h1 class="welcome-heading">Welcome to Settlr!</h1>
+    <p class="welcome-subheading">You're all set. Here's what you can do:</p>
+
+    <!-- Feature Cards -->
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--groups">👥</div>
+        <div class="feature-card__text">
+          <div class="feature-card__title">Create Groups</div>
+          <div class="feature-card__desc">Organize trips, roommates, or any shared expenses</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--split">💸</div>
+        <div class="feature-card__text">
+          <div class="feature-card__title">Split Expenses</div>
+          <div class="feature-card__desc">Divide bills equally, by amount, or by percentage</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--settle">🤝</div>
+        <div class="feature-card__text">
+          <div class="feature-card__title">Settle Up</div>
+          <div class="feature-card__desc">Track who owes what and settle debts easily</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="bottom-cta">
+    <a href="home-dashboard" class="btn btn--primary btn--lg btn--full">Let's Go!</a>
+    <a href="home-dashboard" class="btn-explore">Skip &amp; Explore</a>
+  </div>
+
+</body>
+</html>

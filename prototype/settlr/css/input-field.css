@@ -1,0 +1,102 @@
+/* ============================================
+   Settlr — Input Field Component
+   States: Empty, Active, Filled, Error, Disabled
+   ============================================ */
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+/* ---- Label ---- */
+.input-field__label {
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-14);
+  color: var(--input-label);
+}
+
+/* ---- Input Container ---- */
+.input-field__box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-full);
+  border: var(--border-small) solid var(--input-border-default);
+  background-color: var(--input-bg);
+  transition: all 0.15s ease;
+}
+
+.input-field__box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--input-fg-active);
+}
+
+.input-field__box input::placeholder {
+  color: var(--input-fg-default);
+}
+
+/* ---- Icons ---- */
+.input-field__icon {
+  flex-shrink: 0;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  color: var(--input-fg-default);
+}
+
+/* ---- Helper text ---- */
+.input-field__helper {
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-14);
+  color: var(--input-helper);
+}
+
+/* ---- States ---- */
+
+/* Active / Focused */
+.input-field--active .input-field__box,
+.input-field__box:focus-within {
+  background-color: var(--input-bg-focused);
+  border-color: var(--input-border-focused);
+}
+
+/* Filled */
+.input-field--filled .input-field__box {
+  background-color: var(--input-bg);
+  border-color: var(--input-border-default);
+}
+.input-field--filled .input-field__box input {
+  color: var(--input-fg-active);
+}
+
+/* Error */
+.input-field--error .input-field__box {
+  background-color: var(--input-bg-error);
+  border-color: var(--input-border-error);
+}
+.input-field--error .input-field__helper {
+  color: var(--input-helper-error);
+}
+
+/* Disabled */
+.input-field--disabled .input-field__box {
+  background-color: var(--input-bg);
+  border-color: transparent;
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+.input-field--disabled .input-field__box input {
+  color: var(--input-fg-default);
+}

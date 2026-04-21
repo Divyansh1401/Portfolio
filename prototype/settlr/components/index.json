@@ -1,0 +1,338 @@
+{
+  "meta": {
+    "lastUpdated": "2026-04-09",
+    "note": "Scan this first to find the right component. Then read the specific spec file for full details."
+  },
+  "components": [
+    {
+      "key": "button",
+      "name": "Button",
+      "baseClass": ".btn",
+      "variants": ["--primary", "--secondary", "--ghost", "--destructive"],
+      "sizes": ["--sm", "--md", "--lg"],
+      "description": "Main CTA and action element. Use for any tappable action.",
+      "spec": "components/button.md",
+      "css": "css/button.css"
+    },
+    {
+      "key": "icon-button",
+      "name": "Icon Button",
+      "baseClass": ".icon-btn",
+      "variants": [],
+      "sizes": ["--sm", "--md", "--lg"],
+      "description": "Circular icon-only button for secondary or toolbar actions.",
+      "spec": "components/icon-button.md",
+      "css": "css/icon-button.css"
+    },
+    {
+      "key": "chip",
+      "name": "Chip",
+      "baseClass": ".chip",
+      "variants": ["--on (active state)"],
+      "sizes": ["--sm", "--md", "--lg"],
+      "description": "Toggleable pill for filters or category selection.",
+      "spec": "components/chip.md",
+      "css": "css/chip.css"
+    },
+    {
+      "key": "type-chip",
+      "name": "Type Chip",
+      "baseClass": ".type-chip",
+      "variants": ["is-selected"],
+      "sizes": [],
+      "description": "Vertical tile with illustration for group/expense type selection.",
+      "spec": "components/type-chip.md",
+      "css": "css/type-chip.css"
+    },
+    {
+      "key": "input-field",
+      "name": "Input Field",
+      "baseClass": ".input-field",
+      "variants": ["--error", "--disabled"],
+      "sizes": [],
+      "description": "Text input with label, placeholder, helper text, and icon slots.",
+      "spec": "components/input-field.md",
+      "css": "css/input-field.css"
+    },
+    {
+      "key": "label",
+      "name": "Label / Status Badge",
+      "baseClass": ".label",
+      "variants": ["--success", "--warning", "--error", "--info", "--neutral", "--owe", "--lent", "--settled"],
+      "sizes": ["--sm", "--md", "--lg"],
+      "description": "Small semantic status indicator. Use for expense states, balance indicators.",
+      "spec": "components/labels.md",
+      "css": "css/labels.css"
+    },
+    {
+      "key": "badge",
+      "name": "Badge",
+      "baseClass": ".badge",
+      "variants": ["--success", "--warning", "--error", "--info", "--default"],
+      "sizes": ["--sm", "--md", "--lg"],
+      "description": "Pill-shaped status indicator with optional icon. Use for notification counts.",
+      "spec": "components/badge.md",
+      "css": "css/badge.css"
+    },
+    {
+      "key": "avatar",
+      "name": "Avatar",
+      "baseClass": ".avatar",
+      "variants": ["--initials", "--photo"],
+      "sizes": ["--xs", "--sm", "--md", "--lg"],
+      "description": "Circular user representation. Always use this — never custom circles for users.",
+      "spec": "components/avatar.md",
+      "css": "css/avatar.css"
+    },
+    {
+      "key": "member-pill",
+      "name": "Member Pill",
+      "baseClass": ".member-pill",
+      "variants": ["removable"],
+      "sizes": [],
+      "description": "Compact avatar + name pill for showing selected group members.",
+      "spec": "components/member-pill.md",
+      "css": "css/avatar.css"
+    },
+    {
+      "key": "radio",
+      "name": "Radio",
+      "baseClass": ".radio-control",
+      "variants": [".radio-item", ".radio-item-boxed"],
+      "sizes": [],
+      "description": "Single-select control. Use radio-item for list rows, radio-item-boxed for card-style.",
+      "spec": "components/radio.md",
+      "css": "css/radio.css"
+    },
+    {
+      "key": "checkbox",
+      "name": "Checkbox",
+      "baseClass": ".checkbox-control",
+      "variants": [".checkbox-item"],
+      "sizes": [],
+      "description": "Multi-select control. Use checkbox-item for list rows.",
+      "spec": "components/checkbox.md",
+      "css": "css/checkbox.css"
+    },
+    {
+      "key": "otp",
+      "name": "OTP Input",
+      "baseClass": ".otp-group",
+      "variants": [".otp-digit"],
+      "sizes": [],
+      "description": "One-time password digit inputs. Use for verification screens.",
+      "spec": "components/otp.md",
+      "css": "css/otp.css"
+    },
+    {
+      "key": "person-item",
+      "name": "Person Item",
+      "baseClass": ".person-item",
+      "variants": ["--input", "--lent", "--owe", "--settled"],
+      "sizes": [],
+      "description": "List row for a contact. Use in people lists, friend searches, payer selection.",
+      "spec": "components/list-person-item.md",
+      "css": "css/list-items.css"
+    },
+    {
+      "key": "expense-item",
+      "name": "Expense Item",
+      "baseClass": ".expense-item",
+      "variants": ["--lent", "--owe"],
+      "sizes": [],
+      "description": "List row for an expense entry with illustration and balance.",
+      "spec": "components/list-expense-item.md",
+      "css": "css/list-items.css"
+    },
+    {
+      "key": "card-group",
+      "name": "Group Card",
+      "baseClass": ".card-group",
+      "variants": ["--lent", "--owe"],
+      "sizes": [],
+      "description": "Card showing a group with image, name, member count, and balance.",
+      "spec": "components/card-group.md",
+      "css": "css/cards.css"
+    },
+    {
+      "key": "card-create",
+      "name": "Create Card",
+      "baseClass": ".card-create",
+      "variants": [],
+      "sizes": [],
+      "description": "Dashed card prompting new group creation. Sits alongside group cards.",
+      "spec": "components/card-group.md",
+      "css": "css/cards.css"
+    },
+    {
+      "key": "bottom-nav",
+      "name": "Bottom Nav",
+      "baseClass": ".bottom-nav",
+      "variants": [],
+      "sizes": [],
+      "description": "Fixed floating pill nav bar. Only on main screens: home, people, activity.",
+      "spec": "components/bottom-nav.md",
+      "css": "css/navigation.css"
+    },
+    {
+      "key": "segment-control",
+      "name": "Segment Control",
+      "baseClass": ".segment-control",
+      "variants": [".segment-item"],
+      "sizes": [],
+      "description": "Tab switcher within a screen for toggling between views.",
+      "spec": "components/segment-control.md",
+      "css": "css/navigation.css"
+    },
+    {
+      "key": "fab",
+      "name": "FAB",
+      "baseClass": ".fab",
+      "variants": [],
+      "sizes": [],
+      "description": "64px circular floating action button. Fixed bottom-right. Add expense shortcut.",
+      "spec": "components/fab.md",
+      "css": "css/fab.css"
+    },
+    {
+      "key": "heading",
+      "name": "Heading",
+      "baseClass": ".heading",
+      "variants": [],
+      "sizes": [],
+      "description": "Section heading row with title text and optional right-side action link.",
+      "spec": "components/heading.md",
+      "css": "css/heading.css"
+    },
+    {
+      "key": "bottom-sheet",
+      "name": "Bottom Sheet",
+      "baseClass": ".sheet",
+      "variants": [".sheet-overlay"],
+      "sizes": [],
+      "description": "Modal panel that slides up from bottom. Use for pickers, confirmations.",
+      "spec": "components/bottom-sheet.md",
+      "css": "css/bottom-sheet.css"
+    },
+    {
+      "key": "top-app-bar",
+      "name": "Top App Bar",
+      "baseClass": ".top-app-bar",
+      "variants": ["--bordered"],
+      "sizes": [],
+      "description": "Screen header with back icon, title, and optional right action. Use on all flow screens.",
+      "spec": "components/top-app-bar.md",
+      "css": "css/top-app-bar.css"
+    },
+    {
+      "key": "header-chips",
+      "name": "Header Chips",
+      "baseClass": ".header-chips",
+      "variants": [],
+      "sizes": [],
+      "description": "Horizontally scrollable chip strip directly below top app bar. Use for filters.",
+      "spec": "components/header-chips.md",
+      "css": "css/header-chips.css"
+    },
+    {
+      "key": "action-button-row",
+      "name": "Action Button Row",
+      "baseClass": ".action-btn-row",
+      "variants": [],
+      "sizes": [],
+      "description": "Fixed bottom row with one or two full-width buttons. Use at end of flows.",
+      "spec": "components/action-button-row.md",
+      "css": "css/action-button-row.css"
+    },
+    {
+      "key": "settlement-item",
+      "name": "Settlement Item",
+      "baseClass": ".settlement-item",
+      "variants": ["--lent", "--owe"],
+      "sizes": [],
+      "description": "List row showing a person's balance with settle/remind CTA.",
+      "spec": "components/settlement-item.md",
+      "css": "css/settlement-item.css"
+    },
+    {
+      "key": "avatar-stack",
+      "name": "Avatar Stack",
+      "baseClass": ".avatar-stack",
+      "variants": [".avatar-stack__item", ".avatar-stack__overflow", ".avatar-stack-group"],
+      "sizes": ["--xs", "--sm", "--md"],
+      "description": "Row of overlapping avatars with +N overflow. Use on group cards and detail screens.",
+      "spec": "components/avatar-stack.md",
+      "css": "css/avatar-stack.css"
+    },
+    {
+      "key": "empty-state",
+      "name": "Empty State",
+      "baseClass": ".empty-state",
+      "variants": [],
+      "sizes": [],
+      "description": "Centered placeholder shown when a list has no items. Illustration + title + body + optional CTA.",
+      "spec": "components/empty-state.md",
+      "css": "css/empty-state.css"
+    },
+    {
+      "key": "toast",
+      "name": "Toast",
+      "baseClass": ".toast",
+      "variants": ["--neutral", "--brand", "--success", "--warning", "--error", "--info"],
+      "sizes": [],
+      "description": "Floating notification. Use for action confirmations and errors.",
+      "spec": "components/toast.md",
+      "css": "css/toast.css"
+    },
+    {
+      "key": "search-input",
+      "name": "Search Input",
+      "baseClass": ".search-input",
+      "variants": [],
+      "sizes": [],
+      "description": "Full-width pill search field with magnifying glass. Use on list/search screens.",
+      "spec": "components/search-input.md",
+      "css": "css/search-input.css"
+    },
+    {
+      "key": "amount-input",
+      "name": "Amount Input",
+      "baseClass": ".amount-input",
+      "variants": ["--currency", "--percent", "--shares", "--stepper"],
+      "sizes": [],
+      "description": "Numeric input for split amounts. Supports 4 split modes.",
+      "spec": "components/amount-input.md",
+      "css": "css/amount-input.css"
+    },
+    {
+      "key": "currency-chip",
+      "name": "Currency Chip",
+      "baseClass": ".currency-chip",
+      "variants": [],
+      "sizes": [],
+      "description": "Pill button for currency selection with dropdown caret.",
+      "spec": "components/currency-chip.md",
+      "css": "css/currency-chip.css"
+    },
+    {
+      "key": "status-bar",
+      "name": "Status Bar",
+      "baseClass": ".status-bar",
+      "variants": [],
+      "sizes": [],
+      "description": "iOS-style status bar with time and system icons. Top of every screen.",
+      "spec": null,
+      "css": "css/status-bar.css"
+    },
+    {
+      "key": "faq",
+      "name": "FAQ / Accordion",
+      "baseClass": ".faq-item",
+      "variants": [],
+      "sizes": [],
+      "description": "Expandable question-answer item with toggle icon. Use for help/FAQ screens.",
+      "spec": "components/faq.md",
+      "css": "css/faq.css"
+    }
+  ]
+}

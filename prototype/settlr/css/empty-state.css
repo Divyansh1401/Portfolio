@@ -1,0 +1,60 @@
+/* ============================================
+   Settlr — Empty State Component
+   Centered placeholder for screens with no content.
+   Uses: --empty-state-* tokens + btn component.
+   ============================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-48) var(--spacing-32);
+  gap: var(--spacing-24);
+  width: 100%;
+}
+
+/* ---- Illustration ---- */
+.empty-state__illustration {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-16);
+  background-color: var(--empty-state-illus-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--empty-state-illus-fg);
+}
+
+.empty-state__illustration svg {
+  width: 48px;
+  height: 48px;
+}
+
+/* ---- Text ---- */
+.empty-state__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  align-items: center;
+}
+
+.empty-state__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-18);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  letter-spacing: -0.36px;
+  color: var(--empty-state-title-fg);
+}
+
+.empty-state__body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: 22px;
+  color: var(--empty-state-body-fg);
+  max-width: 240px;
+}
