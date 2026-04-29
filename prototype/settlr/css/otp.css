@@ -1,0 +1,93 @@
+/* ============================================
+   Settlr — OTP Input Component
+   States: Empty, Focus, Filled, Error, Disabled
+   ============================================ */
+
+/* ---- Single Digit ---- */
+.otp-digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: var(--spacing-12);
+  border-radius: var(--radius-8);
+  border: var(--border-small) solid var(--input-border-default);
+  background-color: var(--input-bg);
+  font-family: var(--font-body);
+  font-size: var(--font-size-20);
+  font-weight: var(--weight-regular);
+  line-height: normal;
+  color: var(--input-fg-default);
+  text-align: center;
+  caret-color: var(--otp-caret);
+  transition: all 0.15s ease;
+}
+
+.otp-digit::placeholder {
+  color: var(--input-fg-default);
+  font-weight: var(--weight-regular);
+}
+
+/* Focus */
+.otp-digit:focus,
+.otp-digit--focus {
+  background-color: var(--input-bg-focused);
+  border-color: var(--input-border-focused);
+  border-width: var(--border-large);
+  outline: none;
+}
+
+/* Filled */
+.otp-digit--filled {
+  background-color: var(--input-bg);
+  border-color: var(--input-border-default);
+  color: var(--input-fg-active);
+  font-weight: var(--weight-semibold);
+}
+
+/* Error */
+.otp-digit--error {
+  background-color: var(--input-bg-error);
+  border-color: var(--input-border-error);
+}
+
+/* Disabled */
+.otp-digit--disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+/* ---- 6-Digit Group ---- */
+.otp-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.otp-group__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-14);
+  color: var(--input-label);
+}
+
+.otp-group__digits {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: space-between;
+}
+
+.otp-group__helper {
+  font-family: var(--font-body);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-14);
+  color: var(--input-helper);
+}
+
+.otp-group--error .otp-group__helper {
+  color: var(--input-helper-error);
+}

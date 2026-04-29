@@ -1,0 +1,28 @@
+/* ============================================
+   Settlr Design System — Currency Chip
+   ============================================ */
+
+.currency-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-full);
+  border: var(--border-small) solid var(--chip-border-off);
+  background-color: var(--chip-bg-off);
+  color: var(--chip-fg-off);
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.currency-chip__caret {
+  width: var(--icon-xs);
+  height: var(--icon-xs);
+  flex-shrink: 0;
+  color: currentColor;
+}

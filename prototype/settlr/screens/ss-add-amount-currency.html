@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html, body { margin: 0; padding: 0; width: 393px; height: 852px; overflow: hidden; }
+    iframe { width: 393px; height: 852px; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <iframe id="f" src="add-amount.html"></iframe>
+  <script>
+    document.getElementById('f').addEventListener('load', function() {
+      try { this.contentWindow.openCurrencySheet(); } catch(e) {}
+    });
+  </script>
+</body>
+</html>

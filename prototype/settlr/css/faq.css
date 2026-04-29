@@ -1,0 +1,43 @@
+/* ============================================
+   Settlr Design System — FAQ / Accordion
+   ============================================ */
+
+.faq-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12);
+  border-bottom: var(--border-small) solid var(--faq-border);
+}
+
+.faq-item__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+}
+
+.faq-item__question {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: normal;
+  color: var(--faq-question-fg);
+  flex: 1;
+}
+
+.faq-item__icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  color: var(--faq-icon-fg);
+  flex-shrink: 0;
+}
+
+.faq-item__answer {
+  font-family: var(--font-body);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-16);
+  color: var(--faq-answer-fg);
+}

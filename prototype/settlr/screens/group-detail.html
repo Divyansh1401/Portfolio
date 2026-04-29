@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Goa Trip</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      z-index: 10;
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+    /* ── Hero Photo ── */
+    .hero-photo {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      /* TODO: add --surface-hero-gradient semantic token */
+      background: linear-gradient(160deg, var(--color-olive-300) 0%, var(--color-olive-500) 40%, var(--color-olive-700) 100%);
+    }
+    .hero-photo__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Placeholder when no image — warm gradient with pattern */
+    .hero-photo__placeholder {
+      width: 100%;
+      height: 100%;
+      /* TODO: add --surface-hero-gradient semantic token */
+      background:
+        linear-gradient(160deg, var(--color-olive-200) 0%, var(--color-olive-400) 50%, var(--color-olive-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-photo__placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(60deg, rgba(255,255,255,0.06) 25%, transparent 25%),
+        linear-gradient(-60deg, rgba(255,255,255,0.06) 25%, transparent 25%),
+        linear-gradient(60deg, transparent 75%, rgba(255,255,255,0.06) 75%),
+        linear-gradient(-60deg, transparent 75%, rgba(255,255,255,0.06) 75%);
+      background-size: 40px 40px;
+    }
+    .hero-photo__placeholder-emoji {
+      font-size: 80px;
+      z-index: 1;
+    }
+
+    /* ── Overlay Buttons ── */
+    .hero-photo__actions {
+      position: absolute;
+      top: 52px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      z-index: 5;
+    }
+    .hero-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--surface-primary);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .hero-btn:active { background: var(--btn-icon-bg-pressed); }
+    .hero-btn i { font-size: var(--icon-md); }
+
+    /* ── Group Avatar (overlapping) ── */
+    .group-avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: -48px;
+      position: relative;
+      z-index: 2;
+    }
+    /* TODO: add --avatar-xl size (96px) to avatar.css component spec */
+    .group-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-16);
+      background: var(--surface-card);
+      border: var(--border-large) solid var(--avatar-ring);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+    }
+    .group-avatar__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .group-avatar__emoji {
+      font-size: 42px;
+    }
+
+    /* ── Info Section ── */
+    .info-section {
+      text-align: center;
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-20);
+      background: var(--surface-primary);
+    }
+    .info-section__name {
+      font-family: var(--font-display);
+      font-size: var(--font-size-24);
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.72px;
+      color: var(--text-primary);
+      line-height: var(--line-height-30);
+    }
+    .info-section__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-medium);
+      margin-top: var(--spacing-4);
+    }
+    .info-section__label--owe { color: var(--expense-owe-fg); }
+    .info-section__label--lent { color: var(--expense-lent-fg); }
+    .info-section__amount {
+      font-family: var(--font-display);
+      font-size: var(--font-size-32);
+      font-weight: var(--weight-black);
+      letter-spacing: -1.28px;
+      line-height: 38px;
+      margin-top: var(--spacing-4);
+    }
+    .info-section__amount--owe { color: var(--expense-owe-fg); }
+    .info-section__amount--lent { color: var(--expense-lent-fg); }
+
+    /* ── Segment Wrapper ── */
+    .segment-wrap {
+      padding: 0 var(--spacing-16) var(--spacing-16);
+      background: var(--surface-primary);
+    }
+
+    /* ── Scrollable Content ── */
+    .detail-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: transparent;
+      padding-bottom: 90px;
+    }
+
+    /* ── Tab Panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.is-active { display: block; }
+
+
+    /* ── Transaction Item ── */
+    .txn-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      background: transparent;
+      border-bottom: var(--border-small) solid var(--border-subtle);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .txn-item:active { background: var(--contact-bg-selected); }
+    .txn-item__illus {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-8);
+      background: var(--btn-icon-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .txn-item__text {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+    }
+    .txn-item__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .txn-item__subtitle {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-18);
+      color: var(--text-tertiary);
+    }
+    .txn-item__right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+      gap: var(--spacing-2);
+    }
+    .txn-item__badge {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      line-height: var(--line-height-16);
+    }
+    .txn-item__amount {
+      font-family: var(--font-display);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-bold);
+      line-height: var(--line-height-20);
+    }
+    .txn-item--lent .txn-item__badge { color: var(--expense-lent-fg); }
+    .txn-item--lent .txn-item__amount { color: var(--expense-lent-fg); }
+    .txn-item--owe .txn-item__badge { color: var(--expense-owe-fg); }
+    .txn-item--owe .txn-item__amount { color: var(--expense-owe-fg); }
+    .txn-item--settled .txn-item__badge { color: var(--text-tertiary); }
+    .txn-item--settled .txn-item__amount { color: var(--text-tertiary); }
+
+    /* ── Balances Tab ── */
+    .balance-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .balance-row__avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .balance-row__text {
+      flex: 1;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-20);
+      color: var(--text-secondary);
+    }
+    .balance-row__text strong { color: var(--text-primary); font-weight: var(--weight-semibold); }
+    .balance-row__amount {
+      flex-shrink: 0;
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-bold);
+    }
+    .balance-row__amount--lent { color: var(--expense-lent-fg); }
+    .balance-row__amount--owe  { color: var(--expense-owe-fg); }
+
+    /* ── Empty State (hidden by default; shown when tab list is empty) ── */
+    .tab-empty { display: none; }
+    .tab-panel.is-empty .tab-empty { display: flex; }
+
+    /* ── Sticky Bottom Action Row ── */
+    .sticky-actions {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 393px;
+      display: flex;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16) 28px;
+      background: var(--surface-primary);
+      z-index: 10;
+    }
+    .sticky-actions .btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-8);
+      height: 52px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-semibold);
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .sticky-actions .btn--secondary {
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-fg);
+    }
+    .sticky-actions .btn--secondary:active { background: var(--btn-secondary-bg-pressed); }
+    .sticky-actions .btn--primary {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+    }
+    .sticky-actions .btn--primary:active { background: var(--btn-primary-bg-pressed); }
+    .btn__icon-sq {
+      width: var(--icon-md);
+      height: var(--icon-md);
+      flex-shrink: 0;
+      color: currentColor;
+    }
+    .btn__icon-sq i { font-size: var(--icon-md); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar (overlaid on hero) ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Hero Photo ── -->
+  <div class="hero-photo">
+    <div class="hero-photo__placeholder">
+      <span class="hero-photo__placeholder-emoji" id="js-group-emoji">🏖️</span>
+    </div>
+    <!-- Overlay back + settings -->
+    <div class="hero-photo__actions">
+      <a href="home-dashboard" class="hero-btn" aria-label="Back">
+        <i class="ph-bold ph-caret-left"></i>
+      </a>
+      <a href="edit-group" class="hero-btn" aria-label="Edit group">
+        <i class="ph ph-gear"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Group Avatar ── -->
+  <div class="group-avatar-wrap">
+    <div class="group-avatar">
+      <span class="group-avatar__emoji" id="js-group-avatar-emoji">🏖️</span>
+    </div>
+  </div>
+
+  <!-- ── Info Section ── -->
+  <div class="info-section">
+    <h1 class="info-section__name" id="js-group-name">Goa Trip</h1>
+    <p class="info-section__label" id="js-group-balance-label">Overall you owe</p>
+    <p class="info-section__amount" id="js-group-balance-amount">—</p>
+  </div>
+
+  <!-- ── Segment Control ── -->
+  <div class="segment-wrap">
+    <div class="segment-control">
+      <button class="segment-item is-active" data-tab="transactions">
+        <span class="segment-item__icon">
+          <i class="ph ph-list"></i>
+        </span>
+        Transactions
+      </button>
+      <button class="segment-item" data-tab="balances">
+        <span class="segment-item__icon">
+          <i class="ph ph-arrow-up"></i>
+        </span>
+        Balances
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="detail-content">
+
+    <!-- ── Transactions Tab ── -->
+    <div class="tab-panel is-active" id="tab-transactions">
+      <!-- Empty state — shown when there are no transactions -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 14C8 11.8 9.8 10 12 10h24c2.2 0 4 1.8 4 4v24c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V14z" fill="currentColor" opacity="0.2"/>
+            <path d="M16 22h16M16 28h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">No transactions yet</p>
+          <p class="empty-state__body">Add your first expense for this group to start tracking splits.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Balances Tab ── -->
+    <div class="tab-panel" id="tab-balances">
+      <!-- Empty state — shown when all balances are settled -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="16" fill="currentColor" opacity="0.2"/>
+            <path d="M17 24l5 5 9-10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">All settled up!</p>
+          <p class="empty-state__body">Everyone in this group is even. No outstanding balances.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Sticky Bottom Actions ── -->
+  <div class="sticky-actions">
+    <a href="settle-select" class="btn btn--secondary">
+      Settle up
+      <span class="btn__icon-sq">
+        <i class="ph-bold ph-arrow-right"></i>
+      </span>
+    </a>
+    <a href="add-amount" class="btn btn--primary">
+      Add expense
+      <span class="btn__icon-sq">
+        <i class="ph-bold ph-plus"></i>
+      </span>
+    </a>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/render.js"></script>
+  <script>
+    (function () {
+      // Read group id from URL
+      var params  = new URLSearchParams(window.location.search);
+      var groupId = params.get('id') || 'goa-trip';
+      var group   = Store.getGroup(groupId);
+      if (!group) return;
+
+      // Header
+      document.getElementById('js-group-emoji').textContent        = group.emoji;
+      document.getElementById('js-group-avatar-emoji').textContent = group.emoji;
+      document.getElementById('js-group-name').textContent         = group.name;
+      document.title = 'Settlr — ' + group.name;
+
+      // Balance label + amount
+      var bal      = Store.getGroupBalance(groupId);
+      var labelEl  = document.getElementById('js-group-balance-label');
+      var amountEl = document.getElementById('js-group-balance-amount');
+      if (bal.direction === 'lent') {
+        labelEl.textContent  = 'Overall you lent';
+        labelEl.className    = 'info-section__label info-section__label--lent';
+        amountEl.className   = 'info-section__amount info-section__amount--lent';
+        amountEl.textContent = Store.formatINR(bal.amount);
+      } else if (bal.direction === 'owe') {
+        labelEl.textContent  = 'Overall you owe';
+        labelEl.className    = 'info-section__label info-section__label--owe';
+        amountEl.className   = 'info-section__amount info-section__amount--owe';
+        amountEl.textContent = Store.formatINR(bal.amount);
+      } else {
+        labelEl.textContent  = 'All settled up';
+        labelEl.className    = 'info-section__label';
+        amountEl.className   = 'info-section__amount';
+        amountEl.textContent = '₹0';
+      }
+
+      // Transactions tab
+      var currentUser = Store.getCurrentUser();
+      var expenses    = Store.getExpenses(groupId);
+      var grouped     = Store.groupExpensesByDate(expenses);
+      var txnHtml     = '';
+      grouped.forEach(function (pair) {
+        var label    = pair[0];
+        var items    = pair[1];
+        var itemsHtml = items.map(function (e) {
+          var net          = Store._computeUserNet(e);
+          var payerContact = Store.getContact(e.paidById);
+          var payerName    = e.paidById === currentUser.id
+            ? 'You'
+            : (payerContact ? payerContact.name.split(' ')[0] : 'Someone');
+          var contextLabel = payerName + ' paid \u00b7 ' + Store.formatINR(e.totalAmount) + ' total';
+          return Render.txnItem(e, net, contextLabel);
+        }).join('');
+        txnHtml += Render.dateSection(label, itemsHtml);
+      });
+      var txnPanel = document.getElementById('tab-transactions');
+      if (txnHtml) {
+        txnPanel.innerHTML = txnHtml;
+      } else {
+        txnPanel.classList.add('is-empty');
+      }
+
+      // Balances tab
+      var members  = Store.getMemberBalancesForGroup(groupId);
+      var balHtml  = members.map(function (m) { return Render.balanceRow(m); }).join('');
+      var balPanel = document.getElementById('tab-balances');
+      if (balHtml) {
+        balPanel.innerHTML = balHtml;
+      } else {
+        balPanel.classList.add('is-empty');
+      }
+    }());
+  </script>
+
+  <!-- ── Tab Switching JS ── -->
+  <script>
+    const tabs = document.querySelectorAll('.segment-item');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // deactivate all
+        tabs.forEach(t => t.classList.remove('is-active'));
+        panels.forEach(p => p.classList.remove('is-active'));
+        // activate clicked
+        tab.classList.add('is-active');
+        const target = tab.getAttribute('data-tab');
+        document.getElementById('tab-' + target).classList.add('is-active');
+      });
+    });
+  </script>
+
+</body>
+</html>

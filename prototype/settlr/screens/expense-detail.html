@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Expense Detail</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Top Bar ── */
+    .top-bar { display: flex; align-items: center; gap: var(--spacing-8); padding: var(--spacing-8) var(--spacing-16); flex-shrink: 0; }
+    .top-bar__back { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--btn-icon-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--btn-icon-fg); text-decoration: none; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+    .top-bar__back:active { background: var(--btn-icon-bg-pressed); }
+    .top-bar__back i { font-size: var(--font-size-20); }
+    .top-bar__title { flex: 1; font-family: var(--font-display); font-size: var(--font-size-20); font-weight: var(--weight-bold); line-height: 26px; letter-spacing: -0.40px; color: var(--top-app-bar-title); }
+    .top-bar__more { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--btn-icon-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--btn-icon-fg); -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
+    .top-bar__more:active { background: var(--btn-icon-bg-pressed); }
+    .top-bar__more svg { width: 20px; height: 20px; }
+    .top-bar__more i { font-size: var(--font-size-20); }
+
+    /* ── Scrollable Content ── */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-16);
+      padding-bottom: var(--spacing-24);
+    }
+
+    /* ── Expense Hero Card ── */
+    .expense-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-24) var(--spacing-24) var(--spacing-20);
+      margin: var(--spacing-8) var(--spacing-16) 0;
+      border-radius: var(--radius-16);
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+      text-align: center;
+    }
+    .expense-hero__category {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      background: var(--btn-icon-bg);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-secondary);
+    }
+    .expense-hero__amount {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: var(--weight-bold);
+      line-height: 40px;
+      letter-spacing: -1.44px;
+      color: var(--text-primary);
+    }
+    .expense-hero__desc {
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-bold);
+      line-height: 24px;
+      color: var(--text-primary);
+    }
+    .expense-hero__date {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      line-height: 19px;
+      color: var(--contact-settled-fg);
+    }
+    .expense-hero__balance {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16);
+      border-radius: var(--radius-8);
+      background: var(--expense-lent-bg);
+      width: 100%;
+      justify-content: space-between;
+    }
+    .expense-hero__balance-label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: var(--weight-semibold);
+      color: var(--expense-lent-fg);
+    }
+    .expense-hero__balance-amount {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: var(--weight-bold);
+      letter-spacing: -0.32px;
+      color: var(--expense-lent-fg);
+    }
+
+    /* ── Detail Rows ── */
+    .detail-section {
+      padding: 0 var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) 0;
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-8);
+      background: var(--btn-icon-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .detail-row__text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+    .detail-row__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      line-height: 19px;
+      color: var(--text-tertiary);
+    }
+    .detail-row__value {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .detail-row__chevron {
+      font-size: 18px;
+      color: var(--input-fg-default);
+      flex-shrink: 0;
+    }
+
+    /* ── Section Divider ── */
+    .section-divider {
+      height: 8px;
+      background: var(--btn-icon-bg);
+    }
+
+    /* ── Split Breakdown ── */
+    .split-section {
+      padding: 0 var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+    }
+    .split-section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-12) 0 var(--spacing-8);
+    }
+    .split-section__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+    }
+    .split-section__method {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-brand);
+    }
+
+    .split-person {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-8) 0;
+    }
+    .split-person__avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      flex-shrink: 0;
+    }
+    .split-person__name {
+      flex: 1;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .split-person__amount {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+    }
+    .split-person__amount--self { color: var(--expense-settled-fg); }
+    .split-person__amount--lent { color: var(--expense-lent-fg); }
+    .split-person__amount--owe { color: var(--expense-owe-fg); }
+
+    /* ── Notes Section ── */
+    .notes-section {
+      padding: 0 var(--spacing-16);
+    }
+    .notes-card {
+      padding: var(--spacing-12) var(--spacing-16);
+      border-radius: var(--radius-12);
+      background: var(--btn-icon-bg);
+    }
+    .notes-card__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: var(--spacing-4);
+    }
+    .notes-card__text {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      line-height: 23px;
+      color: var(--input-label);
+    }
+
+    /* ── Comments Section ── */
+    .comments-section {
+      padding: 0 var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+    }
+    .comments-section__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-12) 0 var(--spacing-8);
+    }
+    .comments-section__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+    }
+    .comments-section__count {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-tertiary);
+    }
+    .comments-empty {
+      padding: var(--spacing-8) 0 var(--spacing-12);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      color: var(--text-tertiary);
+    }
+    .comment-item {
+      display: flex;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) 0;
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .comment-item__avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: var(--weight-semibold);
+      flex-shrink: 0;
+    }
+    .comment-item__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+    .comment-item__meta {
+      display: flex;
+      align-items: baseline;
+      gap: var(--spacing-8);
+    }
+    .comment-item__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .comment-item__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+    .comment-item__text {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      line-height: 20px;
+      color: var(--text-primary);
+    }
+    /* ── Comment Input ── */
+    .comment-input {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-12) 0 var(--spacing-4);
+    }
+    .comment-input__field {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: var(--surface-secondary);
+      border: var(--border-small) solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-16);
+      gap: var(--spacing-8);
+    }
+    .comment-input__field input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      color: var(--input-fg-default);
+      outline: none;
+      min-width: 0;
+    }
+    .comment-input__field input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .comment-input__send {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .comment-input__send:active { background: var(--btn-primary-bg-pressed); }
+    .comment-input__send i { font-size: 16px; }
+
+    /* ── Bottom Actions ── */
+    .bottom-actions {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+      display: flex;
+      gap: var(--spacing-12);
+      flex-shrink: 0;
+    }
+    .btn-edit {
+      flex: 1;
+      display: flex;
+      height: 52px;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-8);
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: var(--weight-semibold);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-edit:active { background: var(--btn-primary-bg-pressed); }
+    .btn-edit i { font-size: 20px; }
+    .btn-delete {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--list-remove-bg);
+      color: var(--list-remove-fg);
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .btn-delete:active { background: var(--label-error-bg); }
+    .btn-delete i { font-size: 22px; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-bar">
+    <a href="javascript:history.back()" class="top-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-bar__title">Expense</span>
+    <button class="top-bar__more" aria-label="More options">
+      <i class="ph ph-dots-three"></i>
+    </button>
+  </header>
+
+  <!-- ── Scrollable Content ── -->
+  <div class="scroll-content">
+
+    <!-- Expense Hero -->
+    <div class="expense-hero">
+      <span class="expense-hero__category">🍽️ Food</span>
+      <div class="expense-hero__amount">₹4,890</div>
+      <div class="expense-hero__desc">Beach dinner at Baga</div>
+      <div class="expense-hero__date">27 Feb 2025 · 9:15 PM</div>
+      <div class="expense-hero__balance">
+        <span class="expense-hero__balance-label">You get back</span>
+        <span class="expense-hero__balance-amount">₹3,667.50</span>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="detail-section">
+      <div class="detail-row">
+        <div class="detail-row__icon">🏝</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label">Group</span>
+          <span class="detail-row__value">Goa Trip</span>
+        </div>
+        <i class="ph ph-caret-right detail-row__chevron"></i>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">💳</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label">Paid by</span>
+          <span class="detail-row__value">You paid ₹4,890</span>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">📅</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label">Date</span>
+          <span class="detail-row__value">27 Feb 2025</span>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">🔄</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label">Split method</span>
+          <span class="detail-row__value">Equal split</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <div class="comments-section__header">
+        <span class="comments-section__label">Comments</span>
+        <span class="comments-section__count" id="comments-count"></span>
+      </div>
+      <div id="comments-list"></div>
+      <div class="comment-input">
+        <div class="comment-item__avatar" id="current-user-avatar">DR</div>
+        <div class="comment-input__field">
+          <input type="text" id="comment-text" placeholder="Add a comment…" autocomplete="off" maxlength="300" />
+          <button class="comment-input__send" id="comment-send" aria-label="Post comment">
+            <i class="ph-bold ph-paper-plane-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Split Breakdown -->
+    <div class="split-section">
+      <div class="split-section__header">
+        <span class="split-section__label">Split Breakdown</span>
+        <span class="split-section__method">4 people · Equal</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">DR</div>
+        <span class="split-person__name">You</span>
+        <span class="split-person__amount split-person__amount--self">₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">RA</div>
+        <span class="split-person__name">Rahul Arora</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">PS</div>
+        <span class="split-person__name">Priya Sharma</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">AK</div>
+        <span class="split-person__name">Arjun Kumar</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Notes -->
+    <div class="notes-section">
+      <div class="notes-card">
+        <div class="notes-card__label">Notes</div>
+        <div class="notes-card__text">Went to the beach shack at Baga — the prawn curry and kingfish was 🔥. Included drinks, starters, and dessert for the whole group.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Bottom Actions ── -->
+  <div class="bottom-actions">
+    <a href="edit-expense" class="btn-edit">
+      <i class="ph ph-pencil"></i>
+      Edit Expense
+    </a>
+    <button class="btn-delete" aria-label="Delete expense" onclick="confirmDelete()">
+      <i class="ph ph-trash"></i>
+    </button>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var id = params.get('id');
+      if (!id) { location.replace('home-dashboard'); return; }
+
+      var allExpenses = Store.getActivityFeed();
+      var exp = allExpenses.find(function(e) { return e.id === id; });
+      if (!exp) { location.replace('home-dashboard'); return; }
+
+      var user  = Store.getCurrentUser();
+      var share = Math.round(exp.totalAmount / exp.splitAmong.length * 100) / 100;
+      var net   = Store._computeUserNet(exp);
+
+      // Helper: contact name
+      function nameOf(cid) {
+        if (cid === user.id) return 'You';
+        var c = Store.getContact(cid);
+        return c ? c.name : cid;
+      }
+      function initialsOf(cid) {
+        if (cid === user.id) return user.initials;
+        var c = Store.getContact(cid);
+        return c ? c.initials : cid.slice(0,2).toUpperCase();
+      }
+
+      // Hero
+      document.querySelector('.expense-hero__category').textContent = exp.emoji + ' ' + (exp.category || '');
+      document.querySelector('.expense-hero__amount').textContent = Store.formatINR(exp.totalAmount);
+      document.querySelector('.expense-hero__desc').textContent = exp.title;
+      var d = new Date(exp.date + 'T00:00:00');
+      document.querySelector('.expense-hero__date').textContent =
+        d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      var balEl = document.querySelector('.expense-hero__balance');
+      if (net.direction === 'settled') {
+        balEl.style.background = 'var(--btn-icon-bg)';
+        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--text-secondary)';
+        balEl.querySelector('.expense-hero__balance-label').textContent = 'Settled';
+        balEl.querySelector('.expense-hero__balance-amount').textContent = '';
+        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--text-secondary)';
+      } else if (net.direction === 'lent') {
+        balEl.style.background = 'var(--expense-lent-bg)';
+        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--expense-lent-fg)';
+        balEl.querySelector('.expense-hero__balance-label').textContent = 'You get back';
+        balEl.querySelector('.expense-hero__balance-amount').textContent = Store.formatINR(net.amount);
+        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--expense-lent-fg)';
+      } else {
+        balEl.style.background = 'var(--expense-owe-bg)';
+        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--expense-owe-fg)';
+        balEl.querySelector('.expense-hero__balance-label').textContent = 'You owe';
+        balEl.querySelector('.expense-hero__balance-amount').textContent = Store.formatINR(net.amount);
+        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--expense-owe-fg)';
+      }
+
+      // Detail rows
+      var rows = document.querySelectorAll('.detail-row');
+      // Row 0: Group or Contact
+      if (exp.groupId) {
+        var g = Store.getGroup(exp.groupId);
+        rows[0].querySelector('.detail-row__icon').textContent = g ? g.emoji : '👥';
+        rows[0].querySelector('.detail-row__label').textContent = 'Group';
+        rows[0].querySelector('.detail-row__value').textContent = g ? g.name : exp.groupId;
+        rows[0].style.cursor = 'pointer';
+        rows[0].onclick = function() { location.href = 'group-detail?id=' + exp.groupId; };
+      } else {
+        var co = Store.getContact(exp.contactId);
+        rows[0].querySelector('.detail-row__icon').textContent = '👤';
+        rows[0].querySelector('.detail-row__label').textContent = 'With';
+        rows[0].querySelector('.detail-row__value').textContent = co ? co.name : exp.contactId;
+        var chev = rows[0].querySelector('.detail-row__chevron');
+        if (chev) chev.remove();
+      }
+      // Row 1: Paid by
+      rows[1].querySelector('.detail-row__value').textContent =
+        nameOf(exp.paidById) + ' paid ' + Store.formatINR(exp.totalAmount);
+      // Row 2: Date
+      rows[2].querySelector('.detail-row__value').textContent =
+        d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      // Row 3: Split
+      rows[3].querySelector('.detail-row__value').textContent =
+        'Equal — ' + exp.splitAmong.length + ' people';
+
+      // Split breakdown
+      document.querySelector('.split-section__method').textContent =
+        exp.splitAmong.length + ' people · Equal';
+      var container = document.querySelector('.split-section');
+      // Remove existing person rows
+      container.querySelectorAll('.split-person').forEach(function(el) { el.remove(); });
+      exp.splitAmong.forEach(function(cid) {
+        var isSelf = cid === user.id;
+        var isPayer = cid === exp.paidById;
+        var div = document.createElement('div');
+        div.className = 'split-person';
+        var amtClass, amtText;
+        if (isSelf) {
+          amtClass = 'split-person__amount--self';
+          amtText = Store.formatINR(share);
+        } else if (isPayer) {
+          amtClass = 'split-person__amount--owe';
+          amtText = 'owes ' + Store.formatINR(share);
+        } else if (exp.paidById === user.id) {
+          amtClass = 'split-person__amount--lent';
+          amtText = 'owes ' + Store.formatINR(share);
+        } else {
+          amtClass = 'split-person__amount--self';
+          amtText = Store.formatINR(share);
+        }
+        div.innerHTML =
+          '<div class="split-person__avatar">' + initialsOf(cid) + '</div>' +
+          '<span class="split-person__name">' + nameOf(cid) + '</span>' +
+          '<span class="split-person__amount ' + amtClass + '">' + amtText + '</span>';
+        container.appendChild(div);
+      });
+
+      // Notes
+      var notesCard = document.querySelector('.notes-card__text');
+      if (exp.notes) {
+        notesCard.textContent = exp.notes;
+      } else {
+        notesCard.closest('.notes-section').style.display = 'none';
+      }
+
+      // Edit button
+      document.querySelector('.btn-edit').href = 'edit-expense?id=' + id;
+
+      // ── Comments ──────────────────────────────────────────
+      document.getElementById('current-user-avatar').textContent = user.initials;
+
+      function _relativeTime(isoString) {
+        var diff = Math.floor((Date.now() - new Date(isoString)) / 1000);
+        if (diff < 60)    return 'just now';
+        if (diff < 3600)  return Math.floor(diff / 60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+        if (diff < 172800) return 'Yesterday';
+        var d = new Date(isoString);
+        return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      }
+
+      function renderComments() {
+        var comments = Store.getComments(id);
+        var list = document.getElementById('comments-list');
+        var countEl = document.getElementById('comments-count');
+        countEl.textContent = comments.length ? comments.length : '';
+        list.innerHTML = '';
+        if (!comments.length) {
+          list.innerHTML = '<div class="comments-empty">No comments yet. Be the first!</div>';
+          return;
+        }
+        comments.forEach(function(c) {
+          var author = c.authorId === user.id
+            ? { name: 'You', initials: user.initials }
+            : (function() {
+                var ct = Store.getContact(c.authorId);
+                return ct ? { name: ct.name, initials: ct.initials } : { name: c.authorId, initials: '?' };
+              })();
+          var item = document.createElement('div');
+          item.className = 'comment-item';
+          item.innerHTML =
+            '<div class="comment-item__avatar">' + author.initials + '</div>' +
+            '<div class="comment-item__body">' +
+              '<div class="comment-item__meta">' +
+                '<span class="comment-item__name">' + author.name + '</span>' +
+                '<span class="comment-item__time">' + _relativeTime(c.createdAt) + '</span>' +
+              '</div>' +
+              '<p class="comment-item__text">' + c.text + '</p>' +
+            '</div>';
+          list.appendChild(item);
+        });
+      }
+
+      function submitComment() {
+        var input = document.getElementById('comment-text');
+        var text = input.value.trim();
+        if (!text) return;
+        Store.addComment(id, text);
+        input.value = '';
+        renderComments();
+      }
+
+      document.getElementById('comment-send').addEventListener('click', submitComment);
+      document.getElementById('comment-text').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitComment();
+      });
+
+      renderComments();
+
+      // Delete
+      window.confirmDelete = function() {
+        if (confirm('Delete this expense? This cannot be undone.')) {
+          Store.deleteExpense(id);
+          history.length > 1 ? history.back() : location.replace('home-dashboard');
+        }
+      };
+    }());
+  </script>
+
+</body>
+</html>

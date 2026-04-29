@@ -1,0 +1,25 @@
+/* ============================================
+   Settlr — Header Chips Component
+   A horizontally scrollable row of SM Chips
+   used as a filter strip below the Top App Bar.
+   No new tokens — uses existing chip + border tokens.
+   ============================================ */
+
+.header-chips {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: var(--spacing-12) var(--spacing-16);
+  gap: var(--spacing-12);
+  border-bottom: var(--border-small) solid var(--border-default);
+
+  /* Horizontal scroll on mobile */
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.header-chips::-webkit-scrollbar {
+  display: none;
+}

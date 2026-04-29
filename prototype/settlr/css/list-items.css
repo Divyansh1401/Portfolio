@@ -1,0 +1,248 @@
+/* ============================================
+   Settlr — List Item Components
+   Person Item: Action variants
+   Expense Item: State × Balance variants
+   ============================================ */
+
+/* ---- Person Item ---- */
+.person-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  background-color: var(--contact-bg-default);
+  border-bottom: var(--border-small) solid var(--contact-divider);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.person-item.is-selected {
+  background-color: var(--contact-bg-selected);
+}
+
+.person-item__avatar {
+  flex-shrink: 0;
+}
+
+.person-item__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.person-item__name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+  color: var(--contact-name);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.person-item__subtext {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-19);
+  color: var(--contact-subtext);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.person-item__action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--contact-icon);
+}
+
+.person-item__action-icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+
+/* ---- Person Item: Balance (Lent / Owe / Settled) ---- */
+.person-item__balance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: var(--spacing-2);
+}
+
+.person-item__balance-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-19);
+  color: var(--contact-subtext);
+}
+
+.person-item__balance-amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+}
+
+.person-item--lent     .person-item__balance-amount { color: var(--expense-lent-fg); }
+.person-item--owe      .person-item__balance-amount { color: var(--expense-owe-fg); }
+.person-item--settled  .person-item__balance-amount { color: var(--contact-settled-fg); }
+
+/* ---- Person Item: Amount Input (split row) ---- */
+.person-item__input-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+  width: 120px;
+  height: 40px;
+  flex-shrink: 0;
+  padding: var(--spacing-8);
+  background-color: var(--input-bg);
+  border: var(--border-small) solid var(--input-border-default);
+  border-radius: var(--radius-8);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  color: var(--input-fg-default);
+}
+
+.person-item__input-icon {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  flex-shrink: 0;
+  color: var(--contact-icon);
+}
+
+/* ---- Expense Item ---- */
+.expense-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  background-color: var(--contact-bg-default);
+  border-bottom: var(--border-small) solid var(--contact-divider);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.expense-item.is-pressed {
+  background-color: var(--contact-bg-selected);
+}
+
+.expense-item__illustration {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-8);
+  background-color: var(--expense-item-illus-bg);
+  font-size: var(--font-size-20);
+}
+
+.expense-item__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.expense-item__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+  color: var(--contact-name);
+}
+
+.expense-item__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-19);
+  color: var(--contact-subtext);
+}
+
+/* Right-side column: label on top, amount below */
+.expense-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: var(--spacing-2);
+}
+
+/* Label/Label-XS: "You lent" / "You owe" */
+.expense-item__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-medium);
+  line-height: normal;
+}
+
+.expense-item__label--lent { color: var(--expense-lent-fg); }
+.expense-item__label--owe  { color: var(--expense-owe-fg); }
+
+/* Amount/Amount-SM: the monetary value */
+.expense-item__amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-20);
+  letter-spacing: -0.32px;
+}
+
+.expense-item__amount--lent { color: var(--expense-lent-fg); }
+.expense-item__amount--owe  { color: var(--expense-owe-fg); }
+
+/* Legacy: amount-value + badge (used in other screens) */
+.expense-item__amount-value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+}
+
+.expense-item__badge {
+  display: inline-flex;
+  padding: var(--spacing-2) var(--spacing-8);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-medium);
+}
+
+/* Lent */
+.expense-item--lent .expense-item__amount-value { color: var(--expense-lent-fg); }
+.expense-item--lent .expense-item__badge {
+  background-color: var(--expense-lent-bg);
+  color: var(--expense-lent-fg);
+}
+
+/* Owe */
+.expense-item--owe .expense-item__amount-value { color: var(--expense-owe-fg); }
+.expense-item--owe .expense-item__badge {
+  background-color: var(--expense-owe-bg);
+  color: var(--expense-owe-fg);
+}
+
+/* ---- Comment (optional) ---- */
+.expense-item__comment {
+  font-family: var(--font-body);
+  font-size: var(--font-size-11);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-17);
+  color: var(--contact-subtext);
+  margin-top: var(--spacing-2);
+}

@@ -1,0 +1,78 @@
+/* ============================================
+   Settlr — Badge Component
+   Status: Success, Warning, Error, Info, Default
+   Sizes: SM (10px), MD (14px), LG (16px)
+   Icons: optional left/right, hidden by default
+   Colors: reuse label/* semantic tokens (per Figma)
+   ============================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ---- Sizes ---- */
+/* SM — 10px semibold, icon-sm */
+.badge--sm {
+  padding: var(--spacing-2) var(--spacing-8);
+  gap: var(--spacing-2);
+  font-size: var(--font-size-10);
+}
+.badge--sm .badge__icon { width: var(--icon-sm); height: var(--icon-sm); }
+
+/* MD — 14px semibold, icon-md */
+.badge--md {
+  padding: var(--spacing-4) var(--spacing-12);
+  gap: var(--spacing-8);
+  font-size: var(--font-size-14);
+}
+.badge--md .badge__icon { width: var(--icon-md); height: var(--icon-md); }
+
+/* LG — 16px semibold, icon-lg */
+.badge--lg {
+  padding: var(--spacing-8) var(--spacing-16);
+  gap: var(--spacing-8);
+  font-size: var(--font-size-16);
+}
+.badge--lg .badge__icon { width: var(--icon-lg); height: var(--icon-lg); }
+
+/* ---- Icons hidden by default, shown with modifier ---- */
+.badge__icon { display: none; }
+.badge--has-icon-left  .badge__icon-left  { display: inline-flex; }
+.badge--has-icon-right .badge__icon-right { display: inline-flex; }
+
+/* ---- Status: Success ---- */
+.badge--success {
+  background-color: var(--label-success-bg);
+  color: var(--label-success-fg);
+}
+
+/* ---- Status: Warning ---- */
+.badge--warning {
+  background-color: var(--label-warning-bg);
+  color: var(--label-warning-fg);
+}
+
+/* ---- Status: Error ---- */
+.badge--error {
+  background-color: var(--label-error-bg);
+  color: var(--label-error-fg);
+}
+
+/* ---- Status: Info ---- */
+.badge--info {
+  background-color: var(--label-info-bg);
+  color: var(--label-info-fg);
+}
+
+/* ---- Status: Default ---- */
+.badge--default {
+  background-color: var(--label-neutral-bg);
+  color: var(--label-neutral-fg);
+}

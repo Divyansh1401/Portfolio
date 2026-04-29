@@ -1,0 +1,113 @@
+/* ============================================
+   Settlr — Button Component
+   Variants: Primary, Secondary, Ghost, Destructive
+   Sizes: SM, MD, LG
+   States: Default, Pressed, Disabled
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled,
+.btn.is-disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+/* ---- Sizes ---- */
+.btn--sm {
+  padding: var(--spacing-8) var(--spacing-12);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+}
+.btn--sm .btn__icon { width: var(--icon-sm); height: var(--icon-sm); }
+
+.btn--md {
+  padding: var(--spacing-12) var(--spacing-16);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+}
+.btn--md .btn__icon { width: var(--icon-md); height: var(--icon-md); }
+
+.btn--lg {
+  padding: var(--spacing-12) var(--spacing-20);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-24);
+  letter-spacing: -0.16px;
+}
+.btn--lg .btn__icon { width: var(--icon-lg); height: var(--icon-lg); }
+
+/* ---- Full width ---- */
+.btn--full {
+  width: 100%;
+}
+
+/* ---- Primary ---- */
+.btn--primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+}
+.btn--primary:active,
+.btn--primary.is-pressed {
+  background-color: var(--btn-primary-bg-pressed);
+}
+
+/* ---- Secondary ---- */
+.btn--secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-fg);
+}
+.btn--secondary:active,
+.btn--secondary.is-pressed {
+  background-color: var(--btn-secondary-bg-pressed);
+}
+
+/* ---- Ghost ---- */
+.btn--ghost {
+  background-color: transparent;
+  color: var(--btn-ghost-fg);
+  padding: 0;
+}
+
+/* ---- Destructive ---- */
+.btn--destructive {
+  background-color: var(--btn-destructive-bg);
+  color: var(--btn-destructive-fg);
+}
+.btn--destructive:active,
+.btn--destructive.is-pressed {
+  background-color: var(--btn-destructive-bg-pressed);
+}
+
+/* ---- Inner layout ---- */
+.btn__content {
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn--sm .btn__content { gap: var(--spacing-4); }
+.btn--md .btn__content { gap: var(--spacing-8); }
+.btn--lg .btn__content { gap: var(--spacing-8); }
+
+.btn__icon {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.btn__label {
+  flex-shrink: 0;
+}

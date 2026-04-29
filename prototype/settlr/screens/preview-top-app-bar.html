@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top App Bar — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ───────────────────────────────── */
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-400: #BEB48A;
+      --color-neutral-500: #9A9070;
+      --color-neutral-600: #756C55;
+      --color-neutral-700: #524C3B;
+      --color-neutral-800: #332F25;
+      --color-neutral-900: #1A1810;
+
+      --color-gray-0:    #FFFFFF;
+      --color-gray-50:   #F7F8F9;
+      --color-gray-100:  #ECEFF1;
+      --color-gray-200:  #D8DCE3;
+      --color-gray-300:  #C4C7CC;
+
+      --color-olive-50:  #F2F4EB;
+      --color-olive-100: #DDE3C8;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-400: #6E8742;
+      --color-olive-500: #4E6629;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+
+      --radius-8:   8px;
+      --radius-full: 9999px;
+
+      --font-display: 'Unbounded', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --weight-regular:  400;
+      --weight-medium:   500;
+      --weight-semibold: 600;
+      --weight-bold:     700;
+
+      /* Semantic */
+      --heading-fg: var(--color-neutral-900);
+      --btn-ghost-fg: var(--color-olive-600);
+    }
+
+    /* ── RESET ────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-32);
+      padding: var(--spacing-32) var(--spacing-16);
+      min-height: 100vh;
+    }
+
+    /* ── PHONE FRAME ──────────────────────────── */
+    .phone {
+      width: 393px;
+      background: var(--color-gray-0);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(14,6,24,0.14), 0 4px 8px rgba(14,6,24,0.08);
+    }
+
+    .phone__label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+      text-align: center;
+      margin-bottom: var(--spacing-8);
+    }
+
+    /* ── SCREEN CONTENT (placeholder) ──────────── */
+    .screen-body {
+      background: var(--color-gray-0);
+      padding: var(--spacing-16);
+    }
+
+    .placeholder-line {
+      height: 12px;
+      background: var(--color-neutral-100);
+      border-radius: var(--radius-full);
+      margin-bottom: var(--spacing-12);
+    }
+    .placeholder-line--short { width: 60%; }
+    .placeholder-line--medium { width: 80%; }
+    .placeholder-line--full { width: 100%; }
+
+    /* ── TOP APP BAR ──────────────────────────── */
+    .top-app-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-12) var(--spacing-16);
+      background: var(--color-gray-0);
+      border-bottom: 1px solid var(--color-neutral-200);
+      width: 100%;
+      height: 56px;
+    }
+
+    /* Back button */
+    .top-app-bar__back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: var(--color-neutral-900);
+      transition: background 0.12s;
+    }
+    .top-app-bar__back:active {
+      background: var(--color-neutral-100);
+    }
+
+    /* Title — centered absolutely so back/actions don't shift it */
+    .top-app-bar__title {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: var(--weight-bold);
+      line-height: 24px;
+      letter-spacing: -0.36px;
+      color: var(--heading-fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Right action area — same 40px fixed width as back button to keep title centered */
+    .top-app-bar__action {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 40px;
+      flex-shrink: 0;
+    }
+
+    /* Icon action */
+    .top-app-bar__icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--color-neutral-900);
+      transition: background 0.12s;
+    }
+    .top-app-bar__icon-btn:active {
+      background: var(--color-neutral-100);
+    }
+
+    /* Ghost text action */
+    .top-app-bar__text-btn {
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: var(--weight-semibold);
+      color: var(--btn-ghost-fg);
+      cursor: pointer;
+      padding: 0;
+      white-space: nowrap;
+    }
+
+    /* No right action — spacer to keep title centered */
+    .top-app-bar__spacer {
+      width: 40px;
+      flex-shrink: 0;
+    }
+
+    /* ── VARIANT: No border (overlaps content) ── */
+    .top-app-bar--transparent {
+      border-bottom: none;
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    /* ── VARIANT: Elevated ───────────────────── */
+    .top-app-bar--elevated {
+      border-bottom: none;
+      box-shadow: 0 2px 4px rgba(14,6,24,0.08), 0 1px 2px rgba(14,6,24,0.04);
+    }
+
+    /* ── PREVIEW LAYOUT ───────────────────────── */
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      width: 393px;
+      margin-bottom: var(--spacing-8);
+    }
+
+    .frame-set {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-32);
+      width: 100%;
+      align-items: center;
+    }
+
+    /* Relative container for the transparent variant demo */
+    .phone--relative {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Variant 1: Back only ──────────────────── -->
+  <p class="section-label">Back only</p>
+  <div class="phone">
+    <nav class="top-app-bar">
+      <button class="top-app-bar__back" aria-label="Go back">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="top-app-bar__title">Group name</span>
+      <span class="top-app-bar__spacer"></span>
+    </nav>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+  <!-- ── Variant 2: Back + icon action (right) ── -->
+  <p class="section-label">Back + icon action</p>
+  <div class="phone">
+    <nav class="top-app-bar">
+      <button class="top-app-bar__back" aria-label="Go back">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="top-app-bar__title">Add expense</span>
+      <div class="top-app-bar__action">
+        <button class="top-app-bar__icon-btn" aria-label="More options">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="5" r="1.25" fill="currentColor"/>
+            <circle cx="10" cy="10" r="1.25" fill="currentColor"/>
+            <circle cx="10" cy="15" r="1.25" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+  <!-- ── Variant 3: Back + text action ─────────── -->
+  <p class="section-label">Back + text action</p>
+  <div class="phone">
+    <nav class="top-app-bar">
+      <button class="top-app-bar__back" aria-label="Go back">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="top-app-bar__title">Split equally</span>
+      <div class="top-app-bar__action" style="width: auto;">
+        <button class="top-app-bar__text-btn">Done</button>
+      </div>
+    </nav>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+  <!-- ── Variant 4: Close (X) instead of back ── -->
+  <p class="section-label">Close (modal context)</p>
+  <div class="phone">
+    <nav class="top-app-bar">
+      <button class="top-app-bar__back" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <span class="top-app-bar__title">Add group</span>
+      <div class="top-app-bar__action">
+        <button class="top-app-bar__icon-btn" aria-label="Help">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 14v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 11c0-1.5 2-1.5 2-3a2 2 0 10-4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+  <!-- ── Variant 5: Elevated ────────────────────── -->
+  <p class="section-label">Elevated (scrolled state)</p>
+  <div class="phone">
+    <nav class="top-app-bar top-app-bar--elevated">
+      <button class="top-app-bar__back" aria-label="Go back">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="top-app-bar__title">Friends trip</span>
+      <span class="top-app-bar__spacer"></span>
+    </nav>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+</body>
+</html>

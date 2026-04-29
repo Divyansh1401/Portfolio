@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Search</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+      background: var(--surface-primary);
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+    /* ── Search Bar ── */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-12);
+      background: var(--surface-primary);
+      flex-shrink: 0;
+    }
+    .search-bar__back {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--btn-icon-bg);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--btn-icon-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .search-bar__back:active { background: var(--btn-icon-bg-pressed); }
+    .search-bar__back i { font-size: var(--icon-md); }
+
+    .search-bar__input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      height: 44px;
+      padding: 0 var(--spacing-16);
+      background: var(--input-bg-focused);
+      border: var(--border-medium) solid var(--input-border-focused);
+      border-radius: var(--radius-full);
+    }
+    .search-bar__input-wrap i { font-size: var(--icon-sm); color: var(--text-brand); flex-shrink: 0; }
+    .search-bar__input-wrap input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-regular);
+      color: var(--text-primary);
+      outline: none;
+    }
+    .search-bar__input-wrap input::placeholder { color: var(--input-fg-default); }
+    .search-bar__clear {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      display: none;
+      align-items: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .search-bar__clear i { font-size: var(--icon-sm); }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--spacing-32);
+    }
+
+    /* ── Section Header ── */
+    .section-header {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-header__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.54px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .section-header__action {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Recent Search Chips ── */
+    .recents-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-8);
+      padding: var(--spacing-4) var(--spacing-16) var(--spacing-12);
+    }
+    .recent-chip {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      height: 32px;
+      padding: 0 var(--spacing-12);
+      background: var(--chip-bg-off);
+      border: var(--border-small) solid var(--chip-border-off);
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--chip-fg-off);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .recent-chip:active { background: var(--contact-bg-selected); }
+    .recent-chip i { font-size: var(--font-size-12); color: var(--text-tertiary); }
+
+    /* ── Person Result Row ── */
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--contact-divider);
+      cursor: pointer;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .result-row:active { background: var(--contact-bg-selected); }
+    .result-row:last-child { border-bottom: none; }
+
+    .result-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-bold);
+      flex-shrink: 0;
+    }
+    .result-avatar--group {
+      background: var(--label-info-bg);
+      color: var(--label-info-fg);
+      border-radius: var(--radius-8);
+    }
+    .result-avatar--expense {
+      background: var(--expense-owe-bg);
+      color: var(--expense-owe-fg);
+      border-radius: var(--radius-8);
+    }
+    .result-avatar--settlement {
+      background: var(--expense-lent-bg);
+      color: var(--expense-lent-fg);
+      border-radius: var(--radius-full);
+    }
+    .result-avatar i { font-size: var(--icon-md); }
+
+    .result-text { flex: 1; min-width: 0; }
+    .result-text__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--contact-name);
+      line-height: var(--line-height-20);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .result-text__meta {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--contact-subtext);
+      line-height: var(--line-height-18);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .result-right {
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .result-amount {
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+    }
+    .result-amount--owe { color: var(--expense-owe-fg); }
+    .result-amount--lent { color: var(--expense-lent-fg); }
+    .result-chevron { color: var(--border-default); }
+    .result-chevron i { font-size: var(--icon-sm); }
+
+    /* ── Divider ── */
+    .section-divider {
+      height: 1px;
+      background: var(--border-subtle);
+      margin: var(--spacing-4) 0;
+    }
+
+    /* ── No Results ── */
+    .no-results {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: 64px var(--spacing-32);
+      text-align: center;
+    }
+    .no-results__icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: var(--empty-state-illus-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--empty-state-illus-fg);
+      font-size: 24px;
+    }
+    .no-results__title {
+      font-family: var(--font-display);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-bold);
+      color: var(--empty-state-title-fg);
+      letter-spacing: -0.32px;
+    }
+    .no-results__body {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      color: var(--empty-state-body-fg);
+      line-height: var(--line-height-20);
+    }
+
+    /* ── Highlight match ── */
+    mark {
+      background: var(--card-create-bg);
+      color: var(--text-brand);
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Search Bar ── -->
+  <div class="search-bar">
+    <a href="home-dashboard" class="search-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <div class="search-bar__input-wrap">
+      <i class="ph ph-magnifying-glass"></i>
+      <input
+        type="text"
+        id="js-search-input"
+        placeholder="Search people, groups, expenses..."
+        autofocus
+        oninput="handleSearch(this.value)"
+      >
+      <button class="search-bar__clear" id="js-clear-btn" onclick="clearSearch()" aria-label="Clear">
+        <i class="ph-bold ph-x-circle"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Content ── -->
+  <main class="content">
+
+    <!-- ── Default State: Recents ── -->
+    <div id="js-recents">
+      <div class="section-header">
+        <span class="section-header__label">Recent Searches</span>
+        <button class="section-header__action" onclick="clearRecents()">Clear all</button>
+      </div>
+      <div class="recents-row">
+        <button class="recent-chip" onclick="setSearch('Goa Trip')">
+          <i class="ph ph-clock-counter-clockwise"></i>
+          Goa Trip
+        </button>
+        <button class="recent-chip" onclick="setSearch('Priya')">
+          <i class="ph ph-clock-counter-clockwise"></i>
+          Priya
+        </button>
+        <button class="recent-chip" onclick="setSearch('dinner')">
+          <i class="ph ph-clock-counter-clockwise"></i>
+          dinner
+        </button>
+        <button class="recent-chip" onclick="setSearch('Rahul')">
+          <i class="ph ph-clock-counter-clockwise"></i>
+          Rahul
+        </button>
+        <button class="recent-chip" onclick="setSearch('hotel')">
+          <i class="ph ph-clock-counter-clockwise"></i>
+          hotel
+        </button>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-header">
+        <span class="section-header__label">People</span>
+      </div>
+
+      <a href="individual-detail" class="result-row">
+        <div class="result-avatar">PS</div>
+        <div class="result-text">
+          <p class="result-text__name">Priya Sharma</p>
+          <p class="result-text__meta">@priyasharma</p>
+        </div>
+        <div class="result-right">
+          <p class="result-amount result-amount--lent">+₹2,400</p>
+        </div>
+      </a>
+
+      <a href="individual-detail" class="result-row">
+        <div class="result-avatar">RV</div>
+        <div class="result-text">
+          <p class="result-text__name">Rahul Verma</p>
+          <p class="result-text__meta">@rahulv</p>
+        </div>
+        <div class="result-right">
+          <span class="result-chevron"><i class="ph ph-caret-right"></i></span>
+        </div>
+      </a>
+
+      <div class="section-divider"></div>
+
+      <div class="section-header">
+        <span class="section-header__label">Groups</span>
+      </div>
+
+      <a href="group-detail" class="result-row">
+        <div class="result-avatar result-avatar--group">
+          <i class="ph ph-airplane-takeoff"></i>
+        </div>
+        <div class="result-text">
+          <p class="result-text__name">Goa Trip 2025</p>
+          <p class="result-text__meta">6 members · Active</p>
+        </div>
+        <div class="result-right">
+          <p class="result-amount result-amount--owe">-₹3,200</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- ── Search Results (shown when query entered) ── -->
+    <div id="js-results" style="display:none;">
+
+      <div class="section-header">
+        <span class="section-header__label" id="js-results-count">Results</span>
+      </div>
+
+      <!-- People results -->
+      <div id="js-people-results">
+        <a href="individual-detail" class="result-row">
+          <div class="result-avatar">PS</div>
+          <div class="result-text">
+            <p class="result-text__name" id="res-priya">Priya Sharma</p>
+            <p class="result-text__meta">@priyasharma · Friend</p>
+          </div>
+          <div class="result-right">
+            <p class="result-amount result-amount--lent">+₹2,400</p>
+          </div>
+        </a>
+        <a href="individual-detail" class="result-row">
+          <div class="result-avatar">RV</div>
+          <div class="result-text">
+            <p class="result-text__name" id="res-rahul">Rahul Verma</p>
+            <p class="result-text__meta">@rahulv · Friend</p>
+          </div>
+          <div class="result-right">
+            <span class="result-chevron"><i class="ph ph-caret-right"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Groups results -->
+      <div id="js-group-results">
+        <a href="group-detail" class="result-row">
+          <div class="result-avatar result-avatar--group">
+            <i class="ph ph-airplane-takeoff"></i>
+          </div>
+          <div class="result-text">
+            <p class="result-text__name" id="res-goa">Goa Trip 2025</p>
+            <p class="result-text__meta">6 members · You owe ₹3,200</p>
+          </div>
+          <div class="result-right">
+            <span class="result-chevron"><i class="ph ph-caret-right"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Expenses results -->
+      <div id="js-expense-results">
+        <a href="expense-detail" class="result-row">
+          <div class="result-avatar result-avatar--expense">
+            <i class="ph ph-fork-knife"></i>
+          </div>
+          <div class="result-text">
+            <p class="result-text__name" id="res-dinner">Dinner at Olive Garden</p>
+            <p class="result-text__meta">Goa Trip · Apr 3</p>
+          </div>
+          <div class="result-right">
+            <p class="result-amount result-amount--owe">-₹283</p>
+          </div>
+        </a>
+        <a href="expense-detail" class="result-row">
+          <div class="result-avatar result-avatar--expense">
+            <i class="ph ph-bed"></i>
+          </div>
+          <div class="result-text">
+            <p class="result-text__name" id="res-hotel">Hotel booking</p>
+            <p class="result-text__meta">Coorg Weekend · Mar 28</p>
+          </div>
+          <div class="result-right">
+            <p class="result-amount result-amount--owe">-₹1,200</p>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" id="js-no-results">
+      <div class="no-results__icon"><i class="ph ph-magnifying-glass"></i></div>
+      <p class="no-results__title">No results found</p>
+      <p class="no-results__body">Try a different name, group, or expense keyword</p>
+    </div>
+
+  </main>
+
+  <script>
+    const allData = [
+      { type: 'person', id: 'res-priya',   text: 'Priya Sharma',       section: 'js-people-results' },
+      { type: 'person', id: 'res-rahul',   text: 'Rahul Verma',        section: 'js-people-results' },
+      { type: 'group',  id: 'res-goa',     text: 'Goa Trip 2025',      section: 'js-group-results' },
+      { type: 'expense',id: 'res-dinner',  text: 'Dinner at Olive Garden', section: 'js-expense-results' },
+      { type: 'expense',id: 'res-hotel',   text: 'Hotel booking',      section: 'js-expense-results' },
+    ];
+
+    function handleSearch(query) {
+      const clearBtn = document.getElementById('js-clear-btn');
+      clearBtn.style.display = query ? 'flex' : 'none';
+
+      const recents = document.getElementById('js-recents');
+      const results = document.getElementById('js-results');
+      const noResults = document.getElementById('js-no-results');
+
+      if (!query.trim()) {
+        recents.style.display = '';
+        results.style.display = 'none';
+        noResults.style.display = 'none';
+        return;
+      }
+
+      recents.style.display = 'none';
+      const q = query.toLowerCase();
+      let matchCount = 0;
+
+      allData.forEach(item => {
+        const el = document.getElementById(item.id);
+        const row = el?.closest('.result-row');
+        const match = item.text.toLowerCase().includes(q);
+        if (row) row.style.display = match ? '' : 'none';
+        if (match) {
+          matchCount++;
+          el.innerHTML = item.text.replace(
+            new RegExp(query, 'gi'),
+            m => `<mark>${m}</mark>`
+          );
+        }
+      });
+
+      // Hide empty section headers
+      ['js-people-results', 'js-group-results', 'js-expense-results'].forEach(secId => {
+        const sec = document.getElementById(secId);
+        const visible = sec.querySelectorAll('.result-row:not([style*="display: none"])').length;
+        sec.style.display = visible ? '' : 'none';
+        // Hide adjacent divider if section hidden
+        const divider = sec.nextElementSibling;
+        if (divider?.classList.contains('section-divider')) divider.style.display = visible ? '' : 'none';
+      });
+
+      document.getElementById('js-results-count').textContent = `${matchCount} result${matchCount !== 1 ? 's' : ''}`;
+      results.style.display = matchCount ? '' : 'none';
+      noResults.style.display = matchCount ? 'none' : 'flex';
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('js-search-input');
+      input.value = '';
+      handleSearch('');
+      input.focus();
+    }
+
+    function clearRecents() {
+      document.querySelectorAll('.recent-chip').forEach(c => c.remove());
+    }
+
+    function setSearch(text) {
+      const input = document.getElementById('js-search-input');
+      input.value = text;
+      handleSearch(text);
+    }
+  </script>
+
+</body>
+</html>
