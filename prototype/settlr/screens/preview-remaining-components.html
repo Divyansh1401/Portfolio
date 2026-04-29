@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remaining Components — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-400: #BEB48A;
+      --color-neutral-500: #9A9070;
+      --color-neutral-600: #756C55;
+      --color-neutral-700: #524C3B;
+      --color-neutral-800: #332F25;
+      --color-neutral-900: #1A1810;
+      --color-gray-0:    #FFFFFF;
+      --color-gray-200:  #D8DCE3;
+      --color-olive-50:  #F2F4EB;
+      --color-olive-100: #DDE3C8;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-400: #6E8742;
+      --color-olive-500: #4E6629;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+      --color-green-50:  #E8FAF0;
+      --color-green-500: #357A42;
+      --color-coral-50:  #FBF0EE;
+      --color-coral-500: #9E4C39;
+
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+      --spacing-48: 48px;
+
+      --radius-8:   8px;
+      --radius-12:  12px;
+      --radius-16:  16px;
+      --radius-full: 9999px;
+      --font-display: 'Unbounded', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --weight-regular:  400;
+      --weight-medium:   500;
+      --weight-semibold: 600;
+      --weight-bold:     700;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-32);
+      padding: var(--spacing-32) var(--spacing-16);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      width: 393px;
+      margin-bottom: var(--spacing-8);
+    }
+
+    .phone {
+      width: 393px;
+      background: var(--color-gray-0);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(14,6,24,0.14), 0 4px 8px rgba(14,6,24,0.08);
+    }
+
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: var(--font-body);
+      font-weight: var(--weight-semibold);
+      background: var(--color-olive-200);
+      color: var(--color-olive-600);
+    }
+    .avatar--xs { width: 20px; height: 20px; border-radius: 10px; font-size: 7px; }
+    .avatar--sm { width: 28px; height: 28px; border-radius: 14px; font-size: 10px; }
+    .avatar--md { width: 40px; height: 40px; border-radius: 20px; font-size: 14px; }
+    .avatar--lg { width: 56px; height: 56px; border-radius: 28px; font-size: 18px; }
+
+    /* placeholder screen content */
+    .screen-body {
+      padding: var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+    .placeholder-line { height: 12px; background: var(--color-neutral-100); border-radius: var(--radius-full); }
+    .placeholder-line--short  { width: 50%; }
+    .placeholder-line--medium { width: 75%; }
+    .placeholder-line--full   { width: 100%; }
+
+
+    /* ════════════════════════════════════════════
+       1. GROUP DETAIL HEADER
+       ════════════════════════════════════════════ */
+    .group-detail-header {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      background: var(--color-gray-0);
+    }
+
+    /* Banner image area */
+    .group-detail-header__banner {
+      width: 100%;
+      height: 180px;
+      background: var(--color-gray-200);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .group-detail-header__banner-icon {
+      color: var(--color-neutral-300);
+    }
+
+    /* Info row below banner */
+    .group-detail-header__info {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: var(--spacing-16);
+      gap: var(--spacing-12);
+    }
+
+    .group-detail-header__text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .group-detail-header__name {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: var(--weight-bold);
+      line-height: 26px;
+      letter-spacing: -0.40px;
+      color: var(--color-neutral-900);
+    }
+
+    /* Member avatars stacked row */
+    .group-detail-header__members {
+      display: flex;
+      align-items: center;
+    }
+    .group-detail-header__members .avatar {
+      border: 2px solid var(--color-gray-0);
+      margin-left: -6px;
+    }
+    .group-detail-header__members .avatar:first-child {
+      margin-left: 0;
+    }
+    .group-detail-header__member-count {
+      font-size: 12px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-neutral-500);
+      margin-left: var(--spacing-8);
+    }
+
+    /* Balance chip */
+    .group-detail-header__balance {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: var(--weight-regular);
+      line-height: 18px;
+    }
+    .group-detail-header__balance--lent {
+      background: var(--color-green-50);
+      color: var(--color-green-500);
+    }
+    .group-detail-header__balance--owe {
+      background: var(--color-coral-50);
+      color: var(--color-coral-500);
+    }
+    .group-detail-header__balance--settled {
+      background: var(--color-neutral-100);
+      color: var(--color-neutral-500);
+    }
+
+
+    /* ════════════════════════════════════════════
+       2. EXPENSE DETAIL CARD
+       ════════════════════════════════════════════ */
+    .expense-detail-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-24) var(--spacing-16);
+      background: var(--color-gray-0);
+      width: 100%;
+      border-bottom: 1px solid var(--color-neutral-200);
+    }
+
+    /* Category pill */
+    .expense-detail-card__category {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--color-olive-50);
+      font-size: 12px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-olive-500);
+      letter-spacing: 0;
+    }
+    .expense-detail-card__category-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Main amount */
+    .expense-detail-card__amount {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: var(--weight-black);
+      line-height: 52px;
+      letter-spacing: -1.92px;
+      color: var(--color-neutral-900);
+    }
+    .expense-detail-card__currency {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: var(--weight-bold);
+      color: var(--color-neutral-400);
+      vertical-align: super;
+      line-height: 1;
+    }
+
+    /* Description */
+    .expense-detail-card__title {
+      font-size: 16px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-neutral-700);
+      line-height: 24px;
+    }
+
+    /* Paid by */
+    .expense-detail-card__paid-by {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      font-size: 13px;
+      color: var(--color-neutral-500);
+    }
+
+
+    /* ════════════════════════════════════════════
+       3. BANNER / IMAGE UPLOAD
+       ════════════════════════════════════════════ */
+    .image-upload {
+      width: 100%;
+      height: 180px;
+      background: var(--color-olive-50);
+      border: 1.5px dashed var(--color-olive-200);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-8);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-upload__icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-12);
+      background: var(--color-olive-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-olive-400);
+    }
+
+    .image-upload__label {
+      font-size: 14px;
+      font-weight: var(--weight-semibold);
+      color: var(--color-olive-500);
+    }
+
+    .image-upload__hint {
+      font-size: 12px;
+      color: var(--color-neutral-400);
+    }
+
+    /* Filled state */
+    .image-upload--filled {
+      background: var(--color-gray-200);
+      border: none;
+    }
+    .image-upload--filled img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .image-upload__edit-overlay {
+      position: absolute;
+      bottom: var(--spacing-12);
+      right: var(--spacing-12);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--color-olive-600);
+      color: var(--color-gray-0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       1. GROUP DETAIL HEADER
+       ══════════════════════════════════════════ -->
+  <p class="section-label">1 — Group Detail Header</p>
+
+  <!-- Lent balance -->
+  <div class="phone">
+    <div class="group-detail-header">
+      <div class="group-detail-header__banner">
+        <svg class="group-detail-header__banner-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="18" cy="22" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M6 34l10-8 8 6 6-4 12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="group-detail-header__info">
+        <div class="group-detail-header__text">
+          <p class="group-detail-header__name">Friends Trip Goa</p>
+          <div class="group-detail-header__members">
+            <div class="avatar avatar--xs">RK</div>
+            <div class="avatar avatar--xs">PS</div>
+            <div class="avatar avatar--xs">AJ</div>
+            <div class="avatar avatar--xs">NK</div>
+            <span class="group-detail-header__member-count">4 members</span>
+          </div>
+        </div>
+        <span class="group-detail-header__balance group-detail-header__balance--lent">+₹1,200</span>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+    </div>
+  </div>
+
+  <!-- Owe balance -->
+  <div class="phone">
+    <div class="group-detail-header">
+      <div class="group-detail-header__banner">
+        <svg class="group-detail-header__banner-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="18" cy="22" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M6 34l10-8 8 6 6-4 12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="group-detail-header__info">
+        <div class="group-detail-header__text">
+          <p class="group-detail-header__name">House Expenses</p>
+          <div class="group-detail-header__members">
+            <div class="avatar avatar--xs">DK</div>
+            <div class="avatar avatar--xs">SR</div>
+            <span class="group-detail-header__member-count">2 members</span>
+          </div>
+        </div>
+        <span class="group-detail-header__balance group-detail-header__balance--owe">-₹800</span>
+      </div>
+    </div>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       2. EXPENSE DETAIL CARD
+       ══════════════════════════════════════════ -->
+  <p class="section-label">2 — Expense Detail Card</p>
+
+  <div class="phone">
+    <div class="expense-detail-card">
+      <div class="expense-detail-card__category">
+        <svg class="expense-detail-card__category-icon" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Food & Drinks
+      </div>
+      <p class="expense-detail-card__amount">
+        <span class="expense-detail-card__currency">₹</span>2,400
+      </p>
+      <p class="expense-detail-card__title">Dinner at Thalassa</p>
+      <div class="expense-detail-card__paid-by">
+        <div class="avatar avatar--xs">RK</div>
+        Paid by Rahul Kumar
+      </div>
+    </div>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+      <div class="placeholder-line placeholder-line--short"></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       3. BANNER / IMAGE UPLOAD
+       ══════════════════════════════════════════ -->
+  <p class="section-label">3 — Banner / Image Upload</p>
+
+  <!-- Empty state -->
+  <div class="phone">
+    <div class="image-upload">
+      <div class="image-upload__icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="8.5" cy="10.5" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M3 16l5-4 4 3 3-2 6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="image-upload__label">Add group photo</p>
+      <p class="image-upload__hint">Tap to upload</p>
+    </div>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+    </div>
+  </div>
+
+  <!-- Filled state -->
+  <div class="phone">
+    <div class="image-upload image-upload--filled">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=393&h=180&fit=crop" alt="Group photo">
+      <button class="image-upload__edit-overlay" aria-label="Change photo">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M11 2l3 3-9 9H2v-3L11 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="screen-body">
+      <div class="placeholder-line placeholder-line--full"></div>
+      <div class="placeholder-line placeholder-line--medium"></div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* ============================================
+   Settlr — Settlement Item Component
+   Figma: node 208:15867
+   ============================================ */
+
+.settlement-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--surface-card);
+  border-bottom: var(--border-small) solid var(--contact-divider);
+  width: 100%;
+}
+
+.settlement-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.settlement-item__name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: normal;
+  color: var(--contact-name);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settlement-item__amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+  letter-spacing: 0;
+}
+
+.settlement-item__amount--lent {
+  color: var(--expense-lent-fg);
+}
+
+.settlement-item__amount--owe {
+  color: var(--expense-owe-fg);
+}

@@ -1,0 +1,16 @@
+/* ============================================
+   Settlr Design System — All Tokens
+   Import this single file to load everything.
+   ============================================ */
+
+@import './colors.css';
+@import './semantic.css';
+@import './spacing.css';
+@import './radius.css';
+@import './typography.css';
+@import './shadows.css';
+
+/* ── Phosphor Icons (stored locally in icons/) ── */
+@import '../icons/phosphor/regular/style.css';
+@import '../icons/phosphor/bold/style.css';
+@import '../icons/phosphor/fill/style.css';

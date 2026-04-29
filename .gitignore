@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude Code local settings
+.claude/settings.local.json
+.agents/
+
+# Dev utility scripts
+fix.py
+fix_css.py
+patch.py
+launch.command
+
+# Draft / experiment files
+_archive/
+_experiments/
+backups/
+components/
+button-test.html
+cursor_interaction.html
+hero-v2.html
+index2.html
+
+# Unused font folders
+Plus_Jakarta_Sans,Unbounded/
+PP Telegraf - Free for Personal Use/
+
+# Unused asset experiments
+assets2/
+
+# Screenshot captures
+screenshots/
+
+# Skill metadata
+skills-lock.json

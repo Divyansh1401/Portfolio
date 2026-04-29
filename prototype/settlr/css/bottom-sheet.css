@@ -1,0 +1,91 @@
+/* ============================================
+   Settlr — Bottom Sheet Component
+   ============================================ */
+
+/* ---- Overlay ---- */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay-50);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ---- Sheet ---- */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 393px;
+  max-height: 90vh;
+  background-color: var(--sheet-bg);
+  border-top: var(--border-large) solid var(--sheet-border);
+  border-radius: var(--radius-16) var(--radius-16) 0 0;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+/* ---- Handle ---- */
+.sheet__handle {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-8) 0;
+}
+
+.sheet__handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--sheet-slot-bg);
+}
+
+/* ---- Header ---- */
+.sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--sheet-divider);
+}
+
+.sheet__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-18);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-26);
+  letter-spacing: -0.18px;
+  color: var(--sheet-header);
+}
+
+.sheet__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  color: var(--sheet-icon);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+/* ---- Content ---- */
+.sheet__content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

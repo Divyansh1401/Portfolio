@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-16);
+    }
+    .status-bar__time {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      line-height: var(--line-height-20);
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      color: var(--text-primary);
+    }
+
+
+    /* ── Hero Area ── */
+    .login-hero {
+      padding: var(--spacing-32) var(--spacing-24) var(--spacing-24);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+    .login-hero__title {
+      font-family: var(--font-display);
+      font-size: var(--font-size-28);
+      font-weight: var(--weight-black);
+      line-height: var(--line-height-34);
+      letter-spacing: -0.84px;
+      color: var(--top-app-bar-title);
+    }
+    .login-hero__subtitle {
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-27);
+      color: var(--text-secondary);
+    }
+
+    /* ── Phone Input Area ── */
+    .phone-section {
+      flex: 1;
+      padding: var(--spacing-8) var(--spacing-24);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-24);
+    }
+
+    .phone-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+    }
+    .phone-field__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-19);
+      color: var(--input-label);
+    }
+    .phone-field__row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+    }
+
+    /* Country code pill */
+    .country-code {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      padding: var(--spacing-8) var(--spacing-12);
+      border-radius: var(--radius-8);
+      border: var(--border-small) solid var(--input-border-default);
+      background: var(--input-bg);
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+      flex-shrink: 0;
+      height: 44px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .country-code__flag {
+      font-size: var(--font-size-18);
+      line-height: 1;
+    }
+    .country-code__chevron {
+      font-size: var(--font-size-12);
+      color: var(--text-tertiary);
+    }
+
+    /* Phone number input */
+    .phone-input-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      padding: var(--spacing-8) var(--spacing-12);
+      border-radius: var(--radius-8);
+      border: var(--border-small) solid var(--input-border-default);
+      background: var(--input-bg);
+      height: 44px;
+      transition: all 0.15s ease;
+    }
+    .phone-input-box:focus-within {
+      background: var(--input-bg-focused);
+      border-color: var(--input-border-focused);
+    }
+    .phone-input-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-medium);
+      line-height: var(--line-height-24);
+      color: var(--input-fg-active);
+      letter-spacing: 1px;
+    }
+    .phone-input-box input::placeholder {
+      color: var(--input-fg-default);
+      letter-spacing: 0;
+      font-weight: var(--weight-regular);
+    }
+
+    .phone-field__helper {
+      font-family: var(--font-body);
+      font-size: var(--font-size-11);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-17);
+      color: var(--input-helper);
+    }
+
+    /* ── Divider with "or" ── */
+    .divider-or {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+    }
+    .divider-or__line {
+      flex: 1;
+      height: var(--border-small);
+      background: var(--border-subtle);
+    }
+    .divider-or__text {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-medium);
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── Social Buttons ── */
+    .social-row {
+      display: flex;
+      gap: var(--spacing-12);
+    }
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-8);
+      height: 48px;
+      border-radius: var(--radius-12);
+      border: var(--border-small) solid var(--border-default);
+      background: var(--surface-card);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .social-btn:active {
+      background: var(--btn-icon-bg);
+    }
+    .social-btn__icon {
+      width: var(--icon-md);
+      height: var(--icon-md);
+      flex-shrink: 0;
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+      flex-shrink: 0;
+    }
+
+    .login-terms {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      line-height: var(--line-height-19);
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+    .login-terms a {
+      color: var(--text-brand);
+      text-decoration: none;
+      font-weight: var(--weight-medium);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="splash" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+  </header>
+
+  <!-- ── Hero ── -->
+  <div class="login-hero">
+    <h1 class="login-hero__title">What's your<br>phone number?</h1>
+    <p class="login-hero__subtitle">We'll send you a verification code to confirm your identity.</p>
+  </div>
+
+  <!-- ── Phone Input ── -->
+  <div class="phone-section">
+    <div class="phone-field">
+      <label class="phone-field__label">Phone number</label>
+      <div class="phone-field__row">
+        <div class="country-code">
+          <span class="country-code__flag">🇮🇳</span>
+          <span>+91</span>
+          <i class="ph ph-caret-down country-code__chevron"></i>
+        </div>
+        <div class="phone-input-box">
+          <input type="tel" id="phone-input" placeholder="Enter phone number" inputmode="numeric" maxlength="10" autocomplete="tel">
+        </div>
+      </div>
+      <span class="phone-field__helper">We'll send a 6-digit code via SMS</span>
+      <p class="input-field__helper input-field__helper--error" id="phone-error" style="display:none;">Please enter a valid phone number.</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider-or">
+      <div class="divider-or__line"></div>
+      <span class="divider-or__text">or</span>
+      <div class="divider-or__line"></div>
+    </div>
+
+    <!-- Social login buttons -->
+    <div class="social-row">
+      <button class="social-btn">
+        <svg class="social-btn__icon" viewBox="0 0 20 20" fill="none">
+          <path d="M18.17 10.2c0-.63-.06-1.25-.16-1.84H10v3.48h4.58a3.92 3.92 0 0 1-1.7 2.57v2.13h2.74c1.61-1.48 2.53-3.65 2.53-6.34z" fill="#4285F4"/>
+          <path d="M10 18.5c2.3 0 4.23-.76 5.64-2.07l-2.75-2.13c-.76.51-1.73.81-2.89.81-2.22 0-4.1-1.5-4.78-3.52H2.38v2.2A8.5 8.5 0 0 0 10 18.5z" fill="#34A853"/>
+          <path d="M5.22 11.59a5.1 5.1 0 0 1 0-3.18v-2.2H2.38a8.5 8.5 0 0 0 0 7.58l2.84-2.2z" fill="#FBBC05"/>
+          <path d="M10 4.89c1.25 0 2.38.43 3.26 1.28l2.45-2.44C14.22 2.36 12.29 1.5 10 1.5a8.5 8.5 0 0 0-7.62 4.71l2.84 2.2C5.9 6.39 7.78 4.89 10 4.89z" fill="#EA4335"/>
+        </svg>
+        Google
+      </button>
+      <button class="social-btn">
+        <svg class="social-btn__icon" viewBox="0 0 20 20" fill="none">
+          <path d="M14.17 10.65c-.02-1.8 1.47-2.67 1.54-2.72a3.35 3.35 0 0 0-2.64-1.43c-1.12-.11-2.18.66-2.75.66-.57 0-1.45-.64-2.38-.63a3.5 3.5 0 0 0-2.95 1.8c-1.26 2.18-.32 5.42.9 7.2.6.87 1.32 1.85 2.26 1.81.91-.04 1.25-.58 2.35-.58 1.1 0 1.41.58 2.37.56.98-.01 1.59-.89 2.18-1.76a7.61 7.61 0 0 0 .99-2.03 3.21 3.21 0 0 1-1.87-2.88z" fill="currentColor"/>
+          <path d="M12.42 5.13a3.27 3.27 0 0 0 .75-2.35 3.33 3.33 0 0 0-2.15 1.12 3.12 3.12 0 0 0-.77 2.26c.8.06 1.62-.38 2.17-1.03z" fill="currentColor"/>
+        </svg>
+        Apple
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="bottom-cta">
+    <a href="otp" class="btn btn--primary btn--lg btn--full">Send Code</a>
+    <p class="login-terms">By continuing, you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></p>
+  </div>
+
+</body>
+</html>

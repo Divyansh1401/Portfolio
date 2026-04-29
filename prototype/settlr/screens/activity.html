@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Activity</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+
+    /* ── Filter Chips ── */
+    .chips-row {
+      display: flex;
+      gap: var(--spacing-8);
+      padding: 0 var(--spacing-16) var(--spacing-12);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+      border-bottom: var(--border-small) solid var(--border-default);
+    }
+    .chips-row::-webkit-scrollbar { display: none; }
+
+
+    /* ── Expense List ── */
+    .expense-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Scrollable Content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 112px;
+    }
+
+    .fab i { font-size: var(--icon-lg); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/>
+        <path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/>
+        <path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <nav class="top-app-bar">
+    <span class="top-app-bar__title">Activity</span>
+  </nav>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon">
+        <i class="ph ph-magnifying-glass"></i>
+      </span>
+      <input type="text" placeholder="Search activity">
+    </div>
+  </div>
+
+  <!-- ── Filter Chips ── -->
+  <div class="chips-row">
+    <button class="chip chip--sm" data-filter="individual">Individual</button>
+    <button class="chip chip--sm" data-filter="group">Group</button>
+    <button class="chip chip--sm" data-filter="lend">Lend</button>
+    <button class="chip chip--sm" data-filter="owe">Owe</button>
+  </div>
+
+  <!-- ── Scrollable Expense List ── -->
+  <main class="content">
+    <div class="expense-list" id="js-expense-list">
+
+    </div>
+    <div class="empty-state" id="empty-activity" style="display:none;">
+      <div class="empty-state__illustration"></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No activity yet</p>
+        <p class="empty-state__body">Your expense and settlement history will appear here.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Fixed Bottom: Nav Pill + FAB ── -->
+  <div class="bottom-nav-bar">
+    <nav class="bottom-nav">
+      <a href="home-dashboard" class="bottom-nav__tab">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
+          <span class="bottom-nav__tab-label">Home</span>
+        </div>
+      </a>
+      <a href="people" class="bottom-nav__tab">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph ph-user"></i></span>
+          <span class="bottom-nav__tab-label">People</span>
+        </div>
+      </a>
+      <a href="activity" class="bottom-nav__tab is-active">
+        <div class="bottom-nav__tab-content">
+          <span class="bottom-nav__tab-icon"><i class="ph-fill ph-clock"></i></span>
+          <span class="bottom-nav__tab-label">Activity</span>
+        </div>
+      </a>
+    </nav>
+    <a href="add-amount" class="fab" aria-label="Add expense">
+      <i class="ph-bold ph-plus"></i>
+    </a>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/render.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var allFeed = Store.getActivityFeed();
+      var activeFilters = {};   // { individual: bool, group: bool, lend: bool, owe: bool }
+      var searchQuery = '';
+
+      // ── Filter + search ────────────────────────────────────
+      function applyFilters() {
+        var typeActive = activeFilters.individual || activeFilters.group;
+        var dirActive  = activeFilters.lend || activeFilters.owe;
+
+        var results = allFeed.filter(function (e) {
+          // Type filter (OR within type group)
+          if (typeActive) {
+            var passType = (activeFilters.individual && !e.groupId) ||
+                           (activeFilters.group      && !!e.groupId);
+            if (!passType) return false;
+          }
+          // Direction filter (OR within direction group)
+          if (dirActive) {
+            var passDir = (activeFilters.lend && e.net.direction === 'lent') ||
+                          (activeFilters.owe  && e.net.direction === 'owe');
+            if (!passDir) return false;
+          }
+          // Search (title, context, category)
+          if (searchQuery) {
+            var q = searchQuery.toLowerCase();
+            var inTitle    = e.title.toLowerCase().indexOf(q) !== -1;
+            var inContext  = e.contextLabel && e.contextLabel.toLowerCase().indexOf(q) !== -1;
+            var inCategory = e.category && e.category.toLowerCase().indexOf(q) !== -1;
+            if (!inTitle && !inContext && !inCategory) return false;
+          }
+          return true;
+        });
+
+        renderList(results);
+      }
+
+      // ── Render ─────────────────────────────────────────────
+      function renderList(feed) {
+        var list       = document.getElementById('js-expense-list');
+        var emptyState = document.getElementById('empty-activity');
+
+        if (!feed.length) {
+          list.innerHTML = '';
+          emptyState.style.display = '';
+          return;
+        }
+        emptyState.style.display = 'none';
+
+        var grouped = Store.groupExpensesByDate(feed);
+        var html = '';
+        grouped.forEach(function (pair) {
+          var items = pair[1]
+            .map(function (e) { return Render.expenseItem(e, e.net, e.contextLabel); })
+            .join('');
+          html += Render.dateSection(pair[0], items);
+        });
+        list.innerHTML = html;
+      }
+
+      // ── Chip toggle ────────────────────────────────────────
+      document.querySelectorAll('.chip[data-filter]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var f = chip.dataset.filter;
+          activeFilters[f] = !activeFilters[f];
+          chip.classList.toggle('chip--on', !!activeFilters[f]);
+          applyFilters();
+        });
+      });
+
+      // ── Search input ───────────────────────────────────────
+      var searchInput = document.querySelector('.search-input input');
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          searchQuery = this.value.trim();
+          applyFilters();
+        });
+      }
+
+      // ── URL ?filter= param ─────────────────────────────────
+      var urlFilter = new URLSearchParams(window.location.search).get('filter');
+      if (urlFilter && document.querySelector('.chip[data-filter="' + urlFilter + '"]')) {
+        var chip = document.querySelector('.chip[data-filter="' + urlFilter + '"]');
+        activeFilters[urlFilter] = true;
+        chip.classList.add('chip--on');
+        chip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      }
+
+      // ── Initial render ─────────────────────────────────────
+      applyFilters();
+
+    }());
+  </script>
+
+</body>
+</html>

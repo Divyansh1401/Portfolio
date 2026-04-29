@@ -1,0 +1,101 @@
+/* ============================================
+   Amount Input
+   Figma: node 314:9120 — "Amount input" section
+   ============================================
+
+   Usage:
+     <div class="amount-input amount-input--currency">
+       <span class="amount-input__icon">₹</span>
+       <input class="amount-input__field" type="number">
+     </div>
+
+   Variants:
+     .amount-input--currency  — ₹ icon on the left, value right-aligned
+     .amount-input--percent   — % icon on the right, value right-aligned
+     .amount-input--shares    — unit label on the right, value right-aligned
+     .amount-input--stepper   — ± controls on both sides (equal split display)
+
+   States: default, :focus-within (border + background change)
+   ============================================ */
+
+/* ── Container ── */
+.amount-input {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  width: 120px;
+  height: 40px;
+  padding: var(--spacing-8);
+  background: var(--amount-input-bg);
+  border: var(--border-small) solid var(--amount-input-border);
+  border-radius: var(--radius-8);
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.amount-input:focus-within {
+  background: var(--amount-input-bg-focused);
+  border-color: var(--amount-input-border-focused);
+}
+
+/* ── Editable field ── */
+.amount-input__field {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-20);
+  letter-spacing: -0.32px;
+  color: var(--amount-input-fg);
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.amount-input__field::-webkit-inner-spin-button,
+.amount-input__field::-webkit-outer-spin-button { -webkit-appearance: none; }
+.amount-input__field::placeholder { color: var(--input-fg-default); }
+
+/* ── Icon / unit slot (20 × 20px) ── */
+.amount-input__icon {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--amount-input-icon-fg);
+  font-family: var(--font-body);
+  font-size: var(--icon-md);
+  font-weight: var(--weight-regular);
+  line-height: 1;
+}
+.amount-input__icon svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  display: block;
+}
+
+/* ── Variant: shares — icon slot wider for the unit text ── */
+.amount-input--shares .amount-input__icon {
+  width: auto;
+  font-size: var(--font-size-12);
+  color: var(--amount-input-icon-fg);
+}
+
+/* ── Variant: stepper — icon slots are tap targets ── */
+.amount-input--stepper .amount-input__icon {
+  cursor: pointer;
+  border-radius: var(--radius-4);
+  font-size: var(--font-size-16);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.amount-input--stepper .amount-input__icon:active {
+  background: var(--amount-input-border);
+}
+.amount-input--stepper .amount-input__field {
+  text-align: center;
+}

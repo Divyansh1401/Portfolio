@@ -1,0 +1,89 @@
+/* ============================================
+   Settlr — Labels / Status Badge Component
+   Status: Success, Warning, Error, Info, Default
+   Sizes: SM, MD, LG
+   Typography: all sizes are semibold (Label/Label-XS/MD/LG)
+   ============================================ */
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ---- Sizes ---- */
+/* SM — Label/Label-XS: 10px semibold */
+.label--sm {
+  padding: var(--spacing-2) var(--spacing-8);
+  gap: var(--spacing-2);
+  font-size: var(--font-size-10);
+}
+.label--sm .label__icon { width: var(--icon-xs); height: var(--icon-xs); }
+
+/* MD — Label/Label-MD: 14px semibold */
+.label--md {
+  padding: var(--spacing-4) var(--spacing-12);
+  gap: var(--spacing-8);
+  font-size: var(--font-size-14);
+}
+.label--md .label__icon { width: var(--icon-sm); height: var(--icon-sm); }
+
+/* LG — Label/Label-LG: 16px semibold */
+.label--lg {
+  padding: var(--spacing-8) var(--spacing-16);
+  gap: var(--spacing-8);
+  font-size: var(--font-size-16);
+}
+.label--lg .label__icon { width: var(--icon-md); height: var(--icon-md); }
+
+/* ---- Status: Success ---- */
+.label--success {
+  background-color: var(--label-success-bg);
+  color: var(--label-success-fg);
+}
+
+/* ---- Status: Warning ---- */
+.label--warning {
+  background-color: var(--label-warning-bg);
+  color: var(--label-warning-fg);
+}
+
+/* ---- Status: Error ---- */
+.label--error {
+  background-color: var(--label-error-bg);
+  color: var(--label-error-fg);
+}
+
+/* ---- Status: Info ---- */
+.label--info {
+  background-color: var(--label-info-bg);
+  color: var(--label-info-fg);
+}
+
+/* ---- Status: Default ---- */
+.label--default {
+  background-color: var(--label-neutral-bg);
+  color: var(--label-neutral-fg);
+}
+
+/* ---- Expense Status (text-only, no background) ---- */
+/* Used inline in expense list items and contact list items */
+/* Typography: Label/Label-XS — 10px semibold */
+.label--expense {
+  background: transparent;
+  padding: 0;
+  height: auto;
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-semibold);
+  line-height: normal;
+  border-radius: 0;
+}
+
+.label--owe     { color: var(--expense-owe-fg); }
+.label--lent    { color: var(--expense-lent-fg); }
+.label--settled { color: var(--expense-settled-fg); }

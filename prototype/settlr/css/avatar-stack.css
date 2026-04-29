@@ -1,0 +1,92 @@
+/* ============================================
+   Settlr — Avatar Stack Component
+   Figma: 260:6858 (Subtract boolean stacking)
+   Sizes: XS, SM, MD, LG
+   ============================================ */
+
+/* ---- Stack container ---- */
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Stack item base ---- */
+.avatar-stack__item,
+.avatar-stack__overflow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  /* Subtract boolean effect: ring matches container bg, overridable per context */
+  box-shadow: 0 0 0 var(--border-large) var(--avatar-ring);
+  position: relative;
+}
+
+.avatar-stack__item {
+  background-color: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+}
+
+.avatar-stack__overflow {
+  background-color: var(--avatar-stack-overflow-bg);
+  color: var(--avatar-stack-overflow-fg);
+}
+
+/* ---- Sizes ---- */
+
+/* XS — 20px */
+.avatar-stack--xs .avatar-stack__item,
+.avatar-stack--xs .avatar-stack__overflow {
+  width: 20px;
+  height: 20px;
+  font-size: var(--font-size-10);
+}
+.avatar-stack--xs .avatar-stack__item + .avatar-stack__item,
+.avatar-stack--xs .avatar-stack__overflow { margin-left: var(--avatar-stack-overlap-xs); }
+
+/* SM — 28px */
+.avatar-stack--sm .avatar-stack__item,
+.avatar-stack--sm .avatar-stack__overflow {
+  width: 28px;
+  height: 28px;
+  font-size: var(--font-size-10);
+}
+.avatar-stack--sm .avatar-stack__item + .avatar-stack__item,
+.avatar-stack--sm .avatar-stack__overflow { margin-left: var(--avatar-stack-overlap-sm); }
+
+/* MD — 40px */
+.avatar-stack--md .avatar-stack__item,
+.avatar-stack--md .avatar-stack__overflow {
+  width: 40px;
+  height: 40px;
+  font-size: var(--font-size-14);
+}
+.avatar-stack--md .avatar-stack__item + .avatar-stack__item,
+.avatar-stack--md .avatar-stack__overflow { margin-left: var(--avatar-stack-overlap-md); }
+
+/* LG — 52px */
+.avatar-stack--lg .avatar-stack__item,
+.avatar-stack--lg .avatar-stack__overflow {
+  width: 52px;
+  height: 52px;
+  font-size: var(--font-size-18);
+}
+.avatar-stack--lg .avatar-stack__item + .avatar-stack__item,
+.avatar-stack--lg .avatar-stack__overflow { margin-left: var(--avatar-stack-overlap-lg); }
+
+/* ---- With label ---- */
+.avatar-stack-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.avatar-stack-group__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-medium);
+  color: var(--avatar-stack-label-fg);
+}

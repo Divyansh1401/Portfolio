@@ -1,0 +1,84 @@
+/* ============================================
+   Settlr — Checkbox Control Component
+   Figma: Forms / Checkbox / Control (268:8508)
+   States: Default, Selected, Disabled, Disabled Selected
+   Reuses --control-* tokens (shared with radio).
+   ============================================ */
+
+.checkbox-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-4);
+  border: var(--border-small) solid var(--control-border-default);
+  background-color: var(--control-bg-default);
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Checkmark icon (hidden by default) ---- */
+.checkbox-control__check {
+  display: none;
+  width: 12px;
+  height: 10px;
+  color: var(--control-dot);
+}
+
+/* ---- Selected ---- */
+.checkbox-control.is-selected {
+  background-color: var(--control-bg-selected);
+  border-color: var(--control-border-selected);
+}
+
+.checkbox-control.is-selected .checkbox-control__check {
+  display: block;
+}
+
+/* ---- Disabled ---- */
+.checkbox-control.is-disabled {
+  background-color: var(--control-bg-disabled);
+  border-color: var(--control-border-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- Disabled Selected ---- */
+.checkbox-control.is-disabled.is-selected {
+  background-color: var(--control-bg-disabled-selected);
+  border-color: var(--control-border-disabled);
+}
+
+/* ============================================
+   Checkbox Item (271:8528)
+   Checkbox Control + label text, horizontal row
+   ============================================ */
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-4) 0;
+  cursor: pointer;
+}
+
+.checkbox-item__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--control-label);
+}
+
+.checkbox-item.is-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.checkbox-item.is-disabled .checkbox-item__label {
+  color: var(--control-label-disabled);
+}

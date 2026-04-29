@@ -1,0 +1,49 @@
+/* ============================================
+   Settlr — Icon Button Component
+   Sizes: SM, MD, LG
+   ============================================ */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: var(--btn-icon-bg);
+  color: var(--btn-icon-fg);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn:active {
+  background-color: var(--btn-icon-bg-pressed);
+}
+
+.icon-btn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+/* ---- Icon inherits foreground ---- */
+.icon-btn svg,
+.icon-btn img {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* ---- Sizes ---- */
+.icon-btn--sm {
+  padding: var(--spacing-12);
+}
+.icon-btn--sm .icon-btn__icon { width: var(--icon-sm); height: var(--icon-sm); }
+
+.icon-btn--md {
+  padding: var(--spacing-16);
+}
+.icon-btn--md .icon-btn__icon { width: var(--icon-md); height: var(--icon-md); }
+
+.icon-btn--lg {
+  padding: var(--spacing-20);
+}
+.icon-btn--lg .icon-btn__icon { width: var(--icon-lg); height: var(--icon-lg); }

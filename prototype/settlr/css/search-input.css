@@ -1,0 +1,48 @@
+/* ============================================
+   Settlr — Search Input Component
+   ============================================ */
+
+.search-wrap {
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--surface-primary);
+  flex-shrink: 0;
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  background: var(--input-bg);
+  border: var(--border-small) solid var(--input-border-default);
+  border-radius: var(--radius-full);
+  width: 100%;
+  cursor: text;
+}
+
+.search-input__icon {
+  flex-shrink: 0;
+  color: var(--input-fg-default);
+  display: flex;
+  align-items: center;
+}
+
+.search-input__icon i {
+  font-size: var(--icon-sm);
+}
+
+.search-input input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-input input::placeholder {
+  color: var(--input-fg-default);
+}

@@ -1,0 +1,51 @@
+/* ============================================
+   Settlr — Type Chip Component
+   Group/expense type selection tile
+   States: default (off), is-selected (on)
+   ============================================ */
+
+.type-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-12);
+  border-radius: var(--radius-12);
+  border-style: solid;
+  border-width: var(--border-small);
+  background-color: var(--type-chip-bg-off);
+  border-color: var(--type-chip-border-off);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---- Selected ---- */
+.type-chip.is-selected {
+  background-color: var(--type-chip-bg-on);
+  border-color: var(--type-chip-border-on);
+  border-width: var(--border-large);
+}
+
+/* ---- Illustration placeholder ---- */
+.type-chip__illus {
+  width: var(--icon-xl);
+  height: var(--icon-xl);
+  border-radius: var(--radius-8);
+  background-color: var(--type-chip-illus-placeholder-bg);
+  flex-shrink: 0;
+}
+
+/* ---- Label ---- */
+.type-chip__name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-semibold);
+  color: var(--type-chip-fg-off);
+  text-align: center;
+  line-height: var(--line-height-14);
+}
+
+.type-chip.is-selected .type-chip__name {
+  color: var(--type-chip-fg-on);
+}

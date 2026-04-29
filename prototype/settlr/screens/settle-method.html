@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr — Payment Method</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+      max-width: 393px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+
+    /* ── Summary Card ── */
+    .summary-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-24) var(--spacing-16);
+      margin: var(--spacing-8) var(--spacing-16) 0;
+      border-radius: var(--radius-16);
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+      text-align: center;
+    }
+    .summary-card__avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+      font-family: var(--font-display);
+      font-size: var(--font-size-20);
+      font-weight: var(--weight-bold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .summary-card__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-16);
+      font-weight: var(--weight-bold);
+      color: var(--text-primary);
+    }
+    .summary-card__amount {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: var(--weight-black);
+      letter-spacing: -1.12px;
+      color: var(--expense-owe-fg);
+    }
+    .summary-card__label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: -8px;
+    }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      padding: var(--spacing-24) var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+    }
+
+    /* ── Method Option (Boxed Radio) ── */
+    .method-option {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: 14px 16px;
+      border-radius: var(--radius-12);
+      border: 1.5px solid var(--border-default);
+      background: var(--surface-card);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .method-option.is-selected {
+      background: var(--container-bg-selected);
+      border-color: var(--container-border-selected);
+    }
+    .method-option__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-8);
+      background: var(--btn-icon-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-20);
+      flex-shrink: 0;
+    }
+    .method-option.is-selected .method-option__icon {
+      background: var(--type-chip-bg-on);
+    }
+    .method-option__text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+    .method-option__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .method-option__desc {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-tertiary);
+    }
+    .method-option__radio {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--control-border-default);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .method-option.is-selected .method-option__radio {
+      border-color: var(--control-border-selected);
+      background: var(--control-bg-selected);
+    }
+    .method-option__radio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--control-dot);
+      opacity: 0;
+    }
+    .method-option.is-selected .method-option__radio-dot {
+      opacity: 1;
+    }
+
+    /* ── Bottom CTA ── */
+    .bottom-cta {
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-24);
+      flex-shrink: 0;
+    }
+    .bottom-cta .btn {
+      display: flex;
+      width: 100%;
+      height: 52px;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: var(--weight-semibold);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bottom-cta .btn:active { background: var(--btn-primary-bg-pressed); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Status Bar ── -->
+  <div class="status-bar">
+    <span class="status-bar__time">9:41</span>
+    <div class="status-bar__icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+
+  <!-- ── Top Bar ── -->
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="settle-amount" class="top-app-bar__back" aria-label="Back">
+      <i class="ph-bold ph-caret-left"></i>
+    </a>
+    <span class="top-app-bar__title">Settle Up</span>
+  </header>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+  </div>
+
+  <!-- ── Summary Card ── -->
+  <div class="summary-card">
+    <div class="summary-card__avatar" id="js-avatar">JW</div>
+    <div class="summary-card__name" id="js-name">Johnnie Walker</div>
+    <div class="summary-card__amount" id="js-amount">₹1,220</div>
+    <div class="summary-card__label">Settlement amount</div>
+  </div>
+
+  <!-- ── Payment Methods ── -->
+  <div class="content">
+    <div class="section-label">Payment Method</div>
+
+    <div class="method-option is-selected" onclick="selectMethod(this)">
+      <div class="method-option__icon">💳</div>
+      <div class="method-option__text">
+        <div class="method-option__label">UPI</div>
+        <div class="method-option__desc">Pay via UPI apps</div>
+      </div>
+      <div class="method-option__radio">
+        <div class="method-option__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="method-option" onclick="selectMethod(this)">
+      <div class="method-option__icon">💵</div>
+      <div class="method-option__text">
+        <div class="method-option__label">Cash</div>
+        <div class="method-option__desc">Paid in cash</div>
+      </div>
+      <div class="method-option__radio">
+        <div class="method-option__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="method-option" onclick="selectMethod(this)">
+      <div class="method-option__icon">🏦</div>
+      <div class="method-option__text">
+        <div class="method-option__label">Bank Transfer</div>
+        <div class="method-option__desc">Direct bank transfer</div>
+      </div>
+      <div class="method-option__radio">
+        <div class="method-option__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="method-option" onclick="selectMethod(this)">
+      <div class="method-option__icon">📝</div>
+      <div class="method-option__text">
+        <div class="method-option__label">Other</div>
+        <div class="method-option__desc">Record as settled</div>
+      </div>
+      <div class="method-option__radio">
+        <div class="method-option__radio-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="bottom-cta">
+    <button class="btn" id="js-confirm">Confirm Settlement</button>
+  </div>
+
+  <script>
+    function selectMethod(el) {
+      document.querySelectorAll('.method-option').forEach(function(m) { m.classList.remove('is-selected'); });
+      el.classList.add('is-selected');
+    }
+
+    (function () {
+      var state = JSON.parse(sessionStorage.getItem('settlr_settle') || '{}');
+      if (state.contactInitials) document.getElementById('js-avatar').textContent = state.contactInitials;
+      if (state.contactName)    document.getElementById('js-name').textContent = state.contactName;
+      if (state.amount) {
+        var formatted = '₹' + new Intl.NumberFormat('en-IN').format(Math.round(state.amount * 100) / 100);
+        document.getElementById('js-amount').textContent = formatted;
+        document.getElementById('js-amount').style.color =
+          state.direction === 'lent' ? 'var(--expense-lent-fg)' : 'var(--expense-owe-fg)';
+      }
+
+      document.getElementById('js-confirm').addEventListener('click', function() {
+        var selected = document.querySelector('.method-option.is-selected .method-option__label');
+        var method = selected ? selected.textContent : 'Other';
+        state.method = method;
+        sessionStorage.setItem('settlr_settle', JSON.stringify(state));
+        location.href = 'settle-success';
+      });
+    }());
+  </script>
+
+</body>
+</html>

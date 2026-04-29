@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settlement Item — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-neutral-50:  #FEF9EE;
+      --color-neutral-100: #F9F1DA;
+      --color-neutral-200: #EFE4C4;
+      --color-neutral-300: #E0D0B0;
+      --color-neutral-400: #BEB48A;
+      --color-neutral-500: #9A9070;
+      --color-neutral-600: #756C55;
+      --color-neutral-700: #524C3B;
+      --color-neutral-800: #332F25;
+      --color-neutral-900: #1A1810;
+      --color-gray-0:    #FFFFFF;
+      --color-gray-200:  #D8DCE3;
+      --color-olive-50:  #F2F4EB;
+      --color-olive-200: #BFCB9A;
+      --color-olive-300: #96A96A;
+      --color-olive-600: #31401A;
+      --color-olive-700: #243012;
+      --color-green-50:  #E8FAF0;
+      --color-green-100: #C2EECF;
+      --color-green-500: #357A42;
+      --color-coral-50:  #FBF0EE;
+      --color-coral-100: #F5D8D2;
+      --color-coral-400: #BF6550;
+      --color-coral-500: #9E4C39;
+
+      --btn-primary-bg:         var(--color-olive-600);
+      --btn-primary-bg-pressed: var(--color-olive-700);
+      --btn-primary-fg:         var(--color-gray-0);
+      --btn-secondary-bg:       var(--color-olive-200);
+      --btn-secondary-bg-pressed: var(--color-olive-300);
+      --btn-secondary-fg:       var(--color-olive-700);
+      --contact-avatar-bg:      var(--color-olive-200);
+      --contact-avatar-fg:      var(--color-olive-600);
+
+      --spacing-4:  4px;
+      --spacing-8:  8px;
+      --spacing-12: 12px;
+      --spacing-16: 16px;
+      --spacing-20: 20px;
+      --spacing-24: 24px;
+      --spacing-32: 32px;
+
+      --radius-8:   8px;
+      --radius-full: 9999px;
+      --font-display: 'Unbounded', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --weight-regular:  400;
+      --weight-medium:   500;
+      --weight-semibold: 600;
+      --weight-bold:     700;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-neutral-50);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-32);
+      padding: var(--spacing-32) var(--spacing-16);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-400);
+      width: 393px;
+      margin-bottom: var(--spacing-8);
+    }
+
+    .phone {
+      width: 393px;
+      background: var(--color-gray-0);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(14,6,24,0.14), 0 4px 8px rgba(14,6,24,0.08);
+    }
+
+    /* ── AVATAR ───────────────────────────────── */
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: var(--font-body);
+      font-weight: var(--weight-semibold);
+      background: var(--contact-avatar-bg);
+      color: var(--contact-avatar-fg);
+    }
+    .avatar--md {
+      width: 40px; height: 40px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .avatar--lg {
+      width: 56px; height: 56px;
+      border-radius: 28px;
+      font-size: 18px;
+    }
+
+    /* ── BUTTONS ──────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-family: var(--font-body);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn--sm {
+      height: 36px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: var(--weight-semibold);
+    }
+    .btn--primary   { background: var(--btn-primary-bg);   color: var(--btn-primary-fg); }
+    .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
+    .btn--primary:active   { background: var(--btn-primary-bg-pressed); }
+    .btn--secondary:active { background: var(--btn-secondary-bg-pressed); }
+
+    /* ── SETTLEMENT ITEM ──────────────────────── */
+    .settlement-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      background: var(--color-gray-0);
+      width: 100%;
+    }
+
+    /* Info column — name + amount — fills remaining space */
+    .settlement-item__info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .settlement-item__name {
+      font-size: 14px;
+      font-weight: var(--weight-semibold);
+      line-height: 20px;
+      color: var(--color-neutral-900);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Amount badge */
+    .settlement-item__amount {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-4);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: var(--weight-regular);
+      line-height: 18px;
+    }
+    .settlement-item__amount--lent {
+      color: var(--color-green-500);
+    }
+    .settlement-item__amount--owe {
+      color: var(--color-coral-500);
+    }
+
+    /* Action buttons on the right */
+    .settlement-item__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-8);
+      flex-shrink: 0;
+    }
+
+    /* Divider between items */
+    .settlement-item + .settlement-item {
+      border-top: 1px solid var(--color-neutral-200);
+    }
+
+    /* ── VARIANT: Settled (no actions) ───────── */
+    .settlement-item--settled .settlement-item__name {
+      color: var(--color-neutral-500);
+    }
+    .settlement-item--settled .settlement-item__amount {
+      color: var(--color-neutral-400);
+      font-family: var(--font-body);
+      font-size: 13px;
+    }
+
+    /* Section header above list */
+    .list-header {
+      padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
+      font-size: 11px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 1.76px;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+      background: var(--color-gray-0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Variant 1: Owes you (lent) — Settle Up + Remind ── -->
+  <p class="section-label">Owes you — Settle Up + Remind</p>
+  <div class="phone">
+    <div class="list-header">Settlements</div>
+    <div class="settlement-item">
+      <div class="avatar avatar--md">RK</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Rahul Kumar</span>
+        <span class="settlement-item__amount settlement-item__amount--lent">owes you ₹1,200</span>
+      </div>
+      <div class="settlement-item__actions">
+        <button class="btn btn--sm btn--secondary">Remind</button>
+        <button class="btn btn--sm btn--primary">Settle Up</button>
+      </div>
+    </div>
+    <div class="settlement-item">
+      <div class="avatar avatar--md">PS</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Priya Sharma</span>
+        <span class="settlement-item__amount settlement-item__amount--lent">owes you ₹450</span>
+      </div>
+      <div class="settlement-item__actions">
+        <button class="btn btn--sm btn--secondary">Remind</button>
+        <button class="btn btn--sm btn--primary">Settle Up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Variant 2: You owe — Pay button only ── -->
+  <p class="section-label">You owe — Pay</p>
+  <div class="phone">
+    <div class="list-header">You Owe</div>
+    <div class="settlement-item">
+      <div class="avatar avatar--md">AJ</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Ankit Joshi</span>
+        <span class="settlement-item__amount settlement-item__amount--owe">you owe ₹800</span>
+      </div>
+      <div class="settlement-item__actions">
+        <button class="btn btn--sm btn--primary">Pay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Variant 3: Settled state ── -->
+  <p class="section-label">Settled</p>
+  <div class="phone">
+    <div class="list-header">All Settled</div>
+    <div class="settlement-item settlement-item--settled">
+      <div class="avatar avatar--md" style="opacity:0.4">NK</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Neha Kapoor</span>
+        <span class="settlement-item__amount">All settled up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Variant 4: Mixed group list ── -->
+  <p class="section-label">Mixed group</p>
+  <div class="phone">
+    <div class="list-header">Settlements</div>
+    <div class="settlement-item">
+      <div class="avatar avatar--md">RK</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Rahul Kumar</span>
+        <span class="settlement-item__amount settlement-item__amount--lent">owes you ₹1,200</span>
+      </div>
+      <div class="settlement-item__actions">
+        <button class="btn btn--sm btn--secondary">Remind</button>
+        <button class="btn btn--sm btn--primary">Settle Up</button>
+      </div>
+    </div>
+    <div class="settlement-item">
+      <div class="avatar avatar--md">AJ</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Ankit Joshi</span>
+        <span class="settlement-item__amount settlement-item__amount--owe">you owe ₹800</span>
+      </div>
+      <div class="settlement-item__actions">
+        <button class="btn btn--sm btn--primary">Pay</button>
+      </div>
+    </div>
+    <div class="settlement-item settlement-item--settled">
+      <div class="avatar avatar--md" style="opacity:0.4">NK</div>
+      <div class="settlement-item__info">
+        <span class="settlement-item__name">Neha Kapoor</span>
+        <span class="settlement-item__amount">All settled up</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
