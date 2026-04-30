@@ -14,14 +14,32 @@
       font-display: swap;
     }
     @font-face {
-      font-family: 'HK Grotesk Wide';
-      src: url('./HKGroteskWide_2020D/OTF/HKGroteskWide-Bold.otf') format('opentype');
-      font-weight: 700;
+      font-family: 'Unbounded';
+      src: url('./Plus_Jakarta_Sans,Unbounded/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 900;
+      font-style: normal;
+      font-display: swap;
     }
     @font-face {
-      font-family: 'HK Grotesk Wide';
-      src: url('./HKGroteskWide_2020D/OTF/HKGroteskWide-Black.otf') format('opentype');
-      font-weight: 900;
+      font-family: 'Plus Jakarta Sans';
+      src: url('./Plus_Jakarta_Sans,Unbounded/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      src: url('./Plus_Jakarta_Sans,Unbounded/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 800;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Unbounded';
+      src: url('./Plus_Jakarta_Sans,Unbounded/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 900;
+      font-style: normal;
+      font-display: swap;
     }
     :root {
       --bg: #F5F3EE;
@@ -29,8 +47,8 @@
       --orange: #E06B2D;
       --grey: #808080;
       --f-body: 'Nohemi', sans-serif;
-      --f-heading: 'HK Grotesk Wide', sans-serif;
-      --f-name: 'HK Grotesk Wide', sans-serif;
+      --f-heading: 'Unbounded', sans-serif;
+      --f-name: 'Unbounded', sans-serif;
       --f-hand: 'Nohemi', sans-serif;
       /* Fluid layout tokens (1024px – 2560px desktop range) */
       --pad-page:    clamp(24px, 4.2vw, 96px);
@@ -1834,6 +1852,11 @@
       overflow-y: auto;
       padding: var(--cs-pad) var(--cs-pad) calc(var(--cs-pad) * 1.4);
       scroll-behavior: smooth;
+      --f-body: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--f-body);
+    }
+    .resume-panel {
+      --f-body: 'Plus Jakarta Sans', sans-serif;
     }
     .overlay-body::-webkit-scrollbar { width: 4px; }
     .overlay-body::-webkit-scrollbar-track { background: transparent; }
@@ -1931,6 +1954,24 @@
       margin-bottom: 4px;
     }
     .cs-meta-value { font-size: 13px; line-height: 1.5; }
+
+    /* Settlr case study panel: force only Unbounded + Plus Jakarta Sans */
+    .overlay-body[data-case="settlr"],
+    .overlay-body[data-case="settlr"] * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .overlay-body[data-case="settlr"] h1,
+    .overlay-body[data-case="settlr"] h2,
+    .overlay-body[data-case="settlr"] h3,
+    .overlay-body[data-case="settlr"] h4,
+    .overlay-body[data-case="settlr"] h5,
+    .overlay-body[data-case="settlr"] h6,
+    .overlay-body[data-case="settlr"] .sh-title,
+    .overlay-body[data-case="settlr"] .cs-section-title,
+    .overlay-body[data-case="settlr"] .cs-stat-big-num,
+    .overlay-body[data-case="settlr"] .cs-a11y-ratio-num {
+      font-family: 'Unbounded', sans-serif;
+    }
 
     .cs-section { margin-bottom: 64px; }
     .cs-tag {
@@ -2665,7 +2706,7 @@
     }
     .cs-token-tier-file {
       font-size: 11px;
-      font-family: 'Courier New', monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       opacity: 0.45;
       margin-bottom: 4px;
     }
@@ -2917,7 +2958,7 @@
       margin: 10px 0 12px;
     }
     .cs-ev-code {
-      font-family: 'Courier New', monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 10px;
       font-weight: 700;
       padding: 2px 7px;
@@ -3047,7 +3088,7 @@
       border: 1px solid rgba(0,0,0,0.05);
     }
     .ds-radius-info { display: flex; flex-direction: column; }
-    .ds-radius-label { font-family: 'Courier New', monospace; font-size: 10px; font-weight: 700; color: #1B1C1A; }
+    .ds-radius-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 700; color: #1B1C1A; }
     .ds-radius-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; font-weight: 600; color: #888886; }
 
     /* Spacing: Thicker, shorter bars, Olive */
@@ -3063,7 +3104,7 @@
       gap: 12px;
       height: 24px; /* Increased to accommodate thicker bars */
     }
-    .ds-spacing-token { font-family: 'Courier New', monospace; font-size: 10px; font-weight: 700; color: #1B1C1A; }
+    .ds-spacing-token { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 700; color: #1B1C1A; }
     .ds-spacer-bar {
       height: 14px; /* Significantly thicker */
       background: #31401A; /* Settlr Deep Olive */
@@ -3247,14 +3288,14 @@
     .cs-token-prim {
       display: flex; align-items: center; gap: 9px;
       padding: 9px 12px; border: 1px solid rgba(27,28,26,0.1);
-      border-radius: 8px; font-family: 'Courier New', monospace; font-size: 10px;
+      border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px;
       color: var(--c-dark);
     }
     .cs-token-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
     .cs-token-arr { text-align: center; color: var(--c-mid); font-size: 12px; }
     .cs-token-sem {
       padding: 9px 12px; background: rgba(27,28,26,0.04);
-      border-radius: 8px; font-family: 'Courier New', monospace;
+      border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 10px; color: var(--c-dark);
     }
     .cs-token-use {
@@ -3267,7 +3308,7 @@
     .cs-filetree {
       border: 1px solid rgba(27,28,26,0.1);
       border-radius: 12px; overflow: hidden;
-      font-family: 'Courier New', monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     .cs-ft-header {
       display: flex; align-items: center; gap: 6px;
@@ -3409,10 +3450,10 @@
     .cs-a11y-token-fg, .cs-a11y-token-bg { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
     .cs-a11y-divider-line { height: 1px; background: rgba(27,28,26,0.07); margin: 0; }
     .cs-a11y-dot-sm { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .cs-a11y-tok { font-family: monospace; font-size: 11px; font-weight: 600; color: var(--c-dark); }
+    .cs-a11y-tok { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 600; color: var(--c-dark); }
     
     .cs-a11y-ratio-row { display: flex; align-items: center; gap: 12px; }
-    .cs-a11y-ratio-num { font-family: monospace; font-size: 30px; font-weight: 700; color: var(--c-dark); letter-spacing: -0.03em; line-height: 1; }
+    .cs-a11y-ratio-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 30px; font-weight: 700; color: var(--c-dark); letter-spacing: -0.03em; line-height: 1; }
     
     .cs-a11y-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 100px; text-transform: uppercase; }
     .cs-a11y-aaa { color: #357A42; background: #E8FAF0; border: 1px solid rgba(53,122,66,0.18); }
@@ -3429,7 +3470,7 @@
     }
     .cs-sp-item { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
     .cs-sp-bar { height: 32px; background: var(--c-dark); border-radius: 2px; min-width: 2px; }
-    .cs-sp-label { font-family: 'Courier New', monospace; font-size: 9px; color: var(--c-mid); line-height: 1.5; }
+    .cs-sp-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; color: var(--c-mid); line-height: 1.5; }
     .cs-sp-label em { font-style: normal; color: var(--c-dark); font-weight: 700; }
 
     .cs-radius-row {
@@ -3442,7 +3483,7 @@
       width: 48px; height: 48px;
       border: 2px solid var(--c-dark); background: transparent;
     }
-    .cs-rad-label { font-family: 'Courier New', monospace; font-size: 9px; color: var(--c-mid); }
+    .cs-rad-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; color: var(--c-mid); }
 
     .cs-stroke-opacity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .cs-stroke-row {
@@ -3485,7 +3526,7 @@
     }
     .cs-ts-row:last-child { border-bottom: none; }
     .cs-ts-role { font-size: 10px; font-weight: 700; color: var(--c-dark); letter-spacing: 0.04em; }
-    .cs-ts-spec { font-family: 'Courier New', monospace; font-size: 9px; color: var(--c-mid); }
+    .cs-ts-spec { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; color: var(--c-mid); }
     .cs-ts-preview {
       padding: 14px 20px;
       line-height: 1;
@@ -3615,8 +3656,8 @@
       flex-shrink: 0;
     }
     .cs-sem-token {
-      font-family: 'Courier New', monospace;
-      font-size: 13px; 
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
       font-weight: 600;
       color: #1A1810;
     }
@@ -3699,15 +3740,15 @@
     .cs-comp-spec-token {
       font-size: 12px;
       font-weight: 600;
-      font-family: monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--c-dark);
       display: block;
       line-height: 1.2;
     }
-    
+
     .cs-comp-spec-chain {
       font-size: 10px;
-      font-family: monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--c-mid);
       display: block;
       margin-top: 2px;
@@ -5346,7 +5387,7 @@
         const viewportH = window.innerHeight;
         const targetW = viewportW * 0.92;
         const probe = document.createElement('span');
-        probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-family:"HK Grotesk Wide",sans-serif;font-weight:900;';
+        probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-family:"Unbounded",sans-serif;font-weight:900;';
         probe.textContent = heroName.textContent;
         document.body.appendChild(probe);
         let lo = 10;
@@ -6490,15 +6531,15 @@
                     <div style="display:flex; flex-direction:column; gap:6px;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FEF9EE; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--surface-primary</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--surface-primary</span>
                       </div>
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#1A1810;"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-dark);">--text-primary</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-dark);">--text-primary</span>
                       </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:monospace; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">16.92</span>
+                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">16.92</span>
                       <span class="cs-a11y-badge cs-a11y-aaa">AAA</span>
                     </div>
                   </div>
@@ -6520,15 +6561,15 @@
                     <div style="display:flex; flex-direction:column; gap:6px;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FBF0EE; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--expense-owe-bg</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--expense-owe-bg</span>
                       </div>
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#9E4C39;"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-dark);">--expense-owe-fg</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-dark);">--expense-owe-fg</span>
                       </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:monospace; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">5.30</span>
+                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">5.30</span>
                       <span class="cs-a11y-badge cs-a11y-aa">AA</span>
                     </div>
                   </div>
@@ -6549,15 +6590,15 @@
                     <div style="display:flex; flex-direction:column; gap:6px;">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#31401A;"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--btn-primary-bg</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-mid); opacity:0.8;">--btn-primary-bg</span>
                       </div>
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FFFFFF; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:monospace; font-size:11px; font-weight:600; color:var(--c-dark);">--text-inverse</span>
+                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--c-dark);">--text-inverse</span>
                       </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:monospace; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">11.18</span>
+                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">11.18</span>
                       <span class="cs-a11y-badge cs-a11y-aaa">AAA</span>
                     </div>
                   </div>
@@ -6715,21 +6756,21 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:40px;font-weight:900;letter-spacing:-1.60px;line-height:44px;color:var(--c-dark);">₹</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-display-lg</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">40px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">900</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">44px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−1.60px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-display-lg</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">40px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">900</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">44px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−1.60px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Amount prefix/field (add-amount)</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.96px;line-height:28px;color:var(--c-dark);">Settlr</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-display-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">24px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">700</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">28px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.96px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-display-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">24px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">700</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">28px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.96px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">top-app-bar title (main screens)</div>
                 </div>
 
@@ -6738,21 +6779,21 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.40px;line-height:26px;color:var(--c-dark);">Goa Trip</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-heading-md</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">20px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">700</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">26px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.40px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-heading-md</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">20px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">700</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">26px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.40px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.heading__title, top-app-bar (details)</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.36px;line-height:24px;color:var(--c-dark);">No expenses</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-heading-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">18px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">700</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">24px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.36px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-heading-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">18px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">700</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">24px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.36px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.empty-state__title</div>
                 </div>
 
@@ -6761,41 +6802,41 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.18px;line-height:26px;color:var(--c-dark);">Payment details</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-title-lg</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">18px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">700</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">26px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.18px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-title-lg</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">18px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">700</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">26px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.18px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.sheet__title</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.16px;line-height:24px;color:var(--c-dark);">Add expense</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-title-md</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">16px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">700</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">24px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.16px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-title-md</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">16px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">700</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">24px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.16px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.btn--lg, .chip--lg, .avatar--md</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:0;line-height:20px;color:var(--c-dark);">Rahul Rastogi</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-title-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">14px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">600</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">20px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-title-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">14px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">600</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">20px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.btn--md, .chip--md, names</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0;line-height:18px;color:var(--c-dark);">Save</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-title-xs</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">12px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">600</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">18px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-title-xs</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">12px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">600</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">18px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">.btn--sm, .chip--sm, top-bar btn</div>
                 </div>
 
@@ -6804,31 +6845,31 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:400;letter-spacing:0;line-height:23px;color:var(--c-mid);">Enter amount</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-body-md</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">14px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">400</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">23px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-body-md</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">14px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">400</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">23px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Inputs, OTP, checkbox labels</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:400;letter-spacing:0;line-height:21px;color:var(--c-mid);">Please check again</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-body-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">13px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">400</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">21px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-body-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">13px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">400</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">21px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Toast body, radio sub-text</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:400;letter-spacing:0;line-height:19px;color:var(--c-mid);">Dinner at Pali Bhavan</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-body-xs</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">12px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">400</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">19px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-body-xs</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">12px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">400</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">19px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Subtexts, member pill name</div>
                 </div>
 
@@ -6837,21 +6878,21 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:0;line-height:normal;color:var(--c-dark);">Settlement</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-label-md</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">14px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">600</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">normal</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-label-md</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">14px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">600</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">normal</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Settlement item name</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:0;line-height:normal;color:var(--c-mid);">First Name</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-label-xs</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">10px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">500</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">normal</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-label-xs</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">10px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">500</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">normal</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Input labels/helpers, OTP labels</div>
                 </div>
 
@@ -6860,11 +6901,11 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:400;letter-spacing:0;line-height:17px;color:var(--c-mid);">2 days ago</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-caption-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">11px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">400</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">17px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-caption-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">11px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">400</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">17px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Nav labels, card count, dates</div>
                 </div>
 
@@ -6873,11 +6914,11 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:1.76px;line-height:14px;text-transform:uppercase;color:var(--c-mid);">MARCH 2024</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-overline-md</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">11px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">500</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">14px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">+1.76px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-overline-md</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">11px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">500</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">14px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">+1.76px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Section date dividers</div>
                 </div>
 
@@ -6886,21 +6927,21 @@
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:400;letter-spacing:-0.32px;line-height:20px;color:var(--c-dark);">₹250</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-amount-sm</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">16px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">400</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">20px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">−0.32px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-amount-sm</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">16px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">400</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">20px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">−0.32px</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Secondary amounts</div>
                 </div>
 
                 <div class="cs-ts-row">
                   <div style="padding:14px 14px;"><span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;letter-spacing:0;line-height:18px;color:#9E4C39;">you owe ₹840</span></div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">.text-amount-xs</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">13px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">600</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">18px</div>
-                  <div style="padding:14px 14px;font-family:'Courier New',monospace;font-size:10px;color:var(--c-mid);">0</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">.text-amount-xs</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">13px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">600</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">18px</div>
+                  <div style="padding:14px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:var(--c-mid);">0</div>
                   <div style="padding:14px 14px;font-size:11px;color:var(--c-mid);line-height:1.5;">Card item amounts</div>
                 </div>
 
@@ -7741,6 +7782,7 @@
       window._isOverlayOpen = true;
       document.body.classList.add('overlay-is-open');
       overlayBody.innerHTML = study.html;
+      overlayBody.dataset.case = slug;
       overlayBody.scrollTop = 0;
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
@@ -7756,6 +7798,7 @@
       document.body.style.overflow = '';
       history.pushState(null, '', location.pathname);
       overlayBody.innerHTML = '';
+      delete overlayBody.dataset.case;
       overlayTop.classList.remove('show');
     }
 
