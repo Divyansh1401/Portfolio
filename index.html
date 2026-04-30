@@ -3953,9 +3953,9 @@
     .art-thumb.active { outline-color: var(--c-accent); transform: scale(1.04); }
     .art-thumb .art-fill { transition: filter 0.2s ease; }
     .art-thumb:hover .art-fill { filter: brightness(1.15); }
-    .art-cat-btn { display: block; width: 100%; padding: 10px 12px; margin-top: 14px; margin-bottom: 20px; background: var(--c-accent); color: #fff; font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 8px; border: none; cursor: none; transition: opacity 0.2s; }
-    .art-cat-btn:hover { opacity: 0.82; }
-    .art-cat-btn.art-cat-btn--disabled { background: rgba(237,236,234,0.06); color: rgba(237,236,234,0.2); pointer-events: none; }
+    .art-thumb-link { display: flex; align-items: center; justify-content: center; text-decoration: none; outline: 1px solid rgba(237,236,234,0.15); background: transparent; transition: outline-color 0.25s ease; }
+    .art-thumb-link:hover { outline-color: rgba(237,236,234,0.4); }
+    .art-thumb-link-text { font-family: var(--f-heading); font-size: clamp(12px, 1.2vw, 16px); font-weight: 200; color: var(--c-text); text-align: center; line-height: 1.15; letter-spacing: -0.01em; }
 
     .film-section {
       background-color: #080808; /* Almost black */
@@ -4078,7 +4078,6 @@
       content: '';
       position: absolute;
       inset: -50%;
-      aspect-ratio: 1/1;
       /* Dynamic Position Spotlight Tracking Viewport Center */
       background: radial-gradient(
         circle at var(--light-x, 50%) 50%,
@@ -4087,6 +4086,30 @@
       );
       z-index: -1;
       pointer-events: none;
+    }
+
+    .photo-3d-hint {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    .photo-3d-hint-text {
+      font-family: var(--f-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--c-text);
+      letter-spacing: 0.02em;
+    }
+    .photo-3d-hint-arrow {
+      font-size: 16px;
+      color: var(--c-text);
     }
 
     /* Photography */
@@ -5120,7 +5143,29 @@
           <a class="card-3d"><img alt="" src="assets/images/photography/IMG_3876.webp" /></a>
           <a class="card-3d"><img alt="" src="assets/images/photography/Snapseed-1.webp" /></a>
           <a class="card-3d"><img alt="" src="assets/images/photography/Snapseed.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6195.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6288.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6311.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_3181.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_2164.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_2352.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_7485.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20211004_184448-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220315_210826-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220317_172224-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_140742-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_175835-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_180016-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220319_142835-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220319_160729-01.webp" /></a>
+          <a class="card-3d"><img alt="" src="assets/images/photography/moon fin.webp" /></a>
         </div>
+      </div>
+
+      <div class="photo-3d-hint">
+        <span class="photo-3d-hint-arrow">&larr;</span>
+        <span class="photo-3d-hint-text">Swipe to explore</span>
+        <span class="photo-3d-hint-arrow">&rarr;</span>
       </div>
     </section>
 
@@ -7940,13 +7985,12 @@
       {
         id: 'cyanotype', label: 'Cyanotype', link: null,
         items: [
-          { bg: '#1e2d3a' }, { bg: '#243340' }, { bg: '#1a2835' },
-        ]
-      },
-      {
-        id: 'digital', label: '3D Renders / Digital', link: null,
-        items: [
-          { bg: '#362f3e' }, { bg: '#2f2938' }, { bg: '#3c3545' }, { bg: '#292333' },
+          { bg: '#1e2d3a', img: 'assets/images/cyanotype/Group-26088911.webp' },
+          { bg: '#243340', img: 'assets/images/cyanotype/Group-26088913.webp' },
+          { bg: '#1a2835', img: 'assets/images/cyanotype/Group-26088914.webp' },
+          { bg: '#1e2d3a', img: 'assets/images/cyanotype/IMG_6661-1.webp' },
+          { bg: '#243340', img: 'assets/images/cyanotype/IMG_6662-1.webp' },
+          { bg: '#1a2835', img: 'assets/images/cyanotype/IMG_6840-1.webp' },
         ]
       },
       {
@@ -7970,7 +8014,7 @@
         ]
       },
     ];
-    const ART_DURATION = { traditional: 350, cyanotype: 420, digital: 200, hydrone: 280, watch: 280 };
+    const ART_DURATION = { traditional: 350, cyanotype: 420, hydrone: 280, watch: 280 };
 
     let alterEgoInited = false;
 
@@ -8211,11 +8255,13 @@
                   <div class="art-fill" style="background:${item.bg};${item.img ? `background-image:url('${item.img}');background-size:cover;background-position:center;` : ''}"></div>
                 </div>`
               ).join('')}
+              ${cat.link
+                ? `<a class="art-thumb art-thumb-link" href="${cat.link}" target="_blank" rel="noopener">
+                    <span class="art-thumb-link-text">View on<br>Behance</span>
+                  </a>`
+                : ''
+              }
             </div>
-            ${cat.link
-              ? `<a class="art-cat-btn" href="${cat.link}" target="_blank" rel="noopener">View Project →</a>`
-              : `<span class="art-cat-btn art-cat-btn--disabled">View Project</span>`
-            }
           </div>`
         ).join('');
 
