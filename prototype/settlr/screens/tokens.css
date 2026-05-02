@@ -67,19 +67,6 @@
   --coral-800: #3B180F;
   --coral-900: #1C0B07;
 
-  /* ── PRIMITIVES: Yellow (warning) ──────── */
-  --yellow-50:  #FFFAE8;
-  --yellow-100: #FFF1B0;
-  --yellow-300: #F5C842;
-  --yellow-500: #B58610;
-  --yellow-600: #8C640A;
-
-  /* ── PRIMITIVES: Jay (info) ──────────── */
-  --jay-50:  #EBF4F7;
-  --jay-100: #C8E3EC;
-  --jay-500: #1D4D5E;
-  --jay-600: #0F3240;
-
   /* ── COMPONENT TOKENS ────────────────────── */
   --btn-primary-bg:        var(--olive-600);
   --btn-primary-bg-press:  var(--olive-700);
@@ -102,10 +89,6 @@
   --label-success-fg: var(--green-600);
   --label-error-bg:   var(--coral-100);
   --label-error-fg:   var(--coral-600);
-  --label-warning-bg: var(--yellow-50);
-  --label-warning-fg: var(--yellow-600);
-  --label-info-bg:    var(--jay-50);
-  --label-info-fg:    var(--jay-600);
 
   --input-bg:             var(--neutral-100);
   --input-bg-focused:     var(--gray-0);
@@ -294,7 +277,6 @@ body {
 .status-label-md { height: 28px; padding: 4px 12px; font: 600 14px/14px var(--font-body); }
 .status-success { background: var(--label-success-bg); color: var(--label-success-fg); }
 .status-error   { background: var(--label-error-bg); color: var(--label-error-fg); }
-.status-warning { background: var(--label-warning-bg); color: var(--label-warning-fg); }
 
 /* ══════════════════════════════════════════════
    SHARED LAYOUT PATTERNS

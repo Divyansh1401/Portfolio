@@ -702,15 +702,13 @@
     <!-- 6. Labels / Badges -->
     <section class="docs-section" id="labels">
       <h2 class="docs-section__title">Labels / Badges</h2>
-      <p class="docs-section__desc">Status badges. Classes: <code>.label</code> <code>.label--success</code> <code>.label--warning</code> <code>.label--error</code> <code>.label--info</code> <code>.label--default</code> <code>.label--sm</code> <code>.label--md</code> <code>.label--lg</code></p>
+      <p class="docs-section__desc">Status badges. Classes: <code>.label</code> <code>.label--success</code> <code>.label--error</code> <code>.label--default</code> <code>.label--sm</code> <code>.label--md</code> <code>.label--lg</code></p>
       <p class="docs-section__desc">Expense status (text-only): <code>.label--expense</code> + <code>.label--owe</code> <code>.label--lent</code> <code>.label--settled</code></p>
       <div class="docs-specimen">
         <div class="docs-specimen__row">
           <span class="docs-specimen__label">Statuses</span>
           <span class="label label--md label--success">Success</span>
-          <span class="label label--md label--warning">Warning</span>
           <span class="label label--md label--error">Error</span>
-          <span class="label label--md label--info">Info</span>
           <span class="label label--md label--default">Default</span>
         </div>
         <div class="docs-specimen__row">
@@ -1326,14 +1324,14 @@
       </div>
     </section>
 
-    <!-- 37. Action Button Row -->
-    <section class="docs-section" id="action-button-row">
-      <h2 class="docs-section__title">Action Button Row</h2>
-      <p class="docs-section__desc">Footer action bar. Class: <code>.action-btn-row</code></p>
+    <!-- 37. Screen Footer -->
+    <section class="docs-section" id="screen-footer">
+      <h2 class="docs-section__title">Screen Footer</h2>
+      <p class="docs-section__desc">Fixed sticky footer. Class: <code>.screen-footer</code>. Add <code>.is-scrolled</code> to show top border on scroll.</p>
       <div class="docs-specimen">
         <div class="docs-specimen__col" style="max-width:393px; gap: var(--spacing-16);">
-          <div class="action-btn-row"><button class="btn btn--lg btn--secondary"><span class="btn__content">Add Expense</span></button><button class="btn btn--lg btn--primary"><span class="btn__content">Settle Up</span></button></div>
-          <div class="action-btn-row"><button class="btn btn--lg btn--primary btn--full"><span class="btn__content">Settle Up</span></button></div>
+          <div class="action-btn-row"><button class="btn btn--lg btn--secondary"><span class="btn__content">Settle up <i class="ph-bold ph-arrow-right"></i></span></button><button class="btn btn--lg btn--primary"><span class="btn__content">Add expense <i class="ph-bold ph-plus"></i></span></button></div>
+          <div class="action-btn-row action-btn-row--single"><button class="btn btn--lg btn--primary btn--full"><span class="btn__content">Next <i class="ph-bold ph-arrow-right"></i></span></button></div>
         </div>
       </div>
     </section>

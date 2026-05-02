@@ -56,21 +56,11 @@
     }
 
     .amount-prefix {
-      font-family: var(--font-display);
-      font-size: 44px;
-      font-weight: var(--weight-black);
-      line-height: 1;
-      letter-spacing: -1.76px;
       color: var(--text-primary);
       flex-shrink: 0;
     }
 
     .amount-field {
-      font-family: var(--font-display);
-      font-size: var(--font-size-64);
-      font-weight: var(--weight-black);
-      line-height: 1;
-      letter-spacing: -2.56px;
       color: var(--text-primary);
       background: transparent;
       border: none;
@@ -88,6 +78,7 @@
     .amount-error {
       padding: 0 var(--spacing-24);
       width: 100%;
+      text-align: center;
     }
 
     /* ── Title Input ── */
@@ -101,10 +92,6 @@
       border: none;
       border-bottom: var(--border-medium) solid var(--border-default);
       outline: none;
-      font-family: var(--font-body);
-      font-size: var(--font-size-16);
-      font-weight: var(--weight-medium);
-      line-height: var(--line-height-24);
       color: var(--text-primary);
       text-align: center;
       padding: var(--spacing-8) 0;
@@ -180,29 +167,22 @@
     }
     .cat-item.is-selected .cat-item__label { color: var(--text-brand); }
 
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 393px;
-      max-width: 100%;
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
-      background: var(--surface-primary);
-      border-top: var(--border-small) solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-8);
-      transition: bottom 0.05s linear, padding-bottom 0.05s linear;
+    /* ── Auto-category pop feedback ── */
+    @keyframes catPop {
+      0%, 100% { transform: scale(1); }
+      40%       { transform: scale(1.1); }
     }
+    .category-chip-btn.is-popping {
+      animation: catPop 0.22s ease;
+    }
+
   </style>
 </head>
 <body>
 
   <!-- Status Bar -->
   <div class="status-bar">
-    <span class="status-bar__time">9:41</span>
+    <span class="status-bar__time text-label-md">9:41</span>
     <div class="status-bar__icons">
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
       <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
@@ -215,7 +195,7 @@
     <a href="home-dashboard" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
-    <span class="top-app-bar__title">Add Expense</span>
+    <span class="top-app-bar__title text-heading-md">Add Expense</span>
   </header>
 
   <!-- Steps -->
@@ -228,14 +208,14 @@
   <div class="content-area">
     <!-- Amount -->
     <div class="amount-area">
-      <button class="currency-chip" onclick="openCurrencySheet()">
+      <button class="currency-chip text-title-xs" onclick="openCurrencySheet()">
         &#8377; INR
         <i class="ph ph-caret-down currency-chip__caret"></i>
       </button>
       <div class="amount-row">
-        <span class="amount-prefix">&#8377;</span>
+        <span class="amount-prefix text-display-lg">&#8377;</span>
         <input
-          class="amount-field"
+          class="amount-field text-display-lg"
           id="js-amount"
           type="text"
           inputmode="decimal"
@@ -244,14 +224,14 @@
         >
       </div>
       <div class="amount-error">
-        <p class="input-field__helper input-field__helper--error" id="amount-error" style="display:none;">Please enter a valid amount.</p>
+        <p class="input-field__helper input-field__helper--error text-label-xs" id="amount-error" style="display:none;">Please enter a valid amount.</p>
       </div>
     </div>
 
     <!-- Title -->
     <div class="title-area">
       <input
-        class="title-input"
+        class="title-input text-title-md"
         id="js-title"
         type="text"
         placeholder="What's this for?"
@@ -262,7 +242,7 @@
 
     <!-- Category -->
     <div class="category-area">
-      <button class="category-chip-btn" id="js-cat-btn" onclick="openCategorySheet()">
+      <button class="category-chip-btn text-title-xs" id="js-cat-btn" onclick="openCategorySheet()">
         <span class="category-chip-btn__emoji">🏷️</span>
         <span id="js-cat-label">Category</span>
         <i class="ph ph-caret-down"></i>
@@ -270,17 +250,29 @@
     </div>
   </div>
 
-  <!-- CTA -->
-  <div class="bottom-cta" id="js-cta">
-    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next</button>
+  <!-- Screen Footer -->
+  <div class="screen-footer" id="js-cta">
+    <button id="js-next" class="btn btn--lg btn--primary btn--full text-title-sm">Next</button>
   </div>
+
+  <script>
+    (function () {
+      var footer = document.querySelector('.screen-footer');
+      var scrollEl = document.querySelector('.content-area');
+      if (footer && scrollEl) {
+        scrollEl.addEventListener('scroll', function () {
+          footer.classList.toggle('is-scrolled', scrollEl.scrollTop > 0);
+        }, { passive: true });
+      }
+    }());
+  </script>
 
   <!-- Category Selection Sheet -->
   <div class="sheet-overlay" id="categorySheet" style="display:none;" onclick="closeCategorySheet(event)">
     <div class="sheet">
       <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
       <div class="sheet__header">
-        <span class="sheet__title">Category</span>
+        <span class="sheet__title text-heading-sm">Category</span>
         <button class="sheet__close" onclick="closeCategorySheet()" aria-label="Close">
           <i class="ph-bold ph-x"></i>
         </button>
@@ -296,7 +288,7 @@
     <div class="sheet">
       <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
       <div class="sheet__header">
-        <span class="sheet__title">Select Currency</span>
+        <span class="sheet__title text-heading-sm">Select Currency</span>
         <button class="sheet__close" onclick="closeCurrencySheet()" aria-label="Close">
           <i class="ph-bold ph-x"></i>
         </button>
@@ -322,6 +314,68 @@
       { emoji: '📝', label: 'Other' },
     ];
     var selectedCategory = { emoji: '📝', label: 'Other' };
+    var userPickedManually = false;
+
+    // ── Auto-category keyword map ────────────────────
+    var CATEGORY_KEYWORDS = {
+      'Food':          ['dinner','lunch','breakfast','food','restaurant','cafe','coffee','tea','pizza','burger','sushi','meal','snack','groceries','grocery','drink','drinks','bar','beer','wine','brunch','biryani','dosa','chai','canteen','bakery','sweets','eating'],
+      'Travel':        ['flight','hotel','uber','ola','cab','taxi','train','bus','ticket','trip','travel','tour','hostel','airbnb','airport','metro','railway','boarding'],
+      'Housing':       ['rent','electricity','maintenance','repair','furniture','society','maid','house','flat','pg','deposit','lease','landlord'],
+      'Transport':     ['petrol','fuel','parking','toll','transport','commute','auto','rickshaw','scooter','bike service','car wash'],
+      'Shopping':      ['amazon','flipkart','clothes','shirt','shoes','bag','mall','online order','delivery','shopping','meesho','myntra','zara'],
+      'Entertainment': ['movie','netflix','spotify','prime','gaming','concert','show','club','streaming','cinema','theatre','hotstar','ott','disney'],
+      'Health':        ['doctor','hospital','medicine','pharmacy','medical','dentist','clinic','consultation','chemist','lab test','prescription'],
+      'Utilities':     ['phone bill','recharge','internet bill','subscription','broadband','cable','gas bill','electricity bill','water bill','wifi'],
+      'Education':     ['books','course','class','tuition','fees','coaching','school fees','college fees','udemy','coursera','workshop'],
+      'Fitness':       ['gym','yoga','fitness','workout','swimming','cycling','zumba','crossfit','protein','supplements'],
+      'Gifts':         ['gift','birthday','anniversary','present','wedding gift','bouquet','cake'],
+    };
+
+    function detectCategory(text) {
+      var lower = text.toLowerCase();
+      var best = null, bestScore = 0;
+      Object.keys(CATEGORY_KEYWORDS).forEach(function (cat) {
+        var score = 0;
+        CATEGORY_KEYWORDS[cat].forEach(function (kw) {
+          if (lower.indexOf(kw) !== -1) score += kw.length;
+        });
+        if (score > bestScore) { bestScore = score; best = cat; }
+      });
+      return best ? CATEGORIES.find(function (c) { return c.label === best; }) : null;
+    }
+
+    function applyAutoCategory(cat) {
+      var btn = document.getElementById('js-cat-btn');
+      var changed = !btn.classList.contains('has-value') || selectedCategory.label !== cat.label;
+      selectedCategory = cat;
+      btn.querySelector('.category-chip-btn__emoji').textContent = cat.emoji;
+      document.getElementById('js-cat-label').textContent = cat.label;
+      btn.classList.add('has-value');
+      if (changed) {
+        btn.classList.remove('is-popping');
+        void btn.offsetWidth;
+        btn.classList.add('is-popping');
+        btn.addEventListener('animationend', function () {
+          btn.classList.remove('is-popping');
+        }, { once: true });
+      }
+    }
+
+    function resetCategoryChip() {
+      selectedCategory = { emoji: '📝', label: 'Other' };
+      var btn = document.getElementById('js-cat-btn');
+      btn.querySelector('.category-chip-btn__emoji').textContent = '🏷️';
+      document.getElementById('js-cat-label').textContent = 'Category';
+      btn.classList.remove('has-value');
+    }
+
+    document.getElementById('js-title').addEventListener('input', function () {
+      if (userPickedManually) return;
+      var val = this.value.trim();
+      if (!val) { resetCategoryChip(); return; }
+      var detected = detectCategory(val) || CATEGORIES.find(function (c) { return c.label === 'Other'; });
+      applyAutoCategory(detected);
+    });
 
     function openCategorySheet() {
       var grid = document.getElementById('js-cat-grid');
@@ -329,12 +383,13 @@
         var sel = c.label === selectedCategory.label ? ' is-selected' : '';
         return '<div class="cat-item' + sel + '" onclick="selectCategory(\'' + c.label + '\')">' +
           '<span class="cat-item__emoji">' + c.emoji + '</span>' +
-          '<span class="cat-item__label">' + c.label + '</span>' +
+          '<span class="cat-item__label text-caption-sm">' + c.label + '</span>' +
         '</div>';
       }).join('');
       document.getElementById('categorySheet').style.display = 'flex';
     }
     function selectCategory(label) {
+      userPickedManually = true;
       selectedCategory = CATEGORIES.find(function(c) { return c.label === label; });
       var btn = document.getElementById('js-cat-btn');
       btn.querySelector('.category-chip-btn__emoji').textContent = selectedCategory.emoji;
@@ -363,9 +418,9 @@
       list.innerHTML = CURRENCIES.map(function(c) {
         return '<div onclick="selectCurrency(\'' + c.code + '\')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:var(--border-small) solid var(--border-subtle)">' +
           '<div style="display:flex;align-items:center;gap:var(--spacing-12);">' +
-            '<span style="font-family:var(--font-body);font-size:var(--font-size-16);font-weight:var(--weight-semibold);color:var(--text-tertiary);width:28px;">' + c.symbol + '</span>' +
-            '<div><div style="font-family:var(--font-body);font-size:var(--font-size-14);font-weight:var(--weight-semibold);color:var(--text-primary);">' + c.code + '</div>' +
-            '<div style="font-family:var(--font-body);font-size:var(--font-size-12);font-weight:var(--weight-regular);color:var(--text-tertiary);">' + c.name + '</div></div>' +
+            '<span class="text-title-md" style="color:var(--text-tertiary);width:28px;">' + c.symbol + '</span>' +
+            '<div><div class="text-title-sm" style="color:var(--text-primary);">' + c.code + '</div>' +
+            '<div class="text-caption-sm" style="color:var(--text-tertiary);">' + c.name + '</div></div>' +
           '</div>' +
           (c.code === selectedCurrency.code ? '<i class="ph-bold ph-check" style="font-size:var(--icon-md);color:var(--text-brand);"></i>' : '') +
         '</div>';

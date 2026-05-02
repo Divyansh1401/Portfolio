@@ -50,7 +50,7 @@
 
   <!-- ── Status Bar ── -->
   <div class="status-bar">
-    <span class="status-bar__time">9:41</span>
+    <span class="status-bar__time text-label-md">9:41</span>
     <div class="status-bar__icons">
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
         <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
@@ -73,8 +73,8 @@
 
   <!-- ── Top Bar ── -->
   <nav class="top-app-bar">
-    <span class="top-app-bar__title">People</span>
-    <a href="add-friend" class="btn btn--sm btn--secondary">Add Contact</a>
+    <span class="top-app-bar__title text-display-sm">People</span>
+    <a href="add-friend" class="btn btn--sm btn--secondary text-title-xs">Add Contact</a>
   </nav>
 
   <!-- ── Search ── -->
@@ -89,11 +89,11 @@
 
   <!-- ── Filter Chips ── -->
   <div class="chips-row">
-    <button class="chip chip--sm is-active" data-filter="individual">Individual</button>
-    <button class="chip chip--sm" data-filter="group">Group</button>
-    <button class="chip chip--sm" data-filter="active">Active</button>
-    <button class="chip chip--sm" data-filter="lend">Lend</button>
-    <button class="chip chip--sm" data-filter="owe">Owe</button>
+    <button class="chip chip--sm is-active text-title-xs" data-filter="individual">Individual</button>
+    <button class="chip chip--sm text-title-xs" data-filter="group">Group</button>
+    <button class="chip chip--sm text-title-xs" data-filter="active">Active</button>
+    <button class="chip chip--sm text-title-xs" data-filter="lend">Lend</button>
+    <button class="chip chip--sm text-title-xs" data-filter="owe">Owe</button>
   </div>
 
   <!-- ── Scrollable List ── -->
@@ -231,8 +231,8 @@
     <div class="empty-state" id="empty-people" style="display:none;">
       <div class="empty-state__illustration"></div>
       <div class="empty-state__text">
-        <p class="empty-state__title">No people yet</p>
-        <p class="empty-state__body">People you've shared expenses with will appear here.</p>
+        <p class="empty-state__title text-heading-sm">No people yet</p>
+        <p class="empty-state__body text-body-md">People you've shared expenses with will appear here.</p>
       </div>
     </div>
   </main>
@@ -243,19 +243,19 @@
       <a href="home-dashboard" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
-          <span class="bottom-nav__tab-label">Home</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
       <a href="people" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-user"></i></span>
-          <span class="bottom-nav__tab-label">People</span>
+          <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
       <a href="activity" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-clock"></i></span>
-          <span class="bottom-nav__tab-label">Activity</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>

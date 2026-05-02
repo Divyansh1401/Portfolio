@@ -7,7 +7,7 @@ window.Store = (function () {
   'use strict';
 
   const LS_KEY = 'settlr_data';
-  const SEED_VERSION = 2;
+  const SEED_VERSION = 5;
   const CURRENT_USER_ID = 'divyansh-rastogi';
 
   // ── Seed Data ────────────────────────────────────────────
@@ -20,26 +20,26 @@ window.Store = (function () {
     },
 
     contacts: [
-      { id: 'rahul-arora',    name: 'Rahul Arora',    initials: 'RA', phone: '98765-43210', onSettlr: true  },
-      { id: 'priya-sharma',   name: 'Priya Sharma',   initials: 'PS', phone: '97654-32109', onSettlr: true  },
-      { id: 'arjun-kumar',    name: 'Arjun Kumar',    initials: 'AK', phone: '96543-21098', onSettlr: true  },
-      { id: 'johnnie-walker', name: 'Johnnie Walker', initials: 'JW', phone: '829338-192',  onSettlr: true  },
-      { id: 'manish-kumar',   name: 'Manish Kumar',   initials: 'MK', phone: '829338-001',  onSettlr: true  },
-      { id: 'beau-geste',     name: 'Beau Geste',     initials: 'BG', phone: '837291-203',  onSettlr: true  },
+      { id: 'rahul-arora',    name: 'Rahul Arora',    initials: 'RA', phone: '98765-43210', onSettlr: true,  photo: '/assets/people/Ashwin Santiago.webp' },
+      { id: 'priya-sharma',   name: 'Priya Sharma',   initials: 'PS', phone: '97654-32109', onSettlr: true,  photo: '/assets/people/Priya Shepard.webp' },
+      { id: 'arjun-kumar',    name: 'Arjun Kumar',    initials: 'AK', phone: '96543-21098', onSettlr: true,  photo: '/assets/people/Ali Mahdi.webp' },
+      { id: 'johnnie-walker', name: 'Johnnie Walker', initials: 'JW', phone: '829338-192',  onSettlr: true,  photo: '/assets/people/Frank Whitaker.webp' },
+      { id: 'manish-kumar',   name: 'Manish Kumar',   initials: 'MK', phone: '829338-001',  onSettlr: true,  photo: '/assets/people/Hasan Johns.webp' },
+      { id: 'beau-geste',     name: 'Beau Geste',     initials: 'BG', phone: '837291-203',  onSettlr: true,  photo: '/assets/people/Benedict Doherty.webp' },
       { id: 'kendra-cole',    name: 'Kendra Cole',    initials: 'KC', phone: '849205-314',  onSettlr: false },
       { id: 'sophie-miller',  name: 'Sophie Miller',  initials: 'SM', phone: '865432-404',  onSettlr: false },
-      { id: 'liam-anderson',  name: 'Liam Anderson',  initials: 'LA', phone: '872450-150',  onSettlr: true  },
-      { id: 'avery-rivers',   name: 'Avery Rivers',   initials: 'AR', phone: '711209-567',  onSettlr: false },
+      { id: 'liam-anderson',  name: 'Liam Anderson',  initials: 'LA', phone: '872450-150',  onSettlr: true,  photo: '/assets/people/Liam Hood.webp' },
+      { id: 'avery-rivers',   name: 'Avery Rivers',   initials: 'AR', phone: '711209-567',  onSettlr: false, photo: '/assets/people/Ava Wright.webp' },
       { id: 'tessa-moore',    name: 'Tessa Moore',    initials: 'TM', phone: '703918-678',  onSettlr: false },
       { id: 'gavin-hayes',    name: 'Gavin Hayes',    initials: 'GH', phone: '921563-778',  onSettlr: true  },
-      { id: 'clara-fields',   name: 'Clara Fields',   initials: 'CF', phone: '849203-887',  onSettlr: true  },
-      { id: 'zoe-martin',     name: 'Zoe Martin',     initials: 'ZM', phone: '890231-998',  onSettlr: true  },
-      { id: 'dylan-reed',     name: 'Dylan Reed',     initials: 'DR', phone: '811054-119',  onSettlr: true  },
+      { id: 'clara-fields',   name: 'Clara Fields',   initials: 'CF', phone: '849203-887',  onSettlr: true,  photo: '/assets/people/Florence Shaw.webp' },
+      { id: 'zoe-martin',     name: 'Zoe Martin',     initials: 'ZM', phone: '890231-998',  onSettlr: true,  photo: '/assets/people/Zara Bush.webp' },
+      { id: 'dylan-reed',     name: 'Dylan Reed',     initials: 'DR', phone: '811054-119',  onSettlr: true,  photo: '/assets/people/Drew Cano.webp' },
       { id: 'kylie-porter',   name: 'Kylie Porter',   initials: 'KP', phone: '832950-230',  onSettlr: true  },
       { id: 'henry-nash',     name: 'Henry Nash',     initials: 'HN', phone: '760112-341',  onSettlr: true  },
-      { id: 'ella-brooks',    name: 'Ella Brooks',    initials: 'EB', phone: '812345-456',  onSettlr: true  },
-      { id: 'neha-mehra',     name: 'Neha Mehra',     initials: 'NM', phone: '899012-567',  onSettlr: true  },
-      { id: 'vikram-kapoor',  name: 'Vikram Kapoor',  initials: 'VK', phone: '877654-678',  onSettlr: true  }
+      { id: 'ella-brooks',    name: 'Ella Brooks',    initials: 'EB', phone: '812345-456',  onSettlr: true,  photo: '/assets/people/Elsie Roy.webp' },
+      { id: 'neha-mehra',     name: 'Neha Mehra',     initials: 'NM', phone: '899012-567',  onSettlr: true,  photo: '/assets/people/Nala Goins.webp' },
+      { id: 'vikram-kapoor',  name: 'Vikram Kapoor',  initials: 'VK', phone: '877654-678',  onSettlr: true,  photo: '/assets/people/Marvin Robbins.webp' }
     ],
 
     groups: [
@@ -47,6 +47,7 @@ window.Store = (function () {
         id: 'goa-trip',
         name: 'Goa Trip',
         emoji: '🏖️',
+        photo: '/assets/groups/balkan-campers-ON2TRrhgOBU-unsplash.webp',
         type: 'trip',
         memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
         createdAt: '2025-02-24'
@@ -55,6 +56,7 @@ window.Store = (function () {
         id: 'toronto-trip',
         name: 'Toronto Trip',
         emoji: '🍁',
+        photo: '/assets/groups/will-truettner-wcT778-M1WE-unsplash.webp',
         type: 'trip',
         memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
         createdAt: '2026-03-01'
@@ -63,9 +65,73 @@ window.Store = (function () {
         id: 'roommates',
         name: 'Roommates',
         emoji: '🏠',
+        photo: '/assets/groups/zoshua-colah-6sLH0exs2ME-unsplash.webp',
         type: 'home',
         memberIds: ['divyansh-rastogi', 'johnnie-walker', 'rahul-arora', 'manish-kumar'],
         createdAt: '2025-01-01'
+      },
+      {
+        id: 'diwali-party',
+        name: 'Diwali Party',
+        emoji: '🪔',
+        photo: '/assets/groups/abhimanyu-jhingan-o1Bis9ykTss-unsplash.webp',
+        type: 'event',
+        memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
+        createdAt: '2025-10-15'
+      },
+      {
+        id: 'game-night',
+        name: 'Game Night',
+        emoji: '🎲',
+        photo: '/assets/groups/amelie-aronson-Y2kYm4UFiXs-unsplash.webp',
+        type: 'event',
+        memberIds: ['divyansh-rastogi', 'rahul-arora', 'arjun-kumar', 'beau-geste'],
+        createdAt: '2026-03-12'
+      },
+      {
+        id: 'brooklyn-reunion',
+        name: 'Brooklyn Reunion',
+        emoji: '🌆',
+        photo: '/assets/groups/ben-duchac-96DW4Pow3qI-unsplash.webp',
+        type: 'trip',
+        memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'ella-brooks', 'neha-mehra', 'vikram-kapoor'],
+        createdAt: '2025-04-08'
+      },
+      {
+        id: 'manali-trek',
+        name: 'Manali Trek',
+        emoji: '🏔️',
+        photo: '/assets/groups/felix-rostig-UmV2wr-Vbq8-unsplash.webp',
+        type: 'trip',
+        memberIds: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'liam-anderson', 'manish-kumar'],
+        createdAt: '2025-06-20'
+      },
+      {
+        id: 'birthday-bash',
+        name: "Priya's Birthday Bash",
+        emoji: '🎂',
+        photo: '/assets/groups/jacob-bentzinger-_HXFz-0g9w8-unsplash.webp',
+        type: 'celebration',
+        memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'zoe-martin', 'neha-mehra'],
+        createdAt: '2026-01-22'
+      },
+      {
+        id: 'beach-bonfire',
+        name: 'Beach Bonfire',
+        emoji: '🔥',
+        photo: '/assets/groups/kimson-doan-AZMmUy2qL6A-unsplash.webp',
+        type: 'event',
+        memberIds: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'johnnie-walker'],
+        createdAt: '2025-12-30'
+      },
+      {
+        id: 'sunburn-festival',
+        name: 'Sunburn Festival',
+        emoji: '🎵',
+        photo: '/assets/groups/vishnu-r-nair-m1WZS5ye404-unsplash.webp',
+        type: 'event',
+        memberIds: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'zoe-martin', 'neha-mehra', 'ella-brooks', 'vikram-kapoor'],
+        createdAt: '2026-04-25'
       }
     ],
 
@@ -249,6 +315,162 @@ window.Store = (function () {
         totalAmount: 1520, paidById: 'divyansh-rastogi',
         splitAmong: ['divyansh-rastogi', 'arjun-kumar'],
         date: '2026-03-01', notes: ''
+      },
+
+      // ── Diwali Party (5-way: DR, RA, PS, AK, JW) — settled ──
+      {
+        id: 'diwali-catering',
+        groupId: 'diwali-party', contactId: null,
+        title: 'Catering & dinner', emoji: '🍛', category: 'Food',
+        totalAmount: 2500, paidById: 'rahul-arora',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
+        date: '2025-10-20', notes: ''
+      },
+      {
+        id: 'diwali-decor',
+        groupId: 'diwali-party', contactId: null,
+        title: 'Decor & string lights', emoji: '✨', category: 'Other',
+        totalAmount: 1500, paidById: 'johnnie-walker',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
+        date: '2025-10-20', notes: ''
+      },
+      {
+        id: 'diwali-sweets',
+        groupId: 'diwali-party', contactId: null,
+        title: 'Sweets & gifts', emoji: '🍬', category: 'Other',
+        totalAmount: 1000, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'johnnie-walker'],
+        date: '2025-10-19', notes: ''
+      },
+
+      // ── Game Night (4-way: DR, RA, AK, BG) — settled ──
+      {
+        id: 'gamenight-pizza',
+        groupId: 'game-night', contactId: null,
+        title: 'Pizza & wings', emoji: '🍕', category: 'Food',
+        totalAmount: 1200, paidById: 'rahul-arora',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'arjun-kumar', 'beau-geste'],
+        date: '2026-03-15', notes: ''
+      },
+      {
+        id: 'gamenight-drinks',
+        groupId: 'game-night', contactId: null,
+        title: 'Drinks run', emoji: '🍻', category: 'Food',
+        totalAmount: 600, paidById: 'arjun-kumar',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'arjun-kumar', 'beau-geste'],
+        date: '2026-03-15', notes: ''
+      },
+      {
+        id: 'gamenight-snacks',
+        groupId: 'game-night', contactId: null,
+        title: 'Snacks & dips', emoji: '🥨', category: 'Food',
+        totalAmount: 600, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'arjun-kumar', 'beau-geste'],
+        date: '2026-03-15', notes: ''
+      },
+
+      // ── Brooklyn Reunion (6-way: DR, RA, PS, EB, NM, VK) — settled ──
+      {
+        id: 'brooklyn-hotel',
+        groupId: 'brooklyn-reunion', contactId: null,
+        title: 'Hotel — 2 nights', emoji: '🏨', category: 'Stay',
+        totalAmount: 9000, paidById: 'vikram-kapoor',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'ella-brooks', 'neha-mehra', 'vikram-kapoor'],
+        date: '2025-04-12', notes: ''
+      },
+      {
+        id: 'brooklyn-dinner',
+        groupId: 'brooklyn-reunion', contactId: null,
+        title: 'Williamsburg dinner', emoji: '🍝', category: 'Food',
+        totalAmount: 6000, paidById: 'ella-brooks',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'ella-brooks', 'neha-mehra', 'vikram-kapoor'],
+        date: '2025-04-13', notes: ''
+      },
+      {
+        id: 'brooklyn-activities',
+        groupId: 'brooklyn-reunion', contactId: null,
+        title: 'Subway passes & tour', emoji: '🚇', category: 'Travel',
+        totalAmount: 3000, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'ella-brooks', 'neha-mehra', 'vikram-kapoor'],
+        date: '2025-04-12', notes: ''
+      },
+
+      // ── Manali Trek (5-way: DR, AK, BG, LA, MK) — settled ──
+      {
+        id: 'manali-package',
+        groupId: 'manali-trek', contactId: null,
+        title: 'Trek package — Hampta Pass', emoji: '⛰️', category: 'Activity',
+        totalAmount: 15000, paidById: 'manish-kumar',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'liam-anderson', 'manish-kumar'],
+        date: '2025-06-22', notes: ''
+      },
+      {
+        id: 'manali-gear',
+        groupId: 'manali-trek', contactId: null,
+        title: 'Gear rentals', emoji: '🥾', category: 'Other',
+        totalAmount: 5000, paidById: 'arjun-kumar',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'liam-anderson', 'manish-kumar'],
+        date: '2025-06-21', notes: ''
+      },
+      {
+        id: 'manali-cab-food',
+        groupId: 'manali-trek', contactId: null,
+        title: 'Cabs + meals', emoji: '🚙', category: 'Travel',
+        totalAmount: 5000, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'liam-anderson', 'manish-kumar'],
+        date: '2025-06-23', notes: ''
+      },
+
+      // ── Priya's Birthday Bash (6-way: DR, RA, PS, AK, ZM, NM) — settled ──
+      {
+        id: 'birthday-cake-food',
+        groupId: 'birthday-bash', contactId: null,
+        title: 'Cake & catering', emoji: '🎂', category: 'Food',
+        totalAmount: 6000, paidById: 'zoe-martin',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'zoe-martin', 'neha-mehra'],
+        date: '2026-01-25', notes: ''
+      },
+      {
+        id: 'birthday-bar',
+        groupId: 'birthday-bash', contactId: null,
+        title: 'Bar tab at Soho House', emoji: '🍸', category: 'Food',
+        totalAmount: 9000, paidById: 'neha-mehra',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'zoe-martin', 'neha-mehra'],
+        date: '2026-01-25', notes: ''
+      },
+      {
+        id: 'birthday-decor',
+        groupId: 'birthday-bash', contactId: null,
+        title: 'Decor & gifts', emoji: '🎁', category: 'Other',
+        totalAmount: 3000, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'rahul-arora', 'priya-sharma', 'arjun-kumar', 'zoe-martin', 'neha-mehra'],
+        date: '2026-01-24', notes: ''
+      },
+
+      // ── Beach Bonfire (4-way: DR, AK, BG, JW) — settled ──
+      {
+        id: 'bonfire-shack',
+        groupId: 'beach-bonfire', contactId: null,
+        title: 'Beach shack dinner', emoji: '🍤', category: 'Food',
+        totalAmount: 2000, paidById: 'beau-geste',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'johnnie-walker'],
+        date: '2026-01-02', notes: ''
+      },
+      {
+        id: 'bonfire-drinks',
+        groupId: 'beach-bonfire', contactId: null,
+        title: 'Drinks & snacks', emoji: '🍹', category: 'Food',
+        totalAmount: 1000, paidById: 'johnnie-walker',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'johnnie-walker'],
+        date: '2026-01-02', notes: ''
+      },
+      {
+        id: 'bonfire-firewood',
+        groupId: 'beach-bonfire', contactId: null,
+        title: 'Firewood & ride', emoji: '🔥', category: 'Travel',
+        totalAmount: 1000, paidById: 'divyansh-rastogi',
+        splitAmong: ['divyansh-rastogi', 'arjun-kumar', 'beau-geste', 'johnnie-walker'],
+        date: '2026-01-02', notes: ''
       }
     ]
   };
@@ -560,6 +782,7 @@ window.Store = (function () {
           contactId: mid,
           name: contact ? contact.name : mid,
           initials: contact ? contact.initials : mid.slice(0, 2).toUpperCase(),
+          photo: contact ? contact.photo : null,
           amount: Math.abs(net),
           direction: net > 0 ? 'lent' : net < 0 ? 'owe' : 'settled'
         };

@@ -37,22 +37,10 @@
   border-color:     var(--toast-success-border);
 }
 
-.toast--warning {
-  background-color: var(--toast-warning-bg);
-  color:            var(--toast-warning-fg);
-  border-color:     var(--toast-warning-border);
-}
-
 .toast--error {
   background-color: var(--toast-error-bg);
   color:            var(--toast-error-fg);
   border-color:     var(--toast-error-border);
-}
-
-.toast--info {
-  background-color: var(--toast-info-bg);
-  color:            var(--toast-info-fg);
-  border-color:     var(--toast-info-border);
 }
 
 /* ---- Icon (16×16) — omit element to hide ---- */
@@ -82,16 +70,16 @@
 
 /* ---- Title — Title/Title-SM (14px semibold) — omit element to hide ---- */
 .toast__title {
-  font-size:   var(--font-size-14);
+  color: currentColor;
+  font-size: var(--font-size-14);
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-20);
-  color: currentColor;
 }
 
 /* ---- Body — Body/Body-SM (13px regular) ---- */
 .toast__body {
-  font-size:   var(--font-size-13);
+  color: currentColor;
+  font-size: var(--font-size-13);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-21);
-  color: currentColor;
 }

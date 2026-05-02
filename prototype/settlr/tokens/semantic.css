@@ -1,135 +1,223 @@
 /* ============================================
    Settlr Design System — Semantic / Component Tokens
-   All values alias to primitives in colors.css
+
+   LAYER 2 — General Semantics
+     Maps primitives (colors.css) to role-based aliases.
+     Used only by L3 component tokens below.
+
+   LAYER 3 — Component Tokens
+     Maps L2 roles to specific component slots.
+     Used by css/*.css component files.
    ============================================ */
 
 :root {
+
+  /* ============================================================
+     L2 — GENERAL SEMANTICS
+     All values alias directly to primitives in colors.css
+     ============================================================ */
+
+  /* ---- Brand / Action (Olive) ---- */
+  --action-surface:   var(--color-olive-50);   /* selected rows, tinted card bg */
+  --action-muted:     var(--color-olive-100);  /* chip/badge/toast light tint */
+  --action-secondary: var(--color-olive-200);  /* secondary btn bg, avatar bg */
+  --action-accent:    var(--color-olive-300);  /* fab bg, secondary pressed, illus accent, light borders */
+  --action-mid:       var(--color-olive-500);  /* mid-weight icon fill */
+  --action-primary:   var(--color-olive-600);  /* CTAs, active states, focus rings */
+  --action-dark:      var(--color-olive-700);  /* primary pressed, text/icon on light olive surfaces */
+  --action-strong:    var(--color-olive-800);  /* high-contrast olive text */
+
+  /* ---- Error / Destructive / Owe (Coral) ---- */
+  --error-action:         var(--color-coral-400);  /* destructive btn bg, error input border */
+  --error-action-pressed: var(--color-coral-500);  /* destructive pressed state, owe icon */
+  --error-strong:         var(--color-coral-600);  /* error helper/validation text */
+  --error-fg:             var(--color-coral-700);  /* label/toast error text */
+  --error-subtle:         var(--color-coral-100);  /* error/owe label bg, list-remove bg */
+  --error-surface:        var(--color-coral-50);   /* error input bg, owe card bg */
+  --error-border:         var(--color-coral-300);  /* toast error border */
+
+  /* ---- Success / Lent (Green) ---- */
+  --success-fg:      var(--color-green-600);  /* label/lent text */
+  --success-strong:  var(--color-green-700);  /* toast success text */
+  --success-mid:     var(--color-green-500);  /* expense lent icon */
+  --success-subtle:  var(--color-green-100);  /* label bg, card lent border */
+  --success-surface: var(--color-green-50);   /* expense lent bg, lent card bg */
+  --success-border:  var(--color-green-300);  /* toast success border */
+
+  /* ---- Surface (Neutral / Gray) ---- */
+  --surface-bg:       var(--color-neutral-50);   /* page bg, sheet bg, top-app-bar */
+  --surface-primary:  var(--color-neutral-50);   /* alias — same as surface-bg */
+  --surface-card:     var(--color-gray-0);        /* elevated cards, modals, nav bar */
+  --surface-input:    var(--color-neutral-100);   /* input bg, chip-off bg, icon-btn bg */
+  --surface-track:    var(--color-neutral-200);   /* tab track, slot bg, illustration placeholders */
+  --surface-hero-gradient:        linear-gradient(160deg, var(--color-olive-100), var(--color-neutral-100));
+  --surface-hero-texture-overlay: rgba(255, 255, 255, 0.06);
+  --avatar-border-on-hero:        var(--color-neutral-50);
+
+  /* ---- Content / Text (Neutral) ---- */
+  --text-primary:     var(--color-neutral-900);  /* headings, active labels, primary body */
+  --text-secondary:   var(--color-neutral-600);  /* subtext, helper, tab default */
+  --text-tertiary:    var(--color-neutral-500);  /* captions, empty-state body */
+  --text-placeholder: var(--color-neutral-400);  /* input placeholder, settled text */
+  --text-strong:      var(--color-neutral-800);  /* chip/control labels, faq text */
+  --text-label:       var(--color-neutral-700);  /* form labels, contact icons */
+  --text-faint:       var(--color-neutral-300);  /* very dim text, disabled tab labels */
+  --text-brand:       var(--color-olive-600);    /* brand-colored text */
+  --text-inverse:     var(--color-gray-0);        /* text on filled/dark surfaces */
+
+  /* ---- Border (Neutral) ---- */
+  --border-default: var(--color-neutral-300);  /* standard borders, dividers, sheet */
+  --border-subtle:  var(--color-neutral-200);  /* footer, nav, soft separators */
+  --border-strong:  var(--color-neutral-400);  /* amount input, prominent borders */
+
+  /* ---- Neutral / Gray Status ---- */
+  --neutral-surface:      var(--color-gray-100);  /* neutral label bg */
+  --neutral-fg:           var(--color-gray-700);  /* neutral label text */
+  --neutral-border:       var(--color-gray-300);  /* neutral toast border */
+  --neutral-mid:          var(--color-gray-200);  /* nav tab active bg, illustration bg */
+  --disabled-fg:          var(--color-gray-400);  /* disabled control label */
+  --disabled-border:      var(--color-gray-200);  /* disabled control border */
+  --disabled-selected-bg: var(--color-gray-300);  /* disabled + selected control fill */
+
+
+  /* ============================================================
+     L3 — COMPONENT TOKENS
+     All values alias to L2 general semantics above.
+     Referenced by css/*.css component files.
+     ============================================================ */
+
   /* ---- Button: Primary ---- */
-  --btn-primary-bg:         var(--color-olive-600);
-  --btn-primary-bg-pressed: var(--color-olive-700);
-  --btn-primary-fg:         var(--color-gray-0);
+  --btn-primary-bg:         var(--action-primary);
+  --btn-primary-bg-pressed: var(--action-dark);
+  --btn-primary-fg:         var(--text-inverse);
 
   /* ---- Button: Secondary ---- */
-  --btn-secondary-bg:         var(--color-olive-200);
-  --btn-secondary-bg-pressed: var(--color-olive-300);
-  --btn-secondary-fg:         var(--color-olive-700);
+  --btn-secondary-bg:         var(--action-secondary);
+  --btn-secondary-bg-pressed: var(--action-accent);
+  --btn-secondary-fg:         var(--action-dark);
 
   /* ---- Button: Ghost ---- */
-  --btn-ghost-fg: var(--color-olive-600);
+  --btn-ghost-fg: var(--action-primary);
 
   /* ---- Button: Destructive ---- */
-  --btn-destructive-bg:         var(--color-coral-400);
-  --btn-destructive-bg-pressed: var(--color-coral-500);
-  --btn-destructive-fg:         var(--color-gray-0);
+  --btn-destructive-bg:         var(--error-action);
+  --btn-destructive-bg-pressed: var(--error-action-pressed);
+  --btn-destructive-fg:         var(--text-inverse);
 
   /* ---- Button: Icon ---- */
-  --btn-icon-bg:         var(--color-neutral-100);
-  --btn-icon-bg-pressed: var(--color-neutral-200);
-  --btn-icon-fg:         var(--color-neutral-900);
+  --btn-icon-bg:         var(--surface-input);
+  --btn-icon-bg-pressed: var(--surface-track);
+  --btn-icon-fg:         var(--text-primary);
 
   /* ---- Action Button Row ---- */
-  --action-btn-row-bg:     var(--color-neutral-100);
-  --action-btn-row-border: var(--color-neutral-200);
+  --action-btn-row-bg:     var(--surface-input);
+  --action-btn-row-border: var(--border-subtle);
+
+  /* ---- Screen Footer ---- */
+  --screen-footer-bg:     var(--surface-bg);
+  --screen-footer-border: var(--border-subtle);
 
   /* ---- Type Chip ---- */
-  --type-chip-bg-off:     var(--color-neutral-50);
-  --type-chip-border-off: var(--color-neutral-400);
-  --type-chip-fg-off:     var(--color-neutral-800);
-  --type-chip-bg-on:      var(--color-olive-100);
-  --type-chip-border-on:  var(--color-olive-700);
-  --type-chip-fg-on:      var(--color-neutral-900);
+  --type-chip-bg-off:     var(--surface-bg);
+  --type-chip-border-off: var(--border-strong);
+  --type-chip-fg-off:     var(--text-strong);
+  --type-chip-bg-on:      var(--action-muted);
+  --type-chip-border-on:  var(--action-dark);
+  --type-chip-fg-on:      var(--text-primary);
 
   /* ---- Chip ---- */
-  --chip-bg-off:     var(--color-neutral-100);
-  --chip-bg-on:      var(--color-olive-600);
-  --chip-border-off: var(--color-neutral-300);
-  --chip-border-on:  var(--color-olive-600);
-  --chip-fg-off:     var(--color-neutral-800);
-  --chip-fg-on:      var(--color-gray-0);
+  --chip-bg-off:     var(--surface-input);
+  --chip-bg-on:      var(--action-primary);
+  --chip-border-off: var(--border-default);
+  --chip-border-on:  var(--action-primary);
+  --chip-fg-off:     var(--text-strong);
+  --chip-fg-on:      var(--text-inverse);
 
   /* ---- Label / Status Badge ---- */
-  --label-success-bg: var(--color-green-100);
-  --label-success-fg: var(--color-green-600);
-  --label-warning-bg: var(--color-yellow-100);
-  --label-warning-fg: var(--color-yellow-600);
-  --label-error-bg:   var(--color-coral-100);
-  --label-error-fg:   var(--color-coral-700);
-  --label-info-bg:    var(--color-jay-100);
-  --label-info-fg:    var(--color-jay-600);
-  --label-neutral-bg: var(--color-gray-100);
-  --label-neutral-fg: var(--color-gray-700);
+  --label-success-bg: var(--success-subtle);
+  --label-success-fg: var(--success-fg);
+  --label-error-bg:   var(--error-subtle);
+  --label-error-fg:   var(--error-fg);
+  --label-neutral-bg: var(--neutral-surface);
+  --label-neutral-fg: var(--neutral-fg);
+  --label-lent-bg:    var(--success-subtle);
+  --label-lent-fg:    var(--success-fg);
+  --label-owe-bg:     var(--error-subtle);
+  --label-owe-fg:     var(--error-fg);
+  --label-settled-bg: var(--neutral-surface);
+  --label-settled-fg: var(--neutral-fg);
 
   /* ---- Input ---- */
-  --input-bg:             var(--color-neutral-100);
-  --input-bg-focused:     var(--color-gray-0);
-  --input-bg-error:       var(--color-coral-50);
-  --input-fg-default:     var(--color-neutral-400);
-  --input-fg-active:      var(--color-neutral-900);
-  --input-border-default: var(--color-neutral-300);
-  --input-border-focused: var(--color-olive-600);
-  --input-border-error:   var(--color-coral-400);
-  --input-label:          var(--color-neutral-700);
-  --input-helper:         var(--color-neutral-500);
-  --input-helper-error:   var(--color-coral-600);
+  --input-bg:             var(--surface-input);
+  --input-bg-focused:     var(--surface-card);
+  --input-bg-error:       var(--error-surface);
+  --input-fg-default:     var(--text-placeholder);
+  --input-fg-active:      var(--text-primary);
+  --input-border-default: var(--border-default);
+  --input-border-focused: var(--action-primary);
+  --input-border-error:   var(--error-action);
+  --input-label:          var(--text-label);
+  --input-helper:         var(--text-tertiary);
+  --input-helper-error:   var(--error-strong);
 
   /* ---- OTP Input ---- */
-  --otp-caret: var(--color-olive-600);
+  --otp-caret: var(--action-primary);
 
   /* ---- Radio / Checkbox Control ---- */
   --control-bg-default:           transparent;
-  --control-bg-selected:          var(--color-olive-600);
-  --control-bg-disabled:          var(--color-gray-100);
-  --control-bg-disabled-selected: var(--color-gray-300);
-  --control-border-default:       var(--color-neutral-300);
-  --control-border-selected:      var(--color-olive-600);
-  --control-border-disabled:      var(--color-gray-200);
-  --control-dot:                  var(--color-gray-0);
-  --control-label:                var(--color-neutral-800);
-  --control-description:          var(--color-neutral-500);
-  --control-label-disabled:       var(--color-gray-400);
+  --control-bg-selected:          var(--action-primary);
+  --control-bg-disabled:          var(--neutral-surface);
+  --control-bg-disabled-selected: var(--disabled-selected-bg);
+  --control-border-default:       var(--border-default);
+  --control-border-selected:      var(--action-primary);
+  --control-border-disabled:      var(--disabled-border);
+  --control-dot:                  var(--text-inverse);
+  --control-label:                var(--text-strong);
+  --control-description:          var(--text-tertiary);
+  --control-label-disabled:       var(--disabled-fg);
 
   /* ---- Radio Container (Boxed) ---- */
-  --container-bg-default:      var(--color-gray-0);
-  --container-bg-selected:     var(--color-olive-50);
-  --container-border-default:  var(--color-neutral-300);
-  --container-border-selected: var(--color-olive-600);
-  --container-border-disabled: var(--color-gray-200);
+  --container-bg-default:      var(--surface-card);
+  --container-bg-selected:     var(--action-surface);
+  --container-border-default:  var(--border-default);
+  --container-border-selected: var(--action-primary);
+  --container-border-disabled: var(--disabled-border);
 
   /* ---- Radio Item Boxed — Illustration ---- */
-  --radio-illus-placeholder-bg: var(--color-neutral-200);
+  --radio-illus-placeholder-bg: var(--surface-track);
 
   /* ---- Type Chip — Illustration placeholder ---- */
-  --type-chip-illus-placeholder-bg: var(--color-neutral-200);
+  --type-chip-illus-placeholder-bg: var(--surface-track);
 
   /* ---- Tab / Segment ---- */
-  --tab-bg-track:    var(--color-neutral-200);
-  --tab-bg-active:   var(--color-gray-0);
-  --tab-border-active: var(--color-neutral-300);
-  --tab-fg-active:   var(--color-neutral-900);
-  --tab-fg-default:  var(--color-neutral-600);
-  --tab-fg-disabled: var(--color-neutral-300);
+  --tab-bg-track:    var(--surface-track);
+  --tab-bg-active:   var(--surface-card);
+  --tab-border-active: var(--border-default);
+  --tab-fg-active:   var(--text-primary);
+  --tab-fg-default:  var(--text-secondary);
+  --tab-fg-disabled: var(--text-faint);
 
   /* ---- Sheet / Modal ---- */
-  --sheet-bg:      var(--color-neutral-50);
-  --sheet-border:  var(--color-olive-600);
-  --sheet-header:  var(--color-neutral-900);
-  --sheet-icon:    var(--color-neutral-900);
-  --sheet-slot-bg: var(--color-neutral-200);
-  --sheet-divider: var(--color-neutral-300);
+  --sheet-bg:      var(--surface-bg);
+  --sheet-border:  var(--action-primary);
+  --sheet-header:  var(--text-primary);
+  --sheet-icon:    var(--text-primary);
+  --sheet-slot-bg: var(--surface-track);
+  --sheet-divider: var(--border-default);
 
   /* ---- Avatar (standalone) ---- */
-  --avatar-bg:   var(--color-olive-200);
-  --avatar-fg:   var(--color-olive-600);
-  --avatar-ring: var(--color-gray-0);
+  --avatar-bg:   var(--action-secondary);
+  --avatar-fg:   var(--action-primary);
+  --avatar-ring: var(--surface-card);
 
   /* ---- Member Pill / Avatar Chip ---- */
-  --member-pill-bg: var(--color-neutral-100);
-  --member-pill-fg: var(--color-neutral-800);
+  --member-pill-bg: var(--surface-input);
+  --member-pill-fg: var(--text-strong);
 
   /* ---- Avatar Stack ---- */
-  --avatar-stack-overflow-bg: var(--color-gray-100);
-  --avatar-stack-overflow-fg: var(--color-neutral-600);
-  --avatar-stack-label-fg:    var(--color-neutral-500);
+  --avatar-stack-overflow-bg: var(--neutral-surface);
+  --avatar-stack-overflow-fg: var(--text-secondary);
+  --avatar-stack-label-fg:    var(--text-tertiary);
   /* Overlap (negative margin) per size — component-specific, no spacing primitive */
   --avatar-stack-overlap-xs:  -6px;
   --avatar-stack-overlap-sm:  calc(-1 * var(--spacing-8));
@@ -138,105 +226,192 @@
 
   /* ---- Contact / Person Item ---- */
   --contact-bg-default:  transparent;
-  --contact-bg-selected: var(--color-olive-50);
-  --contact-avatar-bg:   var(--color-olive-200);
-  --contact-avatar-fg:   var(--color-olive-600);
-  --contact-name:        var(--color-neutral-900);
-  --contact-subtext:     var(--color-neutral-600);
-  --contact-icon:        var(--color-neutral-700);
-  --contact-divider:     var(--color-neutral-300);
-  --contact-settled-fg:  var(--color-neutral-400);
+  --contact-bg-selected: var(--action-surface);
+  --contact-avatar-bg:   var(--action-secondary);
+  --contact-avatar-fg:   var(--action-primary);
+  --contact-name:        var(--text-primary);
+  --contact-subtext:     var(--text-secondary);
+  --contact-icon:        var(--text-label);
+  --contact-divider:     var(--border-default);
+  --contact-settled-fg:  var(--text-placeholder);
 
   /* ---- FAB ---- */
-  --fab-bg: var(--color-olive-300);
-  --fab-fg: var(--color-olive-700);
+  --fab-bg: var(--action-accent);
+  --fab-fg: var(--action-dark);
 
   /* ---- Navigation Bar ---- */
-  --nav-bar-bg:         var(--color-gray-0);
-  --nav-bar-border:     var(--color-neutral-200);
-  --nav-tab-bg-active:  var(--color-gray-200);
-  --nav-tab-fg-active:  var(--color-neutral-900);
-  --nav-tab-fg-default: var(--color-neutral-900);
+  --nav-bar-bg:         var(--surface-card);
+  --nav-bar-border:     var(--border-subtle);
+  --nav-tab-bg-active:  var(--neutral-mid);
+  --nav-tab-fg-active:  var(--text-primary);
+  --nav-tab-fg-default: var(--text-primary);
 
   /* ---- List ---- */
-  --list-remove-bg: var(--color-coral-100);
-  --list-remove-fg: var(--color-coral-500);
+  --list-remove-bg: var(--error-subtle);
+  --list-remove-fg: var(--error-action-pressed);
 
   /* ---- Expense ---- */
-  --expense-lent-fg:    var(--color-green-500);
-  --expense-lent-bg:    var(--color-green-50);
-  --expense-owe-fg:     var(--color-coral-500);
-  --expense-owe-bg:     var(--color-coral-50);
-  --expense-settled-fg: var(--color-neutral-500);
-  --expense-item-illus-bg: var(--color-gray-200);
+  --expense-lent-fg:       var(--success-mid);
+  --expense-lent-bg:       var(--success-surface);
+  --expense-owe-fg:        var(--error-action-pressed);
+  --expense-owe-bg:        var(--error-surface);
+  --expense-settled-fg:    var(--text-tertiary);
+  --expense-item-illus-bg: var(--color-neutral-100);
 
   /* ---- Card / Group ---- */
-  --card-group-owe-border:  var(--color-coral-100);
-  --card-group-lent-border: var(--color-green-100);
-  --card-group-image-bg:    var(--color-neutral-200);
-  --card-group-lent-bg:     var(--color-green-50);
-  --card-group-owe-bg:      var(--color-coral-50);
-  --card-create-bg:         var(--color-olive-50);
-  --card-create-icon-bg:    var(--color-olive-100);
-  --card-create-fg:         var(--color-olive-500);
-  --card-create-border:     var(--color-olive-200);
+  --card-group-owe-border:  var(--error-subtle);
+  --card-group-lent-border: var(--success-subtle);
+  --card-group-image-bg:    var(--surface-track);
+  --card-group-lent-bg:     var(--success-surface);
+  --card-group-owe-bg:      var(--error-surface);
+  --card-create-bg:         var(--action-surface);
+  --card-create-icon-bg:    var(--action-muted);
+  --card-create-fg:         var(--action-mid);
+  --card-create-border:     var(--action-secondary);
 
   /* ---- Heading ---- */
-  --heading-fg: var(--color-neutral-900);
+  --heading-fg: var(--text-primary);
 
   /* ---- Top App Bar ---- */
-  --top-app-bar-bg:    var(--color-neutral-50);
-  --top-app-bar-title: var(--color-olive-800);
-
-  /* ---- Screen-Level Semantics ---- */
-  --surface-primary:   var(--color-neutral-50);
-  --surface-card:      var(--color-gray-0);
-  --text-primary:      var(--color-neutral-900);
-  --text-secondary:    var(--color-neutral-600);
-  --text-tertiary:     var(--color-neutral-500);
-  --text-brand:        var(--color-olive-600);
-  --text-inverse:      var(--color-gray-0);
-  --border-default:    var(--color-neutral-300);
-  --border-subtle:     var(--color-neutral-200);
+  --top-app-bar-bg:    var(--surface-bg);
+  --top-app-bar-title: var(--action-strong);
 
   /* ---- Toast ---- */
-  --toast-neutral-bg:     var(--color-gray-100);
-  --toast-neutral-fg:     var(--color-gray-700);
-  --toast-neutral-border: var(--color-gray-300);
-  --toast-brand-bg:       var(--color-olive-100);
-  --toast-brand-fg:       var(--color-olive-800);
-  --toast-brand-border:   var(--color-olive-300);
-  --toast-success-bg:     var(--color-green-100);
-  --toast-success-fg:     var(--color-green-700);
-  --toast-success-border: var(--color-green-300);
-  --toast-warning-bg:     var(--color-yellow-100);
-  --toast-warning-fg:     var(--color-yellow-700);
-  --toast-warning-border: var(--color-yellow-300);
-  --toast-error-bg:       var(--color-coral-100);
-  --toast-error-fg:       var(--color-coral-700);
-  --toast-error-border:   var(--color-coral-300);
-  --toast-info-bg:        var(--color-jay-100);
-  --toast-info-fg:        var(--color-jay-700);
-  --toast-info-border:    var(--color-jay-300);
+  --toast-neutral-bg:     var(--neutral-surface);
+  --toast-neutral-fg:     var(--neutral-fg);
+  --toast-neutral-border: var(--neutral-border);
+  --toast-brand-bg:       var(--action-muted);
+  --toast-brand-fg:       var(--action-strong);
+  --toast-brand-border:   var(--action-accent);
+  --toast-success-bg:     var(--success-subtle);
+  --toast-success-fg:     var(--success-strong);
+  --toast-success-border: var(--success-border);
+  --toast-error-bg:       var(--error-subtle);
+  --toast-error-fg:       var(--error-fg);
+  --toast-error-border:   var(--error-border);
 
   /* ---- Empty State ---- */
-  --empty-state-illus-bg:  var(--color-olive-50);
-  --empty-state-illus-fg:  var(--color-olive-300);
-  --empty-state-title-fg:  var(--color-neutral-800);
-  --empty-state-body-fg:   var(--color-neutral-500);
+  --empty-state-illus-bg:  var(--action-surface);
+  --empty-state-illus-fg:  var(--action-accent);
+  --empty-state-title-fg:  var(--text-strong);
+  --empty-state-body-fg:   var(--text-tertiary);
 
   /* ---- FAQ / Accordion ---- */
-  --faq-border:       var(--border-default);
-  --faq-question-fg:  var(--color-neutral-800);
-  --faq-answer-fg:    var(--text-secondary);
-  --faq-icon-fg:      var(--color-neutral-800);
+  --faq-border:      var(--border-default);
+  --faq-question-fg: var(--text-strong);
+  --faq-answer-fg:   var(--text-secondary);
+  --faq-icon-fg:     var(--text-strong);
 
   /* ---- Amount Input ---- */
-  --amount-input-bg:             var(--color-neutral-100);
-  --amount-input-bg-focused:     var(--color-gray-0);
-  --amount-input-border:         var(--color-neutral-400);
-  --amount-input-border-focused: var(--color-olive-600);
-  --amount-input-fg:             var(--color-neutral-900);
-  --amount-input-fg-disabled:    var(--color-neutral-600);
-  --amount-input-icon-fg:        var(--color-neutral-600);
+  --amount-input-bg:             var(--surface-input);
+  --amount-input-bg-focused:     var(--surface-card);
+  --amount-input-border:         var(--border-strong);
+  --amount-input-border-focused: var(--action-primary);
+  --amount-input-fg:             var(--text-primary);
+  --amount-input-fg-disabled:    var(--text-secondary);
+  --amount-input-icon-fg:        var(--text-secondary);
+
+  /* ---- Avatar — XL (hero/profile feature) ---- */
+  --avatar-xl-font-size:       30px;       /* component-specific spec value */
+  --avatar-xl-letter-spacing:  -0.90px;    /* component-specific spec value */
+
+  /* ---- Hero Section ---- */
+  --hero-section-height:           240px;
+  --hero-section-height-tall:      300px;       /* group-detail */
+  --hero-section-height-short:     200px;       /* edit-group */
+  --hero-section-texture-tile:     40px;
+  --hero-section-actions-top:      52px;
+  --hero-section-emoji-size:       var(--font-size-40);
+  --hero-section-badge-size:       26px;
+  --hero-section-badge-bg:         var(--surface-card);
+  --hero-section-badge-fg:         var(--text-secondary);
+
+  /* ---- Button: Icon — Overlay variant (over hero-section) ---- */
+  --icon-btn-overlay-size:         44px;
+  --icon-btn-overlay-bg:           var(--surface-card);
+  --icon-btn-overlay-fg:           var(--text-primary);
+  --icon-btn-overlay-bg-pressed:   var(--surface-input);
+
+  /* ---- Toggle Switch ---- */
+  --toggle-track-bg-off:        var(--border-default);
+  --toggle-track-bg-on:         var(--action-primary);
+  --toggle-track-bg-disabled:   var(--surface-input);
+  --toggle-thumb-bg:            var(--surface-card);
+  --toggle-thumb-bg-disabled:   var(--neutral-mid);
+  --toggle-thumb-shadow:        var(--shadow-xs);
+
+  /* ---- Settings: Section / Card / Row ---- */
+  --settings-section-label-fg:           var(--text-tertiary);
+  --settings-card-bg:                    var(--surface-card);
+  --settings-card-border:                var(--border-subtle);
+  --settings-row-divider:                var(--border-subtle);
+  --settings-row-press-bg:               var(--surface-primary);
+  --settings-row-icon-bg:                var(--surface-primary);
+  --settings-row-icon-fg:                var(--text-brand);
+  --settings-row-label-fg:               var(--text-primary);
+  --settings-row-value-fg:               var(--text-tertiary);
+  --settings-row-chevron-fg:             var(--border-default);
+  --settings-row-destructive-label-fg:   var(--error-fg);
+  --settings-row-logout-label-fg:        var(--text-primary);
+
+  /* ---- Detail Row ---- */
+  --detail-row-bg:                    transparent;
+  --detail-row-bg-pressed:            var(--surface-input);
+  --detail-row-icon-bg:               var(--surface-input);
+  --detail-row-icon-bg-selected:      var(--action-muted);
+  --detail-row-icon-fg:               var(--text-primary);
+  --detail-row-label-fg:              var(--text-tertiary);
+  --detail-row-value-fg:              var(--text-primary);
+  --detail-row-chevron-fg:            var(--text-placeholder);
+  --detail-row-border:                var(--border-default);
+  --detail-row-selected-bg:           var(--action-surface);
+  --detail-row-selected-border:       var(--action-primary);
+  --detail-row-radio-border:          var(--control-border-default);
+  --detail-row-radio-border-selected: var(--control-border-selected);
+  --detail-row-radio-bg-selected:     var(--control-bg-selected);
+  --detail-row-radio-dot:             var(--control-dot);
+
+  /* ---- Notes Card ---- */
+  --notes-card-bg:                    var(--surface-input);
+  --notes-card-bg-editable:           var(--input-bg);
+  --notes-card-bg-editable-focused:   var(--input-bg-focused);
+  --notes-card-border:                var(--input-border-default);
+  --notes-card-border-focused:        var(--input-border-focused);
+  --notes-card-label-fg:              var(--text-tertiary);
+  --notes-card-text-fg:               var(--text-label);
+  --notes-card-textarea-fg:           var(--input-fg-active);
+  --notes-card-textarea-placeholder:  var(--input-fg-default);
+  --notes-card-counter-fg:            var(--text-tertiary);
+  --notes-card-counter-fg-warning:    var(--error-strong);
+
+  /* ---- Summary Card ---- */
+  --summary-card-bg:         var(--surface-card);
+  --summary-card-border:     var(--border-subtle);
+  --summary-card-avatar-bg:  var(--contact-avatar-bg);
+  --summary-card-avatar-fg:  var(--contact-avatar-fg);
+  --summary-card-name-fg:    var(--text-primary);
+  --summary-card-amount-fg:  var(--text-primary);
+  --summary-card-meta-fg:    var(--text-tertiary);
+
+  /* ---- Success State ---- */
+  --success-state-icon-bg:                 var(--type-chip-bg-on);
+  --success-state-icon-fg:                 var(--text-primary);
+  --success-state-icon-bg-confirmation:    var(--label-success-bg);
+  --success-state-icon-fg-confirmation:    var(--expense-lent-fg);
+  --success-state-heading-fg:              var(--top-app-bar-title);
+  --success-state-heading-fg-confirmation: var(--expense-lent-fg);
+  --success-state-body-fg:                 var(--input-label);
+  --success-state-info-bg:                 var(--surface-card);
+  --success-state-info-border:             var(--border-subtle);
+  --success-state-meta-fg:                 var(--text-secondary);
+  --success-state-timestamp-fg:            var(--contact-settled-fg);
+
+  /* ---- Invite Banner ---- */
+  --invite-banner-bg:           var(--container-bg-selected);
+  --invite-banner-bg-pressed:   var(--type-chip-bg-on);
+  --invite-banner-border:       var(--toast-brand-border);
+  --invite-banner-icon-bg:      var(--type-chip-bg-on);
+  --invite-banner-icon-fg:      var(--text-brand);
+  --invite-banner-title-fg:     var(--btn-secondary-fg);
+  --invite-banner-subtitle-fg:  var(--text-tertiary);
 }

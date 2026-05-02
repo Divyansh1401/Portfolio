@@ -47,22 +47,10 @@
   color: var(--label-success-fg);
 }
 
-/* ---- Status: Warning ---- */
-.label--warning {
-  background-color: var(--label-warning-bg);
-  color: var(--label-warning-fg);
-}
-
 /* ---- Status: Error ---- */
 .label--error {
   background-color: var(--label-error-bg);
   color: var(--label-error-fg);
-}
-
-/* ---- Status: Info ---- */
-.label--info {
-  background-color: var(--label-info-bg);
-  color: var(--label-info-fg);
 }
 
 /* ---- Status: Default ---- */
@@ -87,3 +75,17 @@
 .label--owe     { color: var(--expense-owe-fg); }
 .label--lent    { color: var(--expense-lent-fg); }
 .label--settled { color: var(--expense-settled-fg); }
+
+/* ---- Balance Pill (standalone pill with bg + fg, not text-only) ---- */
+.balance-pill--lent {
+  background: var(--label-lent-bg);
+  color: var(--label-lent-fg);
+}
+.balance-pill--owe {
+  background: var(--label-owe-bg);
+  color: var(--label-owe-fg);
+}
+.balance-pill--settled {
+  background: var(--label-settled-bg);
+  color: var(--label-settled-fg);
+}

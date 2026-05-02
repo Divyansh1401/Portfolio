@@ -1,0 +1,177 @@
+/* ============================================
+   Settlr — Success State Component
+   Full-screen confirmation/celebration layout used after
+   completing a flow (group created, settlement done, etc.).
+
+   Composition: __icon (large circular badge) + __heading +
+   __body + optional __info-card slot + __actions footer.
+
+   Variants:
+     --celebration  — bouncier scale-in, used for create-group-done
+     --confirmation — gentler scale-in, used for settle-success
+
+   Required L3 semantic tokens (defined in tokens/semantic.css):
+     --success-state-icon-bg
+     --success-state-icon-fg
+     --success-state-icon-bg-confirmation
+     --success-state-icon-fg-confirmation
+     --success-state-heading-fg
+     --success-state-heading-fg-confirmation
+     --success-state-body-fg
+     --success-state-info-bg
+     --success-state-info-border
+     --success-state-meta-fg
+     --success-state-timestamp-fg
+   ============================================ */
+
+.success-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-32) var(--spacing-24);
+  gap: var(--spacing-16);
+  width: 100%;
+}
+
+/* ---- Icon (large circular/rounded badge) ---- */
+.success-state__icon {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-24);
+  background: var(--success-state-icon-bg);
+  color: var(--success-state-icon-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: successStateIconIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+.success-state__icon-emoji {
+  font-size: var(--icon-xl);
+  line-height: 1;
+}
+
+.success-state__icon-glyph {
+  font-size: var(--icon-xl);
+  line-height: 1;
+  color: inherit;
+  animation: successStateGlyphIn 0.4s ease 0.6s both;
+}
+
+/* ---- Heading ---- */
+.success-state__heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-28);
+  font-weight: var(--weight-black);
+  line-height: var(--line-height-34);
+  letter-spacing: -0.84px;
+  color: var(--success-state-heading-fg);
+  animation: successStateFadeUp 0.4s ease 0.6s both;
+}
+
+/* ---- Body / supporting copy ---- */
+.success-state__body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-15);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-22);
+  color: var(--success-state-body-fg);
+  max-width: 280px;
+  animation: successStateFadeUp 0.4s ease 0.8s both;
+}
+
+/* ---- Info card (slot for screen-specific content: group info, settlement details) ---- */
+.success-state__info-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  width: 100%;
+  animation: successStateFadeUp 0.4s ease 0.9s both;
+}
+
+.success-state__info-card--boxed {
+  padding: var(--spacing-16);
+  border-radius: var(--radius-16);
+  background: var(--success-state-info-bg);
+  border: var(--border-small) solid var(--success-state-info-border);
+}
+
+/* ---- Meta (small pill / chip — e.g. group type, payment method) ---- */
+.success-state__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-medium);
+  color: var(--success-state-meta-fg);
+}
+
+/* ---- Timestamp ---- */
+.success-state__timestamp {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  color: var(--success-state-timestamp-fg);
+  margin-top: var(--spacing-4);
+  animation: successStateFadeUp 0.4s ease 1.1s both;
+}
+
+/* ---- Actions (footer button stack) ---- */
+.success-state__actions {
+  padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  width: 100%;
+  animation: successStateFadeUp 0.4s ease 1.3s both;
+}
+
+/* ============================================================
+   Variants
+   ============================================================ */
+
+/* Celebration — scale + bouncier easing (group-done) */
+.success-state--celebration .success-state__icon {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Confirmation — settle-success (green check, success palette) */
+.success-state--confirmation .success-state__icon {
+  border-radius: var(--radius-full);
+  width: 88px;
+  height: 88px;
+  background: var(--success-state-icon-bg-confirmation);
+  color: var(--success-state-icon-fg-confirmation);
+}
+
+.success-state--confirmation .success-state__heading {
+  color: var(--success-state-heading-fg-confirmation);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes successStateIconIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes successStateGlyphIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes successStateFadeUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}

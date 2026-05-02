@@ -46,6 +46,16 @@
       flex-direction: column;
     }
 
+    /* ── List rows: transparent on this screen ── */
+    .update-item,
+    .expense-item {
+      background: transparent;
+    }
+
+    .update-item {
+      border-bottom: var(--border-small) solid var(--contact-divider);
+    }
+
     /* ── Scrollable Content ── */
     .content {
       flex: 1;
@@ -60,7 +70,7 @@
 
   <!-- ── Status Bar ── -->
   <div class="status-bar">
-    <span class="status-bar__time">9:41</span>
+    <span class="status-bar__time text-label-md">9:41</span>
     <div class="status-bar__icons">
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
         <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/>
@@ -98,17 +108,16 @@
 
   <!-- ── Filter Chips ── -->
   <div class="chips-row">
-    <button class="chip chip--sm" data-filter="individual">Individual</button>
-    <button class="chip chip--sm" data-filter="group">Group</button>
-    <button class="chip chip--sm" data-filter="lend">Lend</button>
-    <button class="chip chip--sm" data-filter="owe">Owe</button>
+    <button class="chip chip--sm" data-filter="individual" data-group="expense">Individual</button>
+    <button class="chip chip--sm" data-filter="group" data-group="expense">Group</button>
+    <button class="chip chip--sm" data-filter="lend" data-group="expense">Lend</button>
+    <button class="chip chip--sm" data-filter="owe" data-group="expense">Owe</button>
   </div>
 
-  <!-- ── Scrollable Expense List ── -->
+  <!-- ── Scrollable Feed ── -->
   <main class="content">
-    <div class="expense-list" id="js-expense-list">
-
-    </div>
+    <div id="js-updates-list"></div>
+    <div class="expense-list" id="js-expense-list"></div>
     <div class="empty-state" id="empty-activity" style="display:none;">
       <div class="empty-state__illustration"></div>
       <div class="empty-state__text">
@@ -124,19 +133,19 @@
       <a href="home-dashboard" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
-          <span class="bottom-nav__tab-label">Home</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
       <a href="people" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-user"></i></span>
-          <span class="bottom-nav__tab-label">People</span>
+          <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
       <a href="activity" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-clock"></i></span>
-          <span class="bottom-nav__tab-label">Activity</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>
@@ -151,29 +160,141 @@
     (function () {
       'use strict';
 
+      // ── Updates mock data (inline — Store.getUpdates not in store.js) ──
+      var UPDATES_DATA = [
+        {
+          id: 'u1',
+          kind: 'expense-added',
+          expense: { id: 'u1', emoji: '🏨', title: 'Hotel booking' },
+          net: { amount: 2400, direction: 'owe' },
+          payer: 'Priya',
+          group: 'Goa Trip',
+          time: '2 min ago',
+          unread: true
+        },
+        {
+          id: 'u2',
+          type: 'settlement',
+          icon: 'ph-handshake',
+          text: '<strong>Rahul</strong> settled <span class="amount--lent">₹800</span> with you',
+          time: '1 hr ago',
+          group: null,
+          unread: true,
+          actions: []
+        },
+        {
+          id: 'u3',
+          type: 'group',
+          icon: 'ph-users-three',
+          text: 'You were added to <strong>Bangalore Trip</strong>',
+          time: 'Yesterday',
+          group: 'Bangalore Trip',
+          unread: false,
+          actions: [{ label: 'View group', href: 'group-detail.html' }]
+        },
+        {
+          id: 'u4',
+          type: 'reminder',
+          icon: 'ph-clock-countdown',
+          text: 'Reminder: You owe <strong>Meera</strong> <span class="amount--owe">₹1,200</span>',
+          time: '2 days ago',
+          group: null,
+          unread: false,
+          actions: [{ label: 'Settle up', href: 'settle-select.html' }]
+        },
+        {
+          id: 'u5',
+          type: 'expense',
+          icon: 'ph-pencil-simple',
+          text: '<strong>Ankit</strong> edited <em>Dinner at Trattoria</em>',
+          time: '3 days ago',
+          group: 'Friends',
+          unread: false,
+          actions: [{ label: 'View', href: 'expense-detail.html' }]
+        },
+        {
+          id: 'u6',
+          type: 'settlement',
+          icon: 'ph-check-circle',
+          text: '<strong>Goa Trip</strong> is fully settled!',
+          time: '1 week ago',
+          group: 'Goa Trip',
+          unread: false,
+          actions: []
+        },
+        {
+          id: 'u7',
+          type: 'system',
+          icon: 'ph-user-plus',
+          text: '<strong>Neha</strong> joined Settlr',
+          time: '1 week ago',
+          group: null,
+          unread: false,
+          actions: []
+        }
+      ];
+
+      // ── Render a single update row ─────────────────────────
+      function renderUpdateItem(update) {
+        // "X added amount for Y" → render as standard expense-item
+        if (update.kind === 'expense-added') {
+          var ctxParts = [];
+          if (update.payer) ctxParts.push(update.payer);
+          if (update.group) ctxParts.push(update.group);
+          if (update.time)  ctxParts.push(update.time);
+          return Render.expenseItem(update.expense, update.net, ctxParts.join(' · '));
+        }
+
+        // Other update kinds → notification-style update-item
+        var iconVariant = 'update-item__icon--' + update.type;
+        var unreadClass = update.unread ? ' update-item--unread' : '';
+        var actionsHtml = (update.actions || []).map(function (a) {
+          return '<a href="' + a.href + '" class="btn btn--sm btn--secondary">' + a.label + '</a>';
+        }).join('');
+        return '<div class="update-item' + unreadClass + '" data-type="updates" data-id="' + update.id + '">' +
+          '<div class="update-item__icon ' + iconVariant + '">' +
+            '<i class="ph-bold ' + update.icon + '"></i>' +
+          '</div>' +
+          '<div class="update-item__body">' +
+            '<p class="update-item__text">' + update.text + '</p>' +
+            '<div class="update-item__meta">' +
+              '<span class="update-item__time">' + update.time + '</span>' +
+              (update.group ? '<span class="update-item__tag">' + update.group + '</span>' : '') +
+            '</div>' +
+            (actionsHtml ? '<div class="update-item__actions">' + actionsHtml + '</div>' : '') +
+          '</div>' +
+          '<div class="update-item__dot"></div>' +
+        '</div>';
+      }
+
       var allFeed = Store.getActivityFeed();
-      var activeFilters = {};   // { individual: bool, group: bool, lend: bool, owe: bool }
+      // { individual: bool, group: bool, lend: bool, owe: bool }
+      var activeFilters = {};
       var searchQuery = '';
 
       // ── Filter + search ────────────────────────────────────
       function applyFilters() {
+        // Updates always render at the top — they represent latest events
+        var updatesList = document.getElementById('js-updates-list');
+        updatesList.innerHTML = UPDATES_DATA.map(renderUpdateItem).join('');
+
+        var expenseList = document.getElementById('js-expense-list');
+        var emptyState  = document.getElementById('empty-activity');
+
         var typeActive = activeFilters.individual || activeFilters.group;
         var dirActive  = activeFilters.lend || activeFilters.owe;
 
         var results = allFeed.filter(function (e) {
-          // Type filter (OR within type group)
           if (typeActive) {
             var passType = (activeFilters.individual && !e.groupId) ||
                            (activeFilters.group      && !!e.groupId);
             if (!passType) return false;
           }
-          // Direction filter (OR within direction group)
           if (dirActive) {
             var passDir = (activeFilters.lend && e.net.direction === 'lent') ||
                           (activeFilters.owe  && e.net.direction === 'owe');
             if (!passDir) return false;
           }
-          // Search (title, context, category)
           if (searchQuery) {
             var q = searchQuery.toLowerCase();
             var inTitle    = e.title.toLowerCase().indexOf(q) !== -1;
@@ -184,30 +305,28 @@
           return true;
         });
 
-        renderList(results);
-      }
-
-      // ── Render ─────────────────────────────────────────────
-      function renderList(feed) {
-        var list       = document.getElementById('js-expense-list');
-        var emptyState = document.getElementById('empty-activity');
-
-        if (!feed.length) {
-          list.innerHTML = '';
+        // Hide empty state when there's anything to show
+        var hasUpdates = UPDATES_DATA.length > 0;
+        if (!results.length && !hasUpdates) {
+          expenseList.innerHTML = '';
           emptyState.style.display = '';
           return;
         }
         emptyState.style.display = 'none';
 
-        var grouped = Store.groupExpensesByDate(feed);
-        var html = '';
-        grouped.forEach(function (pair) {
-          var items = pair[1]
-            .map(function (e) { return Render.expenseItem(e, e.net, e.contextLabel); })
-            .join('');
-          html += Render.dateSection(pair[0], items);
-        });
-        list.innerHTML = html;
+        if (results.length) {
+          var grouped = Store.groupExpensesByDate(results);
+          var html = '';
+          grouped.forEach(function (pair) {
+            var items = pair[1]
+              .map(function (e) { return Render.expenseItem(e, e.net, e.contextLabel); })
+              .join('');
+            html += Render.dateSection(pair[0], items);
+          });
+          expenseList.innerHTML = html;
+        } else {
+          expenseList.innerHTML = '';
+        }
       }
 
       // ── Chip toggle ────────────────────────────────────────
@@ -232,10 +351,10 @@
       // ── URL ?filter= param ─────────────────────────────────
       var urlFilter = new URLSearchParams(window.location.search).get('filter');
       if (urlFilter && document.querySelector('.chip[data-filter="' + urlFilter + '"]')) {
-        var chip = document.querySelector('.chip[data-filter="' + urlFilter + '"]');
+        var urlChip = document.querySelector('.chip[data-filter="' + urlFilter + '"]');
         activeFilters[urlFilter] = true;
-        chip.classList.add('chip--on');
-        chip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+        urlChip.classList.add('chip--on');
+        urlChip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
       }
 
       // ── Initial render ─────────────────────────────────────

@@ -31,10 +31,10 @@
       display: flex;
       flex-direction: column;
       gap: var(--spacing-16);
-      padding-bottom: 100px;
+      padding-bottom: calc(var(--spacing-96) + var(--spacing-4));
     }
 
-    /* ── Expense Hero ── */
+    /* ── Expense Hero (screen-unique) ── */
     .expense-hero {
       display: flex;
       flex-direction: column;
@@ -51,7 +51,7 @@
       display: inline-flex;
       align-items: center;
       gap: var(--spacing-4);
-      padding: 4px 12px;
+      padding: var(--spacing-4) var(--spacing-12);
       border-radius: var(--radius-full);
       background: var(--btn-icon-bg);
       font-size: var(--font-size-12);
@@ -60,9 +60,9 @@
     }
     .expense-hero__amount {
       font-family: var(--font-display);
-      font-size: 36px;
+      font-size: var(--font-size-36);
       font-weight: var(--weight-bold);
-      line-height: 40px;
+      line-height: var(--line-height-40);
       letter-spacing: -1.44px;
       color: var(--text-primary);
     }
@@ -83,52 +83,31 @@
       align-items: center;
       padding: var(--spacing-8) var(--spacing-16);
       border-radius: var(--radius-8);
-      background: var(--expense-lent-bg);
       width: 100%;
       justify-content: space-between;
     }
     .expense-hero__balance-label {
-      font-size: 13px;
+      font-size: var(--font-size-13);
       font-weight: var(--weight-semibold);
-      color: var(--expense-lent-fg);
     }
     .expense-hero__balance-amount {
       font-family: var(--font-display);
-      font-size: 16px;
+      font-size: var(--font-size-16);
       font-weight: var(--weight-bold);
       letter-spacing: -0.32px;
-      color: var(--expense-lent-fg);
     }
 
-    /* ── Detail Rows ── */
+    /* ── Detail Section wrapper (canonical detail-row used inside) ── */
     .detail-section {
       padding: 0 var(--spacing-16);
       display: flex;
       flex-direction: column;
     }
-    .detail-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) 0;
-      border-bottom: var(--border-small) solid var(--border-subtle);
-    }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-row__icon {
-      width: 40px; height: 40px;
-      border-radius: var(--radius-8);
-      background: var(--btn-icon-bg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
-    }
-    .detail-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
-    .detail-row__label { font-size: var(--font-size-12); font-weight: var(--weight-regular); line-height: 19px; color: var(--text-tertiary); }
-    .detail-row__value { font-size: var(--font-size-14); font-weight: var(--weight-semibold); color: var(--text-primary); }
 
     /* ── Section Divider ── */
     .section-divider { height: 8px; background: var(--btn-icon-bg); }
 
-    /* ── Split Breakdown ── */
+    /* ── Split Breakdown (screen-unique) ── */
     .split-section {
       padding: 0 var(--spacing-16);
       display: flex; flex-direction: column; gap: var(--spacing-4);
@@ -138,7 +117,7 @@
       padding: var(--spacing-12) 0 var(--spacing-8);
     }
     .split-section__label {
-      font-size: 11px; font-weight: var(--weight-semibold);
+      font-size: var(--font-size-11); font-weight: var(--weight-semibold);
       letter-spacing: 1.76px; text-transform: uppercase;
       color: var(--text-tertiary);
     }
@@ -154,7 +133,7 @@
       width: 32px; height: 32px; border-radius: var(--radius-full);
       background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: var(--weight-semibold); flex-shrink: 0;
+      font-size: var(--font-size-11); font-weight: var(--weight-semibold); flex-shrink: 0;
     }
     .split-person__name { flex: 1; font-size: var(--font-size-14); font-weight: var(--weight-semibold); color: var(--text-primary); }
     .split-person__amount { font-size: var(--font-size-14); font-weight: var(--weight-semibold); }
@@ -162,46 +141,19 @@
     .split-person__amount--lent { color: var(--expense-lent-fg); }
     .split-person__amount--owe { color: var(--expense-owe-fg); }
 
-    /* ── Notes / Description ── */
+    /* ── Notes wrapper (canonical notes-card used inside) ── */
     .notes-section { padding: 0 var(--spacing-16); }
-    .notes-card {
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      background: var(--surface-card);
-      border: var(--border-small) solid var(--border-subtle);
-    }
-    .notes-card__label {
-      font-size: 11px; font-weight: var(--weight-semibold);
-      letter-spacing: 1.76px; text-transform: uppercase;
-      color: var(--text-tertiary); margin-bottom: var(--spacing-8);
-    }
-    .notes-card__input {
-      width: 100%; background: transparent; border: none; outline: none;
-      font-family: var(--font-body); font-size: var(--font-size-14);
-      font-weight: var(--weight-regular); line-height: 23px;
-      color: var(--input-label);
-      resize: none; min-height: 48px;
-    }
-    .notes-card__input::placeholder { color: var(--input-fg-default); }
 
-    /* ── Fixed Bottom Dock ── */
-    .bottom-dock {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      max-width: 393px; margin: 0 auto;
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
-      background: var(--surface-card);
-      border-top: var(--border-small) solid var(--border-subtle);
+    /* ── Balance Pill base (structural) ── */
+    .balance-pill {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-8) var(--spacing-16);
+      border-radius: var(--radius-8);
+      width: 100%;
+      justify-content: space-between;
     }
-    .btn-add {
-      display: flex; width: 100%; height: 52px;
-      align-items: center; justify-content: center; gap: var(--spacing-8);
-      border-radius: var(--radius-full); border: none; cursor: pointer;
-      font-family: var(--font-body); font-size: 16px; font-weight: var(--weight-semibold);
-      background: var(--btn-primary-bg); color: var(--btn-primary-fg);
-      text-decoration: none; -webkit-tap-highlight-color: transparent;
-    }
-    .btn-add:active { background: var(--btn-primary-bg-pressed); }
+
   </style>
 </head>
 <body>
@@ -266,24 +218,40 @@
 
     <!-- Notes -->
     <div class="notes-section">
-      <div class="notes-card">
-        <div class="notes-card__label">Notes (optional)</div>
-        <textarea id="js-notes" class="notes-card__input" rows="2" placeholder="Add a note for this expense…"></textarea>
+      <div class="notes-card notes-card--editable">
+        <label class="notes-card__label" for="js-notes">Notes (optional)</label>
+        <textarea id="js-notes" class="notes-card__textarea" rows="2" maxlength="280" placeholder="Add a note for this expense…" oninput="document.getElementById('js-notes-counter').textContent = this.value.length + '/280';"></textarea>
+        <span id="js-notes-counter" class="notes-card__counter">0/280</span>
       </div>
     </div>
 
   </div>
 
-  <!-- Fixed Bottom Dock -->
-  <div class="bottom-dock">
-    <button id="js-add" class="btn-add">Add Expense</button>
+  <!-- Screen Footer -->
+  <div class="screen-footer">
+    <button id="js-add" class="btn btn--lg btn--primary btn--full">Add Expense</button>
   </div>
+
+  <script>
+    (function () {
+      var footer = document.querySelector('.screen-footer');
+      var scrollEl = document.querySelector('.scroll-content');
+      if (footer && scrollEl) {
+        scrollEl.addEventListener('scroll', function () {
+          footer.classList.toggle('is-scrolled', scrollEl.scrollTop > 0);
+        }, { passive: true });
+      }
+    }());
+  </script>
 
   <script src="../js/store.js"></script>
   <script>
     (function () {
-      var ctx = JSON.parse(sessionStorage.getItem('settlr_new_expense') || '{}');
-      if (!ctx.totalAmount || !ctx.splitAmong) { location.replace('add-amount'); return; }
+      // Context guard — redirect if flow data is missing
+      var raw = sessionStorage.getItem('settlr_new_expense');
+      if (!raw) { location.replace('add-amount.html'); return; }
+      var ctx = JSON.parse(raw);
+      if (!ctx.totalAmount || !ctx.splitAmong || !ctx.splitAmong.length) { location.replace('add-amount.html'); return; }
 
       var me = Store.getCurrentUser();
       var meId = me.id;
@@ -329,22 +297,18 @@
       var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('js-date').textContent = dateStr;
 
-      // Balance pill
+      // Balance pill — use CSS classes instead of inline styles
       var bal = document.getElementById('js-balance');
       var balLabelEl = document.getElementById('js-balance-label');
       var balAmountEl = document.getElementById('js-balance-amount');
       if (iMePaying) {
         var getBack = Math.round((total - myAmount) * 100) / 100;
-        bal.style.background = 'var(--expense-lent-bg)';
-        balLabelEl.style.color = 'var(--expense-lent-fg)';
+        bal.className = 'expense-hero__balance balance-pill balance-pill--lent';
         balLabelEl.textContent = 'You get back';
-        balAmountEl.style.color = 'var(--expense-lent-fg)';
         balAmountEl.textContent = fmt(getBack);
       } else {
-        bal.style.background = 'var(--expense-owe-bg)';
-        balLabelEl.style.color = 'var(--expense-owe-fg)';
+        bal.className = 'expense-hero__balance balance-pill balance-pill--owe';
         balLabelEl.textContent = 'You owe';
-        balAmountEl.style.color = 'var(--expense-owe-fg)';
         balAmountEl.textContent = fmt(myAmount);
       }
 

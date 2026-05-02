@@ -153,30 +153,6 @@
     .numpad__key--action { color: var(--text-brand); }
     .numpad__key i { font-size: var(--font-size-24); }
 
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-24);
-      background: var(--surface-card);
-      flex-shrink: 0;
-    }
-    .bottom-cta .btn {
-      display: flex;
-      width: 100%;
-      height: 52px;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: var(--weight-semibold);
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .bottom-cta .btn:active { background: var(--btn-primary-bg-pressed); }
   </style>
 </head>
 <body>
@@ -241,8 +217,8 @@
   </div>
 
   <!-- ── Bottom CTA ── -->
-  <div class="bottom-cta">
-    <button class="btn" id="js-continue">Continue</button>
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary" id="js-continue">Continue</button>
   </div>
 
   <script src="../js/store.js"></script>

@@ -51,49 +51,7 @@
       color: var(--text-primary);
     }
 
-    /* ── Search Input ── */
-    .search-wrap {
-      padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
-      background: var(--surface-primary);
-      flex-shrink: 0;
-    }
-    .search-input {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-8);
-      height: 44px;
-      padding: 0 var(--spacing-16);
-      background: var(--input-bg);
-      border: var(--border-small) solid var(--input-border-default);
-      border-radius: var(--radius-full);
-      width: 100%;
-      cursor: text;
-      transition: border-color 0.15s ease;
-    }
-    .search-input:focus-within {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-    .search-input__icon {
-      flex-shrink: 0;
-      color: var(--input-fg-default);
-      display: flex;
-      align-items: center;
-    }
-    .search-input__icon i { font-size: var(--icon-sm); }
-    .search-input input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-regular);
-      color: var(--text-primary);
-      outline: none;
-    }
-    .search-input input::placeholder { color: var(--input-fg-default); }
-
-    /* ── Invite Card ── */
+    /* ── Invite Card (screen-unique: link copy + share row composition) ── */
     .invite-card {
       margin: var(--spacing-12) var(--spacing-16);
       padding: var(--spacing-16);
@@ -144,25 +102,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .copy-btn {
-      height: 40px;
-      padding: 0 var(--spacing-16);
-      background: var(--btn-secondary-bg);
-      color: var(--btn-secondary-fg);
-      border: none;
-      border-radius: var(--radius-8);
-      font-family: var(--font-body);
-      font-size: var(--font-size-13);
-      font-weight: var(--weight-semibold);
-      cursor: pointer;
-      white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-4);
-    }
-    .copy-btn:active { background: var(--btn-secondary-bg-pressed); }
-    .copy-btn i { font-size: var(--icon-sm); }
 
     .invite-card__divider {
       display: flex;
@@ -207,7 +146,7 @@
     .share-btn:active { background: var(--surface-primary); opacity: 0.7; }
     .share-btn i { font-size: var(--font-size-16); color: var(--text-brand); }
 
-    /* ── QR Code section ── */
+    /* ── QR Code section (screen-unique) ── */
     .qr-section {
       margin: 0 var(--spacing-16) var(--spacing-8);
       padding: var(--spacing-16);
@@ -255,31 +194,8 @@
       margin-top: var(--spacing-4);
     }
 
-    /* ── Section Header ── */
-    .section-header {
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-4);
-      font-family: var(--font-body);
-      font-size: var(--font-size-11);
-      font-weight: var(--weight-semibold);
-      letter-spacing: 1.54px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-    }
-
-    /* ── Person Row ── */
-    .person-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-bottom: var(--border-small) solid var(--contact-divider);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .person-row:active { background: var(--contact-bg-selected); }
-    .person-row:last-child { border-bottom: none; }
-
-    .person-row__avatar {
+    /* ── Person item avatar override (preserve initials styling on existing rows) ── */
+    .person-item__avatar-circle {
       width: 40px;
       height: 40px;
       border-radius: var(--radius-full);
@@ -293,45 +209,12 @@
       font-weight: var(--weight-bold);
       flex-shrink: 0;
     }
-    .person-row__text { flex: 1; min-width: 0; }
-    .person-row__name {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--contact-name);
-      line-height: var(--line-height-20);
-    }
-    .person-row__meta {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--contact-subtext);
-      line-height: var(--line-height-18);
-    }
-    .person-row__action {
-      flex-shrink: 0;
-    }
-    .add-btn {
-      height: 32px;
-      padding: 0 var(--spacing-16);
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-      border: none;
-      border-radius: var(--radius-full);
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-semibold);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
-    }
-    .add-btn:active { background: var(--btn-primary-bg-pressed); }
-    .add-btn--added {
+    .person-item__avatar-circle--invite {
       background: var(--surface-primary);
-      color: var(--text-tertiary);
       border: var(--border-small) solid var(--border-default);
+      color: var(--text-tertiary);
     }
-    .add-btn--added:active { background: var(--surface-primary); }
+    .person-item__avatar-circle--invite i { font-size: var(--icon-md); }
 
     /* ── Scrollable Content ── */
     .content {
@@ -386,7 +269,7 @@
   <!-- ── Scrollable Content ── -->
   <main class="content">
 
-    <!-- Invite via link -->
+    <!-- Invite via link (screen-unique composition: link box + copy + share row) -->
     <div class="invite-card">
       <p class="invite-card__title">Invite via link</p>
       <p class="invite-card__subtitle">Share your personal invite link and start splitting instantly</p>
@@ -394,7 +277,7 @@
         <div class="invite-link-box">
           <span>settlr.app/invite/divyansh</span>
         </div>
-        <button class="copy-btn" onclick="copyLink(this)">
+        <button class="btn btn--secondary btn--sm copy-btn" onclick="copyLink(this)">
           <i class="ph ph-copy"></i>
           Copy
         </button>
@@ -426,90 +309,90 @@
         <p class="qr-text__sub">Friends can scan to add you directly</p>
         <p class="qr-text__id">@divyansh</p>
       </div>
-      <button class="copy-btn" style="flex-shrink:0">
+      <button class="btn btn--secondary btn--sm" style="flex-shrink:0">
         <i class="ph ph-download-simple"></i>
       </button>
     </div>
 
     <!-- On Settlr (suggested contacts) -->
-    <p class="section-header">On Settlr</p>
+    <div class="heading"><span class="heading__title">On Settlr</span></div>
     <div>
 
-      <div class="person-row">
-        <div class="person-row__avatar">SM</div>
-        <div class="person-row__text">
-          <p class="person-row__name">Smita Joshi</p>
-          <p class="person-row__meta">@smitajoshi · Joined today</p>
+      <div class="person-item">
+        <div class="person-item__avatar-circle">SM</div>
+        <div class="person-item__text">
+          <p class="person-item__name">Smita Joshi</p>
+          <p class="person-item__subtext">@smitajoshi · Joined today</p>
         </div>
-        <div class="person-row__action">
-          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
-        </div>
-      </div>
-
-      <div class="person-row">
-        <div class="person-row__avatar">AK</div>
-        <div class="person-row__text">
-          <p class="person-row__name">Arjun Kumar</p>
-          <p class="person-row__meta">@arjunk · 2 mutual friends</p>
-        </div>
-        <div class="person-row__action">
-          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm" onclick="toggleAdd(this)">+ Add</button>
         </div>
       </div>
 
-      <div class="person-row">
-        <div class="person-row__avatar">DP</div>
-        <div class="person-row__text">
-          <p class="person-row__name">Deepika Pillai</p>
-          <p class="person-row__meta">@deepika · 1 mutual friend</p>
+      <div class="person-item">
+        <div class="person-item__avatar-circle">AK</div>
+        <div class="person-item__text">
+          <p class="person-item__name">Arjun Kumar</p>
+          <p class="person-item__subtext">@arjunk · 2 mutual friends</p>
         </div>
-        <div class="person-row__action">
-          <button class="add-btn" onclick="toggleAdd(this)">+ Add</button>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm" onclick="toggleAdd(this)">+ Add</button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="person-item__avatar-circle">DP</div>
+        <div class="person-item__text">
+          <p class="person-item__name">Deepika Pillai</p>
+          <p class="person-item__subtext">@deepika · 1 mutual friend</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm" onclick="toggleAdd(this)">+ Add</button>
         </div>
       </div>
 
     </div>
 
     <!-- From Contacts (not yet on Settlr) -->
-    <p class="section-header">Invite from Contacts</p>
+    <div class="heading"><span class="heading__title">Invite from Contacts</span></div>
     <div>
 
-      <div class="person-row">
-        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
-          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
+      <div class="person-item">
+        <div class="person-item__avatar-circle person-item__avatar-circle--invite">
+          <i class="ph ph-user"></i>
         </div>
-        <div class="person-row__text">
-          <p class="person-row__name">Rohit Mehta</p>
-          <p class="person-row__meta">+91 98765 11111</p>
+        <div class="person-item__text">
+          <p class="person-item__name">Rohit Mehta</p>
+          <p class="person-item__subtext">+91 98765 11111</p>
         </div>
-        <div class="person-row__action">
-          <button class="add-btn">Invite</button>
-        </div>
-      </div>
-
-      <div class="person-row">
-        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
-          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
-        </div>
-        <div class="person-row__text">
-          <p class="person-row__name">Sunita Rao</p>
-          <p class="person-row__meta">+91 87654 22222</p>
-        </div>
-        <div class="person-row__action">
-          <button class="add-btn">Invite</button>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm">Invite</button>
         </div>
       </div>
 
-      <div class="person-row">
-        <div class="person-row__avatar" style="background: var(--surface-primary); border: var(--border-small) solid var(--border-default); color: var(--text-tertiary);">
-          <i class="ph ph-user" style="font-size: var(--icon-md);"></i>
+      <div class="person-item">
+        <div class="person-item__avatar-circle person-item__avatar-circle--invite">
+          <i class="ph ph-user"></i>
         </div>
-        <div class="person-row__text">
-          <p class="person-row__name">Manish Tiwari</p>
-          <p class="person-row__meta">+91 76543 33333</p>
+        <div class="person-item__text">
+          <p class="person-item__name">Sunita Rao</p>
+          <p class="person-item__subtext">+91 87654 22222</p>
         </div>
-        <div class="person-row__action">
-          <button class="add-btn">Invite</button>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm">Invite</button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="person-item__avatar-circle person-item__avatar-circle--invite">
+          <i class="ph ph-user"></i>
+        </div>
+        <div class="person-item__text">
+          <p class="person-item__name">Manish Tiwari</p>
+          <p class="person-item__subtext">+91 76543 33333</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm">Invite</button>
         </div>
       </div>
 
@@ -525,12 +408,12 @@
     }
 
     function toggleAdd(btn) {
-      const isAdded = btn.classList.contains('add-btn--added');
+      const isAdded = btn.classList.contains('btn--added');
       if (isAdded) {
-        btn.classList.remove('add-btn--added');
+        btn.classList.remove('btn--added');
         btn.textContent = '+ Add';
       } else {
-        btn.classList.add('add-btn--added');
+        btn.classList.add('btn--added');
         btn.textContent = '✓ Added';
       }
     }

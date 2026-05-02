@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../tokens/index.css">
   <link rel="stylesheet" href="../css/index.css">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,39 +23,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-
-    /* ── Search ── */
-    .search-wrap {
-      padding: var(--spacing-8) var(--spacing-16);
-      flex-shrink: 0;
-    }
-    .search-field {
-      position: relative;
-    }
-    .search-field__icon {
-      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-      font-size: var(--icon-md); color: var(--input-fg-default);
-      pointer-events: none;
-    }
-    .search-field__input {
-      width: 100%; height: 48px;
-      padding: 0 var(--spacing-16) 0 40px;
-      background: var(--input-bg);
-      border: var(--border-medium) solid transparent;
-      border-radius: var(--radius-full);
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-regular);
-      line-height: var(--line-height-20);
-      color: var(--text-primary); outline: none;
-      transition: all 0.15s;
-    }
-    .search-field__input::placeholder { color: var(--input-fg-default); }
-    .search-field__input:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-
     /* ── Selected Chips Row ── */
     .selected-row {
       display: none;
@@ -67,32 +33,21 @@
     .selected-row::-webkit-scrollbar { display: none; }
     .selected-row--visible { display: flex; }
 
-    .sel-chip {
-      display: inline-flex; align-items: center; gap: var(--spacing-4);
-      padding: var(--spacing-4) var(--spacing-8) var(--spacing-4) var(--spacing-4);
-      background: var(--card-create-bg);
-      border: var(--border-small) solid var(--card-create-border);
-      border-radius: var(--radius-full);
-      flex-shrink: 0; cursor: pointer;
-      transition: all 0.15s;
-    }
-    .sel-chip:active { background: var(--type-chip-bg-on); }
-    .sel-chip .avatar { width: 22px; height: 22px; font-size: var(--font-size-10); }
-    .sel-chip__name {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--btn-secondary-fg);
-    }
-    .sel-chip__x {
-      font-size: var(--font-size-12); color: var(--text-tertiary);
-      margin-left: var(--spacing-2);
-    }
-
     /* ── List ── */
     .people-list {
       flex: 1; overflow-y: auto;
-      padding-bottom: 160px;
+      padding-bottom: calc(var(--spacing-64) * 2 + var(--spacing-32));
+    }
+
+    /* Empty state inline (search no results) */
+    .search-empty {
+      display: none;
+      padding: var(--spacing-32) var(--spacing-16);
+      text-align: center;
+    }
+    .search-empty--visible { display: block; }
+    .search-empty .empty-state__title {
+      margin-bottom: var(--spacing-4);
     }
     .section-header {
       padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
@@ -108,115 +63,25 @@
       z-index: 2;
     }
 
-    /* Group row */
-    .group-row {
-      display: flex; align-items: center; gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-bottom: var(--border-small) solid var(--contact-divider);
-      cursor: pointer; transition: background 0.1s;
-    }
-    .group-row:active { background: var(--surface-primary); }
-    .group-row--selected {
-      background: var(--contact-bg-selected);
-    }
-    .group-row__icon {
-      width: 40px; height: 40px; border-radius: var(--radius-8);
-      background: var(--btn-icon-bg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: var(--icon-md); flex-shrink: 0;
-    }
-    .group-row--selected .group-row__icon {
-      background: var(--type-chip-bg-on);
-    }
-    .group-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
-    .group-row__name {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--contact-name);
-    }
-    .group-row__sub {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--contact-subtext);
-    }
-    .group-row__chevron {
-      font-size: var(--icon-md); color: var(--input-fg-default); flex-shrink: 0;
-    }
-    .group-row--selected .group-row__chevron { color: var(--text-brand); }
-
-    /* Contact row */
-    .contact-row {
-      display: flex; align-items: center; gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-bottom: var(--border-small) solid var(--contact-divider);
-      cursor: pointer; transition: background 0.1s;
-    }
-    .contact-row:active { background: var(--surface-primary); }
-    .contact-row--selected { background: var(--contact-bg-selected); }
-    .contact-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
-    .contact-row__name {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--contact-name);
-    }
-    .contact-row__sub {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--contact-subtext);
-    }
-
-    /* Avatar */
-    .avatar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      background: var(--avatar-bg);
-      color: var(--avatar-fg);
-      font-family: var(--font-body);
-      flex-shrink: 0;
-    }
-    .avatar-md {
-      width: 40px; height: 40px;
-      font-size: var(--font-size-16); font-weight: var(--weight-bold);
-    }
-
-    /* Checkbox */
-    .checkbox {
-      width: 20px; height: 20px;
-      border-radius: var(--radius-4);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--surface-card);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all 0.15s;
-    }
-    .checkbox--checked {
-      background: var(--control-bg-selected);
-      border-color: var(--control-border-selected);
-    }
-    .checkbox--checked::after {
-      content: '';
-      width: 10px; height: 6px;
-      border-left: 2px solid var(--surface-card);
-      border-bottom: 2px solid var(--surface-card);
-      transform: rotate(-45deg) translateY(-1px);
-    }
-
-    /* ── Fixed bottom dock ── */
-    .bottom-dock {
+    /* ── Bottom container holding save-as-group + screen-footer ── */
+    .bottom-stack {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%;
+      max-width: 393px;
       background: var(--surface-card);
       border-top: var(--border-small) solid var(--border-subtle);
       display: flex; flex-direction: column;
-      max-width: 393px; margin: 0 auto;
+      z-index: 20;
+    }
+    .bottom-stack .screen-footer {
+      position: static;
+      transform: none;
+      width: 100%;
+      border-top: none;
     }
 
-    /* Save-as-group row */
+    /* Save-as-group row (screen-unique) */
     .save-group-row {
       display: flex; flex-direction: column;
       border-bottom: var(--border-small) solid var(--border-subtle);
@@ -247,19 +112,6 @@
       line-height: var(--line-height-17);
       color: var(--text-tertiary);
     }
-    .save-group-row__check {
-      width: 20px; height: 20px; border-radius: var(--radius-4);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--surface-card);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all 0.15s;
-    }
-    .save-group-row__check--on {
-      background: var(--btn-primary-bg);
-      border-color: var(--btn-primary-bg);
-    }
-    .save-group-row__check i { display: none; }
-    .save-group-row__check--on i { display: block; }
 
     /* Group name input (shown when checked) */
     .save-group-row__form {
@@ -267,10 +119,10 @@
       padding: 0 var(--spacing-16) var(--spacing-12);
       gap: var(--spacing-8);
     }
-    .save-group-row__form--visible { display: flex; }
+    .save-group-row__form--visible { display: flex; flex-direction: column; }
 
     .save-group-input {
-      flex: 1; height: 40px;
+      width: 100%; height: 40px;
       padding: 0 var(--spacing-12);
       background: var(--surface-primary);
       border: var(--border-medium) solid var(--input-border-default);
@@ -287,15 +139,13 @@
     /* Error state for group name input */
     .save-group-input--error { border-color: var(--input-border-error); background: var(--input-bg-error); }
 
-    /* CTA inside dock */
-    .dock-cta {
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
-    }
-
     /* Disabled CTA */
     .btn--disabled {
       opacity: var(--opacity-strong); pointer-events: none;
     }
+
+    /* Visibility utility */
+    .is-hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -327,10 +177,10 @@
 
   <!-- Search -->
   <div class="search-wrap">
-    <div class="search-field">
-      <i class="ph ph-magnifying-glass search-field__icon"></i>
-      <input type="text" class="search-field__input" placeholder="Search groups or friends..." autofocus>
-    </div>
+    <label class="search-input">
+      <span class="search-input__icon"><i class="ph ph-magnifying-glass"></i></span>
+      <input type="text" placeholder="Search groups or friends..." autofocus>
+    </label>
   </div>
 
   <!-- Selected People Chips -->
@@ -339,8 +189,13 @@
   <!-- Combined List (rendered by JS) -->
   <div class="people-list" id="js-list"></div>
 
-  <!-- Fixed Bottom Dock -->
-  <div class="bottom-dock">
+  <!-- Search empty state -->
+  <div class="search-empty empty-state" id="js-search-empty" aria-live="polite">
+    <p class="empty-state__title">No matches found</p>
+  </div>
+
+  <!-- Fixed Bottom Stack: save-as-group + screen-footer -->
+  <div class="bottom-stack">
 
     <!-- Save as group -->
     <div class="save-group-row">
@@ -350,19 +205,19 @@
           <div class="save-group-row__title">Save as a group</div>
           <div class="save-group-row__sub">Quick access next time</div>
         </div>
-        <div class="save-group-row__check" id="save-check">
-          <i class="ph-bold ph-check" style="font-size:var(--font-size-10);color:var(--btn-primary-fg);display:none;"></i>
+        <div class="checkbox-control" id="save-check">
+          <i class="ph-bold ph-check checkbox-control__check"></i>
         </div>
       </div>
       <div class="save-group-row__form" id="save-group-form">
-        <input type="text" class="save-group-input" id="group-name-input" placeholder="Group name e.g. Goa Trip…">
-        <p class="input-field__helper input-field__helper--error" id="group-name-error" style="display:none;">Please enter a group name.</p>
+        <input type="text" class="save-group-input" id="js-group-name-input" placeholder="Group name e.g. Goa Trip…" oninput="validateGroupName()">
+        <p class="input-field__helper input-field__helper--error is-hidden" id="js-group-name-error">Please enter a group name.</p>
       </div>
     </div>
 
     <!-- Next CTA -->
-    <div class="dock-cta">
-      <button id="js-next" class="btn btn--primary btn--lg btn--full btn--disabled">Next</button>
+    <div class="screen-footer">
+      <button id="js-next" class="btn btn--primary btn--lg btn--full btn--disabled" disabled>Next</button>
     </div>
 
   </div>
@@ -372,45 +227,65 @@
     function toggleSaveGroup() {
       var check = document.getElementById('save-check');
       var form = document.getElementById('save-group-form');
-      var isOn = check.classList.toggle('save-group-row__check--on');
+      var isOn = check.classList.toggle('is-selected');
       form.classList.toggle('save-group-row__form--visible', isOn);
-      if (isOn) form.querySelector('input').focus();
+      if (isOn) {
+        form.querySelector('input').focus();
+      } else {
+        // Reset error state when hiding form
+        var errEl = document.getElementById('js-group-name-error');
+        var inputEl = document.getElementById('js-group-name-input');
+        if (errEl) errEl.classList.add('is-hidden');
+        if (inputEl) inputEl.classList.remove('save-group-input--error');
+      }
+    }
+
+    function validateGroupName() {
+      var inputEl = document.getElementById('js-group-name-input');
+      var errEl   = document.getElementById('js-group-name-error');
+      if (!inputEl || !errEl) return true;
+      var isValid = inputEl.value.trim().length > 0;
+      inputEl.classList.toggle('save-group-input--error', !isValid);
+      errEl.classList.toggle('is-hidden', isValid);
+      return isValid;
     }
 
     (function () {
       var expCtx = JSON.parse(sessionStorage.getItem('settlr_new_expense') || '{}');
       if (!expCtx.totalAmount) { location.replace('add-amount'); return; }
 
-      var CHEVRON = '<i class="ph ph-caret-right group-row__chevron"></i>';
       var selectedGroupId = null;
       var selectedContactIds = {};
 
-      var listEl    = document.getElementById('js-list');
-      var chipsRow  = document.getElementById('selected-chips');
-      var nextBtn   = document.getElementById('js-next');
-      var searchInput = document.querySelector('.search-field__input');
+      var listEl      = document.getElementById('js-list');
+      var chipsRow    = document.getElementById('selected-chips');
+      var nextBtn     = document.getElementById('js-next');
+      var searchInput = document.querySelector('.search-input input');
+      var searchEmpty = document.getElementById('js-search-empty');
 
       var groups   = Store.getGroups();
       var contacts = Store.getContacts();
 
       function groupHTML(g) {
         var mc = g.memberIds.length;
-        return '<div class="group-row" data-group-id="' + g.id + '">' +
-          '<div class="group-row__icon">' + (g.emoji || '👥') + '</div>' +
-          '<div class="group-row__text">' +
-            '<span class="group-row__name">' + g.name + '</span>' +
-            '<span class="group-row__sub">' + mc + ' member' + (mc !== 1 ? 's' : '') + '</span>' +
-          '</div>' + CHEVRON + '</div>';
+        return '<div class="person-item" data-group-id="' + g.id + '">' +
+          '<div class="person-item__group-icon">' + (g.emoji || '👥') + '</div>' +
+          '<div class="person-item__text">' +
+            '<span class="person-item__name">' + g.name + '</span>' +
+            '<span class="person-item__subtext">' + mc + ' member' + (mc !== 1 ? 's' : '') + '</span>' +
+          '</div>' +
+          '<div class="person-item__action"><i class="ph ph-caret-right person-item__action-icon"></i></div>' +
+        '</div>';
       }
 
       function contactHTML(c) {
-        return '<div class="contact-row" data-contact-id="' + c.id + '">' +
-          '<div class="avatar avatar-md">' + c.initials + '</div>' +
-          '<div class="contact-row__text">' +
-            '<span class="contact-row__name">' + c.name + '</span>' +
-            '<span class="contact-row__sub">Tap to add</span>' +
+        return '<div class="person-item" data-contact-id="' + c.id + '">' +
+          '<div class="avatar avatar--initials avatar--md">' + c.initials + '</div>' +
+          '<div class="person-item__text">' +
+            '<span class="person-item__name">' + c.name + '</span>' +
+            '<span class="person-item__subtext">Tap to add</span>' +
           '</div>' +
-          '<div class="checkbox"></div>' +
+          '<div class="checkbox-control"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
         '</div>';
       }
 
@@ -419,6 +294,8 @@
         var html = '';
         var fg = groups.filter(function(g) { return !filter || g.name.toLowerCase().includes(filter); });
         var fc = contacts.filter(function(c) { return !filter || c.name.toLowerCase().includes(filter); });
+        var hasResults = fg.length > 0 || fc.length > 0;
+
         if (fg.length) {
           html += '<div class="section-header">Groups</div>';
           fg.forEach(function(g) { html += groupHTML(g); });
@@ -429,19 +306,25 @@
         }
         listEl.innerHTML = html;
 
-        listEl.querySelectorAll('.group-row').forEach(function(row) {
+        // Show/hide search empty state
+        if (searchEmpty) {
+          searchEmpty.classList.toggle('search-empty--visible', filter.length > 0 && !hasResults);
+        }
+
+        listEl.querySelectorAll('.person-item[data-group-id]').forEach(function(row) {
           var id = row.getAttribute('data-group-id');
-          if (id === selectedGroupId) row.classList.add('group-row--selected');
+          if (id === selectedGroupId) row.classList.add('is-selected');
           row.addEventListener('click', function() { selectGroup(id); });
         });
 
-        listEl.querySelectorAll('.contact-row').forEach(function(row) {
+        listEl.querySelectorAll('.person-item[data-contact-id]').forEach(function(row) {
           var id = row.getAttribute('data-contact-id');
           if (selectedContactIds[id]) {
-            row.classList.add('contact-row--selected');
-            row.querySelector('.checkbox').classList.add('checkbox--checked');
+            row.classList.add('is-selected');
+            var cb = row.querySelector('.checkbox-control');
+            if (cb) cb.classList.add('is-selected');
           }
-          row.addEventListener('click', function() { toggleContact(id, row.querySelector('.contact-row__name').textContent.trim()); });
+          row.addEventListener('click', function() { toggleContact(id, row.querySelector('.person-item__name').textContent.trim()); });
         });
       }
 
@@ -477,13 +360,13 @@
         chipsRow.innerHTML = ids.map(function(id) {
           var name = selectedContactIds[id];
           var initials = name.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
-          return '<div class="sel-chip" data-cid="' + id + '">' +
-            '<div class="avatar">' + initials + '</div>' +
-            '<span class="sel-chip__name">' + name.split(' ')[0] + '</span>' +
-            '<i class="ph ph-x sel-chip__x"></i>' +
+          return '<div class="member-pill member-pill--removable" data-cid="' + id + '">' +
+            '<div class="avatar avatar--initials avatar--sm">' + initials + '</div>' +
+            '<span class="member-pill__name">' + name.split(' ')[0] + '</span>' +
+            '<i class="ph ph-x member-pill__remove"></i>' +
           '</div>';
         }).join('');
-        chipsRow.querySelectorAll('.sel-chip').forEach(function(chip) {
+        chipsRow.querySelectorAll('.member-pill').forEach(function(chip) {
           chip.addEventListener('click', function() {
             delete selectedContactIds[chip.getAttribute('data-cid')];
             renderChips();
@@ -496,6 +379,7 @@
       function updateNext() {
         var has = selectedGroupId || Object.keys(selectedContactIds).length > 0;
         nextBtn.classList.toggle('btn--disabled', !has);
+        nextBtn.disabled = !has;
       }
 
       nextBtn.addEventListener('click', function() {

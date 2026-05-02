@@ -47,3 +47,18 @@
   padding: var(--spacing-20);
 }
 .icon-btn--lg .icon-btn__icon { width: var(--icon-lg); height: var(--icon-lg); }
+
+/* ---- Variant: Overlay ----
+   Used over .hero-section gradients (back, settings, edit).
+   Fixed 44x44 footprint, semi-transparent surface, subtle shadow. */
+.icon-btn--overlay {
+  width: var(--icon-btn-overlay-size);
+  height: var(--icon-btn-overlay-size);
+  padding: 0;
+  background-color: var(--icon-btn-overlay-bg);
+  color: var(--icon-btn-overlay-fg);
+  box-shadow: var(--shadow-sm);
+}
+.icon-btn--overlay .icon-btn__icon { width: var(--icon-md); height: var(--icon-md); }
+.icon-btn--overlay i { font-size: var(--icon-md); }
+.icon-btn--overlay:active { background-color: var(--icon-btn-overlay-bg-pressed); }

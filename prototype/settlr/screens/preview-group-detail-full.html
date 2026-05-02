@@ -297,13 +297,14 @@
     .btn--primary   { background: var(--btn-primary-bg);   color: var(--btn-primary-fg); }
     .btn--secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-fg); }
 
-    /* ── ACTION BUTTON ROW ────────────────────── */
-    .action-btn-row {
+    /* ── SCREEN FOOTER (position override for phone mockup) ── */
+    .screen-footer {
       position: absolute; bottom: 0; left: 0; right: 0;
-      display: flex; align-items: center; gap: var(--spacing-16);
+      transform: none; width: 100%;
+      display: flex; align-items: center; gap: var(--spacing-12);
       padding: var(--spacing-12) var(--spacing-16) var(--spacing-24);
-      border-top: 1px solid var(--color-neutral-200);
-      background: var(--color-gray-0);
+      border-top-color: var(--color-neutral-200);
+      background: var(--color-neutral-50);
     }
 
   </style>
@@ -445,19 +446,19 @@
 
   </div>
 
-  <!-- ── ACTION BUTTON ROW ───────────────────── -->
-  <div class="action-btn-row">
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer is-scrolled">
     <button class="btn btn--lg btn--secondary">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      Add Expense
+      <span class="btn__content">
+        Settle up
+        <i class="btn__icon ph-bold ph-arrow-right"></i>
+      </span>
     </button>
     <button class="btn btn--lg btn--primary">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Settle Up
+      <span class="btn__content">
+        Add expense
+        <i class="btn__icon ph-bold ph-plus"></i>
+      </span>
     </button>
   </div>
 

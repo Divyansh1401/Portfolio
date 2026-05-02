@@ -25,43 +25,24 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Top Bar ── */
-    .top-bar { display: flex; align-items: center; gap: var(--spacing-8); padding: var(--spacing-8) var(--spacing-16); flex-shrink: 0; }
-    .top-bar__back { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--btn-icon-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--btn-icon-fg); text-decoration: none; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
-    .top-bar__back:active { background: var(--btn-icon-bg-pressed); }
-    .top-bar__back i { font-size: var(--font-size-20); }
-    .top-bar__title { flex: 1; font-family: var(--font-display); font-size: var(--font-size-20); font-weight: var(--weight-bold); line-height: 26px; letter-spacing: -0.40px; color: var(--top-app-bar-title); }
-
     /* ── Scrollable Content ── */
     .scroll-content {
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding: var(--spacing-8) var(--spacing-24) var(--spacing-24);
+      padding: var(--spacing-8) var(--spacing-24) calc(var(--spacing-96) + var(--spacing-24));
       display: flex;
       flex-direction: column;
       gap: var(--spacing-24);
     }
 
-    /* ── Amount Display (editable) ── */
+    /* ── Amount Display (editable) — screen-unique ── */
     .amount-area {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-8);
       padding: var(--spacing-16) 0;
-    }
-    .currency-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      background: var(--btn-icon-bg);
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-medium);
-      color: var(--text-secondary);
     }
     .amount-input-wrap {
       display: flex;
@@ -91,40 +72,7 @@
       caret-color: var(--text-brand);
     }
 
-    /* ── Field Group ── */
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-    }
-    .field__label {
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: var(--weight-regular);
-      line-height: 19px;
-      color: var(--input-label);
-    }
-    .field__input {
-      width: 100%;
-      height: 48px;
-      padding: 0 var(--spacing-16);
-      border-radius: var(--radius-12);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--input-bg);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: var(--weight-regular);
-      line-height: 23px;
-      color: var(--input-fg-active);
-      outline: none;
-      transition: all 0.15s ease;
-    }
-    .field__input:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-
-    /* ── Category Chips ── */
+    /* ── Category Chips (screen-unique horizontal scroller) ── */
     .chips-section {
       display: flex;
       flex-direction: column;
@@ -137,143 +85,7 @@
       scrollbar-width: none;
     }
     .chips-row::-webkit-scrollbar { display: none; }
-    .cat-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      padding: 6px 12px;
-      border-radius: var(--radius-full);
-      border: var(--border-medium) solid var(--border-default);
-      background: var(--surface-card);
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: var(--weight-medium);
-      color: var(--input-label);
-      cursor: pointer;
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-      transition: all 0.15s ease;
-    }
-    .cat-chip.is-selected {
-      background: var(--chip-bg-on);
-      border-color: var(--chip-border-on);
-      color: var(--chip-fg-on);
-    }
 
-    /* ── Selector Row (Paid by, Group, Date, Split) ── */
-    .selector-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      background: var(--surface-card);
-      border: var(--border-small) solid var(--border-subtle);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .selector-row:active {
-      background: var(--btn-icon-bg);
-    }
-    .selector-row__icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-8);
-      background: var(--btn-icon-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    .selector-row__text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-    .selector-row__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--text-tertiary);
-    }
-    .selector-row__value {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-primary);
-    }
-    .selector-row__chevron {
-      font-size: 18px;
-      color: var(--input-fg-default);
-      flex-shrink: 0;
-    }
-
-    /* ── Notes Field ── */
-    .field__textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--input-bg);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: var(--weight-regular);
-      line-height: 23px;
-      color: var(--input-fg-active);
-      outline: none;
-      resize: none;
-      transition: all 0.15s ease;
-    }
-    .field__textarea:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-12);
-      flex-shrink: 0;
-    }
-    .btn-save {
-      display: flex;
-      width: 100%;
-      height: 52px;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: var(--weight-semibold);
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-save:active { background: var(--btn-primary-bg-pressed); }
-    .btn-cancel {
-      display: flex;
-      width: 100%;
-      height: 44px;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-tertiary);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
   </style>
 </head>
 <body>
@@ -289,11 +101,11 @@
   </div>
 
   <!-- ── Top Bar ── -->
-  <header class="top-bar">
-    <a href="expense-detail" class="top-bar__back" aria-label="Back">
+  <header class="top-app-bar top-app-bar--nav">
+    <a href="expense-detail" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
-    <span class="top-bar__title">Edit Expense</span>
+    <span class="top-app-bar__title">Edit Expense</span>
   </header>
 
   <!-- ── Scrollable Content ── -->
@@ -301,7 +113,10 @@
 
     <!-- Amount -->
     <div class="amount-area">
-      <span class="currency-badge">₹ INR</span>
+      <button class="currency-chip">
+        ₹ INR
+        <i class="ph ph-caret-down currency-chip__caret"></i>
+      </button>
       <div class="amount-input-wrap">
         <span class="amount-input-wrap__symbol">₹</span>
         <input type="text" inputmode="decimal" value="850">
@@ -309,81 +124,83 @@
     </div>
 
     <!-- Description -->
-    <div class="field">
-      <label class="field__label">Description</label>
-      <input type="text" class="field__input" value="Dinner at Olive">
+    <div class="input-field">
+      <label class="input-field__label">Description</label>
+      <div class="input-field__box">
+        <input type="text" value="Dinner at Olive">
+      </div>
     </div>
 
     <!-- Category -->
     <div class="chips-section">
-      <span class="field__label">Category</span>
+      <span class="input-field__label">Category</span>
       <div class="chips-row">
-        <span class="cat-chip is-selected" onclick="selectCat(this)">🍽 Food</span>
-        <span class="cat-chip" onclick="selectCat(this)">✈️ Travel</span>
-        <span class="cat-chip" onclick="selectCat(this)">🛍 Shopping</span>
-        <span class="cat-chip" onclick="selectCat(this)">📄 Bills</span>
-        <span class="cat-chip" onclick="selectCat(this)">📦 Other</span>
+        <span class="chip chip--md chip--on" onclick="selectCat(this)">🍽 Food</span>
+        <span class="chip chip--md" onclick="selectCat(this)">✈️ Travel</span>
+        <span class="chip chip--md" onclick="selectCat(this)">🛍 Shopping</span>
+        <span class="chip chip--md" onclick="selectCat(this)">📄 Bills</span>
+        <span class="chip chip--md" onclick="selectCat(this)">📦 Other</span>
       </div>
     </div>
 
     <!-- Paid by -->
-    <div class="selector-row">
-      <div class="selector-row__icon">💳</div>
-      <div class="selector-row__text">
-        <span class="selector-row__label">Paid by</span>
-        <span class="selector-row__value">You paid ₹850</span>
+    <div class="detail-row detail-row--clickable">
+      <div class="detail-row__icon">💳</div>
+      <div class="detail-row__text">
+        <span class="detail-row__label">Paid by</span>
+        <span class="detail-row__value">You paid ₹850</span>
       </div>
-      <i class="ph ph-caret-right selector-row__chevron"></i>
+      <i class="ph ph-caret-right detail-row__chevron"></i>
     </div>
 
     <!-- Group -->
-    <div class="selector-row">
-      <div class="selector-row__icon">🏝</div>
-      <div class="selector-row__text">
-        <span class="selector-row__label">Group</span>
-        <span class="selector-row__value">Goa Trip</span>
+    <div class="detail-row detail-row--clickable">
+      <div class="detail-row__icon">🏝</div>
+      <div class="detail-row__text">
+        <span class="detail-row__label">Group</span>
+        <span class="detail-row__value">Goa Trip</span>
       </div>
-      <i class="ph ph-caret-right selector-row__chevron"></i>
+      <i class="ph ph-caret-right detail-row__chevron"></i>
     </div>
 
     <!-- Date -->
-    <div class="selector-row">
-      <div class="selector-row__icon">📅</div>
-      <div class="selector-row__text">
-        <span class="selector-row__label">Date</span>
-        <span class="selector-row__value">17 March 2026</span>
+    <div class="detail-row detail-row--clickable">
+      <div class="detail-row__icon">📅</div>
+      <div class="detail-row__text">
+        <span class="detail-row__label">Date</span>
+        <span class="detail-row__value">17 March 2026</span>
       </div>
-      <i class="ph ph-caret-right selector-row__chevron"></i>
+      <i class="ph ph-caret-right detail-row__chevron"></i>
     </div>
 
     <!-- Split -->
-    <div class="selector-row">
-      <div class="selector-row__icon">🔄</div>
-      <div class="selector-row__text">
-        <span class="selector-row__label">Split method</span>
-        <span class="selector-row__value">Equal split · 4 people</span>
+    <div class="detail-row detail-row--clickable">
+      <div class="detail-row__icon">🔄</div>
+      <div class="detail-row__text">
+        <span class="detail-row__label">Split method</span>
+        <span class="detail-row__value">Equal split · 4 people</span>
       </div>
-      <i class="ph ph-caret-right selector-row__chevron"></i>
+      <i class="ph ph-caret-right detail-row__chevron"></i>
     </div>
 
     <!-- Notes -->
-    <div class="field">
-      <label class="field__label">Notes (optional)</label>
-      <textarea class="field__textarea">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time! 🎂</textarea>
+    <div class="notes-card notes-card--editable">
+      <label class="notes-card__label" for="js-notes">Notes (optional)</label>
+      <textarea id="js-notes" class="notes-card__textarea" rows="3" maxlength="280" placeholder="Add a note for this expense…">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time! 🎂</textarea>
     </div>
 
   </div>
 
-  <!-- ── Bottom CTA ── -->
-  <div class="bottom-cta">
-    <a href="expense-detail" class="btn-save">Save Changes</a>
-    <a href="expense-detail" class="btn-cancel">Discard Changes</a>
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="expense-detail" class="btn btn--lg btn--ghost">Discard</a>
+    <a href="expense-detail" class="btn btn--lg btn--primary">Save Changes</a>
   </div>
 
   <script>
     function selectCat(el) {
-      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('is-selected'));
-      el.classList.add('is-selected');
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--on'));
+      el.classList.add('chip--on');
     }
   </script>
 

@@ -42,19 +42,19 @@
 }
 
 .empty-state__title {
+  color: var(--empty-state-title-fg);
   font-family: var(--font-display);
   font-size: var(--font-size-18);
   font-weight: var(--weight-bold);
-  line-height: 24px;
+  line-height: var(--line-height-24);
   letter-spacing: -0.36px;
-  color: var(--empty-state-title-fg);
 }
 
 .empty-state__body {
-  font-family: var(--font-body);
-  font-size: var(--font-size-14);
-  font-weight: var(--weight-regular);
-  line-height: 22px;
   color: var(--empty-state-body-fg);
   max-width: 240px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-21);
 }

@@ -30,18 +30,26 @@ Single-file HTML/CSS/JS portfolio for Divyansh Rastogi, product designer (IDC II
 │           ├── treasure-2.png    ← Treasure Referrals: contacts list mockup
 │           └── [13 more unused]  ← see projects/03-refer-earn/docs.md for full list
 ├── prototype/
-│   └── settlr/                   ← interactive prototype (copied from /Desktop/Settlr/)
-│       ├── tokens/               ← primitive + semantic CSS tokens
-│       ├── css/                  ← component CSS files
+│   └── settlr/                   ← mirrored from /Desktop/settlr/ (last sync: 2026-05-02)
+│       ├── tokens/               ← primitive + semantic CSS tokens (57 primitives · 290+ semantic)
+│       ├── css/                  ← 42 component CSS files
 │       ├── icons/                ← Phosphor icons (regular/bold/fill, ~1.6MB)
-│       └── screens/              ← 24 app screens (all .html, relative paths resolve via ../)
+│       ├── screens/              ← 31 user-facing + 9 dev/preview .html (relative paths resolve via ../)
+│       ├── components/           ← 41 component spec markdown files
+│       ├── references/           ← changelog, design-review-report, etc.
+│       ├── design-system.md      ← master design system reference
+│       └── conventions.md        ← naming + code conventions
 ├── projects/                     ← per-project documentation
 │   ├── 01-kinko/
 │   │   └── docs.md               ← placeholder (content + thumbnail pending)
 │   ├── 02-settlr/
 │   │   ├── research-splitwise.md ← raw Splitwise research (HTA/SHERPA/NASA-TLX, 3 parts)
-│   │   ├── project-docs.md       ← unified Settlr arc (Phase 1 research + Phase 2 redesign + workflow)
-│   │   └── case-study-plan.md    ← agreed narrative plan (capability-first)
+│   │   ├── research-data.md      ← extracted data from research images
+│   │   ├── project-docs.md       ← unified Settlr arc (research + redesign + workflow)
+│   │   ├── case-study-plan.md    ← agreed narrative plan (capability-first)
+│   │   ├── design-manager-review.md ← design manager review notes
+│   │   ├── KT-handoff.md         ← knowledge transfer doc (Apr 9 + May 2 updates)
+│   │   └── CHANGELOG.md          ← Settlr project changelog (added 2026-05-02)
 │   └── 03-refer-earn/
 │       └── docs.md               ← full asset inventory + built section map
 └── .claude/
@@ -252,7 +260,7 @@ All images verified loading in preview (naturalWidth > 0, zero broken). Full sec
 - Footer work links → wire to `#kinko`, `#settlr`, `#refer-earn`
 
 ### 🔲 Settlr Prototype Viewer (in-case-study interactive prototype)
-- Files are ready at `prototype/settlr/` — 24 screens + tokens + css + icons
+- Files are ready at `prototype/settlr/` — 31 user-facing screens + tokens + css + icons (synced from /Desktop/settlr/ on 2026-05-02)
 - **Still to build:** Add iframe phone frame + screen switcher section to the Settlr case study in `index.html`
 - Approach: a `.cs-section` with a phone-framed `<iframe>` (393×852 aspect ratio) + buttons to switch between key screens
 - Screens to feature in switcher: `home-dashboard.html`, `group-detail.html`, `add-split.html`, `settle-success.html`, `activity.html`, `settle-select.html`

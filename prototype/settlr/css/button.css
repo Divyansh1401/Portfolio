@@ -32,7 +32,7 @@
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-18);
 }
-.btn--sm .btn__icon { width: var(--icon-sm); height: var(--icon-sm); }
+.btn--sm .btn__icon { font-size: var(--icon-sm); }
 
 .btn--md {
   padding: var(--spacing-12) var(--spacing-16);
@@ -40,7 +40,7 @@
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-20);
 }
-.btn--md .btn__icon { width: var(--icon-md); height: var(--icon-md); }
+.btn--md .btn__icon { font-size: var(--icon-md); }
 
 .btn--lg {
   padding: var(--spacing-12) var(--spacing-20);
@@ -49,7 +49,7 @@
   line-height: var(--line-height-24);
   letter-spacing: -0.16px;
 }
-.btn--lg .btn__icon { width: var(--icon-lg); height: var(--icon-lg); }
+.btn--lg .btn__icon { font-size: var(--icon-lg); }
 
 /* ---- Full width ---- */
 .btn--full {
@@ -106,6 +106,7 @@
 .btn__icon {
   flex-shrink: 0;
   color: currentColor;
+  line-height: 1;
 }
 
 .btn__label {

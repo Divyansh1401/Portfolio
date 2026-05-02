@@ -1,0 +1,101 @@
+/* ============================================
+   Summary Card — Centered Settlement Summary
+   ============================================
+   A vertically-stacked, centered card showing
+   avatar + name + amount + meta. Used for
+   settlement and confirmation flows.
+
+   Variants:
+     .summary-card              — Default bordered card
+     .summary-card--success     — Success state (no border, used on settle-success)
+
+   Sub-elements:
+     __avatar  - 56px circular avatar (uses .avatar component or inline)
+     __name    - Person name
+     __amount  - Large amount (display font)
+     __meta    - Subtitle / timestamp / method label
+   ============================================ */
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-24) var(--spacing-16);
+  margin: var(--spacing-8) var(--spacing-16) 0;
+  border-radius: var(--radius-16);
+  background: var(--summary-card-bg);
+  border: var(--border-small) solid var(--summary-card-border);
+  text-align: center;
+}
+
+/* Avatar — circular, 56px */
+.summary-card__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--summary-card-avatar-bg);
+  color: var(--summary-card-avatar-fg);
+  font-family: var(--font-display);
+  font-size: var(--font-size-20);
+  font-weight: var(--weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Name */
+.summary-card__name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  color: var(--summary-card-name-fg);
+  line-height: var(--line-height-24);
+}
+
+/* Primary amount */
+.summary-card__amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-28);
+  font-weight: var(--weight-black);
+  letter-spacing: -1.12px;
+  color: var(--summary-card-amount-fg);
+  line-height: var(--line-height-34);
+}
+
+/* Meta — subtitle, timestamp, method tag */
+.summary-card__meta {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-regular);
+  color: var(--summary-card-meta-fg);
+  line-height: var(--line-height-20);
+}
+
+/* ── Variant: Success (used on settle-success) ── */
+.summary-card--success {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--spacing-8);
+}
+
+.summary-card--success .summary-card__avatar {
+  width: 48px;
+  height: 48px;
+  font-size: var(--font-size-16);
+  font-family: var(--font-body);
+  margin-bottom: var(--spacing-4);
+}
+
+.summary-card--success .summary-card__amount {
+  font-size: var(--font-size-24);
+  letter-spacing: -0.72px;
+  color: var(--summary-card-name-fg);
+}
+
+/* Directional amount color — applied via modifier */
+.summary-card__amount--owe { color: var(--expense-owe-fg); }
+.summary-card__amount--lent { color: var(--expense-lent-fg); }

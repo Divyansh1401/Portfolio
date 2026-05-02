@@ -1,0 +1,59 @@
+/* ============================================
+   Settlr — Confetti Utility (decorative animation)
+
+   Pinned-overlay container with falling, rotating dots.
+   Decorative only: pointer-events disabled, z-index 0
+   so it sits behind interactive content.
+
+   Used by: welcome.html, create-group-done.html,
+            settle-success.html.
+
+   Usage:
+     <div class="confetti">
+       <div class="confetti__dot"
+            style="width: 8px; height: 8px;
+                   left: 15%; top: 20%;
+                   background: var(--color-olive-300);
+                   animation-delay: 0.3s;"></div>
+       ...repeat for each dot
+     </div>
+
+   The position (left/top), size (width/height), color
+   (background) and stagger (animation-delay) are
+   parameterized inline per-dot so the same utility
+   serves multiple celebratory contexts without modifier
+   classes.
+
+   Modifier:
+     .confetti--slow  — slower fall (2.5s) for a calmer
+                        welcome feel; default is 2s.
+
+   Tokens: none required — colors come from existing
+   primitive palette (olive/green) referenced inline at
+   the screen level. Radius uses --radius-full.
+   ============================================ */
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  max-width: 393px;
+  margin: 0 auto;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.confetti__dot {
+  position: absolute;
+  border-radius: var(--radius-full);
+  animation: confettiFall 2s ease-out both;
+}
+
+.confetti--slow .confetti__dot {
+  animation-duration: 2.5s;
+}
+
+@keyframes confettiFall {
+  0%   { opacity: 1; transform: translateY(-20px) rotate(0deg)   scale(1); }
+  100% { opacity: 0; transform: translateY(120px) rotate(360deg) scale(0.3); }
+}

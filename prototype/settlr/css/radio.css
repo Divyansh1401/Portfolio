@@ -66,11 +66,11 @@
 }
 
 .radio-item__label {
+  color: var(--control-label);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-23);
-  color: var(--control-label);
 }
 
 .radio-item--disabled .radio-item__label {
@@ -110,19 +110,19 @@
 }
 
 .radio-item-boxed__label {
+  color: var(--control-label);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-23);
-  color: var(--control-label);
 }
 
 .radio-item-boxed__description {
+  color: var(--control-description);
   font-family: var(--font-body);
   font-size: var(--font-size-13);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-21);
-  color: var(--control-description);
 }
 
 /* ---- Radio Item Boxed — Illustration Variant ---- */
