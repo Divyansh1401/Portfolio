@@ -7,9 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../tokens/index.css">
   <link rel="stylesheet" href="../css/index.css">
-  <link rel="stylesheet" href="../css/amount-input.css">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -30,10 +28,10 @@
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding-bottom: 100px;
+      padding-bottom: calc(var(--spacing-96) + var(--spacing-4));
     }
 
-    /* ── Split header ── */
+    /* ── Split header (screen-unique) ── */
     .split-header {
       padding: var(--spacing-16);
       display: flex; flex-direction: column; gap: var(--spacing-16);
@@ -57,7 +55,7 @@
       color: var(--text-secondary);
     }
 
-    /* ── Participant list ── */
+    /* ── Participant list (screen-unique) ── */
     .participant-list {
       display: flex; flex-direction: column;
       background: var(--surface-card);
@@ -101,7 +99,7 @@
       color: var(--amount-input-fg-disabled);
     }
 
-    /* ── Total bar ── */
+    /* ── Total bar (screen-unique) ── */
     .total-bar {
       display: flex; align-items: center; justify-content: space-between;
       padding: var(--spacing-12) var(--spacing-16);
@@ -127,10 +125,21 @@
       color: var(--expense-owe-fg);
     }
 
+    /* ── Split error message (screen-unique) ── */
+    .split-error {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--expense-owe-fg);
+      padding: var(--spacing-4) var(--spacing-16);
+      display: none;
+    }
+    .split-error--visible { display: block; }
+
     /* Amount input in split context */
     .participant-item .amount-input { width: 120px; flex-shrink: 0; }
 
-    /* ── Paid By ── */
+    /* ── Paid By (screen-unique) ── */
     .paid-by {
       display: flex; align-items: center; gap: var(--spacing-12);
       padding: var(--spacing-12) var(--spacing-16);
@@ -158,83 +167,7 @@
       color: var(--text-primary);
     }
 
-    /* ── Avatar ── */
-    .avatar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      background: var(--avatar-bg);
-      color: var(--avatar-fg);
-      font-family: var(--font-body);
-      flex-shrink: 0;
-    }
-    .avatar-md {
-      width: 40px; height: 40px;
-      font-size: var(--font-size-16); font-weight: var(--weight-bold);
-    }
-
-    /* ── Checkbox ── */
-    .checkbox {
-      width: 20px; height: 20px;
-      border-radius: var(--radius-4);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--surface-card);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .checkbox--checked {
-      background: var(--control-bg-selected);
-      border-color: var(--control-border-selected);
-    }
-    .checkbox--checked::after {
-      content: '';
-      width: 10px; height: 6px;
-      border-left: var(--border-large) solid var(--surface-card);
-      border-bottom: var(--border-large) solid var(--surface-card);
-      transform: rotate(-45deg) translateY(-1px);
-    }
-
-    /* ── Payer Bottom Sheet ── */
-    .sheet-overlay {
-      position: fixed; inset: 0;
-      background: var(--overlay-35);
-      z-index: 100;
-      display: none;
-      align-items: flex-end; justify-content: center;
-    }
-    .sheet-overlay--open { display: flex; }
-    .sheet {
-      width: 393px; max-height: 75dvh;
-      background: var(--sheet-bg);
-      border-radius: var(--radius-16) var(--radius-16) 0 0;
-      border-top: var(--border-large) solid var(--sheet-border);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-    }
-    .sheet__header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: var(--spacing-16);
-      flex-shrink: 0;
-    }
-    .sheet__title {
-      font-family: var(--font-body);
-      font-size: var(--font-size-18);
-      font-weight: var(--weight-bold);
-      line-height: var(--line-height-26);
-      color: var(--sheet-header);
-    }
-    .sheet__close {
-      width: 32px; height: 32px; border-radius: var(--radius-full);
-      background: var(--border-subtle); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-secondary); font-size: var(--icon-sm);
-    }
-    .sheet__list {
-      overflow-y: auto; flex: 1;
-    }
-
-    /* Payer row inside sheet */
+    /* Payer row (screen-unique within sheet) */
     .payer-row {
       display: flex; align-items: center; gap: var(--spacing-12);
       padding: var(--spacing-12) var(--spacing-16);
@@ -254,74 +187,7 @@
       font-weight: var(--weight-regular);
       color: var(--text-tertiary);
     }
-    .payer-row__input {
-      width: 90px; height: 36px;
-      padding: 0 var(--spacing-8);
-      background: var(--input-bg);
-      border: var(--border-medium) solid var(--input-border-default);
-      border-radius: var(--radius-8);
-      font-family: var(--font-display);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      line-height: var(--line-height-20);
-      letter-spacing: -0.3px;
-      color: var(--text-primary);
-      text-align: right; outline: none;
-      transition: all 0.15s;
-    }
-    .payer-row__input:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-    .payer-row__input--disabled {
-      opacity: var(--opacity-medium);
-      pointer-events: none;
-    }
 
-    /* Sheet total */
-    .sheet-total {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: var(--spacing-12) var(--spacing-16);
-      border-top: var(--border-medium) solid var(--border-default);
-      background: var(--surface-primary);
-      flex-shrink: 0;
-    }
-    .sheet-total__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-secondary);
-    }
-    .sheet-total__value--ok {
-      font-family: var(--font-display);
-      font-size: var(--font-size-13);
-      font-weight: var(--weight-semibold);
-      color: var(--expense-lent-fg);
-    }
-    .sheet-total__value--err {
-      font-family: var(--font-display);
-      font-size: var(--font-size-13);
-      font-weight: var(--weight-semibold);
-      color: var(--expense-owe-fg);
-    }
-
-    /* Sheet done button */
-    .sheet-cta {
-      padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
-      flex-shrink: 0;
-    }
-
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      position: fixed;
-      bottom: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 393px; max-width: 100%;
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
-      background: var(--surface-card);
-      border-top: var(--border-small) solid var(--border-subtle);
-      z-index: 10;
-    }
   </style>
 </head>
 <body>
@@ -366,7 +232,7 @@
     <!-- Split method & summary -->
     <div class="split-header">
       <div class="segment-control">
-        <button class="segment-item segment-item--active">Equally</button>
+        <button class="segment-item is-active">Equally</button>
         <button class="segment-item">Amount</button>
         <button class="segment-item">%</button>
         <button class="segment-item">Shares</button>
@@ -385,25 +251,40 @@
       <span class="total-bar__label">Total</span>
       <span class="total-bar__ok" id="js-total">—</span>
     </div>
+    <!-- Validation error message -->
+    <p id="js-split-error" class="split-error"></p>
 
   </div>
 
-  <!-- CTA -->
-  <div class="bottom-cta">
-    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next</button>
+  <!-- Screen Footer -->
+  <div class="screen-footer">
+    <button id="js-next" class="btn btn--lg btn--primary btn--full">Next</button>
   </div>
 
-  <!-- PAYER BOTTOM SHEET -->
-  <div class="sheet-overlay" id="payer-sheet" onclick="closePayerSheet()">
+  <script>
+    (function () {
+      var footer = document.querySelector('.screen-footer');
+      var scrollEl = document.querySelector('.scroll-content');
+      if (footer && scrollEl) {
+        scrollEl.addEventListener('scroll', function () {
+          footer.classList.toggle('is-scrolled', scrollEl.scrollTop > 0);
+        }, { passive: true });
+      }
+    }());
+  </script>
+
+  <!-- PAYER BOTTOM SHEET (canonical .sheet-overlay / .sheet) -->
+  <div class="sheet-overlay" id="payer-sheet" style="display:none;" onclick="closePayerSheet(event)">
     <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
       <div class="sheet__header">
         <span class="sheet__title">Paid by</span>
         <button class="sheet__close" onclick="closePayerSheet()" aria-label="Close">
           <i class="ph ph-x"></i>
         </button>
       </div>
-      <div class="sheet__list" id="js-payer-list"></div>
-      <div class="sheet-cta">
+      <div class="sheet__content" id="js-payer-list"></div>
+      <div style="padding: var(--spacing-8) var(--spacing-16) var(--spacing-16); flex-shrink: 0;">
         <button class="btn btn--primary btn--lg btn--full" onclick="closePayerSheet()">Done</button>
       </div>
     </div>
@@ -412,10 +293,11 @@
   <script src="../js/store.js"></script>
   <script>
     function openPayerSheet() {
-      document.getElementById('payer-sheet').classList.add('sheet-overlay--open');
+      document.getElementById('payer-sheet').style.display = 'flex';
     }
-    function closePayerSheet() {
-      document.getElementById('payer-sheet').classList.remove('sheet-overlay--open');
+    function closePayerSheet(e) {
+      if (e && e.target !== document.getElementById('payer-sheet')) return;
+      document.getElementById('payer-sheet').style.display = 'none';
     }
 
     (function () {
@@ -472,24 +354,41 @@
 
       function isValid() {
         if (splitMode === 'equal' || splitMode === 'shares') return true;
-        if (splitMode === 'amount') return Math.abs(runningTotal() - total) < 0.02;
+        if (splitMode === 'amount') return Math.abs(runningTotal() - total) < 0.01;
         if (splitMode === 'percent') return Math.abs(runningTotal() - 100) < 0.5;
       }
 
       function updateTotalBar() {
         var el = document.getElementById('js-total');
+        var errEl = document.getElementById('js-split-error');
         var valid = isValid();
         if (splitMode === 'equal' || splitMode === 'shares') {
           el.textContent = fmt(total) + ' \u2713';
           el.className = 'total-bar__ok';
+          errEl.textContent = '';
+          errEl.classList.remove('split-error--visible');
         } else if (splitMode === 'amount') {
           var s = runningTotal();
           el.textContent = fmt(s) + ' / ' + fmt(total) + (valid ? ' \u2713' : '');
           el.className = valid ? 'total-bar__ok' : 'total-bar__err';
+          if (valid) {
+            errEl.textContent = '';
+            errEl.classList.remove('split-error--visible');
+          } else {
+            errEl.textContent = 'Amounts don\u2019t add up to ' + fmt(total);
+            errEl.classList.add('split-error--visible');
+          }
         } else if (splitMode === 'percent') {
           var s = runningTotal();
           el.textContent = s + '% / 100%' + (valid ? ' \u2713' : '');
           el.className = valid ? 'total-bar__ok' : 'total-bar__err';
+          if (valid) {
+            errEl.textContent = '';
+            errEl.classList.remove('split-error--visible');
+          } else {
+            errEl.textContent = 'Percentages must total 100%';
+            errEl.classList.add('split-error--visible');
+          }
         }
         nextBtn.style.opacity = valid ? '' : String(0.4);
         nextBtn.style.pointerEvents = valid ? '' : 'none';
@@ -520,8 +419,8 @@
             ? '<div class="participant-item__amount"><span class="participant-item__amount-value">' + fmt(amtForId) + '</span></div>'
             : inputCol(id);
           return '<div class="participant-item">' +
-            '<div class="checkbox checkbox--checked"></div>' +
-            '<div class="avatar avatar-md">' + p.initials + '</div>' +
+            '<div class="checkbox-control is-selected"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
+            '<div class="avatar avatar--initials avatar--md">' + p.initials + '</div>' +
             '<div class="participant-item__text">' +
               '<span class="participant-item__name">' + p.name + '</span>' +
               '<span class="participant-item__share js-share-lbl" data-pid="' + id + '">' + shareLabel + '</span>' +
@@ -550,7 +449,7 @@
 
       function renderPayerBar() {
         var payer = getInfo(paidById);
-        document.getElementById('js-paid-avatars').innerHTML = '<div class="avatar avatar-md">' + payer.initials + '</div>';
+        document.getElementById('js-paid-avatars').innerHTML = '<div class="avatar avatar--initials avatar--md">' + payer.initials + '</div>';
         document.getElementById('js-paid-name').textContent = payer.name;
       }
 
@@ -559,8 +458,8 @@
           var p = getInfo(id);
           var sel = id === paidById;
           return '<div class="payer-row" data-pid="' + id + '" style="cursor:pointer;' + (sel ? 'background:var(--contact-bg-selected);' : '') + '">' +
-            '<div class="' + (sel ? 'checkbox checkbox--checked' : 'checkbox') + '"></div>' +
-            '<div class="avatar avatar-md">' + p.initials + '</div>' +
+            '<div class="checkbox-control' + (sel ? ' is-selected' : '') + '"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
+            '<div class="avatar avatar--initials avatar--md">' + p.initials + '</div>' +
             '<div class="payer-row__text"><span class="payer-row__name">' + p.name + '</span></div>' +
           '</div>';
         }).join('');
@@ -578,8 +477,8 @@
       var modeMap = ['equal', 'amount', 'percent', 'shares'];
       document.querySelectorAll('.segment-item').forEach(function(btn, i) {
         btn.addEventListener('click', function() {
-          document.querySelectorAll('.segment-item').forEach(function(b) { b.classList.remove('segment-item--active'); });
-          btn.classList.add('segment-item--active');
+          document.querySelectorAll('.segment-item').forEach(function(b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
           splitMode = modeMap[i];
           initSplits(splitMode);
           renderParticipants();

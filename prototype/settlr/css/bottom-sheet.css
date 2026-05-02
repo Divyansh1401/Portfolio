@@ -52,12 +52,12 @@
 }
 
 .sheet__title {
+  color: var(--sheet-header);
   font-family: var(--font-body);
   font-size: var(--font-size-18);
   font-weight: var(--weight-bold);
   line-height: var(--line-height-26);
   letter-spacing: -0.18px;
-  color: var(--sheet-header);
 }
 
 .sheet__close {

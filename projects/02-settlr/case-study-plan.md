@@ -1,6 +1,7 @@
 # Settlr — Case Study Plan
 > Narrative structure for the portfolio case study overlay.
 > Agreed approach: capability-first. Show the system and workflow up top — viewers won't scroll the whole thing, so lead with what proves your skill level.
+> Last updated: 2026-05-02 (post Campaign 1 — 13 new components shipped, prototype synced)
 
 ---
 
@@ -13,12 +14,13 @@
 - Candidates: `home-dashboard.html`, `group-detail.html`, `add-split.html`, `settle-success.html`
 
 ### 2. System Stats — Design System at a Glance
-- Numbers that prove scale:
-  - 27 components
-  - 34 screens
-  - 72 color primitives (7 palettes × 10 steps)
-  - 3-tier token architecture
-  - 100+ semantic tokens
+- Numbers that prove scale (current as of 2026-05-02):
+  - **40 components** (post Campaign 1 — added hero-section, toggle, settings-row, detail-row, notes-card, summary-card, success-state, invite-banner, screen-footer, update-item, confetti, plus avatar `--xl` and icon-btn `--overlay`)
+  - **31 user-facing screens** (auth, home, groups, expenses, people, settlements, settings — excluding 9 dev/preview pages)
+  - **57 color primitives** (5 palettes: olive · coral · green · gray · neutral)
+  - **3-tier token architecture** (primitive → semantic → component)
+  - **290+ semantic tokens** (semantic.css)
+  - **42 component CSS files** — one source of truth per component
 - Visual: token architecture diagram (Primitive → Semantic → Component)
 - A quick glimpse at the component library (grid of component previews)
 
@@ -63,11 +65,12 @@ Verbatim quotes used:
 
 ⚠️ **Frame as designed-to-solve, not proven-to-solve** — user testing pending. The research is rigorous; the design rationale is traceable. The hypothesis is clear. Don't overstate validation.
 
-### 6. Full Gallery — All 34 Screens
+### 6. Full Gallery — All 31 Screens
 - Scrollable grid of all built screens
 - Groups: Auth → Home → Groups → Expenses → People → Settlements
 - No captions needed — the screens speak for themselves
 - Link to Figma file or live preview if available
+- ⚠️ **Note (2026-05-02):** `notifications.html` was removed — all events now consolidated into the Activity screen with an "Updates" filter chip.
 
 ---
 
@@ -84,7 +87,7 @@ Verbatim quotes used:
 > TBD — probably just the project title + 1 line tagline. Let screens do the talking.
 
 ### Section 2 stats copy
-> "A complete design system. Built ground-up. 27 components, 34 screens, 100+ semantic tokens — all connected, nothing hardcoded."
+> "A complete design system. Built ground-up. 40 components, 31 screens, 290+ semantic tokens — all connected, nothing hardcoded."
 
 ### Section 3 workflow lead
 > "The real project wasn't the app. It was building a system where Claude could work the way a designer thinks."

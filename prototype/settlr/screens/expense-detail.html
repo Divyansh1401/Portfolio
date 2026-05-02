@@ -25,17 +25,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Top Bar ── */
-    .top-bar { display: flex; align-items: center; gap: var(--spacing-8); padding: var(--spacing-8) var(--spacing-16); flex-shrink: 0; }
-    .top-bar__back { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--btn-icon-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--btn-icon-fg); text-decoration: none; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
-    .top-bar__back:active { background: var(--btn-icon-bg-pressed); }
-    .top-bar__back i { font-size: var(--font-size-20); }
-    .top-bar__title { flex: 1; font-family: var(--font-display); font-size: var(--font-size-20); font-weight: var(--weight-bold); line-height: 26px; letter-spacing: -0.40px; color: var(--top-app-bar-title); }
-    .top-bar__more { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--btn-icon-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--btn-icon-fg); -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
-    .top-bar__more:active { background: var(--btn-icon-bg-pressed); }
-    .top-bar__more svg { width: 20px; height: 20px; }
-    .top-bar__more i { font-size: var(--font-size-20); }
-
     /* ── Scrollable Content ── */
     .scroll-content {
       flex: 1;
@@ -64,7 +53,7 @@
       display: inline-flex;
       align-items: center;
       gap: var(--spacing-4);
-      padding: 4px 12px;
+      padding: var(--spacing-4) var(--spacing-12);
       border-radius: var(--radius-full);
       background: var(--btn-icon-bg);
       font-family: var(--font-body);
@@ -74,9 +63,9 @@
     }
     .expense-hero__amount {
       font-family: var(--font-display);
-      font-size: 36px;
+      font-size: var(--font-size-36);
       font-weight: var(--weight-bold);
-      line-height: 40px;
+      line-height: var(--line-height-40);
       letter-spacing: -1.44px;
       color: var(--text-primary);
     }
@@ -84,93 +73,49 @@
       font-family: var(--font-body);
       font-size: var(--font-size-16);
       font-weight: var(--weight-bold);
-      line-height: 24px;
+      line-height: var(--line-height-24);
       color: var(--text-primary);
     }
     .expense-hero__date {
       font-family: var(--font-body);
       font-size: var(--font-size-12);
       font-weight: var(--weight-regular);
-      line-height: 19px;
+      line-height: var(--line-height-19);
       color: var(--contact-settled-fg);
     }
-    .expense-hero__balance {
+
+    /* ── Balance Pill (structural only — colors come from .balance-pill--* variants) ── */
+    .balance-pill {
       display: flex;
       align-items: center;
       gap: var(--spacing-8);
       padding: var(--spacing-8) var(--spacing-16);
       border-radius: var(--radius-8);
-      background: var(--expense-lent-bg);
       width: 100%;
       justify-content: space-between;
     }
-    .expense-hero__balance-label {
+    .balance-pill__label {
       font-family: var(--font-body);
-      font-size: 13px;
+      font-size: var(--font-size-13);
       font-weight: var(--weight-semibold);
-      color: var(--expense-lent-fg);
     }
-    .expense-hero__balance-amount {
+    .balance-pill__amount {
       font-family: var(--font-display);
-      font-size: 16px;
+      font-size: var(--font-size-16);
       font-weight: var(--weight-bold);
       letter-spacing: -0.32px;
-      color: var(--expense-lent-fg);
     }
 
-    /* ── Detail Rows ── */
+    /* ── Detail Section wrapper ── */
     .detail-section {
       padding: 0 var(--spacing-16);
       display: flex;
       flex-direction: column;
     }
-    .detail-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) 0;
-      border-bottom: var(--border-small) solid var(--border-subtle);
-    }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-row__icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-8);
-      background: var(--btn-icon-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    .detail-row__text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-    .detail-row__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      line-height: 19px;
-      color: var(--text-tertiary);
-    }
-    .detail-row__value {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-primary);
-    }
-    .detail-row__chevron {
-      font-size: 18px;
-      color: var(--input-fg-default);
-      flex-shrink: 0;
-    }
 
     /* ── Section Divider ── */
     .section-divider {
-      height: 8px;
+      height: var(--spacing-8);
       background: var(--btn-icon-bg);
     }
 
@@ -189,11 +134,11 @@
     }
     .split-section__label {
       font-family: var(--font-body);
-      font-size: 11px;
+      font-size: var(--font-size-11);
       font-weight: var(--weight-semibold);
       letter-spacing: 1.76px;
       text-transform: uppercase;
-      color: var(--color-neutral-500);
+      color: var(--text-tertiary);
     }
     .split-section__method {
       font-family: var(--font-body);
@@ -218,7 +163,7 @@
       align-items: center;
       justify-content: center;
       font-family: var(--font-body);
-      font-size: 11px;
+      font-size: var(--font-size-11);
       font-weight: var(--weight-semibold);
       flex-shrink: 0;
     }
@@ -238,30 +183,9 @@
     .split-person__amount--lent { color: var(--expense-lent-fg); }
     .split-person__amount--owe { color: var(--expense-owe-fg); }
 
-    /* ── Notes Section ── */
+    /* ── Notes Section wrapper ── */
     .notes-section {
       padding: 0 var(--spacing-16);
-    }
-    .notes-card {
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      background: var(--btn-icon-bg);
-    }
-    .notes-card__label {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: var(--weight-semibold);
-      letter-spacing: 1.76px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: var(--spacing-4);
-    }
-    .notes-card__text {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-regular);
-      line-height: 23px;
-      color: var(--input-label);
     }
 
     /* ── Comments Section ── */
@@ -278,11 +202,11 @@
     }
     .comments-section__label {
       font-family: var(--font-body);
-      font-size: 11px;
+      font-size: var(--font-size-11);
       font-weight: var(--weight-semibold);
       letter-spacing: 1.76px;
       text-transform: uppercase;
-      color: var(--color-neutral-500);
+      color: var(--text-tertiary);
     }
     .comments-section__count {
       font-family: var(--font-body);
@@ -312,7 +236,7 @@
       align-items: center;
       justify-content: center;
       font-family: var(--font-body);
-      font-size: 10px;
+      font-size: var(--font-size-10);
       font-weight: var(--weight-semibold);
       flex-shrink: 0;
     }
@@ -343,7 +267,7 @@
       font-family: var(--font-body);
       font-size: var(--font-size-14);
       font-weight: var(--weight-regular);
-      line-height: 20px;
+      line-height: var(--line-height-20);
       color: var(--text-primary);
     }
     /* ── Comment Input ── */
@@ -357,7 +281,7 @@
       flex: 1;
       display: flex;
       align-items: center;
-      background: var(--surface-secondary);
+      background: var(--btn-icon-bg);
       border: var(--border-small) solid var(--border-subtle);
       border-radius: var(--radius-full);
       padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-16);
@@ -391,15 +315,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     .comment-input__send:active { background: var(--btn-primary-bg-pressed); }
-    .comment-input__send i { font-size: 16px; }
+    .comment-input__send i { font-size: var(--font-size-16); }
 
-    /* ── Bottom Actions ── */
-    .bottom-actions {
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
-      display: flex;
-      gap: var(--spacing-12);
-      flex-shrink: 0;
-    }
     .btn-edit {
       flex: 1;
       display: flex;
@@ -411,7 +328,7 @@
       border: none;
       cursor: pointer;
       font-family: var(--font-body);
-      font-size: 16px;
+      font-size: var(--font-size-16);
       font-weight: var(--weight-semibold);
       background: var(--btn-primary-bg);
       color: var(--btn-primary-fg);
@@ -419,7 +336,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     .btn-edit:active { background: var(--btn-primary-bg-pressed); }
-    .btn-edit i { font-size: 20px; }
+    .btn-edit i { font-size: var(--font-size-20); }
     .btn-delete {
       width: 52px;
       height: 52px;
@@ -435,14 +352,14 @@
       flex-shrink: 0;
     }
     .btn-delete:active { background: var(--label-error-bg); }
-    .btn-delete i { font-size: 22px; }
+    .btn-delete i { font-size: var(--font-size-20); }
   </style>
 </head>
 <body>
 
   <!-- ── Status Bar ── -->
   <div class="status-bar">
-    <span class="status-bar__time">9:41</span>
+    <span class="status-bar__time text-label-md">9:41</span>
     <div class="status-bar__icons">
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.35"/></svg>
       <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" fill="currentColor"/><path d="M3.5 6.2C4.9 4.8 6.9 4 9 4s4.1.8 5.5 2.2l-1.5 1.5C11.9 6.6 10.5 6 9 6S6.1 6.6 5 7.7L3.5 6.2z" fill="currentColor"/><path d="M.5 3.2C2.4 1.2 5.6 0 9 0s6.6 1.2 8.5 3.2L16 4.7C14.5 3 11.9 2 9 2S3.5 3 2 4.7L.5 3.2z" fill="currentColor"/></svg>
@@ -450,15 +367,12 @@
     </div>
   </div>
 
-  <!-- ── Top Bar ── -->
-  <header class="top-bar">
-    <a href="javascript:history.back()" class="top-bar__back" aria-label="Back">
+  <!-- ── Top App Bar ── -->
+  <header class="top-app-bar">
+    <a href="javascript:history.back()" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
-    <span class="top-bar__title">Expense</span>
-    <button class="top-bar__more" aria-label="More options">
-      <i class="ph ph-dots-three"></i>
-    </button>
+    <span class="top-app-bar__title text-heading-md">Expense</span>
   </header>
 
   <!-- ── Scrollable Content ── -->
@@ -466,13 +380,13 @@
 
     <!-- Expense Hero -->
     <div class="expense-hero">
-      <span class="expense-hero__category">🍽️ Food</span>
-      <div class="expense-hero__amount">₹4,890</div>
-      <div class="expense-hero__desc">Beach dinner at Baga</div>
-      <div class="expense-hero__date">27 Feb 2025 · 9:15 PM</div>
-      <div class="expense-hero__balance">
-        <span class="expense-hero__balance-label">You get back</span>
-        <span class="expense-hero__balance-amount">₹3,667.50</span>
+      <span class="expense-hero__category text-label-xs">🍽️ Food</span>
+      <div class="expense-hero__amount text-display-lg">₹4,890</div>
+      <div class="expense-hero__desc text-title-lg">Beach dinner at Baga</div>
+      <div class="expense-hero__date text-body-sm">27 Feb 2025 · 9:15 PM</div>
+      <div class="balance-pill balance-pill--lent text-title-sm">
+        <span class="balance-pill__label">You get back</span>
+        <span class="balance-pill__amount text-amount-sm">₹3,667.50</span>
       </div>
     </div>
 
@@ -481,30 +395,30 @@
       <div class="detail-row">
         <div class="detail-row__icon">🏝</div>
         <div class="detail-row__text">
-          <span class="detail-row__label">Group</span>
-          <span class="detail-row__value">Goa Trip</span>
+          <span class="detail-row__label text-body-xs">Group</span>
+          <span class="detail-row__value text-title-sm">Goa Trip</span>
         </div>
         <i class="ph ph-caret-right detail-row__chevron"></i>
       </div>
       <div class="detail-row">
         <div class="detail-row__icon">💳</div>
         <div class="detail-row__text">
-          <span class="detail-row__label">Paid by</span>
-          <span class="detail-row__value">You paid ₹4,890</span>
+          <span class="detail-row__label text-body-xs">Paid by</span>
+          <span class="detail-row__value text-title-sm">You paid ₹4,890</span>
         </div>
       </div>
       <div class="detail-row">
         <div class="detail-row__icon">📅</div>
         <div class="detail-row__text">
-          <span class="detail-row__label">Date</span>
-          <span class="detail-row__value">27 Feb 2025</span>
+          <span class="detail-row__label text-body-xs">Date</span>
+          <span class="detail-row__value text-title-sm">27 Feb 2025</span>
         </div>
       </div>
       <div class="detail-row">
         <div class="detail-row__icon">🔄</div>
         <div class="detail-row__text">
-          <span class="detail-row__label">Split method</span>
-          <span class="detail-row__value">Equal split</span>
+          <span class="detail-row__label text-body-xs">Split method</span>
+          <span class="detail-row__value text-title-sm">Equal split</span>
         </div>
       </div>
     </div>
@@ -515,14 +429,14 @@
     <!-- Comments -->
     <div class="comments-section">
       <div class="comments-section__header">
-        <span class="comments-section__label">Comments</span>
-        <span class="comments-section__count" id="comments-count"></span>
+        <span class="comments-section__label text-overline-md">Comments</span>
+        <span class="comments-section__count text-label-xs" id="comments-count"></span>
       </div>
       <div id="comments-list"></div>
       <div class="comment-input">
         <div class="comment-item__avatar" id="current-user-avatar">DR</div>
         <div class="comment-input__field">
-          <input type="text" id="comment-text" placeholder="Add a comment…" autocomplete="off" maxlength="300" />
+          <input type="text" class="text-body-md" id="comment-text" placeholder="Add a comment…" autocomplete="off" maxlength="300" />
           <button class="comment-input__send" id="comment-send" aria-label="Post comment">
             <i class="ph-bold ph-paper-plane-right"></i>
           </button>
@@ -536,8 +450,8 @@
     <!-- Split Breakdown -->
     <div class="split-section">
       <div class="split-section__header">
-        <span class="split-section__label">Split Breakdown</span>
-        <span class="split-section__method">4 people · Equal</span>
+        <span class="split-section__label text-overline-md">Split Breakdown</span>
+        <span class="split-section__method text-label-xs">4 people · Equal</span>
       </div>
 
       <div class="split-person">
@@ -570,17 +484,17 @@
 
     <!-- Notes -->
     <div class="notes-section">
-      <div class="notes-card">
-        <div class="notes-card__label">Notes</div>
-        <div class="notes-card__text">Went to the beach shack at Baga — the prawn curry and kingfish was 🔥. Included drinks, starters, and dessert for the whole group.</div>
+      <div class="notes-card notes-card--readonly">
+        <div class="notes-card__label text-overline-md">Notes</div>
+        <div class="notes-card__text text-body-md">Went to the beach shack at Baga — the prawn curry and kingfish was 🔥. Included drinks, starters, and dessert for the whole group.</div>
       </div>
     </div>
 
   </div>
 
-  <!-- ── Bottom Actions ── -->
-  <div class="bottom-actions">
-    <a href="edit-expense" class="btn-edit">
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="edit-expense" class="btn-edit text-title-md">
       <i class="ph ph-pencil"></i>
       Edit Expense
     </a>
@@ -624,25 +538,23 @@
       document.querySelector('.expense-hero__date').textContent =
         d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
-      var balEl = document.querySelector('.expense-hero__balance');
+      var balEl = document.querySelector('.balance-pill');
+      var balLabel = balEl.querySelector('.balance-pill__label');
+      var balAmount = balEl.querySelector('.balance-pill__amount');
       if (net.direction === 'settled') {
-        balEl.style.background = 'var(--btn-icon-bg)';
-        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--text-secondary)';
-        balEl.querySelector('.expense-hero__balance-label').textContent = 'Settled';
-        balEl.querySelector('.expense-hero__balance-amount').textContent = '';
-        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--text-secondary)';
+        balEl.className = 'balance-pill balance-pill--settled text-title-sm';
+        balLabel.textContent = 'Settled';
+        balAmount.textContent = '';
       } else if (net.direction === 'lent') {
-        balEl.style.background = 'var(--expense-lent-bg)';
-        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--expense-lent-fg)';
-        balEl.querySelector('.expense-hero__balance-label').textContent = 'You get back';
-        balEl.querySelector('.expense-hero__balance-amount').textContent = Store.formatINR(net.amount);
-        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--expense-lent-fg)';
+        balEl.className = 'balance-pill balance-pill--lent text-title-sm';
+        balLabel.textContent = 'You get back';
+        balAmount.textContent = Store.formatINR(net.amount);
+        balAmount.className = 'balance-pill__amount text-amount-sm';
       } else {
-        balEl.style.background = 'var(--expense-owe-bg)';
-        balEl.querySelector('.expense-hero__balance-label').style.color = 'var(--expense-owe-fg)';
-        balEl.querySelector('.expense-hero__balance-label').textContent = 'You owe';
-        balEl.querySelector('.expense-hero__balance-amount').textContent = Store.formatINR(net.amount);
-        balEl.querySelector('.expense-hero__balance-amount').style.color = 'var(--expense-owe-fg)';
+        balEl.className = 'balance-pill balance-pill--owe text-title-sm';
+        balLabel.textContent = 'You owe';
+        balAmount.textContent = Store.formatINR(net.amount);
+        balAmount.className = 'balance-pill__amount text-amount-sm';
       }
 
       // Detail rows
@@ -699,9 +611,9 @@
           amtText = Store.formatINR(share);
         }
         div.innerHTML =
-          '<div class="split-person__avatar">' + initialsOf(cid) + '</div>' +
-          '<span class="split-person__name">' + nameOf(cid) + '</span>' +
-          '<span class="split-person__amount ' + amtClass + '">' + amtText + '</span>';
+          '<div class="split-person__avatar avatar avatar--sm text-label-xs">' + initialsOf(cid) + '</div>' +
+          '<span class="split-person__name text-title-sm">' + nameOf(cid) + '</span>' +
+          '<span class="split-person__amount ' + amtClass + ' text-title-sm">' + amtText + '</span>';
         container.appendChild(div);
       });
 

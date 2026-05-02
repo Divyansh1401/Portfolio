@@ -1,7 +1,7 @@
 /* ============================================
    Settlr — Avatar Component
    Figma: 84:5841
-   Sizes: XS(20) SM(28) MD(40) LG(52)
+   Sizes: XS(20) SM(28) MD(40) LG(52) XL(96)
    Types: Initials / Photo
    ============================================ */
 
@@ -13,6 +13,7 @@
   overflow: hidden;
   font-family: var(--font-body);
   border-radius: var(--radius-full);
+  text-decoration: none;
 }
 
 /* ---- Types ---- */
@@ -28,20 +29,20 @@
 }
 
 /* ---- Sizes ---- */
-/* XS — 20px — Label/Label-XS: 10px semibold */
+/* XS — 20px — text-label-xs: 10px medium */
 .avatar--xs {
   width: 20px;
   height: 20px;
   font-size: var(--font-size-10);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
 }
 
-/* SM — 28px — Label/Label-XS: 10px semibold */
+/* SM — 28px — text-label-xs: 10px medium */
 .avatar--sm {
   width: 28px;
   height: 28px;
   font-size: var(--font-size-10);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
 }
 
 /* MD — 40px — Title/Title-MD: 16px bold */
@@ -62,6 +63,21 @@
   letter-spacing: -0.18px;
 }
 
+/* XL — 96px — Hero/Profile feature avatar */
+/* Uses display font (Unbounded) at 30px bold, ring border + shadow-md.
+   Used as hero/profile centerpiece overlapping a hero-section. */
+.avatar--xl {
+  width: var(--spacing-96);
+  height: var(--spacing-96);
+  font-family: var(--font-display);
+  font-size: var(--avatar-xl-font-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--avatar-xl-letter-spacing);
+  border: var(--border-large) solid var(--avatar-border-on-hero);
+  box-shadow: var(--shadow-md);
+  background-clip: padding-box;
+}
+
 /* ============================================
    Member Pill / Avatar Chip
    Figma: 241:19122
@@ -75,6 +91,7 @@
   padding: var(--spacing-4) var(--spacing-8) var(--spacing-4) var(--spacing-4);
   border-radius: var(--radius-full);
   background-color: var(--member-pill-bg);
+  border: var(--border-small) solid var(--border-default);
   white-space: nowrap;
 }
 
@@ -85,11 +102,11 @@
 }
 
 .member-pill__name {
+  color: var(--member-pill-fg);
   font-family: var(--font-body);
   font-size: var(--font-size-12);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-19);
-  color: var(--member-pill-fg);
 }
 
 /* ---- Removable variant (with × icon) ---- */

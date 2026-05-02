@@ -8,40 +8,73 @@
   align-items: center;
   gap: var(--spacing-8);
   padding: var(--spacing-8) var(--spacing-16);
+  min-height: var(--spacing-50);
   background: var(--top-app-bar-bg);
   width: 100%;
+  flex-shrink: 0;
 }
 
 /* Title — left-aligned, fills remaining space */
 .top-app-bar__title {
   flex: 1;
+  color: var(--top-app-bar-title);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-family: var(--font-display);
   font-size: var(--font-size-24);
   font-weight: var(--weight-bold);
   line-height: var(--line-height-28);
   letter-spacing: -0.96px;
-  color: var(--top-app-bar-title);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* "Done" ghost text action (Variant2) */
 .top-app-bar__done {
   border: none;
   background: transparent;
-  font-family: var(--font-body);
-  font-size: var(--font-size-12);
-  font-weight: var(--weight-semibold);
-  line-height: var(--line-height-18);
   color: var(--btn-ghost-fg);
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
   white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
 }
+
+/* Back button — 40×40 circle icon, used in nav/detail screens */
+.top-app-bar__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  border: none;
+  cursor: pointer;
+  color: var(--btn-icon-fg);
+  text-decoration: none;
+  flex-shrink: 0;
+  font-size: var(--icon-md);
+  -webkit-tap-highlight-color: transparent;
+}
+.top-app-bar__back:active {
+  background: var(--btn-icon-bg-pressed);
+}
+
+
 
 /* Modifier: adds a bottom border (use when bar sits over flat content) */
 .top-app-bar--bordered {
   border-bottom: var(--border-small) solid var(--nav-bar-border);
+}
+
+/* Detail screen title override — heading-md size (20px) */
+.top-app-bar--bordered .top-app-bar__title,
+.top-app-bar--nav .top-app-bar__title {
+  font-size: var(--font-size-20);
+  line-height: var(--line-height-26);
+  letter-spacing: -0.40px;
 }

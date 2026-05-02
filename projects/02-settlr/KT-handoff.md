@@ -1,6 +1,9 @@
 # KT Document — Settlr Case Study Work
-> Knowledge Transfer for new chat. Date: 2026-04-09
+> Knowledge Transfer for new chat. Date: 2026-04-09 · Updated: 2026-05-02
 > This picks up from the session that ran out of context.
+
+> **2026-05-02 update — Settlr prototype + docs sync.**
+> The source `/Users/divyanshrastogi/Desktop/settlr/` advanced significantly between Apr 9 and May 1 (Campaign 1 — 8 new components, ~22 screens swept, `notifications.html` deleted). The website prototype mirror (`/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/`) was fully resynced via rsync `--delete` on screens/, css/, tokens/, icons/, js/. New: `components/` markdown docs (41 files), `references/`, `design-system.md`, `conventions.md` were also copied into the prototype folder for reference. Stale stats across `index.html` and the docs in this folder were updated to reflect: **40 components · 31 screens · 57 color primitives · 290+ semantic tokens · 42 CSS files**. See `CHANGELOG.md` in this folder for the full Apr 29 → May 1 delta.
 
 ---
 

@@ -36,9 +36,23 @@
   height: 96px;
   background-color: var(--card-group-image-bg);
   object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 1;
+  overflow: hidden;
 }
 
-.card-group__content {
+.card-group__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-group__content,
+.card-group__info {
   display: flex;
   flex-direction: column;
   padding: var(--spacing-12);
@@ -46,28 +60,28 @@
 }
 
 .card-group__name {
+  color: var(--contact-name);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-20);
-  color: var(--contact-name);
 }
 
 .card-group__members,
 .card-group__subtitle {
+  color: var(--contact-subtext);
   font-family: var(--font-body);
   font-size: var(--font-size-11);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-17);
-  color: var(--contact-subtext);
 }
 
 .card-group__amount {
+  margin-top: auto;
   font-family: var(--font-display);
   font-size: var(--font-size-13);
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-18);
-  margin-top: auto;
 }
 
 .card-group--lent .card-group__amount { color: var(--expense-lent-fg); }
@@ -83,6 +97,16 @@
 .card-group--owe .card-group__info {
   background-color: var(--card-group-owe-bg);
 }
+
+/* Balance wrapper inside info */
+.card-group__balance {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+}
+
+.card-group__amount--lent { color: var(--expense-lent-fg); }
+.card-group__amount--owe  { color: var(--expense-owe-fg); }
 
 /* ---- Create New Group Card ---- */
 .card-create {

@@ -63,4 +63,5 @@
   font-size: var(--font-size-16);
   font-weight: var(--weight-bold);
   line-height: var(--line-height-24);
+  letter-spacing: -0.16px;
 }

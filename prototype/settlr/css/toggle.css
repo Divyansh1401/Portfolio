@@ -1,0 +1,78 @@
+/* ============================================
+   Toggle Switch — .toggle-control
+   ----------------------------------------------
+   44x26 pill switch. The native <input type="checkbox">
+   is visually hidden but remains the source of truth
+   for state — :checked drives the visual change via
+   the sibling combinator.
+
+   States:
+     - Off (default)
+     - On  (input:checked)
+     - Disabled (input:disabled)
+
+   Accessibility:
+     Use role="switch" + aria-checked on the visible
+     <label>/<input> pair, or rely on the native
+     checkbox semantics provided by the <input>.
+   ============================================ */
+
+.toggle-control {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+/* Visually hidden but functional native input */
+.toggle-control input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+/* Track — pill background */
+.toggle-control__track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--toggle-track-bg-off);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+/* Thumb — circular knob that slides on toggle */
+.toggle-control__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--toggle-thumb-bg);
+  box-shadow: var(--toggle-thumb-shadow);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+/* On state — drives both track and thumb via sibling combinator */
+.toggle-control input:checked ~ .toggle-control__track {
+  background: var(--toggle-track-bg-on);
+}
+.toggle-control input:checked ~ .toggle-control__thumb {
+  transform: translateX(18px);
+}
+
+/* Disabled state */
+.toggle-control input:disabled ~ .toggle-control__track {
+  background: var(--toggle-track-bg-disabled);
+  cursor: not-allowed;
+}
+.toggle-control input:disabled ~ .toggle-control__thumb {
+  background: var(--toggle-thumb-bg-disabled);
+  box-shadow: none;
+}

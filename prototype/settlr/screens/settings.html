@@ -53,22 +53,6 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .profile-hero__avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: var(--radius-full);
-      background: var(--avatar-bg);
-      color: var(--avatar-fg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 30px;
-      font-weight: var(--weight-bold);
-      letter-spacing: -0.90px;
-      border: 3px solid var(--avatar-ring);
-      box-shadow: var(--shadow-md);
-    }
     .profile-hero__edit-badge {
       position: absolute;
       bottom: var(--spacing-2);
@@ -100,126 +84,6 @@
       line-height: var(--line-height-18);
       margin-top: calc(-1 * var(--spacing-4));
     }
-
-    /* ── Section ── */
-    .settings-section { display: flex; flex-direction: column; gap: var(--spacing-8); }
-    .settings-section__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-11);
-      font-weight: var(--weight-semibold);
-      letter-spacing: 1.54px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      padding: 0 var(--spacing-4);
-    }
-
-    /* ── Settings Card ── */
-    .settings-card {
-      background: var(--surface-card);
-      border-radius: var(--radius-12);
-      overflow: hidden;
-      border: var(--border-small) solid var(--border-subtle);
-    }
-
-    /* ── Settings Row ── */
-    .settings-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-16);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      border-bottom: var(--border-small) solid var(--border-subtle);
-      text-decoration: none;
-    }
-    .settings-row:last-child { border-bottom: none; }
-    .settings-row:active { background: var(--surface-primary); }
-    .settings-row--no-pointer { cursor: default; }
-
-    .settings-row__icon-wrap {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-8);
-      background: var(--surface-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .settings-row__icon-wrap i { font-size: var(--font-size-18); color: var(--text-brand); }
-    .settings-row__icon-wrap--coral { background: var(--expense-owe-bg); }
-    .settings-row__icon-wrap--coral i { color: var(--expense-owe-fg); }
-    .settings-row__icon-wrap--green { background: var(--expense-lent-bg); }
-    .settings-row__icon-wrap--green i { color: var(--expense-lent-fg); }
-    .settings-row__icon-wrap--yellow { background: var(--label-warning-bg); }
-    .settings-row__icon-wrap--yellow i { color: var(--label-warning-fg); }
-    .settings-row__icon-wrap--jay { background: var(--label-info-bg); }
-    .settings-row__icon-wrap--jay i { color: var(--label-info-fg); }
-
-    .settings-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
-    .settings-row__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-medium);
-      color: var(--text-primary);
-      line-height: var(--line-height-20);
-    }
-    .settings-row__value {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--text-tertiary);
-      line-height: var(--line-height-18);
-    }
-
-    .settings-row__right {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-8);
-      flex-shrink: 0;
-    }
-    .settings-row__chevron { color: var(--border-default); }
-    .settings-row__chevron i { font-size: var(--icon-sm); }
-
-    /* ── Destructive Row ── */
-    .settings-row--destructive .settings-row__label { color: var(--expense-owe-fg); }
-    .settings-row--logout .settings-row__label { color: var(--label-warning-fg); }
-
-    /* ── Toggle ── */
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 26px;
-      flex-shrink: 0;
-    }
-    .toggle input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-    .toggle__track {
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius-full);
-      background: var(--border-default);
-      transition: background 0.2s ease;
-      cursor: pointer;
-    }
-    .toggle__thumb {
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: var(--radius-full);
-      background: var(--surface-card);
-      box-shadow: var(--shadow-xs);
-      transition: transform 0.2s ease;
-      pointer-events: none;
-    }
-    .toggle input:checked ~ .toggle__track { background: var(--text-brand); }
-    .toggle input:checked ~ .toggle__thumb { transform: translateX(18px); }
 
     /* ── App Version ── */
     .app-version {
@@ -258,7 +122,7 @@
     <!-- Profile Hero -->
     <div class="profile-hero">
       <a href="edit-profile" class="profile-hero__avatar-wrap" style="text-decoration:none;" aria-label="Edit profile">
-        <div class="profile-hero__avatar">DR</div>
+        <div class="avatar avatar--xl avatar--initials">DR</div>
         <div class="profile-hero__edit-badge">
           <i class="ph ph-pencil"></i>
         </div>
@@ -320,7 +184,7 @@
       <div class="settings-card">
 
         <div class="settings-row settings-row--no-pointer">
-          <div class="settings-row__icon-wrap--jay settings-row__icon-wrap">
+          <div class="settings-row__icon-wrap--brand settings-row__icon-wrap">
             <i class="ph ph-bell"></i>
           </div>
           <div class="settings-row__text">
@@ -328,16 +192,16 @@
             <span class="settings-row__value">Expenses, settlements, reminders</span>
           </div>
           <div class="settings-row__right">
-            <label class="toggle" aria-label="Push notifications">
+            <label class="toggle-control" role="switch" aria-checked="true" aria-label="Push notifications">
               <input type="checkbox" checked>
-              <span class="toggle__track"></span>
-              <span class="toggle__thumb"></span>
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
             </label>
           </div>
         </div>
 
         <div class="settings-row settings-row--no-pointer">
-          <div class="settings-row__icon-wrap--yellow settings-row__icon-wrap">
+          <div class="settings-row__icon-wrap--neutral settings-row__icon-wrap">
             <i class="ph ph-clock-countdown"></i>
           </div>
           <div class="settings-row__text">
@@ -345,10 +209,10 @@
             <span class="settings-row__value">Remind unpaid members</span>
           </div>
           <div class="settings-row__right">
-            <label class="toggle" aria-label="Expense reminders">
+            <label class="toggle-control" role="switch" aria-checked="true" aria-label="Expense reminders">
               <input type="checkbox" checked>
-              <span class="toggle__track"></span>
-              <span class="toggle__thumb"></span>
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
             </label>
           </div>
         </div>
@@ -362,10 +226,10 @@
             <span class="settings-row__value">When someone settles with you</span>
           </div>
           <div class="settings-row__right">
-            <label class="toggle" aria-label="Settlement alerts">
+            <label class="toggle-control" role="switch" aria-checked="false" aria-label="Settlement alerts">
               <input type="checkbox">
-              <span class="toggle__track"></span>
-              <span class="toggle__thumb"></span>
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
             </label>
           </div>
         </div>
@@ -426,7 +290,7 @@
       <div class="settings-card">
 
         <div class="settings-row">
-          <div class="settings-row__icon-wrap--jay settings-row__icon-wrap">
+          <div class="settings-row__icon-wrap--brand settings-row__icon-wrap">
             <i class="ph ph-chats"></i>
           </div>
           <div class="settings-row__text">
@@ -472,7 +336,7 @@
       <div class="settings-card">
 
         <div class="settings-row settings-row--logout" data-confirm="true">
-          <div class="settings-row__icon-wrap--yellow settings-row__icon-wrap">
+          <div class="settings-row__icon-wrap--neutral settings-row__icon-wrap">
             <i class="ph ph-sign-out"></i>
           </div>
           <div class="settings-row__text">

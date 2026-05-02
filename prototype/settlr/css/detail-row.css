@@ -1,0 +1,159 @@
+/* ============================================
+   Detail Row — Read-only / Selectable Row
+   ============================================
+   A composable row showing icon + label + value
+   with optional chevron or selection radio.
+
+   Variants:
+     .detail-row                — Default (transparent, divider-bottom)
+     .detail-row--clickable     — Tap-affordant with chevron
+     .detail-row--selectable    — Boxed, radio-style selection (settle-method)
+
+   Sub-elements:
+     __icon     - Square 40px tinted icon container
+     __text     - Label + value column
+     __label    - Smaller caption above value
+     __value    - Primary content
+     __right    - Right-aligned slot (chevron, radio, custom)
+     __chevron  - Caret-right indicator
+     __radio    - Radio circle for selectable variant
+     __radio-dot- Inner dot of radio
+   ============================================ */
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) 0;
+  background: var(--detail-row-bg);
+  border-bottom: var(--border-small) solid var(--border-subtle);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+/* Icon container — square tinted tile */
+.detail-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-8);
+  background: var(--detail-row-icon-bg);
+  color: var(--detail-row-icon-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-18);
+  flex-shrink: 0;
+}
+
+/* Text column */
+.detail-row__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.detail-row__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-19);
+  color: var(--detail-row-label-fg);
+}
+
+.detail-row__value {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  color: var(--detail-row-value-fg);
+}
+
+/* Right slot — generic */
+.detail-row__right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-shrink: 0;
+}
+
+/* Chevron indicator */
+.detail-row__chevron {
+  font-size: var(--font-size-18);
+  color: var(--detail-row-chevron-fg);
+  flex-shrink: 0;
+}
+
+/* ── Variant: Clickable (with chevron) ── */
+.detail-row--clickable {
+  cursor: pointer;
+}
+
+.detail-row--clickable:active {
+  background: var(--detail-row-bg-pressed);
+}
+
+/* ── Variant: Selectable (boxed, radio-style) ── */
+.detail-row--selectable {
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-12);
+  border: var(--border-medium) solid var(--detail-row-border);
+  background: var(--detail-row-bg);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.detail-row--selectable + .detail-row--selectable {
+  margin-top: var(--spacing-12);
+}
+
+/* Boxed rows do not get a divider */
+.detail-row--selectable,
+.detail-row--selectable:last-child {
+  border-bottom: var(--border-medium) solid var(--detail-row-border);
+}
+
+.detail-row--selectable:active {
+  background: var(--detail-row-bg-pressed);
+}
+
+.detail-row--selectable.is-selected {
+  background: var(--detail-row-selected-bg);
+  border-color: var(--detail-row-selected-border);
+}
+
+.detail-row--selectable.is-selected .detail-row__icon {
+  background: var(--detail-row-icon-bg-selected);
+}
+
+/* Radio control inside selectable variant */
+.detail-row__radio {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: var(--border-medium) solid var(--detail-row-radio-border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.detail-row--selectable.is-selected .detail-row__radio {
+  border-color: var(--detail-row-radio-border-selected);
+  background: var(--detail-row-radio-bg-selected);
+}
+
+.detail-row__radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--detail-row-radio-dot);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.detail-row--selectable.is-selected .detail-row__radio-dot {
+  opacity: 1;
+}

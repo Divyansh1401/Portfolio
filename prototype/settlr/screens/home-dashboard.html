@@ -41,11 +41,6 @@
       background: var(--surface-primary);
     }
     .status-bar__time {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      line-height: var(--line-height-20);
-      letter-spacing: -0.5px;
       color: var(--text-primary);
     }
     .status-bar__icons {
@@ -53,57 +48,6 @@
       align-items: center;
       gap: var(--spacing-4);
       color: var(--text-primary);
-    }
-
-    /* ── Top Bar ── */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--spacing-8) var(--spacing-16);
-      background: var(--surface-primary);
-      flex-shrink: 0;
-    }
-    .top-bar__brand {
-      font-family: var(--font-display);
-      font-size: var(--font-size-32);
-      font-weight: var(--weight-black);
-      line-height: var(--line-height-36);
-      letter-spacing: -1.28px;
-      color: var(--text-brand);
-      flex: 1;
-    }
-    .top-bar__actions {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-8);
-    }
-    .top-bar__icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-full);
-      background: var(--btn-icon-bg);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--btn-icon-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-    }
-    .top-bar__icon-btn:active { background: var(--btn-icon-bg-pressed); }
-    .top-bar__icon-btn i { font-size: var(--icon-md); }
-    .notif-badge {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 8px;
-      height: 8px;
-      border-radius: var(--radius-full);
-      background: var(--expense-owe-fg);
-      border: 1.5px solid var(--surface-primary);
     }
 
     /* ── Hero / Balance Area ── */
@@ -122,18 +66,9 @@
       flex-direction: column;
     }
     .hero__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      line-height: var(--line-height-19);
       color: var(--text-primary);
     }
     .hero__amount {
-      font-family: var(--font-display);
-      font-size: var(--font-size-32);
-      font-weight: var(--weight-black);
-      line-height: var(--line-height-36);
-      letter-spacing: -1.28px;
       color: var(--heading-fg);
     }
     .hero__actions {
@@ -209,7 +144,7 @@
 
   <!-- ── Status Bar ── -->
   <div class="status-bar">
-    <span class="status-bar__time">9:41</span>
+    <span class="status-bar__time text-label-md">9:41</span>
     <div class="status-bar__icons">
       <!-- Signal -->
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
@@ -233,13 +168,11 @@
     </div>
   </div>
 
-  <!-- ── Top Bar: Brand + Actions + Avatar ── -->
-  <header class="top-bar">
-    <span class="top-bar__brand">Settlr</span>
-    <div class="top-bar__actions">
-      <a href="settings" class="avatar avatar--initials avatar--lg" id="js-user-initials" aria-label="Settings">DR</a>
-    </div>
-  </header>
+  <!-- ── Top App Bar: Brand + Avatar ── -->
+  <nav class="top-app-bar">
+    <span class="top-app-bar__title text-display-sm" style="color: var(--text-brand);">Settlr</span>
+    <a href="settings" class="avatar avatar--initials avatar--lg text-title-lg" id="js-user-initials" aria-label="Settings">DR</a>
+  </nav>
 
   <!-- ── Scrollable Content ── -->
   <main class="content">
@@ -247,11 +180,11 @@
     <!-- Hero: Balance + Actions -->
     <section class="hero">
       <div class="hero__info">
-        <span class="hero__label" id="js-hero-label">Overall you are owed</span>
-        <span class="hero__amount" id="js-hero-amount">&#8377;12,300</span>
+        <span class="hero__label text-body-sm" id="js-hero-label">Overall you are owed</span>
+        <span class="hero__amount text-display-sm" id="js-hero-amount">&#8377;0</span>
       </div>
       <div class="hero__actions">
-        <a href="add-amount" class="btn btn--sm btn--primary">
+        <a href="add-amount" class="btn btn--sm btn--primary text-title-xs">
           <span class="btn__content">
             <span class="btn__label">Add expense</span>
             <span class="btn__icon">
@@ -259,7 +192,7 @@
             </span>
           </span>
         </a>
-        <a href="settle-select" class="btn btn--sm btn--secondary">
+        <a href="settle-select" class="btn btn--sm btn--secondary text-title-xs">
           <span class="btn__content">
             <span class="btn__label">Settle up</span>
             <span class="btn__icon">
@@ -272,8 +205,8 @@
 
     <!-- Recent Groups -->
     <div class="heading">
-      <span class="heading__text">Recent groups</span>
-      <a href="people?filter=group" class="btn btn--ghost btn--sm">
+      <span class="heading__title text-heading-md">Recent groups</span>
+      <a href="people?filter=group" class="btn btn--ghost btn--sm text-title-xs">
         <span class="btn__content">
           <span class="btn__label">View all</span>
           <span class="btn__icon">
@@ -288,14 +221,14 @@
         <div class="card-create__icon">
           <i class="ph-bold ph-plus"></i>
         </div>
-        <span class="card-create__text">Create new group</span>
+        <span class="card-create__text text-title-sm">Create new group</span>
       </a>
     </div>
 
     <!-- Activity -->
     <div class="heading mt-8">
-      <span class="heading__text">Activity</span>
-      <a href="activity" class="btn btn--ghost btn--sm">
+      <span class="heading__title text-heading-md">Activity</span>
+      <a href="activity" class="btn btn--ghost btn--sm text-title-xs">
         <span class="btn__content">
           <span class="btn__label">View all</span>
           <span class="btn__icon">
@@ -315,19 +248,19 @@
       <a href="home-dashboard" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-house"></i></span>
-          <span class="bottom-nav__tab-label">Home</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
       <a href="people" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-user"></i></span>
-          <span class="bottom-nav__tab-label">People</span>
+          <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
       <a href="activity" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-clock"></i></span>
-          <span class="bottom-nav__tab-label">Activity</span>
+          <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>
@@ -340,41 +273,121 @@
   <script src="../js/render.js"></script>
   <script>
     (function () {
-      // User initials
+      'use strict';
+
+      // ── User initials ─────────────────────────────────────
       var user = Store.getCurrentUser();
       document.getElementById('js-user-initials').textContent = user.initials;
 
-      // Hero balance
-      var net = Store.getNetBalance();
+      // ── Hero balance (Fix 1) ──────────────────────────────
+      // Store.getNetBalance() returns { amount, direction: 'lent'|'owe'|'settled' }
+      var net      = Store.getNetBalance();
       var labelEl  = document.getElementById('js-hero-label');
       var amountEl = document.getElementById('js-hero-amount');
       if (net.direction === 'lent') {
-        labelEl.textContent  = 'Overall you are owed';
-        amountEl.textContent = Store.formatINR(net.amount);
+        labelEl.textContent = 'Overall you are owed';
       } else if (net.direction === 'owe') {
-        labelEl.textContent  = 'Overall you owe';
-        amountEl.textContent = Store.formatINR(net.amount);
+        labelEl.textContent = 'Overall you owe';
       } else {
-        labelEl.textContent  = 'All settled up';
-        amountEl.textContent = '₹0';
+        labelEl.textContent = 'All settled up';
       }
 
-      // Group cards (prepend before the create card)
-      var cardsRow = document.getElementById('js-cards-row');
-      var createCard = cardsRow.querySelector('.card-create');
-      Store.getGroups().forEach(function (g) {
-        var bal  = Store.getGroupBalance(g.id);
-        var html = Render.groupCard(g, bal);
-        var tmp  = document.createElement('div');
-        tmp.innerHTML = html;
-        cardsRow.insertBefore(tmp.firstChild, createCard);
-      });
+      // Count-up animation from 0 → target over ~700ms (ease-out cubic)
+      function animateCountUp(el, target, duration) {
+        var start    = performance.now();
+        var startVal = 0;
+        function frame(now) {
+          var t = Math.min(1, (now - start) / duration);
+          var eased = 1 - Math.pow(1 - t, 3);
+          var current = startVal + (target - startVal) * eased;
+          el.textContent = Store.formatINR(current);
+          if (t < 1) requestAnimationFrame(frame);
+          else el.textContent = Store.formatINR(target);
+        }
+        requestAnimationFrame(frame);
+      }
+      animateCountUp(amountEl, net.amount, 700);
 
-      // Activity list (first 8 items, flat — no date sections)
-      var feed = Store.getActivityFeed(8);
-      document.getElementById('js-activity-list').innerHTML = feed
-        .map(function (e) { return Render.expenseItem(e, e.net, e.contextLabel); })
-        .join('');
+      // ── Group cards (Fix 3: empty state when no groups) ──
+      var cardsRow   = document.getElementById('js-cards-row');
+      var createCard = cardsRow.querySelector('.card-create');
+      // Recent groups rules:
+      //   1. ALL active (non-settled) groups must be shown — even if > 4.
+      //   2. If active count < 4, pad with most-recent settled groups until 4 total.
+      //   3. Final list ordered by createdAt desc.
+      var allGroups = Store.getGroups()
+        .slice()
+        .sort(function (a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
+      var groupsWithBal = allGroups.map(function (g) {
+        return { group: g, bal: Store.getGroupBalance(g.id) };
+      });
+      var active  = groupsWithBal.filter(function (x) { return x.bal.direction !== 'settled'; });
+      var settled = groupsWithBal.filter(function (x) { return x.bal.direction === 'settled'; });
+      var padCount = Math.max(0, 4 - active.length);
+      var groups   = active.concat(settled.slice(0, padCount))
+        .sort(function (a, b) { return (b.group.createdAt || '').localeCompare(a.group.createdAt || ''); })
+        .map(function (x) { return x.group; });
+
+      if (groups.length === 0) {
+        // Show empty state above the cards row; create card always remains visible
+        var emptyGroups = document.createElement('div');
+        emptyGroups.className = 'empty-state';
+        emptyGroups.innerHTML =
+          '<div class="empty-state__illustration">' +
+            '<svg viewBox="0 0 48 48" fill="none" aria-hidden="true">' +
+              '<path d="M24 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zM8 38c0-8.8 7.2-16 16-16s16 7.2 16 16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</div>' +
+          '<div class="empty-state__text">' +
+            '<p class="empty-state__title text-heading-sm">No groups yet</p>' +
+            '<p class="empty-state__body text-body-md">Create one to get started</p>' +
+          '</div>';
+        // Insert the empty state before the cards row
+        cardsRow.parentNode.insertBefore(emptyGroups, cardsRow);
+      } else {
+        groups.forEach(function (g) {
+          var bal  = Store.getGroupBalance(g.id);
+          var html = Render.groupCard(g, bal);
+          var tmp  = document.createElement('div');
+          tmp.innerHTML = html;
+          cardsRow.insertBefore(tmp.firstChild, createCard);
+        });
+      }
+
+      // ── Activity feed (Fix 2: date sections, Fix 4: empty state) ──
+      var activityList = document.getElementById('js-activity-list');
+      var feed         = Store.getActivityFeed(8);
+
+      if (!feed.length) {
+        // Fix 4: empty state when no activity
+        activityList.innerHTML =
+          '<div class="empty-state">' +
+            '<div class="empty-state__illustration">' +
+              '<svg viewBox="0 0 48 48" fill="none" aria-hidden="true">' +
+                '<rect x="10" y="6" width="28" height="36" rx="4" stroke="currentColor" stroke-width="3"/>' +
+                '<path d="M16 18h16M16 26h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' +
+              '</svg>' +
+            '</div>' +
+            '<div class="empty-state__text">' +
+              '<p class="empty-state__title text-heading-sm">No expenses yet</p>' +
+              '<p class="empty-state__body text-body-md">Add one to get started</p>' +
+            '</div>' +
+          '</div>';
+      } else {
+        // Fix 2: group by date using Store.groupExpensesByDate()
+        // Returns an ordered array of [label, items[]] pairs (newest date first)
+        var grouped = Store.groupExpensesByDate(feed);
+        var html = '';
+        grouped.forEach(function (pair) {
+          var label = pair[0];
+          var items = pair[1]
+            .map(function (e) { return Render.expenseItem(e, e.net, e.contextLabel); })
+            .join('');
+          html += Render.dateSection(label, items);
+        });
+        activityList.innerHTML = html;
+      }
+
     }());
   </script>
 

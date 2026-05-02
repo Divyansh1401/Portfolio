@@ -11,13 +11,13 @@
   border: var(--border-small) solid var(--chip-border-off);
   background-color: var(--chip-bg-off);
   color: var(--chip-fg-off);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
   font-family: var(--font-body);
   font-size: var(--font-size-12);
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-18);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  white-space: nowrap;
 }
 
 .currency-chip__caret {

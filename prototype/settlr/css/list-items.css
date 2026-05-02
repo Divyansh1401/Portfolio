@@ -34,25 +34,46 @@
 }
 
 .person-item__name {
-  font-family: var(--font-body);
-  font-size: var(--font-size-14);
-  font-weight: var(--weight-semibold);
-  line-height: var(--line-height-20);
   color: var(--contact-name);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
 }
 
 .person-item__subtext {
-  font-family: var(--font-body);
-  font-size: var(--font-size-12);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-19);
   color: var(--contact-subtext);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-19);
+}
+
+/* Group emoji tile — reuses same pattern as expense-item__illustration */
+.person-item__group-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-8);
+  background-color: var(--expense-item-illus-bg);
+  font-size: var(--font-size-20);
+  overflow: hidden;
+}
+
+.person-item__group-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .person-item__action {
@@ -159,19 +180,19 @@
 }
 
 .expense-item__title {
+  color: var(--contact-name);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: var(--weight-semibold);
   line-height: var(--line-height-20);
-  color: var(--contact-name);
 }
 
 .expense-item__subtitle {
+  color: var(--contact-subtext);
   font-family: var(--font-body);
   font-size: var(--font-size-12);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-19);
-  color: var(--contact-subtext);
 }
 
 /* Right-side column: label on top, amount below */
@@ -181,26 +202,24 @@
   align-items: flex-end;
   flex-shrink: 0;
   gap: var(--spacing-2);
-}
-
-/* Label/Label-XS: "You lent" / "You owe" */
+}/* Label text above the amount (e.g. "lent", "owe") */
 .expense-item__label {
   font-family: var(--font-body);
   font-size: var(--font-size-10);
   font-weight: var(--weight-medium);
-  line-height: normal;
 }
-
 .expense-item__label--lent { color: var(--expense-lent-fg); }
 .expense-item__label--owe  { color: var(--expense-owe-fg); }
 
-/* Amount/Amount-SM: the monetary value */
+/* Amount/Amount-XS: the monetary value */
 .expense-item__amount {
   font-family: var(--font-display);
-  font-size: var(--font-size-16);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-20);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
   letter-spacing: -0.32px;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .expense-item__amount--lent { color: var(--expense-lent-fg); }
@@ -239,10 +258,6 @@
 
 /* ---- Comment (optional) ---- */
 .expense-item__comment {
-  font-family: var(--font-body);
-  font-size: var(--font-size-11);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-17);
   color: var(--contact-subtext);
   margin-top: var(--spacing-2);
 }

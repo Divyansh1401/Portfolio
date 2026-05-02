@@ -1,11 +1,12 @@
 # Settlr — Full Project Documentation
 > Unified record of the complete arc: Splitwise research → Settlr redesign.
 > Source of truth for case study copy. Updated with design rationale, story arc, and research-to-decision mappings.
+> Last updated: 2026-05-02 (post Campaign 1 — design system grew to 40 components, prototype synced)
 
 ---
 
 ## Project Arc (One-Line Summary)
-A college ergonomics study of Splitwise revealed real usability failures — so instead of stopping at a report, the findings were used to build Settlr: an independent redesign of the group expense splitting experience, complete with a full design system and 34 built screens.
+A college ergonomics study of Splitwise revealed real usability failures — so instead of stopping at a report, the findings were used to build Settlr: an independent redesign of the group expense splitting experience, complete with a 40-component design system and 31 built screens.
 
 ---
 
@@ -16,10 +17,12 @@ A college ergonomics study of Splitwise revealed real usability failures — so 
 It started with Splitwise's Add Expense flow. The split method selector was buried and unclear — users couldn't figure out how to split unequally without hunting through the interface. This wasn't a hypothesis. It was observed directly in user testing, and confirmed by NASA-TLX: Task 3 (Add Expense) scored as the most cognitively demanding task of the five studied. That's the moment the project stopped being academic.
 
 ### Act 2 — Experiment (the question behind the app)
-The research was complete. The findings could have lived in a report. Instead, Settlr became the answer to a bigger question: *can you build a production-quality design system and 34 screens solo, using AI as the executor rather than the author?* The app wasn't the point — it was the test environment. Settlr was built to learn how a 3-tier token system actually works in practice, and to figure out what a disciplined Figma MCP + Claude workflow looks like when the designer stays in control.
+The research was complete. The findings could have lived in a report. Instead, Settlr became the answer to a bigger question: *can you build a production-quality design system and 30+ screens solo, using AI as the executor rather than the author?* The app wasn't the point — it was the test environment. Settlr was built to learn how a 3-tier token system actually works in practice, and to figure out what a disciplined Figma MCP + Claude workflow looks like when the designer stays in control.
 
 ### Act 3 — Execution (the build)
-The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values — every color, spacing, and radius tracing back through the token system. From there, the system scaled: 27 components, 34 screens, 100+ semantic tokens, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research. The app itself is still in progress — user testing is planned once the build is complete.
+The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values — every color, spacing, and radius tracing back through the token system. From there, the system scaled: **40 components, 31 screens, 290+ semantic tokens** across **42 component CSS files**, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research. The app itself is still in progress — user testing is planned once the build is complete.
+
+> **Campaign 1 (2026-04-29 → 2026-05-01):** Eight new components shipped in a single sweep — `hero-section`, `toggle`, `settings-row`, `detail-row`, `notes-card`, `summary-card`, `success-state`, `invite-banner` — plus avatar `--xl`, icon-btn `--overlay`, the `confetti` utility, and two new patterns (`screen-footer`, `update-item`). 22 screens were swept and ~150 custom one-off classes were consolidated back into the system. The `notifications` screen was deleted; all events now flow through the Activity screen via an "Updates" filter chip — one screen, one mental model.
 
 ---
 
@@ -516,8 +519,8 @@ Settlr is an independent redesign of the group expense splitting experience. The
 
 ### Token Architecture (Rule: No Primitives in Components)
 ```
-tokens/colors.css → primitives (72 colors)
-tokens/semantic.css → component-level aliases (100+)
+tokens/colors.css → primitives (57 colors · 5 palettes)
+tokens/semantic.css → semantic + component aliases (290+)
 css/*.css → components (use semantic tokens only)
 screens/*.html → screens (use semantic tokens only)
 ```
@@ -556,14 +559,15 @@ screens/*.html → screens (use semantic tokens only)
 | Path | Contents |
 |------|----------|
 | `/Users/divyanshrastogi/Desktop/Settlr/CLAUDE.md` | Full project rules and workflow |
-| `/Users/divyanshrastogi/Desktop/Settlr/settlr-design.md` | Master design system reference (colors, type, spacing, all 27 components) |
-| `/Users/divyanshrastogi/Desktop/Settlr/design-system.md` | Token and component inventory |
-| `/Users/divyanshrastogi/Desktop/Settlr/references/changelog.md` | Change log (from 2026-03-20) |
-| `/Users/divyanshrastogi/Desktop/Settlr/references/design-review-report.md` | Full 67-issue design review |
-| `/Users/divyanshrastogi/Desktop/Settlr/tokens/` | colors.css, semantic.css, spacing.css, radius.css, typography.css, shadows.css |
-| `/Users/divyanshrastogi/Desktop/Settlr/css/` | 26 CSS component files |
-| `/Users/divyanshrastogi/Desktop/Settlr/components/` | 27 component spec markdown files |
-| `/Users/divyanshrastogi/Desktop/Settlr/screens/` | 34 built screen HTML files |
+| `/Users/divyanshrastogi/Desktop/settlr/settlr-design.md` | Master design system reference (colors, type, spacing, all 40 components) |
+| `/Users/divyanshrastogi/Desktop/settlr/design-system.md` | Token and component inventory |
+| `/Users/divyanshrastogi/Desktop/settlr/references/changelog.md` | Change log (from 2026-03-20) |
+| `/Users/divyanshrastogi/Desktop/settlr/references/design-review-report.md` | Full design review backlog |
+| `/Users/divyanshrastogi/Desktop/settlr/tokens/` | colors.css, semantic.css, spacing.css, radius.css, typography.css, shadows.css |
+| `/Users/divyanshrastogi/Desktop/settlr/css/` | 42 CSS component files |
+| `/Users/divyanshrastogi/Desktop/settlr/components/` | 41 component spec markdown files |
+| `/Users/divyanshrastogi/Desktop/settlr/screens/` | 31 user-facing screen HTML files (+9 dev/preview pages) |
+| `/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/` | **Mirror** of source — used by the case study iframes (synced 2026-05-02) |
 
 ---
 ---

@@ -1,0 +1,116 @@
+/* ============================================
+   Settlr — Hero Section Component
+
+   Full-width 240px tall feature section used at the top of detail
+   and edit screens. Has a gradient background, decorative diamond
+   texture overlay (::before), an action overlay row at top
+   (back / settings buttons), and an optional avatar that overlaps
+   the hero/content boundary.
+
+   Replaces: .hero-photo (group-detail), .hero-banner
+   (individual-detail), .hero (edit-group)
+   ============================================ */
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: var(--hero-section-height);
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--surface-hero-gradient);
+}
+
+/* ---- Size variants ---- */
+.hero-section--tall  { height: var(--hero-section-height-tall);  }
+.hero-section--short { height: var(--hero-section-height-short); }
+
+/* ---- Diamond texture overlay (decorative) ---- */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(60deg,  var(--surface-hero-texture-overlay) 25%, transparent 25%),
+    linear-gradient(-60deg, var(--surface-hero-texture-overlay) 25%, transparent 25%),
+    linear-gradient(60deg,  transparent 75%, var(--surface-hero-texture-overlay) 75%),
+    linear-gradient(-60deg, transparent 75%, var(--surface-hero-texture-overlay) 75%);
+  background-size: var(--hero-section-texture-tile) var(--hero-section-texture-tile);
+  pointer-events: none;
+}
+
+/* ---- Optional photo background (replaces gradient) ---- */
+.hero-section__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ---- Optional centered emoji (e.g. group-detail placeholder) ---- */
+.hero-section__emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--hero-section-emoji-size);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---- Overlay action row (top: back, settings) ---- */
+.hero-section__actions {
+  position: absolute;
+  top: var(--hero-section-actions-top);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--spacing-16);
+  z-index: 5;
+}
+
+/* ---- Avatar wrapper — sits below the hero, vertically overlapping ---- */
+.hero-section__avatar-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(-1 * var(--spacing-48));
+  position: relative;
+  z-index: 2;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* When the wrap is a button (edit screens), apply press feedback to its
+   children — the avatar itself stays visually intact. */
+.hero-section__avatar-wrap:active .avatar,
+.hero-section__avatar-wrap:active .hero-section__avatar-edit-badge {
+  opacity: var(--opacity-disabled);
+}
+
+/* ---- Optional edit badge on the avatar (camera / pencil) ---- */
+/* Pattern shared with edit-profile and edit-group. Position the badge
+   relative to a positioned avatar wrap. */
+.hero-section__avatar-edit-badge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--hero-section-badge-size);
+  height: var(--hero-section-badge-size);
+  border-radius: var(--radius-full);
+  background: var(--hero-section-badge-bg);
+  color: var(--hero-section-badge-fg);
+  border: var(--border-medium) solid var(--avatar-border-on-hero);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.hero-section__avatar-edit-badge i {
+  font-size: var(--icon-xs);
+}

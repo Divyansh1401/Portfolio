@@ -24,8 +24,8 @@
 /* ---- Checkmark icon (hidden by default) ---- */
 .checkbox-control__check {
   display: none;
-  width: 12px;
-  height: 10px;
+  font-size: var(--font-size-10);
+  line-height: 1;
   color: var(--control-dot);
 }
 
@@ -67,11 +67,11 @@
 }
 
 .checkbox-item__label {
+  color: var(--control-label);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-23);
-  color: var(--control-label);
 }
 
 .checkbox-item.is-disabled {

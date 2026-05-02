@@ -1,0 +1,82 @@
+/* ============================================
+   Settlr — Invite Banner Component
+   Promotional row inviting users to share a join link.
+   Compact horizontal layout: icon + text block + optional action.
+
+   Required L3 semantic tokens (defined in tokens/semantic.css):
+     --invite-banner-bg
+     --invite-banner-bg-pressed
+     --invite-banner-border
+     --invite-banner-icon-bg
+     --invite-banner-icon-fg
+     --invite-banner-title-fg
+     --invite-banner-subtitle-fg
+   ============================================ */
+
+.invite-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-12);
+  background: var(--invite-banner-bg);
+  border: var(--border-small) dashed var(--invite-banner-border);
+  cursor: pointer;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.invite-banner:active {
+  background: var(--invite-banner-bg-pressed);
+}
+
+/* ---- Icon ---- */
+.invite-banner__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--invite-banner-icon-bg);
+  color: var(--invite-banner-icon-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.invite-banner__icon i {
+  font-size: var(--icon-md);
+  color: inherit;
+}
+
+/* ---- Text block ---- */
+.invite-banner__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.invite-banner__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-20);
+  color: var(--invite-banner-title-fg);
+}
+
+.invite-banner__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-16);
+  color: var(--invite-banner-subtitle-fg);
+}
+
+/* ---- Action slot (for trailing button or icon) ---- */
+.invite-banner__action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}

@@ -4,11 +4,36 @@
    Callers pre-fetch data and pass it in.
    ============================================================ */
 
+// Global avatar/photo fallback handler. Invoked from <img onerror="...">
+// when a contact/group photo fails to load — swaps to initials/emoji
+// in-place without breaking layout.
+window.handleAvatarError = function (img, fallback, mode) {
+  var p = img.parentNode;
+  if (!p) return;
+  // Strip --photo modifier classes
+  p.className = p.className.split(/\s+/).filter(function (c) {
+    return c && !/--photo$/.test(c);
+  }).join(' ');
+  // For initials avatars, ensure --initials class
+  if (mode === 'initials' && !/(^|\s)avatar--initials(\s|$)/.test(p.className)) {
+    p.className += ' avatar--initials';
+  }
+  while (p.firstChild) p.removeChild(p.firstChild);
+  p.textContent = fallback || '';
+};
+
 window.Render = (function () {
   'use strict';
 
   const CHEVRON_SVG =
     '<i class="ph ph-caret-right"></i>';
+
+  // Build an onerror attribute that swaps a broken <img> with fallback text.
+  // mode: 'initials' for avatars | 'tile' for emoji/group tiles.
+  function _imgErr(fallback, mode) {
+    var safe = String(fallback || '').replace(/'/g, "\\'");
+    return ' onerror="window.handleAvatarError(this, \'' + safe + '\', \'' + mode + '\')"';
+  }
 
   // ── Label helpers ─────────────────────────────────────────
 
@@ -38,11 +63,11 @@ window.Render = (function () {
     return `<a href="expense-detail?id=${expense.id}" class="expense-item${mod}" data-id="${expense.id}">` +
       `<div class="expense-item__illustration">${expense.emoji}</div>` +
       `<div class="expense-item__text">` +
-        `<span class="expense-item__title">${expense.title}</span>` +
-        `<span class="expense-item__subtitle">${contextLabel}</span>` +
+        `<span class="expense-item__title text-title-sm">${expense.title}</span>` +
+        `<span class="expense-item__subtitle text-body-xs">${contextLabel}</span>` +
       `</div>` +
       `<div class="expense-item__right">` +
-        `<span class="expense-item__label${cls}">${label}</span>` +
+        `<span class="expense-item__label${cls} text-label-xs">${label}</span>` +
         `<span class="expense-item__amount${amtCls}">${amtStr}</span>` +
       `</div>` +
     `</a>`;
@@ -66,11 +91,11 @@ window.Render = (function () {
     return `<a href="expense-detail?id=${expense.id}" class="txn-item${mod}" data-id="${expense.id}">` +
       `<div class="txn-item__illus">${expense.emoji}</div>` +
       `<div class="txn-item__text">` +
-        `<span class="txn-item__name">${expense.title}</span>` +
-        `<span class="txn-item__subtitle">${contextLabel}</span>` +
+        `<span class="txn-item__name text-title-sm">${expense.title}</span>` +
+        `<span class="txn-item__subtitle text-body-xs">${contextLabel}</span>` +
       `</div>` +
       `<div class="txn-item__right">` +
-        `<span class="txn-item__badge">${badge}</span>` +
+        `<span class="txn-item__badge text-label-xs">${badge}</span>` +
         `<span class="txn-item__amount">${amtStr}</span>` +
       `</div>` +
     `</a>`;
@@ -96,13 +121,18 @@ window.Render = (function () {
       ? 'Settled'
       : Store.formatINR(balance.amount);
 
+    const imageInner = group.photo
+      ? `<img src="${group.photo}" alt="${group.name}"${_imgErr(group.emoji || '', 'tile')}>`
+      : (group.emoji || '');
+    const imageMod = group.photo ? ' card-group__image--photo' : '';
+
     return `<a href="group-detail?id=${group.id}" class="card-group${mod}" data-id="${group.id}">` +
-      `<div class="card-group__image">${group.emoji || ''}</div>` +
+      `<div class="card-group__image${imageMod}">${imageInner}</div>` +
       `<div class="card-group__info${infoMod}">` +
-        `<span class="card-group__name">${group.name}</span>` +
+        `<span class="card-group__name text-title-sm">${group.name}</span>` +
         `<div class="card-group__balance">` +
-          `<span class="card-group__subtitle">${subtitle}</span>` +
-          `<span class="card-group__amount${amtMod}">${amtStr}</span>` +
+          `<span class="card-group__subtitle text-caption-sm">${subtitle}</span>` +
+          `<span class="card-group__amount${amtMod} text-amount-xs">${amtStr}</span>` +
         `</div>` +
       `</div>` +
     `</a>`;
@@ -129,7 +159,7 @@ window.Render = (function () {
 
     // Subtext: always show phone number
     const subtext = contact.phone
-      ? `<span class="person-item__subtext">${contact.phone}</span>`
+      ? `<span class="person-item__subtext text-body-xs">${contact.phone}</span>`
       : '';
 
     // Right side
@@ -150,10 +180,14 @@ window.Render = (function () {
         `</div>`;
     }
 
+    const avatarHtml = contact.photo
+      ? `<div class="avatar avatar--photo avatar--md"><img src="${contact.photo}" alt="${contact.name}"${_imgErr(contact.initials, 'initials')}></div>`
+      : `<div class="avatar avatar--initials avatar--md text-title-md">${contact.initials}</div>`;
+
     return `<a class="person-item${mod}" href="individual-detail?id=${contact.id}" data-id="${contact.id}">` +
-      `<div class="avatar avatar--initials avatar--md">${contact.initials}</div>` +
+      avatarHtml +
       `<div class="person-item__text">` +
-        `<span class="person-item__name">${contact.name}</span>` +
+        `<span class="person-item__name text-title-sm">${contact.name}</span>` +
         subtext +
       `</div>` +
       right +
@@ -192,11 +226,16 @@ window.Render = (function () {
         `</div>`;
     }
 
+    const groupIconInner = group.photo
+      ? `<img src="${group.photo}" alt="${group.name}"${_imgErr(group.emoji || '👥', 'tile')}>`
+      : (group.emoji || '👥');
+    const groupIconMod = group.photo ? ' person-item__group-icon--photo' : '';
+
     return `<a class="person-item${mod}" href="group-detail?id=${group.id}" data-id="${group.id}" data-type="group">` +
-      `<div class="person-item__group-icon">${group.emoji || '👥'}</div>` +
+      `<div class="person-item__group-icon${groupIconMod}">${groupIconInner}</div>` +
       `<div class="person-item__text">` +
-        `<span class="person-item__name">${group.name}</span>` +
-        `<span class="person-item__subtext">${group.memberCount} members</span>` +
+        `<span class="person-item__name text-title-sm">${group.name}</span>` +
+        `<span class="person-item__subtext text-body-xs">${group.memberCount} members</span>` +
       `</div>` +
       right +
     `</a>`;
@@ -218,10 +257,14 @@ window.Render = (function () {
     else if (dir === 'owe') text = `You owe <strong>${member.name}</strong>`;
     else                    text = `<strong>${member.name}</strong> — settled`;
 
+    const avatarHtml = member.photo
+      ? `<div class="balance-row__avatar avatar avatar--photo avatar--sm"><img src="${member.photo}" alt="${member.name}"${_imgErr(member.initials, 'initials')}></div>`
+      : `<div class="balance-row__avatar avatar avatar--sm text-label-xs">${member.initials}</div>`;
+
     return `<div class="balance-row" data-id="${member.contactId}">` +
-      `<div class="balance-row__avatar">${member.initials}</div>` +
-      `<div class="balance-row__text">${text}</div>` +
-      `<span class="balance-row__amount${amtMod}">${amtStr}</span>` +
+      avatarHtml +
+      `<div class="balance-row__text text-body-md">${text}</div>` +
+      `<span class="balance-row__amount${amtMod} text-amount-xs">${amtStr}</span>` +
     `</div>`;
   }
 
@@ -250,13 +293,18 @@ window.Render = (function () {
     const avatarStack =
       `<div class="avatar-stack avatar-stack--xs">${avatarItems}${overflowHtml}</div>`;
 
+    const rowIconInner = group.photo
+      ? `<img src="${group.photo}" alt="${group.name}"${_imgErr(group.emoji || '', 'tile')}>`
+      : (group.emoji || '');
+    const rowIconMod = group.photo ? ' group-row__icon--photo' : '';
+
     return `<a class="group-row" href="group-detail?id=${group.id}" data-id="${group.id}">` +
-      `<div class="group-row__icon">${group.emoji}</div>` +
+      `<div class="group-row__icon${rowIconMod}">${rowIconInner}</div>` +
       `<div class="group-row__text">` +
-        `<span class="group-row__name">${group.name}</span>` +
+        `<span class="group-row__name text-title-sm">${group.name}</span>` +
         avatarStack +
       `</div>` +
-      `<span class="group-row__amount${amtMod}">${amtStr}</span>` +
+      `<span class="group-row__amount${amtMod} text-amount-xs">${amtStr}</span>` +
       `<svg class="group-row__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>` +
     `</a>`;
   }
@@ -271,7 +319,7 @@ window.Render = (function () {
    * @param {string} itemsHtml - pre-rendered items HTML string
    */
   function dateSection(label, itemsHtml) {
-    return `<div class="date-heading"><span class="date-heading__label">${label}</span></div>${itemsHtml}`;
+    return `<div class="date-heading"><span class="date-heading__label text-overline-md">${label}</span></div>${itemsHtml}`;
   }
 
   // ── Public API ────────────────────────────────────────────

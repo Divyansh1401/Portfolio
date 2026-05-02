@@ -26,86 +26,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Status Bar ── */
-    .status-bar {
-      height: 44px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 var(--spacing-16);
-      background: var(--surface-primary);
-    }
-    .status-bar__time {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      line-height: var(--line-height-20);
-      letter-spacing: -0.5px;
-      color: var(--text-primary);
-    }
-    .status-bar__icons {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      color: var(--text-primary);
-    }
-
-    /* ── Top Bar ── */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-8);
-      padding: var(--spacing-8) var(--spacing-16);
-      background: var(--surface-primary);
-      flex-shrink: 0;
-    }
-    .top-bar__back {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-full);
-      background: var(--btn-icon-bg);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--btn-icon-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      flex-shrink: 0;
-    }
-    .top-bar__back:active { background: var(--btn-icon-bg-pressed); }
-    .top-bar__back i { font-size: var(--icon-md); }
-    .top-bar__title {
-      flex: 1;
-      font-family: var(--font-display);
-      font-size: var(--font-size-20);
-      font-weight: var(--weight-bold);
-      line-height: var(--line-height-26);
-      letter-spacing: -0.40px;
-      color: var(--top-app-bar-title);
-    }
-    .top-bar__save {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--btn-primary-fg);
-      background: var(--btn-primary-bg);
-      border: none;
-      cursor: pointer;
-      padding: var(--spacing-8) var(--spacing-16);
-      border-radius: var(--radius-full);
-      -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
-    }
-    .top-bar__save:active { background: var(--btn-primary-bg-pressed); }
-    .top-bar__save:disabled {
-      background: var(--border-default);
-      color: var(--text-tertiary);
-      cursor: default;
-    }
-
     /* ── Scrollable Content ── */
     .content {
       flex: 1;
@@ -126,22 +46,6 @@
       position: relative;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-    }
-    .avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: var(--radius-full);
-      background: var(--avatar-bg);
-      color: var(--avatar-fg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 30px;
-      font-weight: var(--weight-bold);
-      letter-spacing: -0.90px;
-      border: 3px solid var(--surface-card);
-      box-shadow: var(--shadow-md);
     }
     .avatar-camera {
       position: absolute;
@@ -226,122 +130,11 @@
       gap: var(--spacing-16);
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-    }
-    .field__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-semibold);
-      color: var(--input-label);
-      line-height: var(--line-height-18);
-    }
-    .field__label span {
-      font-weight: var(--weight-regular);
-      color: var(--text-tertiary);
-      margin-left: var(--spacing-4);
-    }
-    .field__input {
-      height: 52px;
-      padding: 0 var(--spacing-16);
-      background: var(--input-bg);
-      border: var(--border-small) solid var(--input-border-default);
-      border-radius: var(--radius-12);
-      font-family: var(--font-body);
-      font-size: var(--font-size-15);
-      font-weight: var(--weight-regular);
-      color: var(--input-fg-active);
-      outline: none;
-      width: 100%;
-      transition: border-color 0.15s ease, background 0.15s ease;
-      -webkit-appearance: none;
-    }
-    .field__input:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-    .field__input::placeholder { color: var(--input-fg-default); }
-    .field__input:disabled {
-      background: var(--surface-primary);
-      color: var(--text-tertiary);
-      cursor: not-allowed;
-      border-color: var(--border-subtle);
-    }
-    .field__input--with-prefix {
-      padding-left: 52px;
-    }
-    .field__helper {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--input-helper);
-      line-height: var(--line-height-18);
-    }
-    .field__helper--error {
-      color: var(--input-helper-error);
-    }
-    .field__helper i { font-size: var(--font-size-12); vertical-align: middle; }
-
-    /* input with prefix icon */
-    .field__input-wrap {
-      position: relative;
-    }
-    .field__input-prefix {
-      position: absolute;
-      left: var(--spacing-16);
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--font-body);
-      font-size: var(--font-size-15);
-      font-weight: var(--weight-semibold);
-      color: var(--text-tertiary);
-      pointer-events: none;
-    }
-
     /* ── Section Divider ── */
     .form-divider {
       height: 1px;
       background: var(--border-subtle);
       margin: var(--spacing-8) 0;
-    }
-
-    /* ── Bio field ── */
-    .field__textarea {
-      padding: var(--spacing-12) var(--spacing-16);
-      background: var(--input-bg);
-      border: var(--border-small) solid var(--input-border-default);
-      border-radius: var(--radius-12);
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-regular);
-      color: var(--input-fg-active);
-      outline: none;
-      width: 100%;
-      resize: none;
-      min-height: 80px;
-      transition: border-color 0.15s ease, background 0.15s ease;
-      line-height: var(--line-height-22);
-      -webkit-appearance: none;
-    }
-    .field__textarea:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-    .field__textarea::placeholder { color: var(--input-fg-default); }
-    .field__char-count {
-      text-align: right;
-      font-family: var(--font-body);
-      font-size: var(--font-size-11);
-      color: var(--text-tertiary);
-      line-height: var(--line-height-16);
-    }
-
-    /* ── Save CTA ── */
-    .save-cta {
-      padding: var(--spacing-16);
-      padding-top: var(--spacing-24);
     }
   </style>
 </head>
@@ -370,13 +163,13 @@
     </div>
   </div>
 
-  <!-- ── Top Bar ── -->
-  <header class="top-bar">
-    <a href="settings" class="top-bar__back" aria-label="Back">
+  <!-- ── Top App Bar ── -->
+  <header class="top-app-bar">
+    <a href="settings" class="icon-btn icon-btn--md" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
-    <span class="top-bar__title">Edit Profile</span>
-    <button class="top-bar__save" id="js-save-btn" onclick="saveProfile()">Save</button>
+    <span class="top-app-bar__title">Edit Profile</span>
+    <button class="top-app-bar__done" id="js-save-btn" onclick="saveProfile()">Save</button>
   </header>
 
   <!-- ── Content ── -->
@@ -385,7 +178,7 @@
     <!-- Avatar -->
     <div class="avatar-section">
       <div class="avatar-wrap" onclick="document.getElementById('js-avatar-input').click()">
-        <div class="avatar" id="js-avatar">DR</div>
+        <div class="avatar avatar--xl avatar--initials" id="js-avatar">DR</div>
         <div class="avatar-camera">
           <i class="ph ph-camera"></i>
         </div>
@@ -412,42 +205,43 @@
     <div class="form-section">
 
       <!-- Display Name -->
-      <div class="field">
-        <label class="field__label" for="input-name">Display Name</label>
-        <input
-          class="field__input"
-          id="input-name"
-          type="text"
-          value="Divyansh Rastogi"
-          placeholder="Your full name"
-          oninput="onFieldChange()"
-          maxlength="50"
-        >
+      <div class="input-field">
+        <label class="input-field__label" for="input-name">Display Name</label>
+        <div class="input-field__box">
+          <input
+            id="input-name"
+            type="text"
+            value="Divyansh Rastogi"
+            placeholder="Your full name"
+            oninput="onFieldChange()"
+            maxlength="50"
+          >
+        </div>
       </div>
 
       <!-- Phone (read-only) -->
-      <div class="field">
-        <label class="field__label" for="input-phone">
+      <div class="input-field input-field--disabled">
+        <label class="input-field__label" for="input-phone">
           Phone Number
           <span>· can't be changed</span>
         </label>
-        <input
-          class="field__input"
-          id="input-phone"
-          type="tel"
-          value="+91 98765 43210"
-          disabled
-        >
+        <div class="input-field__box">
+          <input
+            id="input-phone"
+            type="tel"
+            value="+91 98765 43210"
+            disabled
+          >
+        </div>
       </div>
 
       <div class="form-divider"></div>
 
       <!-- UPI ID -->
-      <div class="field">
-        <label class="field__label" for="input-upi">UPI ID</label>
-        <div class="field__input-wrap">
+      <div class="input-field">
+        <label class="input-field__label" for="input-upi">UPI ID</label>
+        <div class="input-field__box">
           <input
-            class="field__input"
             id="input-upi"
             type="text"
             value="divyansh@okaxis"
@@ -455,46 +249,47 @@
             oninput="onFieldChange()"
           >
         </div>
-        <p class="field__helper">Used when others pay you via UPI</p>
+        <span class="input-field__helper">Used when others pay you via UPI</span>
       </div>
 
       <!-- Bank / Payment info note -->
-      <div class="field">
-        <label class="field__label" for="input-bank-name">Bank Name <span>· optional</span></label>
-        <input
-          class="field__input"
-          id="input-bank-name"
-          type="text"
-          placeholder="e.g. Axis Bank, HDFC"
-          oninput="onFieldChange()"
-        >
+      <div class="input-field">
+        <label class="input-field__label" for="input-bank-name">Bank Name <span>· optional</span></label>
+        <div class="input-field__box">
+          <input
+            id="input-bank-name"
+            type="text"
+            placeholder="e.g. Axis Bank, HDFC"
+            oninput="onFieldChange()"
+          >
+        </div>
       </div>
 
       <div class="form-divider"></div>
 
       <!-- Bio -->
-      <div class="field">
-        <label class="field__label" for="input-bio">Bio <span>· optional</span></label>
+      <div class="notes-card notes-card--editable">
+        <label class="notes-card__label" for="input-bio">Bio <span>· optional</span></label>
         <textarea
-          class="field__textarea"
+          class="notes-card__textarea"
           id="input-bio"
           placeholder="A short note about you..."
           maxlength="120"
           oninput="updateCharCount(this)"
         ></textarea>
-        <p class="field__char-count" id="js-char-count">0 / 120</p>
+        <span class="notes-card__counter" id="js-char-count">0 / 120</span>
       </div>
 
     </div>
 
-    <!-- Save CTA (duplicate at bottom for long forms) -->
-    <div class="save-cta">
-      <button class="btn btn--primary btn--lg" style="width:100%" onclick="saveProfile()">
-        Save Changes
-      </button>
-    </div>
-
   </main>
+
+  <!-- Save CTA -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary" onclick="saveProfile()">
+      <span class="btn__content">Save Changes</span>
+    </button>
+  </div>
 
   <script>
     let isDirty = false;

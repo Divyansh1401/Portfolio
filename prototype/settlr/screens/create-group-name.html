@@ -29,13 +29,13 @@
     /* ── Content ── */
     .content {
       flex: 1;
-      padding: var(--spacing-24) var(--spacing-24);
+      padding: var(--spacing-24) var(--spacing-24) 120px;
       display: flex;
       flex-direction: column;
       gap: var(--spacing-32);
     }
 
-    /* ── Group Photo Area ── */
+    /* ── Group Photo Area (screen-unique) ── */
     .photo-area {
       display: flex;
       flex-direction: column;
@@ -73,50 +73,7 @@
       text-transform: uppercase;
     }
 
-    /* ── Name Field ── */
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-    }
-    .field__label {
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: var(--weight-regular);
-      line-height: 19px;
-      color: var(--input-label);
-    }
-    .field__input {
-      width: 100%;
-      height: 48px;
-      padding: 0 var(--spacing-16);
-      border-radius: var(--radius-12);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--input-bg);
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: var(--weight-medium);
-      color: var(--input-fg-active);
-      outline: none;
-      transition: all 0.15s ease;
-    }
-    .field__input::placeholder {
-      color: var(--input-fg-default);
-      font-weight: var(--weight-regular);
-    }
-    .field__input:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-    .field__helper {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: var(--weight-regular);
-      line-height: 17px;
-      color: var(--input-helper);
-    }
-
-    /* ── Group Type Grid ── */
+    /* ── Type Section (screen-specific section header for grid) ── */
     .type-section {
       display: flex;
       flex-direction: column;
@@ -135,90 +92,6 @@
       grid-template-columns: repeat(4, 1fr);
       gap: var(--spacing-8);
     }
-    .type-chip {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-4);
-      padding: var(--spacing-12) var(--spacing-8);
-      border-radius: var(--radius-12);
-      border: var(--border-medium) solid var(--border-subtle);
-      background: var(--surface-card);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: all 0.15s ease;
-    }
-    .type-chip:active {
-      background: var(--btn-icon-bg);
-    }
-    .type-chip.is-selected {
-      background: var(--container-bg-selected);
-      border-color: var(--container-border-selected);
-    }
-    .type-chip__emoji {
-      font-size: 24px;
-      line-height: 1;
-    }
-    .type-chip__name {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: var(--weight-medium);
-      color: var(--text-secondary);
-      text-align: center;
-    }
-    .type-chip.is-selected .type-chip__name {
-      color: var(--btn-secondary-fg);
-      font-weight: var(--weight-semibold);
-    }
-
-    /* ── Description Field ── */
-    .field__textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      border: var(--border-medium) solid var(--input-border-default);
-      background: var(--input-bg);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: var(--weight-regular);
-      line-height: 23px;
-      color: var(--input-fg-active);
-      outline: none;
-      resize: none;
-      transition: all 0.15s ease;
-    }
-    .field__textarea::placeholder {
-      color: var(--input-fg-default);
-    }
-    .field__textarea:focus {
-      background: var(--input-bg-focused);
-      border-color: var(--input-border-focused);
-    }
-
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      padding: var(--spacing-12) var(--spacing-24) var(--spacing-32);
-      flex-shrink: 0;
-    }
-    .btn-next {
-      display: flex;
-      width: 100%;
-      height: 52px;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: var(--weight-semibold);
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-next:active { background: var(--btn-primary-bg-pressed); }
   </style>
 </head>
 <body>
@@ -260,10 +133,12 @@
     </div>
 
     <!-- Group Name -->
-    <div class="field">
-      <label class="field__label">Group name</label>
-      <input type="text" class="field__input" placeholder="e.g. Goa Trip, Flat Expenses..." autofocus>
-      <span class="field__helper">Give your group a memorable name</span>
+    <div class="input-field">
+      <label class="input-field__label">Group name</label>
+      <div class="input-field__box">
+        <input type="text" id="js-group-name" placeholder="e.g. Goa Trip, Flat Expenses..." autofocus>
+      </div>
+      <span class="input-field__helper">Give your group a memorable name</span>
     </div>
 
     <!-- Group Type -->
@@ -306,16 +181,18 @@
     </div>
 
     <!-- Description (optional) -->
-    <div class="field">
-      <label class="field__label">Description (optional)</label>
-      <textarea class="field__textarea" placeholder="Add a short note about this group..."></textarea>
+    <div class="input-field">
+      <label class="input-field__label">Description (optional)</label>
+      <div class="input-field__box">
+        <textarea id="js-group-description" placeholder="Add a short note about this group..." rows="3" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-body);font-size:var(--font-size-14);font-weight:var(--weight-regular);color:var(--input-fg-active);resize:none;line-height:var(--line-height-23);"></textarea>
+      </div>
     </div>
 
   </div>
 
   <!-- ── Bottom CTA ── -->
-  <div class="bottom-cta">
-    <button id="js-next" class="btn-next">Next — Add Members</button>
+  <div class="screen-footer">
+    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next — Add Members</button>
   </div>
 
   <script>
@@ -325,9 +202,13 @@
     }
 
     document.getElementById('js-next').addEventListener('click', function() {
-      var nameInput = document.querySelector('.field__input');
+      var nameInput = document.getElementById('js-group-name');
       var name = nameInput.value.trim();
-      if (!name) { nameInput.focus(); nameInput.style.borderColor = 'var(--input-border-error)'; return; }
+      if (!name) {
+        nameInput.focus();
+        nameInput.closest('.input-field').classList.add('input-field--error');
+        return;
+      }
       var selectedChip = document.querySelector('.type-chip.is-selected');
       var type = selectedChip ? selectedChip.querySelector('.type-chip__name').textContent.trim().toLowerCase() : 'other';
       var emoji = selectedChip ? selectedChip.querySelector('.type-chip__emoji').textContent.trim() : '📝';

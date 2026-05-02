@@ -5837,10 +5837,15 @@
           ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.08})`;
           ctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
         }
-        ctx.fillStyle = 'rgba(60,60,60,0.8)';
-        ctx.font = '700 16px var(--f-heading), "Plus Jakarta Sans", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Scratch to reveal', w / 2, h / 2 + 6);
+        ctx.font = '16px sans-serif';
+        ctx.fillStyle = 'rgba(60,60,60,0.55)';
+        const starOffset = 82;
+        ctx.fillText('✦', w / 2 - starOffset, h / 2 + 9);
+        ctx.fillText('✦', w / 2 + starOffset, h / 2 + 9);
+        ctx.fillStyle = 'rgba(60,60,60,0.8)';
+        ctx.font = '700 24px var(--f-heading), "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Scratch to reveal', w / 2, h / 2 + 9);
       }
 
       function getPos(e) {
@@ -6114,19 +6119,19 @@
             <p class="cs-tag">By the Numbers</p>
             <div class="cs-stat-row-grid">
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">27</p>
+                <p class="cs-stat-big-num">40</p>
                 <p class="cs-stat-big-label">components built</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">24</p>
+                <p class="cs-stat-big-num">31</p>
                 <p class="cs-stat-big-label">screens designed</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">50</p>
+                <p class="cs-stat-big-num">57</p>
                 <p class="cs-stat-big-label">color primitives</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">100<span style="font-size:20px;letter-spacing:0">+</span></p>
+                <p class="cs-stat-big-num">290<span style="font-size:20px;letter-spacing:0">+</span></p>
                 <p class="cs-stat-big-label">semantic tokens</p>
               </div>
               <div class="cs-stat-grid-item">
@@ -6166,7 +6171,7 @@
           <!-- PROTOTYPE VIEWER -->
           <div class="cs-section">
             <p class="cs-tag">Try It</p>
-            <h2 class="cs-section-title">The prototype. 24 screens. Live.</h2>
+            <h2 class="cs-section-title">The prototype. 31 screens. Live.</h2>
             <div class="cs-body">
               <p>Click through the flows — or jump to a screen with the switcher.</p>
             </div>
@@ -6341,7 +6346,7 @@
                 <span class="cs-tier-num">01 · Primitive</span>
                 <p class="cs-tier-name">Named Scales</p>
                 <p class="cs-tier-body">Raw values. No context. olive-600, coral-50, green-500. Defined once in <em>colors.css</em> — no meaning attached.</p>
-                <span class="cs-tier-count">50 color primitives</span>
+                <span class="cs-tier-count">57 color primitives</span>
               </div>
               <div class="cs-tier-arrow">→</div>
               <div class="cs-tier-col cs-tier-col--mid">
@@ -6354,8 +6359,8 @@
               <div class="cs-tier-col">
                 <span class="cs-tier-num">03 · Component</span>
                 <p class="cs-tier-name">Scoped to UI</p>
-                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --fab-bg, --chip-bg-on. 27 component files, nothing hardcoded.</p>
-                <span class="cs-tier-count">100+ component tokens</span>
+                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --fab-bg, --chip-bg-on. 40 component files, nothing hardcoded.</p>
+                <span class="cs-tier-count">290+ component tokens</span>
               </div>
             </div>
 
@@ -6435,7 +6440,7 @@
 
             <div style="display:flex; justify-content:space-between; margin-top:56px; border-bottom:1px solid rgba(27,28,26,0.06); padding-bottom:8px;">
               <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid);">Component layer</span>
-              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">100+ tokens · 27 files</span>
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">290+ tokens · 42 files</span>
             </div>
 
             <div class="cs-comp-token-card">
@@ -6502,7 +6507,7 @@
             </div>
 
             <!-- Summary Footnote -->
-            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">27 components · Primary, secondary, ghost, and destructive variants · 100+ tokens across 27 files</p>
+            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">40 components · Primary, secondary, ghost, and destructive variants · 290+ tokens across 42 files</p>
           </div>
 
           <div class="cs-divider"></div>
@@ -6634,7 +6639,7 @@
           <!-- SECTION 5: Component Showcase -->
           <div class="cs-section">
             <p class="cs-tag">The Components</p>
-            <h2 class="cs-section-title">27 components. Each traceable to a screen.</h2>
+            <h2 class="cs-section-title">40 components. Each traceable to a screen.</h2>
             <div class="cs-body">
               <p>I designed one variant of each style in Figma. Claude generated the full size scale (SM · MD · LG), pressed states, disabled states, and mapped every semantic token — no repetitive work, just review and approve.</p>
             </div>
@@ -6644,7 +6649,7 @@
               <img src="assets/images/settlr/Components.webp" alt="Settlr Component Library" style="width:100%; height:auto; display:block;">
             </div>
 
-            <p style="font-size:11px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Designed in Figma · 27 components · Primary / Secondary / Ghost / Destructive · 100+ tokens</p>
+            <p style="font-size:11px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Designed in Figma · 40 components · Primary / Secondary / Ghost / Destructive · 290+ tokens</p>
 
             <!-- Codebase documentation -->
             <div style="margin-top:40px; display:grid; grid-template-columns:1.1fr 1fr; gap:48px; align-items:center;">
@@ -6653,10 +6658,10 @@
               <div>
                 <p style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid); margin-bottom:16px;">Every component documented</p>
                 <p style="font-size:18px; font-weight:700; color:var(--c-dark); line-height:1.4; margin-bottom:14px;">Claude wrote the docs.<br>I approved them.</p>
-                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 27 components has its own <code style="font-size:11px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file — tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
+                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 40 components has its own <code style="font-size:11px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file — tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
                 <div style="display:flex; gap:32px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(27,28,26,0.08);">
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">27</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">40</p>
                     <p style="font-size:11px; color:var(--c-mid); margin:4px 0 0;">.md files</p>
                   </div>
                   <div>
@@ -7032,7 +7037,7 @@
                 <span class="cs-iter-why-num">03</span>
                 <div>
                   <p class="cs-iter-why-title">Code mirrors design exactly</p>
-                  <p class="cs-iter-why-body">Primitive CSS → Semantic CSS → 27 component files. Change one primitive — it propagates everywhere.</p>
+                  <p class="cs-iter-why-body">Primitive CSS → Semantic CSS → 40 component files. Change one primitive — it propagates everywhere.</p>
                 </div>
               </div>
             </div>
@@ -7058,8 +7063,8 @@
               </div>
               <div class="cs-ft-body">
                 <div class="cs-ft-row cs-ft-dir">📁 tokens/</div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">colors.css</span><span class="cs-ft-comment">— 50 color primitives · 5 palettes · 10 steps each</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">semantic.css</span><span class="cs-ft-comment">— 100+ semantic + component tokens · all aliased</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">colors.css</span><span class="cs-ft-comment">— 57 color primitives · 5 palettes · olive/coral/green/gray/neutral</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">semantic.css</span><span class="cs-ft-comment">— 290+ semantic + component tokens · all aliased</span></div>
                 <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">typography.css</span><span class="cs-ft-comment">— full type scale · 30+ pre-composed text styles</span></div>
                 <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">spacing.css</span><span class="cs-ft-comment">— 10 spacing values · 4pt/8pt system</span></div>
                 <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">radius.css</span><span class="cs-ft-comment">— 11 radius values · 2px → pill</span></div>
@@ -7363,12 +7368,12 @@
 
           <div class="cs-divider"></div>
 
-          <!-- SECTION 7: Full Gallery — all 34 screens -->
+          <!-- SECTION 7: Full Gallery — all 31 screens -->
           <div class="cs-section">
-            <p class="cs-tag">All 34 Screens</p>
+            <p class="cs-tag">All 31 Screens</p>
             <h2 class="cs-section-title">Every screen. Built in Figma. Exported as code.</h2>
             <div class="cs-body">
-              <p>Auth &amp; Onboarding → Main App → Groups → Add Expense → Settlements. 24 screens. All built.</p>
+              <p>Auth &amp; Onboarding → Main App → Groups → Add Expense → Settlements. 31 screens. All built.</p>
             </div>
 
             <div class="cs-gallery-group" style="margin-top: 40px;">

@@ -1,0 +1,128 @@
+/* =========================================================
+   UPDATE ITEM — Activity feed notification rows
+   Variants: --expense | --settlement | --group | --reminder | --system
+   Modifier: --unread (shows dot indicator)
+   ========================================================= */
+
+.update-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--surface-card);
+  position: relative;
+}
+
+/* Icon circle */
+.update-item__icon {
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--spacing-20);
+}
+
+.update-item__icon--expense {
+  background: var(--label-owe-bg);
+  color: var(--label-owe-fg);
+}
+
+.update-item__icon--settlement {
+  background: var(--label-lent-bg);
+  color: var(--label-lent-fg);
+}
+
+.update-item__icon--group {
+  background: var(--chip-bg-on);
+  color: var(--chip-fg-on);
+}
+
+.update-item__icon--reminder {
+  background: var(--label-settled-bg);
+  color: var(--label-settled-fg);
+}
+
+.update-item__icon--system {
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+/* Body */
+.update-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.update-item__text {
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+}
+
+.update-item__text strong {
+  font-weight: 600;
+}
+
+.update-item__text .amount--lent {
+  color: var(--label-lent-fg);
+}
+
+.update-item__text .amount--owe {
+  color: var(--label-owe-fg);
+}
+
+/* Meta row */
+.update-item__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.update-item__time {
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-11);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-17);
+}
+
+.update-item__tag {
+  color: var(--text-secondary);
+  background: var(--surface-bg);
+  border-radius: var(--radius-4);
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-11);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-17);
+}
+
+/* Action buttons */
+.update-item__actions {
+  display: flex;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-4);
+}
+
+/* Unread dot */
+.update-item__dot {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-full);
+  background: var(--text-brand);
+  flex-shrink: 0;
+  margin-top: var(--spacing-4);
+}
+
+.update-item:not(.update-item--unread) .update-item__dot {
+  display: none;
+}

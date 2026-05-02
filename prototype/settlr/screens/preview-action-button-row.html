@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Action Button Row — Preview</title>
+  <title>Screen Footer — Preview</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -123,35 +123,24 @@
     }
     .btn--secondary:active { background: var(--btn-secondary-bg-pressed); }
 
-    /* ── ACTION BUTTON ROW ────────────────────── */
-    .action-btn-row {
+    /* ── SCREEN FOOTER ────────────────────────── */
+    /* Override fixed positioning for phone mockup context */
+    .screen-footer {
+      position: static;
+      transform: none;
+      left: auto;
+      width: 100%;
       display: flex;
       align-items: center;
-      gap: var(--spacing-8);
+      gap: var(--spacing-12);
       padding: var(--spacing-12) var(--spacing-16);
-      background: var(--color-gray-0);
+      background: var(--color-neutral-50);
       border-top: 1px solid var(--color-neutral-200);
-      width: 100%;
     }
 
     /* Each button stretches equally */
-    .action-btn-row .btn {
+    .screen-footer .btn {
       flex: 1;
-    }
-
-    /* ── VARIANT: Single primary full-width ────── */
-    .action-btn-row--single .btn {
-      width: 100%;
-    }
-
-    /* ── VARIANT: With safe area bottom (on-device) */
-    .action-btn-row--safe {
-      padding-bottom: calc(var(--spacing-12) + 20px);
-    }
-
-    /* ── SETTLE UP ONLY (no add expense) ─────── */
-    .action-btn-row--settle-only .btn {
-      width: 100%;
     }
 
     /* ── ICON inside button ───────────────────── */
@@ -191,81 +180,67 @@
 </head>
 <body>
 
-  <!-- ── Variant 1: Add Expense + Settle Up (equal halves) ── -->
-  <p class="section-label">Add Expense + Settle Up</p>
+  <!-- ── Double: Settle Up + Add Expense ── -->
+  <p class="section-label">Double button (Settle Up + Add Expense)</p>
   <div class="phone">
     <div class="screen-body">
       <div class="placeholder-line placeholder-line--full"></div>
       <div class="placeholder-line placeholder-line--medium"></div>
       <div class="placeholder-line placeholder-line--short"></div>
     </div>
-    <div class="action-btn-row">
-      <button class="btn btn--md btn--secondary">
+    <div class="screen-footer">
+      <button class="btn btn--lg btn--secondary">
         <span class="btn__content">
-          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          Add Expense
+          Settle up
+          <i class="btn__icon ph-bold ph-arrow-right"></i>
         </span>
       </button>
-      <button class="btn btn--md btn--primary">
+      <button class="btn btn--lg btn--primary">
         <span class="btn__content">
-          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Settle Up
+          Add expense
+          <i class="btn__icon ph-bold ph-plus"></i>
         </span>
       </button>
     </div>
   </div>
 
-  <!-- ── Variant 2: Settle Up only (full width) ── -->
-  <p class="section-label">Settle Up only</p>
+  <!-- ── Single: one full-width primary button ── -->
+  <p class="section-label">Single button (full-width primary)</p>
   <div class="phone">
     <div class="screen-body">
       <div class="placeholder-line placeholder-line--full"></div>
       <div class="placeholder-line placeholder-line--medium"></div>
       <div class="placeholder-line placeholder-line--short"></div>
     </div>
-    <div class="action-btn-row action-btn-row--single">
-      <button class="btn btn--md btn--primary" style="width:100%">
+    <div class="screen-footer">
+      <button class="btn btn--lg btn--primary btn--full">
         <span class="btn__content">
-          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Settle Up
+          Next
+          <i class="btn__icon ph-bold ph-arrow-right"></i>
         </span>
       </button>
     </div>
   </div>
 
-  <!-- ── Variant 3: With balance summary row above ── -->
-  <p class="section-label">With balance summary</p>
+  <!-- ── Double with is-scrolled border ── -->
+  <p class="section-label">Double with top border (is-scrolled state)</p>
   <div class="phone">
     <div class="screen-body">
       <div class="placeholder-line placeholder-line--full"></div>
       <div class="placeholder-line placeholder-line--medium"></div>
       <div class="placeholder-line placeholder-line--short"></div>
     </div>
-    <div class="balance-summary">
-      <span class="balance-summary__lent">You lent ₹2,400</span>
-      <span class="balance-summary__owe">You owe ₹600</span>
-    </div>
-    <div class="action-btn-row">
-      <button class="btn btn--md btn--secondary">
+    <div class="screen-footer is-scrolled">
+      <button class="btn btn--lg btn--secondary">
         <span class="btn__content">
-          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          Add Expense
+          Settle up
+          <i class="btn__icon ph-bold ph-arrow-right"></i>
         </span>
       </button>
-      <button class="btn btn--md btn--primary">
+      <button class="btn btn--lg btn--primary">
         <span class="btn__content">
-          <svg class="btn__icon" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h12M10 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Settle Up
+          Add expense
+          <i class="btn__icon ph-bold ph-plus"></i>
         </span>
       </button>
     </div>

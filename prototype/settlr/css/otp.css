@@ -15,18 +15,17 @@
   border: var(--border-small) solid var(--input-border-default);
   background-color: var(--input-bg);
   font-family: var(--font-body);
-  font-size: var(--font-size-20);
-  font-weight: var(--weight-regular);
-  line-height: normal;
   color: var(--input-fg-default);
   text-align: center;
   caret-color: var(--otp-caret);
   transition: all 0.15s ease;
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
 }
 
 .otp-digit::placeholder {
   color: var(--input-fg-default);
-  font-weight: var(--weight-regular);
 }
 
 /* Focus */
@@ -43,7 +42,6 @@
   background-color: var(--input-bg);
   border-color: var(--input-border-default);
   color: var(--input-fg-active);
-  font-weight: var(--weight-semibold);
 }
 
 /* Error */
@@ -67,11 +65,9 @@
 }
 
 .otp-group__label {
-  font-family: var(--font-body);
-  font-size: var(--font-size-10);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-14);
   color: var(--input-label);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-medium);
 }
 
 .otp-group__digits {
@@ -81,11 +77,9 @@
 }
 
 .otp-group__helper {
-  font-family: var(--font-body);
-  font-size: var(--font-size-10);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-14);
   color: var(--input-helper);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-medium);
 }
 
 .otp-group--error .otp-group__helper {

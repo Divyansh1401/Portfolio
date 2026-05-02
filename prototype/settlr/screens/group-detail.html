@@ -54,107 +54,6 @@
       color: var(--text-primary);
     }
 
-    /* ── Hero Photo ── */
-    .hero-photo {
-      width: 100%;
-      height: 300px;
-      position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
-      /* TODO: add --surface-hero-gradient semantic token */
-      background: linear-gradient(160deg, var(--color-olive-300) 0%, var(--color-olive-500) 40%, var(--color-olive-700) 100%);
-    }
-    .hero-photo__img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    /* Placeholder when no image — warm gradient with pattern */
-    .hero-photo__placeholder {
-      width: 100%;
-      height: 100%;
-      /* TODO: add --surface-hero-gradient semantic token */
-      background:
-        linear-gradient(160deg, var(--color-olive-200) 0%, var(--color-olive-400) 50%, var(--color-olive-600) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-photo__placeholder::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(60deg, rgba(255,255,255,0.06) 25%, transparent 25%),
-        linear-gradient(-60deg, rgba(255,255,255,0.06) 25%, transparent 25%),
-        linear-gradient(60deg, transparent 75%, rgba(255,255,255,0.06) 75%),
-        linear-gradient(-60deg, transparent 75%, rgba(255,255,255,0.06) 75%);
-      background-size: 40px 40px;
-    }
-    .hero-photo__placeholder-emoji {
-      font-size: 80px;
-      z-index: 1;
-    }
-
-    /* ── Overlay Buttons ── */
-    .hero-photo__actions {
-      position: absolute;
-      top: 52px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 var(--spacing-16);
-      z-index: 5;
-    }
-    .hero-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-full);
-      background: var(--surface-primary);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-primary);
-      box-shadow: var(--shadow-sm);
-      -webkit-tap-highlight-color: transparent;
-      text-decoration: none;
-    }
-    .hero-btn:active { background: var(--btn-icon-bg-pressed); }
-    .hero-btn i { font-size: var(--icon-md); }
-
-    /* ── Group Avatar (overlapping) ── */
-    .group-avatar-wrap {
-      display: flex;
-      justify-content: center;
-      margin-top: -48px;
-      position: relative;
-      z-index: 2;
-    }
-    /* TODO: add --avatar-xl size (96px) to avatar.css component spec */
-    .group-avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: var(--radius-16);
-      background: var(--surface-card);
-      border: var(--border-large) solid var(--avatar-ring);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: var(--shadow-md);
-    }
-    .group-avatar__img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .group-avatar__emoji {
-      font-size: 42px;
-    }
-
     /* ── Info Section ── */
     .info-section {
       text-align: center;
@@ -182,7 +81,7 @@
       font-size: var(--font-size-32);
       font-weight: var(--weight-black);
       letter-spacing: -1.28px;
-      line-height: 38px;
+      line-height: var(--line-height-40);
       margin-top: var(--spacing-4);
     }
     .info-section__amount--owe { color: var(--expense-owe-fg); }
@@ -200,7 +99,7 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       background: transparent;
-      padding-bottom: 90px;
+      padding-bottom: 100px;
     }
 
     /* ── Tab Panels ── */
@@ -230,7 +129,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: var(--font-size-20);
       flex-shrink: 0;
     }
     .txn-item__text {
@@ -326,52 +225,6 @@
     .tab-empty { display: none; }
     .tab-panel.is-empty .tab-empty { display: flex; }
 
-    /* ── Sticky Bottom Action Row ── */
-    .sticky-actions {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 393px;
-      display: flex;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16) 28px;
-      background: var(--surface-primary);
-      z-index: 10;
-    }
-    .sticky-actions .btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--spacing-8);
-      height: 52px;
-      border-radius: var(--radius-full);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: var(--font-size-16);
-      font-weight: var(--weight-semibold);
-      -webkit-tap-highlight-color: transparent;
-      text-decoration: none;
-    }
-    .sticky-actions .btn--secondary {
-      background: var(--btn-secondary-bg);
-      color: var(--btn-secondary-fg);
-    }
-    .sticky-actions .btn--secondary:active { background: var(--btn-secondary-bg-pressed); }
-    .sticky-actions .btn--primary {
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-    }
-    .sticky-actions .btn--primary:active { background: var(--btn-primary-bg-pressed); }
-    .btn__icon-sq {
-      width: var(--icon-md);
-      height: var(--icon-md);
-      flex-shrink: 0;
-      color: currentColor;
-    }
-    .btn__icon-sq i { font-size: var(--icon-md); }
   </style>
 </head>
 <body>
@@ -399,26 +252,24 @@
     </div>
   </div>
 
-  <!-- ── Hero Photo ── -->
-  <div class="hero-photo">
-    <div class="hero-photo__placeholder">
-      <span class="hero-photo__placeholder-emoji" id="js-group-emoji">🏖️</span>
-    </div>
+  <!-- ── Hero Section ── -->
+  <div class="hero-section hero-section--tall">
+    <span class="hero-section__emoji" id="js-group-emoji">🏖️</span>
     <!-- Overlay back + settings -->
-    <div class="hero-photo__actions">
-      <a href="home-dashboard" class="hero-btn" aria-label="Back">
-        <i class="ph-bold ph-caret-left"></i>
+    <div class="hero-section__actions">
+      <a href="home-dashboard" class="icon-btn icon-btn--overlay" aria-label="Back">
+        <i class="ph-bold ph-caret-left icon-btn__icon"></i>
       </a>
-      <a href="edit-group" class="hero-btn" aria-label="Edit group">
-        <i class="ph ph-gear"></i>
+      <a href="edit-group" class="icon-btn icon-btn--overlay" aria-label="Edit group">
+        <i class="ph ph-gear icon-btn__icon"></i>
       </a>
     </div>
   </div>
 
   <!-- ── Group Avatar ── -->
-  <div class="group-avatar-wrap">
-    <div class="group-avatar">
-      <span class="group-avatar__emoji" id="js-group-avatar-emoji">🏖️</span>
+  <div class="hero-section__avatar-wrap">
+    <div class="avatar avatar--xl avatar--initials">
+      <span id="js-group-avatar-emoji">🏖️</span>
     </div>
   </div>
 
@@ -486,18 +337,18 @@
 
   </main>
 
-  <!-- ── Sticky Bottom Actions ── -->
-  <div class="sticky-actions">
-    <a href="settle-select" class="btn btn--secondary">
-      Settle up
-      <span class="btn__icon-sq">
-        <i class="ph-bold ph-arrow-right"></i>
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="settle-select" class="btn btn--lg btn--secondary">
+      <span class="btn__content">
+        Settle up
+        <i class="btn__icon ph-bold ph-arrow-right"></i>
       </span>
     </a>
-    <a href="add-amount" class="btn btn--primary">
-      Add expense
-      <span class="btn__icon-sq">
-        <i class="ph-bold ph-plus"></i>
+    <a href="add-amount" class="btn btn--lg btn--primary">
+      <span class="btn__content">
+        Add expense
+        <i class="btn__icon ph-bold ph-plus"></i>
       </span>
     </a>
   </div>
@@ -510,7 +361,24 @@
       var params  = new URLSearchParams(window.location.search);
       var groupId = params.get('id') || 'goa-trip';
       var group   = Store.getGroup(groupId);
-      if (!group) return;
+      if (!group) {
+        document.querySelector('.detail-content').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state__illustration">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="16" fill="currentColor" opacity="0.2"/>
+                <path d="M20 20l8 8M28 20l-8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="empty-state__text">
+              <p class="empty-state__title">Group not found</p>
+              <p class="empty-state__body">This group no longer exists.</p>
+            </div>
+            <button class="btn btn--secondary" onclick="history.back()">Go Back</button>
+          </div>
+        `;
+        return;
+      }
 
       // Header
       document.getElementById('js-group-emoji').textContent        = group.emoji;
@@ -573,6 +441,19 @@
         balPanel.innerHTML = balHtml;
       } else {
         balPanel.classList.add('is-empty');
+      }
+    }());
+  </script>
+
+  <!-- ── Screen Footer Scroll Detection ── -->
+  <script>
+    (function () {
+      var footer = document.querySelector('.screen-footer');
+      var scrollEl = document.querySelector('.detail-content');
+      if (footer && scrollEl) {
+        scrollEl.addEventListener('scroll', function () {
+          footer.classList.toggle('is-scrolled', scrollEl.scrollTop > 0);
+        }, { passive: true });
       }
     }());
   </script>

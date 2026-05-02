@@ -36,16 +36,6 @@
       --color-coral-300: #D4876F;
       --color-coral-700: #5C271B;
 
-      /* Yellow */
-      --color-yellow-100: #FFF1B0;
-      --color-yellow-300: #F5C842;
-      --color-yellow-700: #644608;
-
-      /* Jay (info) */
-      --color-jay-100: #C8E3EC;
-      --color-jay-300: #5FA3BC;
-      --color-jay-700: #0A2330;
-
       /* Toast semantic tokens */
       --toast-neutral-bg:     var(--color-gray-100);
       --toast-neutral-fg:     var(--color-gray-700);
@@ -56,15 +46,9 @@
       --toast-success-bg:     var(--color-green-100);
       --toast-success-fg:     var(--color-green-700);
       --toast-success-border: var(--color-green-300);
-      --toast-warning-bg:     var(--color-yellow-100);
-      --toast-warning-fg:     var(--color-yellow-700);
-      --toast-warning-border: var(--color-yellow-300);
       --toast-error-bg:       var(--color-coral-100);
       --toast-error-fg:       var(--color-coral-700);
       --toast-error-border:   var(--color-coral-300);
-      --toast-info-bg:        var(--color-jay-100);
-      --toast-info-fg:        var(--color-jay-700);
-      --toast-info-border:    var(--color-jay-300);
 
       /* Illustration placeholder */
       --expense-item-illus-bg: var(--color-gray-200);
@@ -182,22 +166,11 @@
       color:            var(--toast-success-fg);
       border-color:     var(--toast-success-border);
     }
-    .toast--warning {
-      background-color: var(--toast-warning-bg);
-      color:            var(--toast-warning-fg);
-      border-color:     var(--toast-warning-border);
-    }
     .toast--error {
       background-color: var(--toast-error-bg);
       color:            var(--toast-error-fg);
       border-color:     var(--toast-error-border);
     }
-    .toast--info {
-      background-color: var(--toast-info-bg);
-      color:            var(--toast-info-fg);
-      border-color:     var(--toast-info-border);
-    }
-
     .toast__illustration {
       flex-shrink: 0;
       width: 40px;
@@ -265,24 +238,10 @@
         </div>
       </div>
 
-      <div class="toast toast--warning">
-        <div class="toast__text">
-          <p class="toast__title">Warning</p>
-          <p class="toast__body">Some members haven't confirmed the split</p>
-        </div>
-      </div>
-
       <div class="toast toast--error">
         <div class="toast__text">
           <p class="toast__title">Error</p>
           <p class="toast__body">Payment failed. Please try again</p>
-        </div>
-      </div>
-
-      <div class="toast toast--info">
-        <div class="toast__text">
-          <p class="toast__title">Info</p>
-          <p class="toast__body">Rohan settled their share with you</p>
         </div>
       </div>
 
@@ -325,17 +284,6 @@
         </div>
       </div>
 
-      <div class="toast toast--warning">
-        <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
-          <path d="M8 2.5L14 13H2L8 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M8 6.5v3M8 11.5v.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="toast__text">
-          <p class="toast__title">Unusual amount</p>
-          <p class="toast__body">₹12,400 is higher than your usual splits</p>
-        </div>
-      </div>
-
       <div class="toast toast--error">
         <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
@@ -344,17 +292,6 @@
         <div class="toast__text">
           <p class="toast__title">Something went wrong</p>
           <p class="toast__body">Couldn't load your balance. Retry?</p>
-        </div>
-      </div>
-
-      <div class="toast toast--info">
-        <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 7v4M8 5v.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="toast__text">
-          <p class="toast__title">New activity</p>
-          <p class="toast__body">Ankit added an expense to Weekend Trip</p>
         </div>
       </div>
 
@@ -399,18 +336,6 @@
         </div>
       </div>
 
-      <div class="toast toast--warning">
-        <div class="toast__illustration"></div>
-        <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
-          <path d="M8 2.5L14 13H2L8 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M8 6.5v3M8 11.5v.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="toast__text">
-          <p class="toast__title">Split looks off</p>
-          <p class="toast__body">Review before confirming</p>
-        </div>
-      </div>
-
       <div class="toast toast--error">
         <div class="toast__illustration"></div>
         <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
@@ -420,18 +345,6 @@
         <div class="toast__text">
           <p class="toast__title">Payment failed</p>
           <p class="toast__body">UPI declined. Check with your bank</p>
-        </div>
-      </div>
-
-      <div class="toast toast--info">
-        <div class="toast__illustration"></div>
-        <svg class="toast__icon" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 7v4M8 5v.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="toast__text">
-          <p class="toast__title">Expense updated</p>
-          <p class="toast__body">Amount changed from ₹300 to ₹450</p>
         </div>
       </div>
 

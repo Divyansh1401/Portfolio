@@ -147,31 +147,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── Recent Search Chips ── */
+    /* ── Recent Search Chips Row ── */
     .recents-row {
       display: flex;
       flex-wrap: wrap;
       gap: var(--spacing-8);
       padding: var(--spacing-4) var(--spacing-16) var(--spacing-12);
     }
-    .recent-chip {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      height: 32px;
-      padding: 0 var(--spacing-12);
-      background: var(--chip-bg-off);
-      border: var(--border-small) solid var(--chip-border-off);
-      border-radius: var(--radius-full);
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-medium);
-      color: var(--chip-fg-off);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .recent-chip:active { background: var(--contact-bg-selected); }
-    .recent-chip i { font-size: var(--font-size-12); color: var(--text-tertiary); }
 
     /* ── Person Result Row ── */
     .result-row {
@@ -202,8 +184,8 @@
       flex-shrink: 0;
     }
     .result-avatar--group {
-      background: var(--label-info-bg);
-      color: var(--label-info-fg);
+      background: var(--action-muted);
+      color: var(--action-dark);
       border-radius: var(--radius-8);
     }
     .result-avatar--expense {
@@ -258,40 +240,6 @@
       height: 1px;
       background: var(--border-subtle);
       margin: var(--spacing-4) 0;
-    }
-
-    /* ── No Results ── */
-    .no-results {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: 64px var(--spacing-32);
-      text-align: center;
-    }
-    .no-results__icon {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radius-full);
-      background: var(--empty-state-illus-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--empty-state-illus-fg);
-      font-size: 24px;
-    }
-    .no-results__title {
-      font-family: var(--font-display);
-      font-size: var(--font-size-16);
-      font-weight: var(--weight-bold);
-      color: var(--empty-state-title-fg);
-      letter-spacing: -0.32px;
-    }
-    .no-results__body {
-      font-family: var(--font-body);
-      font-size: var(--font-size-13);
-      color: var(--empty-state-body-fg);
-      line-height: var(--line-height-20);
     }
 
     /* ── Highlight match ── */
@@ -358,23 +306,23 @@
         <button class="section-header__action" onclick="clearRecents()">Clear all</button>
       </div>
       <div class="recents-row">
-        <button class="recent-chip" onclick="setSearch('Goa Trip')">
+        <button class="chip chip--sm" onclick="setSearch('Goa Trip')">
           <i class="ph ph-clock-counter-clockwise"></i>
           Goa Trip
         </button>
-        <button class="recent-chip" onclick="setSearch('Priya')">
+        <button class="chip chip--sm" onclick="setSearch('Priya')">
           <i class="ph ph-clock-counter-clockwise"></i>
           Priya
         </button>
-        <button class="recent-chip" onclick="setSearch('dinner')">
+        <button class="chip chip--sm" onclick="setSearch('dinner')">
           <i class="ph ph-clock-counter-clockwise"></i>
           dinner
         </button>
-        <button class="recent-chip" onclick="setSearch('Rahul')">
+        <button class="chip chip--sm" onclick="setSearch('Rahul')">
           <i class="ph ph-clock-counter-clockwise"></i>
           Rahul
         </button>
-        <button class="recent-chip" onclick="setSearch('hotel')">
+        <button class="chip chip--sm" onclick="setSearch('hotel')">
           <i class="ph ph-clock-counter-clockwise"></i>
           hotel
         </button>
@@ -510,10 +458,12 @@
     </div>
 
     <!-- No Results -->
-    <div class="no-results" id="js-no-results">
-      <div class="no-results__icon"><i class="ph ph-magnifying-glass"></i></div>
-      <p class="no-results__title">No results found</p>
-      <p class="no-results__body">Try a different name, group, or expense keyword</p>
+    <div class="empty-state" id="js-no-results" style="display:none;">
+      <div class="empty-state__illustration"><i class="ph ph-magnifying-glass"></i></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title text-heading-sm">No results found</p>
+        <p class="empty-state__body text-body-md">Try a different name, group, or expense keyword</p>
+      </div>
     </div>
 
   </main>
@@ -572,7 +522,7 @@
 
       document.getElementById('js-results-count').textContent = `${matchCount} result${matchCount !== 1 ? 's' : ''}`;
       results.style.display = matchCount ? '' : 'none';
-      noResults.style.display = matchCount ? 'none' : 'flex';
+      noResults.style.display = matchCount ? 'none' : '';
     }
 
     function clearSearch() {
@@ -583,7 +533,7 @@
     }
 
     function clearRecents() {
-      document.querySelectorAll('.recent-chip').forEach(c => c.remove());
+      document.querySelectorAll('.recents-row .chip').forEach(c => c.remove());
     }
 
     function setSearch(text) {

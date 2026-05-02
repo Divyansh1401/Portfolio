@@ -25,53 +25,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-
-    /* ── Summary Card ── */
-    .summary-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-24) var(--spacing-16);
-      margin: var(--spacing-8) var(--spacing-16) 0;
-      border-radius: var(--radius-16);
-      background: var(--surface-card);
-      border: var(--border-small) solid var(--border-subtle);
-      text-align: center;
-    }
-    .summary-card__avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radius-full);
-      background: var(--contact-avatar-bg);
-      color: var(--contact-avatar-fg);
-      font-family: var(--font-display);
-      font-size: var(--font-size-20);
-      font-weight: var(--weight-bold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .summary-card__name {
-      font-family: var(--font-body);
-      font-size: var(--font-size-16);
-      font-weight: var(--weight-bold);
-      color: var(--text-primary);
-    }
-    .summary-card__amount {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: var(--weight-black);
-      letter-spacing: -1.12px;
-      color: var(--expense-owe-fg);
-    }
-    .summary-card__label {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--text-tertiary);
-      margin-top: -8px;
-    }
-
     /* ── Content ── */
     .content {
       flex: 1;
@@ -80,105 +33,6 @@
       flex-direction: column;
       gap: var(--spacing-12);
     }
-
-    /* ── Method Option (Boxed Radio) ── */
-    .method-option {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: 14px 16px;
-      border-radius: var(--radius-12);
-      border: 1.5px solid var(--border-default);
-      background: var(--surface-card);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .method-option.is-selected {
-      background: var(--container-bg-selected);
-      border-color: var(--container-border-selected);
-    }
-    .method-option__icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-8);
-      background: var(--btn-icon-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--font-size-20);
-      flex-shrink: 0;
-    }
-    .method-option.is-selected .method-option__icon {
-      background: var(--type-chip-bg-on);
-    }
-    .method-option__text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-    .method-option__label {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-primary);
-    }
-    .method-option__desc {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      color: var(--text-tertiary);
-    }
-    .method-option__radio {
-      width: 20px;
-      height: 20px;
-      border-radius: var(--radius-full);
-      border: 2px solid var(--control-border-default);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s ease;
-    }
-    .method-option.is-selected .method-option__radio {
-      border-color: var(--control-border-selected);
-      background: var(--control-bg-selected);
-    }
-    .method-option__radio-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: var(--radius-full);
-      background: var(--control-dot);
-      opacity: 0;
-    }
-    .method-option.is-selected .method-option__radio-dot {
-      opacity: 1;
-    }
-
-    /* ── Bottom CTA ── */
-    .bottom-cta {
-      padding: var(--spacing-12) var(--spacing-16) var(--spacing-24);
-      flex-shrink: 0;
-    }
-    .bottom-cta .btn {
-      display: flex;
-      width: 100%;
-      height: 52px;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-full);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: var(--weight-semibold);
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-fg);
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .bottom-cta .btn:active { background: var(--btn-primary-bg-pressed); }
   </style>
 </head>
 <body>
@@ -209,70 +63,70 @@
   </div>
 
   <!-- ── Summary Card ── -->
-  <div class="summary-card">
+  <div class="summary-card" id="js-summary">
     <div class="summary-card__avatar" id="js-avatar">JW</div>
     <div class="summary-card__name" id="js-name">Johnnie Walker</div>
-    <div class="summary-card__amount" id="js-amount">₹1,220</div>
-    <div class="summary-card__label">Settlement amount</div>
+    <div class="summary-card__amount summary-card__amount--owe" id="js-amount">₹1,220</div>
+    <div class="summary-card__meta">Settlement amount</div>
   </div>
 
   <!-- ── Payment Methods ── -->
   <div class="content">
-    <div class="section-label">Payment Method</div>
+    <div class="heading"><span class="heading__text">Payment Method</span></div>
 
-    <div class="method-option is-selected" onclick="selectMethod(this)">
-      <div class="method-option__icon">💳</div>
-      <div class="method-option__text">
-        <div class="method-option__label">UPI</div>
-        <div class="method-option__desc">Pay via UPI apps</div>
+    <div class="detail-row detail-row--selectable is-selected" onclick="selectMethod(this)">
+      <div class="detail-row__icon">💳</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">UPI</span>
+        <span class="detail-row__label">Pay via UPI apps</span>
       </div>
-      <div class="method-option__radio">
-        <div class="method-option__radio-dot"></div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
       </div>
     </div>
 
-    <div class="method-option" onclick="selectMethod(this)">
-      <div class="method-option__icon">💵</div>
-      <div class="method-option__text">
-        <div class="method-option__label">Cash</div>
-        <div class="method-option__desc">Paid in cash</div>
+    <div class="detail-row detail-row--selectable" onclick="selectMethod(this)">
+      <div class="detail-row__icon">💵</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Cash</span>
+        <span class="detail-row__label">Paid in cash</span>
       </div>
-      <div class="method-option__radio">
-        <div class="method-option__radio-dot"></div>
-      </div>
-    </div>
-
-    <div class="method-option" onclick="selectMethod(this)">
-      <div class="method-option__icon">🏦</div>
-      <div class="method-option__text">
-        <div class="method-option__label">Bank Transfer</div>
-        <div class="method-option__desc">Direct bank transfer</div>
-      </div>
-      <div class="method-option__radio">
-        <div class="method-option__radio-dot"></div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
       </div>
     </div>
 
-    <div class="method-option" onclick="selectMethod(this)">
-      <div class="method-option__icon">📝</div>
-      <div class="method-option__text">
-        <div class="method-option__label">Other</div>
-        <div class="method-option__desc">Record as settled</div>
+    <div class="detail-row detail-row--selectable" onclick="selectMethod(this)">
+      <div class="detail-row__icon">🏦</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Bank Transfer</span>
+        <span class="detail-row__label">Direct bank transfer</span>
       </div>
-      <div class="method-option__radio">
-        <div class="method-option__radio-dot"></div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="detail-row detail-row--selectable" onclick="selectMethod(this)">
+      <div class="detail-row__icon">📝</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Other</span>
+        <span class="detail-row__label">Record as settled</span>
+      </div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
       </div>
     </div>
   </div>
 
   <!-- ── Bottom CTA ── -->
-  <div class="bottom-cta">
-    <button class="btn" id="js-confirm">Confirm Settlement</button>
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary" id="js-confirm">Confirm Settlement</button>
   </div>
 
   <script>
     function selectMethod(el) {
-      document.querySelectorAll('.method-option').forEach(function(m) { m.classList.remove('is-selected'); });
+      document.querySelectorAll('.detail-row--selectable').forEach(function(m) { m.classList.remove('is-selected'); });
       el.classList.add('is-selected');
     }
 
@@ -282,13 +136,14 @@
       if (state.contactName)    document.getElementById('js-name').textContent = state.contactName;
       if (state.amount) {
         var formatted = '₹' + new Intl.NumberFormat('en-IN').format(Math.round(state.amount * 100) / 100);
-        document.getElementById('js-amount').textContent = formatted;
-        document.getElementById('js-amount').style.color =
-          state.direction === 'lent' ? 'var(--expense-lent-fg)' : 'var(--expense-owe-fg)';
+        var amountEl = document.getElementById('js-amount');
+        amountEl.textContent = formatted;
+        amountEl.classList.remove('summary-card__amount--owe', 'summary-card__amount--lent');
+        amountEl.classList.add(state.direction === 'lent' ? 'summary-card__amount--lent' : 'summary-card__amount--owe');
       }
 
       document.getElementById('js-confirm').addEventListener('click', function() {
-        var selected = document.querySelector('.method-option.is-selected .method-option__label');
+        var selected = document.querySelector('.detail-row--selectable.is-selected .detail-row__value');
         var method = selected ? selected.textContent : 'Other';
         state.method = method;
         sessionStorage.setItem('settlr_settle', JSON.stringify(state));

@@ -1,0 +1,24 @@
+/* ============================================
+   Settlr — Screen Footer Component
+   Fixed footer bar with 1 or 2 action buttons.
+   Figma node: TBD
+   ============================================ */
+
+.screen-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 393px;
+  display: flex;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+  background: var(--screen-footer-bg);
+  border-top: var(--border-small) solid var(--screen-footer-border);
+  z-index: 20;
+}
+
+/* All direct .btn children grow equally */
+.screen-footer .btn {
+  flex: 1;
+}

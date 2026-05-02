@@ -13,10 +13,9 @@
 
 /* ---- Label ---- */
 .input-field__label {
-  font-size: var(--font-size-10);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-14);
   color: var(--input-label);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-medium);
 }
 
 /* ---- Input Container ---- */
@@ -37,10 +36,10 @@
   outline: none;
   background: transparent;
   font-family: var(--font-body);
+  color: var(--input-fg-active);
   font-size: var(--font-size-14);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-23);
-  color: var(--input-fg-active);
 }
 
 .input-field__box input::placeholder {
@@ -57,10 +56,9 @@
 
 /* ---- Helper text ---- */
 .input-field__helper {
-  font-size: var(--font-size-10);
-  font-weight: var(--weight-regular);
-  line-height: var(--line-height-14);
   color: var(--input-helper);
+  font-size: var(--font-size-10);
+  font-weight: var(--weight-medium);
 }
 
 /* ---- States ---- */

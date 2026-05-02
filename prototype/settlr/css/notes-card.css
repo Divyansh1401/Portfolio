@@ -1,0 +1,115 @@
+/* ============================================
+   Notes Card — Read-only / Editable Notes Block
+   ============================================
+   A tinted (or bordered) card for notes,
+   descriptions, comments — with optional textarea
+   and character counter.
+
+   Variants:
+     .notes-card                — Default (readonly tinted card)
+     .notes-card--readonly      — Explicit readonly (alias for default)
+     .notes-card--editable      — Bordered card with textarea + counter
+
+   Sub-elements:
+     __label    - Overline label
+     __text     - Display-only body text
+     __textarea - Editable textarea
+     __counter  - Character counter (right-aligned)
+     __helper   - Helper text below textarea
+   ============================================ */
+
+.notes-card {
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-12);
+  background: var(--notes-card-bg);
+  border: var(--border-small) solid var(--notes-card-border);
+}
+
+/* Label — overline */
+.notes-card__label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-11);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 1.76px;
+  text-transform: uppercase;
+  color: var(--notes-card-label-fg);
+  margin-bottom: var(--spacing-4);
+}
+
+/* Read-only body text */
+.notes-card__text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--notes-card-text-fg);
+}
+
+/* Helper / hint below textarea or text */
+.notes-card__helper {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  color: var(--notes-card-counter-fg);
+  margin-top: var(--spacing-4);
+}
+
+/* ── Variant: Read-only (default) ─────────── */
+.notes-card,
+.notes-card--readonly {
+  background: var(--notes-card-bg);
+  border: none;
+}
+
+/* ── Variant: Editable (with textarea) ────── */
+.notes-card--editable {
+  background: var(--notes-card-bg-editable);
+  border: var(--border-small) solid var(--notes-card-border);
+}
+
+.notes-card--editable .notes-card__label {
+  margin-bottom: var(--spacing-8);
+}
+
+/* Textarea — borderless, expands inside card */
+.notes-card__textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-23);
+  color: var(--notes-card-textarea-fg);
+  resize: none;
+  min-height: 48px;
+  padding: 0;
+}
+
+.notes-card__textarea::placeholder {
+  color: var(--notes-card-textarea-placeholder);
+}
+
+/* Focused state — card-level */
+.notes-card--editable:focus-within {
+  background: var(--notes-card-bg-editable-focused);
+  border-color: var(--notes-card-border-focused);
+}
+
+/* Counter — right-aligned beneath textarea */
+.notes-card__counter {
+  display: block;
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  color: var(--notes-card-counter-fg);
+  margin-top: var(--spacing-4);
+}
+
+.notes-card__counter--warning {
+  color: var(--notes-card-counter-fg-warning);
+}
