@@ -2388,6 +2388,23 @@
       gap: calc(20 * var(--u));
       align-items: start;
     }
+    /* Workflow (dark) variant: Figma shows the 3 items in a 3-col row,
+       each stacked vertically (number on top, title, body) with a thin
+       divider rule above the column. */
+    .cs-dark-section .cs-iter-why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: calc(32 * var(--u));
+    }
+    .cs-dark-section .cs-iter-why-item {
+      flex-direction: column;
+      gap: calc(10 * var(--u));
+      padding-top: calc(20 * var(--u));
+      border-top: calc(1 * var(--u)) solid rgba(242,240,240,0.18);
+    }
+    .cs-dark-section .cs-iter-why-num {
+      padding-top: 0;
+    }
     .cs-iter-why-num {
       font-size: calc(12 * var(--u));
       font-weight: 700;
@@ -2784,17 +2801,24 @@
     /* Research methods — 2×2 grid of method cards */
     .cs-method-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);                    /* Figma: 4-col row */
       gap: calc(12 * var(--u));
       margin-top: calc(32 * var(--u));
     }
     .cs-method-card {
-      border: calc(1 * var(--u)) solid rgba(27,28,26,0.12);
+      border: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
       border-radius: calc(12 * var(--u));
-      padding: calc(24 * var(--u));
+      padding: calc(20 * var(--u));
+      background: var(--c-light);
       display: flex;
       flex-direction: column;
       gap: calc(8 * var(--u));
+    }
+    /* Figma alternates 02 + 04 with darker gray */
+    .cs-method-card:nth-child(2),
+    .cs-method-card:nth-child(4) {
+      background: #DDDBD7;
+      border-color: rgba(27,28,26,0.05);
     }
     .cs-method-card-title {
       font-size: calc(13 * var(--u));
@@ -3319,6 +3343,12 @@
     .cs-handoff-card {
       border: calc(1 * var(--u)) solid rgba(27,28,26,0.08); border-radius: calc(12 * var(--u));
       padding: calc(20 * var(--u)); background: var(--c-light);
+    }
+    /* Figma alternates 02 + 04 with darker gray */
+    .cs-handoff-card:nth-child(2),
+    .cs-handoff-card:nth-child(4) {
+      background: #DDDBD7;
+      border-color: rgba(27,28,26,0.05);
     }
     .cs-handoff-num { font-size: calc(12 * var(--u)); font-weight: 700; color: var(--c-orange); margin-bottom: calc(8 * var(--u)); }
     .cs-handoff-title { font-size: calc(13 * var(--u)); font-weight: 700; color: var(--c-dark); font-family: var(--f-heading); margin-bottom: calc(8 * var(--u)); }
