@@ -2989,6 +2989,149 @@
       font-style: italic;
     }
 
+    /* ─── Research → Design — Figma 1:1 override ─────────────
+       Scoped to .cs-finding-trio so we don't disturb the
+       generic .cs-decision-* / .cs-finding-* rules used in
+       other case studies. */
+    .cs-finding-list { margin-top: calc(48 * var(--u)); }
+    .cs-finding-trio {
+      display: flex;
+      grid-template-columns: none;
+      gap: calc(24 * var(--u));
+      align-items: flex-start;
+      padding: calc(32 * var(--u)) 0;
+      border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+    }
+    .cs-finding-trio:last-child { border-bottom: none; }
+    .cs-finding-text {
+      flex: 1 0 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(14 * var(--u));
+    }
+    .cs-finding-text .cs-decision-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 700;
+      letter-spacing: calc(1.1 * var(--u));
+      color: #EA7623;
+      opacity: 1;
+      padding: 0;
+      margin: 0;
+    }
+    .cs-finding-text .cs-decision-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: calc(18 * var(--u));
+      font-weight: 700;
+      line-height: calc(25 * var(--u));
+      letter-spacing: calc(-0.18 * var(--u));
+      color: #1B1C1A;
+      margin: 0;
+    }
+    .cs-finding-text .cs-finding-quote {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border-left: none;
+      border-radius: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(13 * var(--u));
+      font-style: italic;
+      font-weight: 400;
+      line-height: calc(21 * var(--u));
+      color: rgba(27,28,26,0.6);
+      opacity: 1;
+    }
+    .cs-finding-text .cs-finding-fix {
+      margin-top: 0;
+      padding: calc(18 * var(--u)) calc(22 * var(--u));
+      border-top: none;
+      background: #31401A;
+      border-radius: calc(12 * var(--u));
+      display: flex;
+      flex-direction: column;
+      gap: calc(10 * var(--u));
+      width: 100%;
+    }
+    .cs-finding-text .cs-fix-label {
+      font-family: 'Unbounded', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 700;
+      letter-spacing: calc(1.4 * var(--u));
+      text-transform: uppercase;
+      color: #DDE3C8;
+      margin-bottom: 0;
+      line-height: calc(14 * var(--u));
+    }
+    .cs-finding-text .cs-finding-fix .cs-decision-body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(16 * var(--u));
+      font-weight: 400;
+      line-height: calc(22 * var(--u));
+      color: #FEF9EE;
+      opacity: 1;
+      margin: 0;
+    }
+    /* Phone columns — Figma exact dimensions */
+    .cs-finding-trio .cs-finding-phone-col {
+      flex-shrink: 0;
+      width: calc(180 * var(--u));
+      gap: calc(8 * var(--u));
+    }
+    .cs-finding-trio .cs-finding-phone-col .cs-mini-bezel {
+      width: calc(170 * var(--u));
+      height: calc(360 * var(--u));
+      background: #1B1C1A;
+      border: none;
+      border-radius: calc(20 * var(--u));
+      padding: calc(6 * var(--u));
+      box-shadow: none;
+      box-sizing: border-box;
+    }
+    .cs-finding-trio .cs-finding-phone-col .cs-mini-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: calc(14 * var(--u));
+      overflow: hidden;
+    }
+    .cs-finding-trio .cs-finding-phone-col .cs-mini-screen img {
+      width: 100%;
+      height: 100%;
+      border-radius: calc(14 * var(--u));
+      object-fit: cover;
+      display: block;
+    }
+    /* Phone badges — solid pill, white text */
+    .cs-finding-trio .cs-phone-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 700;
+      letter-spacing: calc(0.6 * var(--u));
+      padding: calc(4 * var(--u)) calc(8 * var(--u));
+      border-radius: calc(4 * var(--u));
+      border: none;
+      background: #9E4C39;
+      color: #FFFFFF;
+      text-transform: none;
+      display: inline-block;
+    }
+    .cs-finding-trio .cs-phone-badge--settlr {
+      background: #31401A;
+      color: #FFFFFF;
+      border: none;
+    }
+    .cs-finding-trio .cs-finding-phone-col .cs-mini-caption {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 400;
+      line-height: calc(14 * var(--u));
+      letter-spacing: 0;
+      color: rgba(27,28,26,0.55);
+      text-align: center;
+      text-transform: none;
+    }
+
     /* ── Color palette swatches ─────────────────────── */
     .cs-palette-grid { display: flex; flex-direction: column; gap: calc(8 * var(--u)); margin-top: calc(40 * var(--u)); }
     .cs-palette-row  { display: flex; align-items: center; gap: calc(16 * var(--u)); }
@@ -6956,65 +7099,6 @@
             </div>
           </div>
 
-          <div class="cs-divider"></div>
-
-          <!-- GEOMETRIC SYSTEM (Full Token Inventory) -->
-          <div class="cs-section">
-            <p class="cs-tag">Geometric System</p>
-            <h2 class="cs-section-title">Settlr brand primitives.</h2>
-            
-            <div class="ds-system-container">
-              <div class="ds-split-layout">
-                
-                <!-- LEFT: RADIUS (Full scale) -->
-                <div class="ds-sub-section">
-                  <div class="ds-section-header">
-                    <h3 class="ds-section-title">Radius scale</h3>
-                    <p class="ds-section-subtitle">Full set of rounding tokens in Settlr Olive.</p>
-                  </div>
-                  <div class="ds-radius-grid-compact">
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:2px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/2</span><span class="ds-radius-val">2px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:4px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/4</span><span class="ds-radius-val">4px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:8px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/8</span><span class="ds-radius-val">8px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:12px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/12</span><span class="ds-radius-val">12px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:16px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/16</span><span class="ds-radius-val">16px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:20px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/20</span><span class="ds-radius-val">20px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:24px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/24</span><span class="ds-radius-val">24px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:32px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/32</span><span class="ds-radius-val">32px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:48px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/48</span><span class="ds-radius-val">48px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:64px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/64</span><span class="ds-radius-val">64px</span></div></div>
-                    <div class="ds-radius-item"><div class="ds-radius-box" style="border-radius:999px;"></div><div class="ds-radius-info"><span class="ds-radius-label">r/full</span><span class="ds-radius-val">pill</span></div></div>
-                  </div>
-                </div>
-
-                <!-- RIGHT: SPACING (Full scale) -->
-                <div class="ds-sub-section">
-                  <div class="ds-section-header">
-                    <h3 class="ds-section-title">Spacing Ruler</h3>
-                    <p class="ds-section-subtitle">Full set of gap tokens in Settlr Olive.</p>
-                  </div>
-                  <div class="ds-spacing-table">
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/2</span><div class="ds-spacer-bar" style="width:6px;"></div><span class="ds-spacer-val">2px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/4</span><div class="ds-spacer-bar" style="width:12px;"></div><span class="ds-spacer-val">4px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/8</span><div class="ds-spacer-bar" style="width:24px;"></div><span class="ds-spacer-val">8px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/12</span><div class="ds-spacer-bar" style="width:36px;"></div><span class="ds-spacer-val">12px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/16</span><div class="ds-spacer-bar" style="width:48px;"></div><span class="ds-spacer-val">16px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/20</span><div class="ds-spacer-bar" style="width:60px;"></div><span class="ds-spacer-val">20px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/24</span><div class="ds-spacer-bar" style="width:72px;"></div><span class="ds-spacer-val">24px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/32</span><div class="ds-spacer-bar" style="width:96px;"></div><span class="ds-spacer-val">32px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/40</span><div class="ds-spacer-bar" style="width:120px;"></div><span class="ds-spacer-val">40px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/48</span><div class="ds-spacer-bar" style="width:144px;"></div><span class="ds-spacer-val">48px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/50</span><div class="ds-spacer-bar" style="width:150px;"></div><span class="ds-spacer-val">50px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/64</span><div class="ds-spacer-bar" style="width:192px;"></div><span class="ds-spacer-val">64px</span></div>
-                    <div class="ds-spacing-row"><span class="ds-spacing-token">gap/96</span><div class="ds-spacer-bar" style="width:288px;"></div><span class="ds-spacer-val">96px</span></div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-
           <!-- SECTION 6: Workflow — condensed -->
           <div class="cs-dark-section">
             <p class="cs-tag">The Workflow</p>
@@ -7180,9 +7264,6 @@
                   <span class="cs-decision-num">01</span>
                   <p class="cs-decision-title">App opened to a flat friends list — no home</p>
                   <blockquote class="cs-finding-quote">"At first glance they were confused since there was no homepage." — observer note, user testing</blockquote>
-                  <div class="cs-evidence">
-                    <span class="cs-ev-note">Cognitive walkthrough — no spatial anchor, no actions, balance buried in one line of text</span>
-                  </div>
                   <div class="cs-finding-fix">
                     <span class="cs-fix-label">Settlr fixed it</span>
                     <p class="cs-decision-body">Real dashboard: balance → primary actions → recent groups → activity. Information before action.</p>
@@ -7214,10 +7295,6 @@
                   <span class="cs-decision-num">02</span>
                   <p class="cs-decision-title">Friends and Groups were two separate worlds</p>
                   <blockquote class="cs-finding-quote">"Not able to find 'add expense' after opening the app." — pain point, user testing</blockquote>
-                  <div class="cs-evidence">
-                    <span class="cs-ev-code">T1: A10, S2</span><span class="cs-ev-code">T5: A7</span>
-                    <span class="cs-ev-note">— wrong-section errors on every task</span>
-                  </div>
                   <div class="cs-finding-fix">
                     <span class="cs-fix-label">Settlr fixed it</span>
                     <p class="cs-decision-body">Unified People tab — friends and groups in one list. WhatsApp mental model. Home · People · Activity.</p>
@@ -7249,10 +7326,6 @@
                   <span class="cs-decision-num">03</span>
                   <p class="cs-decision-title">Add expense front-loaded every decision at once</p>
                   <blockquote class="cs-finding-quote">"There was no clear callout for different split methods. Users struggled to find options to split." — observer note, Task 3</blockquote>
-                  <div class="cs-evidence">
-                    <span class="cs-ev-code">NASA-TLX #1</span><span class="cs-ev-code">A10</span><span class="cs-ev-code">R1</span><span class="cs-ev-code">S2</span><span class="cs-ev-code">A3</span><span class="cs-ev-code">A7</span>
-                    <span class="cs-ev-note">— highest cognitive load of all 5 tasks</span>
-                  </div>
                   <div class="cs-finding-fix">
                     <span class="cs-fix-label">Settlr fixed it</span>
                     <p class="cs-decision-body">Dedicated split screen. amount → who → how. Live ₹X/person pill — no mental math needed.</p>
@@ -7284,9 +7357,6 @@
                   <span class="cs-decision-num">04</span>
                   <p class="cs-decision-title">No review step — expenses were final the moment you hit Save</p>
                   <blockquote class="cs-finding-quote">"Users frequently had to re-open submitted expenses to correct amounts or descriptions." — observer note, post-task</blockquote>
-                  <div class="cs-evidence">
-                    <span class="cs-ev-note">Cognitive walkthrough — no review stage in the task flow. Users re-opened expenses within seconds of saving.</span>
-                  </div>
                   <div class="cs-finding-fix">
                     <span class="cs-fix-label">Settlr fixed it</span>
                     <p class="cs-decision-body">Review screen before Save — full transaction summary. Confirm your order, not submit a form.</p>
