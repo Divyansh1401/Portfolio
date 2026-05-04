@@ -2065,6 +2065,17 @@
       margin: calc(56 * var(--u)) 0;
     }
 
+    /* Closing line — matches Figma "Thanks for reading. Let's build something together." */
+    .cs-closing-line {
+      font-family: var(--f-heading);
+      font-size: calc(28 * var(--u));
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--c-dark);
+      margin-top: calc(56 * var(--u));
+      max-width: calc(720 * var(--u));
+    }
     .cs-footer {
       display: flex;
       align-items: center;
@@ -6617,12 +6628,12 @@
                 <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 40 components has its own <code style="font-size:12px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file — tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
                 <div style="display:flex; gap:32px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(27,28,26,0.08);">
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">40</p>
-                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">.md files</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">350+</p>
+                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">tokens mapped</p>
                   </div>
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">100+</p>
-                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">tokens mapped</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">40</p>
+                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">coded components</p>
                   </div>
                   <div>
                     <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">0</p>
@@ -6972,7 +6983,7 @@
           <!-- SECTION 6: Workflow — condensed -->
           <div class="cs-dark-section">
             <p class="cs-tag">The Workflow</p>
-            <h2 class="cs-section-title">I designed the system. Claude executed it.</h2>
+            <h2 class="cs-section-title">I designed. Claude executed (most of it).</h2>
             <p class="cs-dark-desc">Not AI-generated design. A human-defined system, with Claude handling the repetitive execution — token mapping, size scaling, state generation — precisely and without drift.</p>
             <div class="cs-iter-why-grid" style="margin-top: 40px;">
               <div class="cs-iter-why-item">
@@ -7343,6 +7354,9 @@
           <div class="cs-footer">
             <a href="https://www.behance.net/divyansh_rastogi" class="cs-ext-link" target="_blank">View Research on Behance</a>
           </div>
+
+          <!-- Closing line — matches Figma -->
+          <p class="cs-closing-line">Thanks for reading. Let's build something together.</p>
         `
       },
 
