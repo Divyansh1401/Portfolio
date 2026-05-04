@@ -3675,10 +3675,164 @@
     .cs-a11y-ratio-row { display: flex; align-items: center; gap: calc(12 * var(--u)); }
     .cs-a11y-ratio-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: calc(30 * var(--u)); font-weight: 700; color: var(--c-dark); letter-spacing: -0.03em; line-height: 1; }
     
-    .cs-a11y-badge { font-size: calc(12 * var(--u)); font-weight: 700; letter-spacing: 0.06em; padding: calc(4 * var(--u)) calc(10 * var(--u)); border-radius: calc(100 * var(--u)); text-transform: uppercase; }
-    .cs-a11y-aaa { color: #357A42; background: #E8FAF0; border: calc(1 * var(--u)) solid rgba(53,122,66,0.18); }
-    .cs-a11y-aa { color: #31401A; background: #ECEFDF; border: calc(1 * var(--u)) solid rgba(49,64,26,0.18); }
-    .cs-a11y-aal { color: #756C55; background: rgba(27,28,26,0.06); border: calc(1 * var(--u)) solid rgba(27,28,26,0.1); }
+    /* Figma: solid dark fill pills with white text, no border */
+    .cs-a11y-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 700;
+      letter-spacing: calc(0.6 * var(--u));
+      padding: calc(4 * var(--u)) calc(8 * var(--u));
+      border-radius: calc(4 * var(--u));
+      text-transform: none;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .cs-a11y-aaa { color: #FFFFFF; background: #1A4A1F; }
+    .cs-a11y-aa  { color: #FFFFFF; background: #7A4F26; }
+    .cs-a11y-aal { color: #FFFFFF; background: rgba(27,28,26,0.55); }
+
+    /* ─── Accessibility cards — Figma 1:1 (node 463:27) ───────── */
+    .cs-a11y-row {
+      display: flex;
+      align-items: flex-start;
+      gap: calc(32 * var(--u));
+      margin-top: calc(32 * var(--u));
+    }
+    .cs-a11y-stack {
+      flex: 1 0 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(14 * var(--u));
+    }
+    .cs-a11y-card {
+      display: flex;
+      align-items: stretch;
+      height: calc(140 * var(--u));
+      background: #FFFFFF;
+      border: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+      border-radius: calc(12 * var(--u));
+      overflow: hidden;
+    }
+    .cs-a11y-card .cs-a11y-swatch {
+      width: calc(154 * var(--u));
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .cs-a11y-card .cs-a11y-swatch > div {
+      flex: 1 0 0;
+      width: 100%;
+    }
+    .cs-a11y-card .cs-a11y-info {
+      width: calc(243 * var(--u));
+      flex-shrink: 0;
+      height: 100%;
+      padding: calc(16 * var(--u)) calc(18 * var(--u));
+      display: flex;
+      flex-direction: column;
+      gap: calc(12 * var(--u));
+      justify-content: center;
+      border-left: calc(1 * var(--u)) solid rgba(27,28,26,0.04);
+      border-right: calc(1 * var(--u)) solid rgba(27,28,26,0.04);
+    }
+    .cs-a11y-tokens {
+      display: flex;
+      flex-direction: column;
+      gap: calc(6 * var(--u));
+    }
+    .cs-a11y-token-row {
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+    }
+    .cs-a11y-dot {
+      width: calc(8 * var(--u));
+      height: calc(8 * var(--u));
+      border-radius: calc(4 * var(--u));
+      flex-shrink: 0;
+    }
+    .cs-a11y-token {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 600;
+      color: rgba(27,28,26,0.7);
+      white-space: nowrap;
+    }
+    .cs-a11y-ratio-row {
+      display: flex;
+      align-items: center;
+      gap: calc(10 * var(--u));
+    }
+    .cs-a11y-card .cs-a11y-ratio-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(28 * var(--u));
+      font-weight: 700;
+      letter-spacing: calc(-0.84 * var(--u));
+      line-height: 1;
+      color: #1B1C1A;
+    }
+    .cs-a11y-sample {
+      flex: 1 0 0;
+      min-width: 0;
+      height: 100%;
+      padding: calc(24 * var(--u));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: calc(8 * var(--u));
+      overflow: hidden;
+    }
+    .cs-a11y-sample-lg {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: calc(18 * var(--u));
+      letter-spacing: calc(-0.54 * var(--u));
+      line-height: 1.1;
+    }
+    .cs-a11y-sample-md {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: calc(12 * var(--u));
+      line-height: 1.4;
+    }
+    .cs-a11y-sample-sm {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 400;
+      font-size: calc(12 * var(--u));
+      line-height: 1.4;
+    }
+    /* Right column: contrast checker image + caption */
+    .cs-a11y-checker {
+      width: calc(280 * var(--u));
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(12 * var(--u));
+    }
+    .cs-a11y-checker-img {
+      width: calc(280 * var(--u));
+      height: calc(455 * var(--u));
+      border-radius: calc(12 * var(--u));
+      overflow: hidden;
+    }
+    .cs-a11y-checker-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;       /* Crop to match Figma's 280×455 frame */
+      object-position: center;
+      display: block;
+      border-radius: calc(12 * var(--u));
+    }
+    .cs-a11y-checker-cap {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 400;
+      line-height: calc(16 * var(--u));
+      color: rgba(27,28,26,0.55);
+      margin: 0;
+    }
     
     .cs-a11y-samples { flex: 1; padding: calc(24 * var(--u)) calc(28 * var(--u)); display: flex; flex-direction: column; justify-content: center; gap: calc(10 * var(--u)); border-left: calc(1 * var(--u)) solid rgba(27,28,26,0.08); }
 
@@ -6725,109 +6879,105 @@
               <p>Contrast pairs were verified against WCAG 2.1 AA while defining semantic tokens — not after the fact. But colour is one part of the picture. Every primitive carries a responsibility: 16px minimum body type with system scaling, 44px touch targets on every interactive surface, two-state focus rings on inputs, and motion that respects prefers-reduced-motion. Compliance is guaranteed by tokens, not by audits.</p>
             </div>
 
-            <div style="display:flex; align-items:start; gap:44px; margin-top:32px;">
+            <div class="cs-a11y-row">
 
-              <!-- LEFT: 3 cards (Fill available width) -->
-              <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
-                <!-- CARD 1 -->
-                <div style="display:flex; border-radius:12px; overflow:hidden; border:1px solid rgba(27,28,26,0.08);">
-                  <!-- Swatch: Significantly Expanded -->
-                  <div style="flex:1.8; display:flex; flex-direction:column; min-width:160px;">
-                    <div style="flex:3; background:#FEF9EE;"></div>
-                    <div style="flex:2; background:#1A1810;"></div>
+              <!-- LEFT: 3 contrast cards (Figma 1:1) -->
+              <div class="cs-a11y-stack">
+
+                <!-- CARD 1 — surface / text -->
+                <div class="cs-a11y-card">
+                  <div class="cs-a11y-swatch">
+                    <div style="background:#FEF9EE;"></div>
+                    <div style="background:#1A1810;"></div>
                   </div>
-                  <!-- Info: Locked "Perfect" spine -->
-                  <div style="width:360px; flex-shrink:0; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; background:#fff; border-left:1px solid rgba(27,28,26,0.04); border-right:1px solid rgba(27,28,26,0.04);">
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FEF9EE; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-mid); opacity:0.8;">--surface-primary</span>
+                  <div class="cs-a11y-info">
+                    <div class="cs-a11y-tokens">
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#FEF9EE; border:1px solid rgba(27,28,26,0.2);"></span>
+                        <span class="cs-a11y-token">--surface-primary</span>
                       </div>
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#1A1810;"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-dark);">--text-primary</span>
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#1A1810;"></span>
+                        <span class="cs-a11y-token">--text-primary</span>
                       </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">16.92</span>
+                    <div class="cs-a11y-ratio-row">
+                      <span class="cs-a11y-ratio-num">16.92</span>
                       <span class="cs-a11y-badge cs-a11y-aaa">AAA</span>
                     </div>
                   </div>
-                  <!-- Text samples: Significantly Expanded -->
-                  <div style="flex:3; padding:20px 32px; display:flex; flex-direction:column; justify-content:center; gap:8px; background:#FEF9EE;"> 
-                    <span style="font-family:'Unbounded',sans-serif; font-size:22px; font-weight:900; letter-spacing:-0.04em; line-height:1; color:#1A1810;">₹4,500</span>
-                    <span style="font-size:13px; font-weight:700; color:#1A1810;">Goa Trip · 6 members</span>
-                    <span style="font-size:12px; color:#1A1810; opacity:0.6;">Last expense 2 days ago</span>
+                  <div class="cs-a11y-sample" style="background:#FEF9EE;">
+                    <span class="cs-a11y-sample-lg" style="color:#1A1810;">₹4,500</span>
+                    <span class="cs-a11y-sample-md" style="color:#1A1810;">Goa Trip · 6 members</span>
+                    <span class="cs-a11y-sample-sm" style="color:rgba(26,24,16,0.6);">Last expense 2 days ago</span>
                   </div>
                 </div>
 
-                <!-- CARD 2 -->
-                <div style="display:flex; border-radius:12px; overflow:hidden; border:1px solid rgba(27,28,26,0.08);">
-                  <div style="flex:1.8; display:flex; flex-direction:column; min-width:160px;">
-                    <div style="flex:3; background:#FBF0EE;"></div>
-                    <div style="flex:2; background:#9E4C39;"></div>
+                <!-- CARD 2 — expense-owe -->
+                <div class="cs-a11y-card">
+                  <div class="cs-a11y-swatch">
+                    <div style="background:#FBF0EE;"></div>
+                    <div style="background:#9E4C39;"></div>
                   </div>
-                  <div style="width:360px; flex-shrink:0; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; background:#fff; border-left:1px solid rgba(27,28,26,0.04); border-right:1px solid rgba(27,28,26,0.04);">
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FBF0EE; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-mid); opacity:0.8;">--expense-owe-bg</span>
+                  <div class="cs-a11y-info">
+                    <div class="cs-a11y-tokens">
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#FBF0EE; border:1px solid rgba(27,28,26,0.2);"></span>
+                        <span class="cs-a11y-token">--expense-owe-bg</span>
                       </div>
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#9E4C39;"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-dark);">--expense-owe-fg</span>
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#9E4C39;"></span>
+                        <span class="cs-a11y-token">--expense-owe-fg</span>
                       </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">5.30</span>
+                    <div class="cs-a11y-ratio-row">
+                      <span class="cs-a11y-ratio-num">5.30</span>
                       <span class="cs-a11y-badge cs-a11y-aa">AA</span>
                     </div>
                   </div>
-                  <div style="flex:3; padding:20px 32px; display:flex; flex-direction:column; justify-content:center; gap:8px; background:#FBF0EE;"> 
-                    <span style="font-family:'Unbounded',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.03em; color:#9E4C39;">you owe ₹840</span>
-                    <span style="font-size:13px; font-weight:600; color:#9E4C39;">Rahul paid for dinner</span>
-                    <span style="font-size:12px; color:#9E4C39; opacity:0.6;">Added 2 days ago</span>
+                  <div class="cs-a11y-sample" style="background:#FBF0EE;">
+                    <span class="cs-a11y-sample-lg" style="color:#9E4C39;">you owe ₹840</span>
+                    <span class="cs-a11y-sample-md" style="color:#9E4C39;">Rahul paid for dinner</span>
+                    <span class="cs-a11y-sample-sm" style="color:rgba(158,76,57,0.6);">Added 2 days ago</span>
                   </div>
                 </div>
 
-                <!-- CARD 3 -->
-                <div style="display:flex; border-radius:12px; overflow:hidden; border:1px solid rgba(27,28,26,0.08);">
-                  <div style="flex:1.8; display:flex; flex-direction:column; min-width:160px;">
-                    <div style="flex:3; background:#31401A;"></div>
-                    <div style="flex:2; background:#FFFFFF;"></div>
+                <!-- CARD 3 — btn-primary / text-inverse -->
+                <div class="cs-a11y-card">
+                  <div class="cs-a11y-swatch">
+                    <div style="background:#31401A;"></div>
+                    <div style="background:#FFFFFF;"></div>
                   </div>
-                  <div style="width:360px; flex-shrink:0; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; background:#fff; border-left:1px solid rgba(27,28,26,0.04); border-right:1px solid rgba(27,28,26,0.04);">
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#31401A;"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-mid); opacity:0.8;">--btn-primary-bg</span>
+                  <div class="cs-a11y-info">
+                    <div class="cs-a11y-tokens">
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#31401A;"></span>
+                        <span class="cs-a11y-token">--btn-primary-bg</span>
                       </div>
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="width:8px; height:8px; border-radius:50%; flex-shrink:0; background:#FFFFFF; border:1px solid rgba(27,28,26,0.2);"></span>
-                        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; color:var(--c-dark);">--text-inverse</span>
+                      <div class="cs-a11y-token-row">
+                        <span class="cs-a11y-dot" style="background:#FFFFFF; border:1px solid rgba(27,28,26,0.2);"></span>
+                        <span class="cs-a11y-token">--text-inverse</span>
                       </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:700; color:var(--c-dark); letter-spacing:-0.03em;">11.18</span>
+                    <div class="cs-a11y-ratio-row">
+                      <span class="cs-a11y-ratio-num">11.18</span>
                       <span class="cs-a11y-badge cs-a11y-aaa">AAA</span>
                     </div>
                   </div>
-                  <div style="flex:3; padding:20px 32px; display:flex; flex-direction:column; justify-content:center; gap:8px; background:#31401A;"> 
-                    <span style="font-size:17px; font-weight:700; color:#FFFFFF;">Add expense</span>
-                    <span style="font-size:14px; font-weight:600; color:#FFFFFF; opacity:0.85;">Settle up</span>
-                    <span style="font-size:12px; color:#FFFFFF; opacity:0.6;">Save changes</span>
+                  <div class="cs-a11y-sample" style="background:#31401A;">
+                    <span class="cs-a11y-sample-lg" style="color:#FFFFFF;">Add expense</span>
+                    <span class="cs-a11y-sample-md" style="color:#FFFFFF;">Settle up</span>
+                    <span class="cs-a11y-sample-sm" style="color:rgba(255,255,255,0.6);">Save changes</span>
                   </div>
                 </div>
               </div>
 
-              <!-- RIGHT: Verification panel -->
-              <div style="position:sticky; top:120px; flex-shrink:0; display:flex; flex-direction:column; gap:12px; align-self:flex-start;">
-                <img src="assets/images/settlr/figma-contrast-checker.webp"
-                     alt="Figma contrast checker"
-                     style="height:354px; width:auto; display:block; object-fit:contain;">
-                <p style="font-size:12px; color:var(--c-mid); padding-left:2px; max-width:240px; line-height:1.4;">
-                  Figma's built-in contrast checker — used during token definition, not after.
-                </p>
+              <!-- RIGHT: contrast checker panel -->
+              <div class="cs-a11y-checker">
+                <div class="cs-a11y-checker-img">
+                  <img src="assets/images/settlr/figma-contrast-checker.webp" alt="Figma contrast checker">
+                </div>
+                <p class="cs-a11y-checker-cap">Figma's built-in contrast checker — used during token definition, not after.</p>
               </div>
 
             </div>
@@ -7289,20 +7439,8 @@
                 <div class="cs-research-img-caption">Sherpa analysis documentation.</div>
               </div>
             </div>
-            <div class="cs-research-imgs" style="margin-top: 12px;">
-              <div class="cs-research-img" style="grid-column: 1 / -1;">
-                <div class="cs-research-ph">
-                  <svg class="cs-research-ph-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="8" width="32" height="24" rx="3" stroke="#1B1C1A" stroke-width="2"/>
-                    <circle cx="14" cy="17" r="3" stroke="#1B1C1A" stroke-width="1.5"/>
-                    <path d="M4 27l8-6 6 5 5-4 9 7" stroke="#1B1C1A" stroke-width="1.5" stroke-linejoin="round"/>
-                  </svg>
-                  <span class="cs-research-ph-tag">Image needed</span>
-                  <p class="cs-research-ph-title">User Evaluations + Design Suggestions</p>
-                  <p class="cs-research-ph-desc">Two-part summary slide — (1) NASA-TLX workload scores + SUS usability scores across all 5 tasks, Task 3 peaks at highest cognitive load. (2) Four design suggestion mockups: unified home, updated add expense, merged people tab, activity changes. Landscape 16:9 export from research report.</p>
-                </div>
-                <div class="cs-research-img-caption">User Evaluations (NASA-TLX + SUS) + 4 Design Suggestions from the study</div>
-              </div>
+            <div style="margin-top: 32px; display: flex; justify-content: center;">
+              <a href="https://www.behance.net/divyansh_rastogi" class="cs-ext-link" target="_blank">View Research on Behance</a>
             </div>
           </div>
 
@@ -7516,9 +7654,6 @@
           </div>
 
           <div class="cs-divider"></div>
-          <div class="cs-footer">
-            <a href="https://www.behance.net/divyansh_rastogi" class="cs-ext-link" target="_blank">View Research on Behance</a>
-          </div>
 
           <!-- Closing line — matches Figma -->
           <p class="cs-closing-line">Thanks for reading. Let's build something together.</p>
@@ -7528,20 +7663,20 @@
       'refer-earn': {
         num: '03',
         title: 'Refer & Earn',
-        meta: { Role: 'Product Designer', Company: 'Head Digital Works · A23', Timeline: '2024', Mentors: 'Navneet Peri · Harsha Paruchuri' },
+        meta: { Role: 'Product Designer', Company: 'Head Digital Works · A23', Dated: 'July 2025', Mentors: 'Navneet Peri · Harsha Paruchuri' },
         behance: 'https://www.behance.net/divyansh_rastogi',
         html: `
-          <div class="cs-hero">
+          <div class="cs-hero cs-hero--re">
             <img src="assets/images/refer-earn/cover.webp" alt="Refer & Earn Redesign & Gamification — A23 Games">
           </div>
 
-          <div class="cs-overview">
+          <div class="cs-overview cs-overview--re">
             <div class="cs-meta-block">
               <div class="cs-meta-item"><p class="cs-meta-label">Role</p><p class="cs-meta-value">Product Designer</p></div>
               <div class="cs-meta-item"><p class="cs-meta-label">Company</p><p class="cs-meta-value">Head Digital Works · A23</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Timeline</p><p class="cs-meta-value">2024</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Dated</p><p class="cs-meta-value">July 2025</p></div>
               <div class="cs-meta-item"><p class="cs-meta-label">Mentors</p><p class="cs-meta-value">Navneet Peri · Harsha Paruchuri</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma · Maze · UX writing</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma</p></div>
             </div>
             <div>
               <p class="cs-tag">The Challenge</p>
@@ -7568,60 +7703,75 @@
             <div class="cs-body">
               <p>Insights derived from surveys and interviews with 2,000+ users, combined with MAU and CTR analysis over one quarter. The referral funnel told a brutal story.</p>
             </div>
-            <div class="cs-numbers-grid">
-              <div class="cs-stat-stack">
-                <div class="cs-stat">
+            <div class="cs-numbers-grid cs-numbers-grid--re">
+              <div class="cs-stat-stack cs-stat-stack--re">
+                <div class="cs-stat cs-stat--card">
                   <span class="cs-stat-num">72%</span>
                   <span class="cs-stat-label">of users who referred, referred only one person</span>
-                  <span class="cs-stat-tag">Low Motivation</span>
+                  <span class="cs-stat-tag cs-stat-tag--blue">LOW MOTIVATION</span>
                 </div>
-                <div class="cs-stat">
+                <div class="cs-stat cs-stat--card">
                   <span class="cs-stat-num">45%</span>
                   <span class="cs-stat-label">of surveyed users didn't clearly understand the reward structure</span>
-                  <span class="cs-stat-tag">Poor Comprehension</span>
+                  <span class="cs-stat-tag cs-stat-tag--blue">POOR COMPREHENSION</span>
                 </div>
-                <div class="cs-stat">
+                <div class="cs-stat cs-stat--card">
                   <span class="cs-stat-num">4%</span>
                   <span class="cs-stat-label">of users on the page ever watched the explainer video</span>
-                  <span class="cs-stat-tag">Low Visibility</span>
+                  <span class="cs-stat-tag cs-stat-tag--blue">LOW VISIBILITY</span>
                 </div>
               </div>
 
-              <div class="cs-funnel">
-                <p class="cs-funnel-heading">Conversion funnel</p>
-                <div class="cs-funnel-row" style="--w:100%">
-                  <span class="cs-funnel-label">Logins (MAU)</span>
-                  <span class="cs-funnel-val">1,195,842</span>
+              <div class="cs-funnel cs-funnel--re">
+                <p class="cs-funnel-heading">CONVERSION FUNNEL</p>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Logins (MAU)</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-val">1,195,842</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:100%"></div></div>
                 </div>
-                <div class="cs-funnel-row" style="--w:62%">
-                  <span class="cs-funnel-label">Page Visits</span>
-                  <span class="cs-funnel-drop">−61.04%</span>
-                  <span class="cs-funnel-val">465,892</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Page Visits</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−61.04%</span><span class="cs-funnel-val">465,892</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:63%"></div></div>
                 </div>
-                <div class="cs-funnel-row" style="--w:25%">
-                  <span class="cs-funnel-label">Referral Initiated</span>
-                  <span class="cs-funnel-drop">−83.37%</span>
-                  <span class="cs-funnel-val">77,381</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Referral Initiated</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−83.37%</span><span class="cs-funnel-val">77,381</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:25.4%"></div></div>
                 </div>
-                <div class="cs-funnel-row" style="--w:19%">
-                  <span class="cs-funnel-label">Clicks on Shared Link</span>
-                  <span class="cs-funnel-drop">−44.26%</span>
-                  <span class="cs-funnel-val">43,136</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Clicks on Shared Link</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−44.26%</span><span class="cs-funnel-val">43,136</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:19.3%"></div></div>
                 </div>
-                <div class="cs-funnel-row" style="--w:11%">
-                  <span class="cs-funnel-label">Installs</span>
-                  <span class="cs-funnel-drop">−67.24%</span>
-                  <span class="cs-funnel-val">14,119</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Installs</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−67.24%</span><span class="cs-funnel-val">14,119</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:11.2%"></div></div>
                 </div>
-                <div class="cs-funnel-row" style="--w:7%">
-                  <span class="cs-funnel-label">Registrations</span>
-                  <span class="cs-funnel-drop">−55.42%</span>
-                  <span class="cs-funnel-val">6,295</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Registrations</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−55.42%</span><span class="cs-funnel-val">6,295</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:7.1%"></div></div>
                 </div>
-                <div class="cs-funnel-row cs-funnel-row--last" style="--w:5%">
-                  <span class="cs-funnel-label">Conversions</span>
-                  <span class="cs-funnel-drop">−58.55%</span>
-                  <span class="cs-funnel-val">2,609</span>
+                <div class="cs-funnel-row cs-funnel-row--re">
+                  <div class="cs-funnel-row-top">
+                    <span class="cs-funnel-label">Conversions</span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−58.55%</span><span class="cs-funnel-val">2,609</span></span>
+                  </div>
+                  <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:5.1%"></div></div>
                 </div>
               </div>
             </div>
@@ -7635,35 +7785,54 @@
             <div class="cs-body">
               <p>Why did users see ₹1 Lakh and still not share? Three angles, simultaneously.</p>
             </div>
-            <div class="cs-quotes">
-              <div class="cs-quote">
-                <p class="cs-quote-text">"There's just too much to read. I don't know where the important part is."</p>
-                <span class="cs-quote-attr">User · 24 · Mumbai</span>
+            <div class="cs-research-methods">
+              <div class="cs-research-method">
+                <div class="cs-rm-top">
+                  <span class="cs-rm-num">01</span>
+                  <p class="cs-rm-title">IA Audit</p>
+                  <p class="cs-rm-body">End-to-end audit of the live page. Mapped information gaps and cognitive load hotspots.</p>
+                </div>
+                <div class="cs-rm-finding">
+                  <span class="cs-rm-dot"></span>
+                  <span>Reward logic is buried and non-linear</span>
+                </div>
               </div>
-              <div class="cs-quote">
-                <p class="cs-quote-text">"₹1 Lakh sounds fake. I've seen these promises before."</p>
-                <span class="cs-quote-attr">User · 27 · Bangalore</span>
+              <div class="cs-research-method">
+                <div class="cs-rm-top">
+                  <span class="cs-rm-num">02</span>
+                  <p class="cs-rm-title">PRD Alignment</p>
+                  <p class="cs-rm-body">Reviewed objectives with the PM. Defined opportunity areas balancing growth and user trust.</p>
+                </div>
+                <div class="cs-rm-finding">
+                  <span class="cs-rm-dot"></span>
+                  <span>Trust barriers outweigh reward size</span>
+                </div>
               </div>
-              <div class="cs-quote">
-                <p class="cs-quote-text">"I sent the link once but had no idea if it even worked."</p>
-                <span class="cs-quote-attr">User · 22 · Delhi</span>
+              <div class="cs-research-method">
+                <div class="cs-rm-top">
+                  <span class="cs-rm-num">03</span>
+                  <p class="cs-rm-title">Hallway Testing</p>
+                  <p class="cs-rm-body">Short tests on the live UI. Captured confusion, hesitation, and drop-off moments.</p>
+                </div>
+                <div class="cs-rm-finding">
+                  <span class="cs-rm-dot"></span>
+                  <span>Users can't build a mental model in one scroll</span>
+                </div>
               </div>
             </div>
-            <div class="cs-insight-grid">
-              <div class="cs-insight-card">
-                <p class="cs-insight-card-title">IA Audit</p>
-                <p>End-to-end audit of the live page. Mapped information gaps and cognitive load hotspots.</p>
-                <span class="cs-finding-tag">Reward logic is buried and non-linear</span>
+
+            <div class="cs-pull-quotes">
+              <div class="cs-pull-quote">
+                <span class="cs-pull-quote-mark">“</span>
+                <p class="cs-pull-quote-text">"There's just too much to read. I don't know where the important part is."</p>
               </div>
-              <div class="cs-insight-card">
-                <p class="cs-insight-card-title">PRD Alignment</p>
-                <p>Reviewed objectives with the PM. Defined opportunity areas balancing growth and user trust.</p>
-                <span class="cs-finding-tag">Trust barriers outweigh reward size</span>
+              <div class="cs-pull-quote">
+                <span class="cs-pull-quote-mark">“</span>
+                <p class="cs-pull-quote-text">"₹1 Lakh sounds fake. I've seen these promises before."</p>
               </div>
-              <div class="cs-insight-card">
-                <p class="cs-insight-card-title">Hallway Testing</p>
-                <p>Short tests on the live UI. Captured confusion, hesitation, and drop-off moments.</p>
-                <span class="cs-finding-tag">Users can't build a mental model in one scroll</span>
+              <div class="cs-pull-quote">
+                <span class="cs-pull-quote-mark">“</span>
+                <p class="cs-pull-quote-text">"I sent the referral link once but did not receive a bonus, this is scam."</p>
               </div>
             </div>
           </div>
@@ -7676,38 +7845,38 @@
             <div class="cs-body">
               <p>Three solution directions emerged. We stress-tested two full approaches before committing.</p>
             </div>
-            <div class="cs-direction-chips">
-              <div class="cs-direction-chip"><span class="cs-direction-chip-num">01</span> Improve Video Discoverability</div>
-              <div class="cs-direction-chip"><span class="cs-direction-chip-num">02</span> Add Trust &amp; Social Proof</div>
-              <div class="cs-direction-chip"><span class="cs-direction-chip-num">03</span> Simplify Reward Structure</div>
+            <div class="cs-direction-chips cs-direction-chips--re">
+              <div class="cs-direction-chip cs-direction-chip--filled"><span class="cs-direction-chip-num">01</span><span>Improve Video Discoverability</span></div>
+              <div class="cs-direction-chip cs-direction-chip--filled"><span class="cs-direction-chip-num">02</span><span>Add Trust &amp; Social Proof</span></div>
+              <div class="cs-direction-chip cs-direction-chip--filled"><span class="cs-direction-chip-num">03</span><span>Simplify Reward Structure</span></div>
             </div>
-            <div class="cs-approach-pair">
-              <div class="cs-approach-card">
+            <div class="cs-approach-pair cs-approach-pair--re">
+              <div class="cs-approach-card cs-approach-card--selected">
                 <div class="cs-approach-header">
-                  <span class="cs-approach-label">Approach 1</span>
-                  <span class="cs-approach-selected">✓ Selected</span>
+                  <span class="cs-approach-label cs-approach-label--muted">APPROACH 1</span>
+                  <span class="cs-approach-selected cs-approach-selected--dark">✓ SELECTED</span>
                 </div>
                 <div class="cs-approach-name">Minimal UI + Gamification Layer</div>
                 <div class="cs-approach-img-wrap"><img src="assets/images/refer-earn/approach-1.webp" alt="Approach 1 screens"></div>
-                <ul class="cs-approach-bullets">
+                <ul class="cs-approach-bullets cs-approach-bullets--re">
                   <li>Video as the hero element — not buried mid-scroll</li>
                   <li>Target-based gamification nudges</li>
                   <li>Testimonials + social proof layer</li>
                   <li>Live referral stats near the CTA dock</li>
                 </ul>
               </div>
-              <div class="cs-approach-card">
+              <div class="cs-approach-card cs-approach-card--alt">
                 <div class="cs-approach-header">
-                  <span class="cs-approach-label">Approach 2</span>
+                  <span class="cs-approach-label cs-approach-label--muted">APPROACH 2</span>
                 </div>
                 <div class="cs-approach-name">Contextual Primary CTA</div>
                 <div class="cs-approach-img-wrap"><img src="assets/images/refer-earn/approach-2.webp" alt="Approach 2 screens"></div>
-                <ul class="cs-approach-bullets">
+                <ul class="cs-approach-bullets cs-approach-bullets--re">
                   <li>State-aware CTA based on referral journey progress</li>
                   <li>Reduces decision fatigue at each step</li>
                   <li>Personal and contextual — follows the user</li>
                 </ul>
-                <p class="cs-approach-risk">⚠ Feasibility risk — one CTA across different states could confuse users</p>
+                <p class="cs-approach-risk cs-approach-risk--re">Feasibility risk — one CTA across different states could confuse users</p>
               </div>
             </div>
           </div>
@@ -7720,38 +7889,35 @@
             <div class="cs-body">
               <p>The hardest part was the reward explainer — how do you show a 3-step earning structure without losing users to text? We explored five structural approaches before landing on one that worked.</p>
             </div>
-            <div class="cs-iter-grid">
-              <img class="cs-iter-img" src="assets/images/refer-earn/infographic-v1.webp" alt="Infographic structure v1 — light list">
-              <img class="cs-iter-img" src="assets/images/refer-earn/infographic-v2.webp" alt="Infographic structure v2 — dark two-column grid">
-              <div class="cs-iter-img-wrap">
+            <div class="cs-iter-grid cs-iter-grid--re">
+              <div class="cs-iter-cell cs-iter-cell--dim">
+                <img class="cs-iter-img" src="assets/images/refer-earn/infographic-v1.webp" alt="Infographic structure v1 — light list">
+              </div>
+              <div class="cs-iter-cell cs-iter-cell--dim">
+                <img class="cs-iter-img" src="assets/images/refer-earn/infographic-v2.webp" alt="Infographic structure v2 — dark two-column grid">
+              </div>
+              <div class="cs-iter-cell">
                 <img class="cs-iter-img" src="assets/images/refer-earn/infographic-v3.webp" alt="Infographic structure v3 — dark numbered steps">
-                <span class="cs-iter-selected">✓ Selected</span>
+                <span class="cs-iter-final"><span class="cs-iter-final-dot"></span>Final direction</span>
               </div>
             </div>
-            <div class="cs-iter-why">
-              <p class="cs-iter-why-label">Why the final structure worked</p>
-              <div class="cs-iter-why-grid">
-                <div class="cs-iter-why-item">
-                  <span class="cs-iter-why-num">01</span>
-                  <div>
-                    <p class="cs-iter-why-title">Scannable in one glance</p>
-                    <p class="cs-iter-why-body">Previous structures required reading. The infographic maps the 3-step journey visually — users understand the reward logic without processing a single line of text.</p>
-                  </div>
-                </div>
-                <div class="cs-iter-why-item">
-                  <span class="cs-iter-why-num">02</span>
-                  <div>
-                    <p class="cs-iter-why-title">Addresses the 45%</p>
-                    <p class="cs-iter-why-body">Nearly half of surveyed users couldn't explain the reward structure. The final layout makes "you get / friend gets" explicit at each step — no inference required.</p>
-                  </div>
-                </div>
-                <div class="cs-iter-why-item">
-                  <span class="cs-iter-why-num">03</span>
-                  <div>
-                    <p class="cs-iter-why-title">Builds a mental model</p>
-                    <p class="cs-iter-why-body">Users struggled to understand how rewards accumulate. The step-based structure mirrors the actual referral journey, making it intuitive to follow progression.</p>
-                  </div>
-                </div>
+
+            <p class="cs-why-eyebrow">WHY THE FINAL STRUCTURE WORKED</p>
+            <div class="cs-why-grid">
+              <div class="cs-why-item">
+                <span class="cs-why-num">01</span>
+                <p class="cs-why-title">Scannable in one glance</p>
+                <p class="cs-why-body">Previous structures required reading. The infographic maps the 3-step journey visually — users understand the reward logic without processing a single line of text.</p>
+              </div>
+              <div class="cs-why-item">
+                <span class="cs-why-num">02</span>
+                <p class="cs-why-title">Addresses the 45%</p>
+                <p class="cs-why-body">Nearly half of surveyed users couldn't explain the reward structure. The final layout makes "you get / friend gets" explicit at each step — no inference required.</p>
+              </div>
+              <div class="cs-why-item">
+                <span class="cs-why-num">03</span>
+                <p class="cs-why-title">Builds a mental model</p>
+                <p class="cs-why-body">Users struggled to understand how rewards accumulate. The step-based structure mirrors the actual referral journey, making it intuitive to follow progression.</p>
               </div>
             </div>
           </div>
@@ -7764,51 +7930,59 @@
             <div class="cs-body">
               <p>The final design isn't one big idea — it's five precise interventions that compound. Each decision is traceable back to a specific research finding.</p>
             </div>
-            <div class="cs-decision-list">
-              <div class="cs-decision">
-                <span class="cs-decision-num">01</span>
-                <div>
+            <div class="cs-decision-list cs-decision-list--big">
+              <div class="cs-decision cs-decision--big">
+                <span class="cs-decision-ghost" aria-hidden="true">01</span>
+                <div class="cs-decision-content">
+                  <span class="cs-decision-eyebrow">VISUAL HIERARCHY</span>
                   <p class="cs-decision-title">Banner as video thumbnail</p>
                   <p class="cs-decision-body">Made the video the hero — the most dismissed element became the first thing users see, with an unmissable play button. Directly addresses the 4% video watch rate.</p>
                 </div>
               </div>
-              <div class="cs-decision">
-                <span class="cs-decision-num">02</span>
-                <div>
+              <div class="cs-decision cs-decision--big">
+                <span class="cs-decision-ghost" aria-hidden="true">02</span>
+                <div class="cs-decision-content">
+                  <span class="cs-decision-eyebrow">PRIMARY ACTION</span>
                   <p class="cs-decision-title">WhatsApp Invite as the primary CTA</p>
                   <p class="cs-decision-body">97% of users share via WhatsApp. We merged the copy code + share flow into one primary action and elevated its hierarchy above all other CTAs on the page.</p>
                 </div>
               </div>
-              <div class="cs-decision">
-                <span class="cs-decision-num">03</span>
-                <div>
+              <div class="cs-decision cs-decision--big">
+                <span class="cs-decision-ghost" aria-hidden="true">03</span>
+                <div class="cs-decision-content">
+                  <span class="cs-decision-eyebrow">TRUST</span>
                   <p class="cs-decision-title">Live stats adjacent to the action zone</p>
                   <p class="cs-decision-body">"₹25,483 users joined through referrals" — not at the top where no one reads it, but placed near the moment of decision to trigger trust at exactly the right point.</p>
                 </div>
               </div>
-              <div class="cs-decision">
-                <span class="cs-decision-num">04</span>
-                <div>
+              <div class="cs-decision cs-decision--big">
+                <span class="cs-decision-ghost" aria-hidden="true">04</span>
+                <div class="cs-decision-content">
+                  <span class="cs-decision-eyebrow">SOCIAL PROOF</span>
                   <p class="cs-decision-title">Testimonials for social validation</p>
                   <p class="cs-decision-body">Real earnings from real users. Pushed down the scroll once the user has already referred — reducing visual noise for repeat visitors who no longer need the nudge.</p>
                 </div>
               </div>
-              <div class="cs-decision">
-                <span class="cs-decision-num">05</span>
-                <div>
+              <div class="cs-decision cs-decision--big cs-decision--last">
+                <span class="cs-decision-ghost" aria-hidden="true">05</span>
+                <div class="cs-decision-content">
+                  <span class="cs-decision-eyebrow">COMPREHENSION</span>
                   <p class="cs-decision-title">Infographic over text-heavy reward table</p>
                   <p class="cs-decision-body">Converted the dense reward breakdown into a scannable visual table. Addresses the 45% who didn't understand the structure — without requiring them to read a word.</p>
                 </div>
               </div>
             </div>
-            <div class="cs-before-after">
-              <span class="cs-ba-label cs-ba-label--before">Before</span>
-              <span class="cs-ba-label cs-ba-label--after">After</span>
+
+            <div class="cs-before-after cs-before-after--re">
+              <span class="cs-ba-pill cs-ba-pill--before">BEFORE</span>
+              <span class="cs-ba-pill cs-ba-pill--after">AFTER</span>
               <img src="assets/images/refer-earn/screen-before.webp"   alt="Original Refer &amp; Earn screen">
               <img src="assets/images/refer-earn/screen-tooltip.webp"  alt="Redesign — tooltip state">
               <img src="assets/images/refer-earn/screen-final.webp"    alt="Redesign — active state">
             </div>
           </div>
+
+          <div class="cs-divider"></div>
 
           <div class="cs-section">
             <p class="cs-tag">Multi-Brand System</p>
@@ -7816,7 +7990,7 @@
             <div class="cs-body">
               <p>The solution was built with adaptability as a constraint — not an afterthought. The same design structure was applied across A23 Rummy, A23 Poker, and Adda52, each carrying their distinct visual identity, colour system, and typography.</p>
             </div>
-            <div class="cs-phone-trio">
+            <div class="cs-phone-trio cs-phone-trio--re">
               <div class="cs-phone-trio-item">
                 <img src="assets/images/refer-earn/screen-rummy.webp" alt="A23 Rummy — Refer & Earn redesign">
               </div>
@@ -7831,34 +8005,56 @@
 
           <div class="cs-divider"></div>
 
-          <div class="cs-dark-section">
-            <p class="cs-tag">Next Step</p>
-            <h2 class="cs-section-title">Treasure Referrals</h2>
-            <p class="cs-dark-desc">What if the app told you exactly who to invite — and made it worth your while? Treasure Referrals surfaces high-potential contacts from your network, pairs them with double bonuses, and refreshes daily so there's always a reason to come back.</p>
-            <div class="cs-treasure-mockups">
+          <div class="cs-treasure-card">
+            <div class="cs-treasure-head">
+              <div class="cs-treasure-head-left">
+                <div class="cs-treasure-eyebrow">
+                  <span class="cs-treasure-eyebrow-dot"></span>
+                  <span>NEXT STEP&nbsp;&nbsp;·&nbsp;&nbsp;CONCEPT EXPLORATION</span>
+                </div>
+                <h2 class="cs-treasure-title">Treasure<br>Referrals</h2>
+                <p class="cs-treasure-tagline">A self-replenishing referral surface for repeat use.</p>
+              </div>
+              <div class="cs-treasure-head-right">
+                <p class="cs-treasure-body">What if the app told you exactly who to invite — and made it worth your while? Treasure Referrals surfaces high-potential contacts from your network, pairs them with double bonuses, and refreshes daily so there's always a reason to come back.</p>
+              </div>
+            </div>
+
+            <div class="cs-treasure-mockups cs-treasure-mockups--re">
               <img src="assets/images/refer-earn/treasure-1.webp" alt="Treasure Referrals — chest state">
               <img src="assets/images/refer-earn/treasure-2.webp" alt="Treasure Referrals — contacts list state">
             </div>
-            <div class="cs-treasure-points">
-              <div class="cs-treasure-point">
-                <span class="cs-tp-label">Gamified Growth</span>
-                <span class="cs-tp-body">Curated high-value targets + elevated incentives — more referrals per user, less friction.</span>
+
+            <div class="cs-treasure-points cs-treasure-points--re">
+              <div class="cs-treasure-point cs-treasure-point--re">
+                <span class="cs-tp-ghost" aria-hidden="true">01</span>
+                <span class="cs-tp-eyebrow">GAMIFIED GROWTH</span>
+                <p class="cs-tp-title">Curated targets + elevated incentives</p>
+                <p class="cs-tp-copy">Surface high-value contacts and pair them with 2× bonuses — more referrals per user, less friction in choosing who to invite.</p>
               </div>
-              <div class="cs-treasure-point">
-                <span class="cs-tp-label">Retention Loop</span>
-                <span class="cs-tp-body">Daily-refreshing lists give users a reason to return — time-sensitive, progress-driven.</span>
+              <div class="cs-treasure-point cs-treasure-point--re">
+                <span class="cs-tp-ghost" aria-hidden="true">02</span>
+                <span class="cs-tp-eyebrow">RETENTION LOOP</span>
+                <p class="cs-tp-title">A reason to come back tomorrow</p>
+                <p class="cs-tp-copy">Daily-refreshing target lists give users a recurring trigger — time-sensitive, progress-driven, never the same twice.</p>
               </div>
-              <div class="cs-treasure-point">
-                <span class="cs-tp-label">Discovery via Randomisation</span>
-                <span class="cs-tp-body">Randomised suggestions surface contacts users wouldn't think to invite — wider referral reach.</span>
+              <div class="cs-treasure-point cs-treasure-point--re">
+                <span class="cs-tp-ghost" aria-hidden="true">03</span>
+                <span class="cs-tp-eyebrow">DISCOVERY</span>
+                <p class="cs-tp-title">Reach beyond the obvious circle</p>
+                <p class="cs-tp-copy">Randomised suggestions surface contacts users wouldn't think to invite themselves — quietly widening the referral graph.</p>
               </div>
+            </div>
+
+            <div class="cs-treasure-foot">
+              <span class="cs-treasure-foot-tag">CONCEPT&nbsp;&nbsp;·&nbsp;&nbsp;EXPLORATION&nbsp;&nbsp;·&nbsp;&nbsp;2024</span>
+              <span class="cs-treasure-foot-note">Not yet shipped — proposed direction for v2.</span>
             </div>
           </div>
 
           <div class="cs-divider"></div>
-          <div class="cs-footer">
-            <a href="https://www.behance.net/divyansh_rastogi" class="cs-ext-link" target="_blank">View Research on Behance</a>
-          </div>
+
+          <p class="cs-closing-line">Thanks for reading. Let's build something together.</p>
         `
       }
     };
