@@ -1594,18 +1594,19 @@
       color: #2D1A00;
       letter-spacing: -0.02em;
     }
-    .coupon-sub {
+    .scratch-coupon .coupon-sub {
       font-size: 12px;
       color: #8B6914;
       font-style: italic;
+      opacity: 1;
       margin-bottom: 8px;
     }
-    .coupon-fine {
+    .scratch-coupon .coupon-fine {
       font-size: 10px;
-      color: #A07830;
+      color: #8B6914;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      opacity: 0.7;
+      opacity: 1;
     }
     .scratch-canvas {
       position: absolute;
@@ -4237,7 +4238,7 @@
       aspect-ratio: 16 / 9;
     }
 
-    .exp-card:hover { transform: scale(1.02); }
+    .exp-card.film-theme:hover { transform: scale(1.02); }
 
     .exp-card-inner {
       position: relative;
@@ -4250,13 +4251,18 @@
 
     .parallax-wrap {
       position: absolute;
-      top: -7.5%;
+      top: 0;
       left: 0;
       width: 100%;
-      height: 115%; /* Balanced for subtle parallax without extreme cropping */
+      height: 100%;
       will-change: transform;
       pointer-events: none;
       transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .exp-card.film-theme .parallax-wrap {
+      top: -7.5%;
+      height: 115%;
     }
     
     .exp-card-img {
@@ -4267,7 +4273,7 @@
       transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .exp-card:hover .exp-card-img { transform: scale(1.05); }
+    .exp-card.film-theme:hover .exp-card-img { transform: scale(1.05); }
 
     /* Video Play Button */
     .glass-play-btn {
@@ -4879,26 +4885,17 @@
       <div class="exp-card reveal" data-project="kinko">
         <div class="exp-card-inner">
           <div class="parallax-wrap">
-              <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1400" class="exp-card-img" alt="Kinko Insurance">
+              <img src="assets/images/kinko/thumbnail.webp" class="exp-card-img" alt="Kinko Insurance">
             </div>
           
           <div class="exp-card-text">
             <span class="exp-label">Head digital works</span>
-            <h3 class="exp-title">Kinko Insurance <span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);border-radius:4px;padding:2px 7px;vertical-align:middle;margin-left:8px;">Coming Soon</span></h3>
           </div>
 
           <div class="exp-frosted-panel">
             <div class="exp-frosted-content">
               <p class="exp-desc">Led the end-to-end build of a production-ready design system — 25+ components, 100+ variants, fully WCAG compliant.</p>
-              
-              <span class="exp-tools-label">Tools Used</span>
-              <div class="exp-tools">
-                <span class="tool-tag">Figma</span>
-                <span class="tool-tag">CSS</span>
-                <span class="tool-tag">HTML</span>
-                <span class="tool-tag">WCAG</span>
-              </div>
-              
+
               <a href="#kinko" class="btn-hero btn-solid exp-btn case-link" data-project="kinko"><span>View Project</span></a>
             </div>
           </div>
@@ -4914,20 +4911,12 @@
           <div class="parallax-wrap">
               <img src="assets/images/settlr/thumbnail.webp" class="exp-card-img" alt="Settlr Project">
             <span class="exp-label">UX Audit & Redesign</span>
-            <h3 class="exp-title">Settlr Redesign</h3>
           </div>
 
           <div class="exp-frosted-panel">
             <div class="exp-frosted-content">
               <p class="exp-desc">Evolved from a college ergonomic study into an independent redesign of group expense splitting. Focused on systems thinking and IA.</p>
-              
-              <span class="exp-tools-label">Tools Used</span>
-              <div class="exp-tools">
-                <span class="tool-tag">Figma</span>
-                <span class="tool-tag">Notion</span>
-                <span class="tool-tag">Systems Thinking</span>
-              </div>
-              
+
               <a href="#settlr" class="btn-hero btn-solid exp-btn case-link" data-project="settlr"><span>View Project</span></a>
             </div>
           </div>
@@ -4943,21 +4932,12 @@
           <div class="parallax-wrap">
               <img src="assets/images/refer-earn/thumbnail.webp" class="exp-card-img" alt="Refer & Earn">
             <span class="exp-label">Head Digital Works · A23 Games</span>
-            <h3 class="exp-title">Refer & Earn</h3>
           </div>
 
           <div class="exp-frosted-panel">
             <div class="exp-frosted-content">
               <p class="exp-desc">Conceptualised and implemented "Treasure Referrals" — a gamified referral feature for India's leading skill gaming platform.</p>
-              
-              <span class="exp-tools-label">Tools Used</span>
-              <div class="exp-tools">
-                <span class="tool-tag">Figma</span>
-                <span class="tool-tag">Protopie</span>
-                <span class="tool-tag">Maze</span>
-                <span class="tool-tag">Growth Design</span>
-              </div>
-              
+
               <a href="#refer-earn" class="btn-hero btn-solid exp-btn case-link" data-project="refer-earn"><span>View Project</span></a>
             </div>
           </div>
@@ -5048,9 +5028,9 @@
             <div class="scratch-card" id="scratchCard">
               <div class="scratch-coupon">
                 <span class="coupon-emoji">☕</span>
-                <h3 class="coupon-title">One Complimentary Coffee</h3>
-                <p class="coupon-sub">Redeemable upon meeting<br>Let’s connect and plan</p>
-                <p class="coupon-fine">Bearer is entitled to one coffee and a good conversation</p>
+                <h3 class="coupon-title">One Coffee, On Me</h3>
+                <p class="coupon-sub">Thank you for spending time here.<br>Let’s spend another hour in person.</p>
+                <p class="coupon-fine">Reach me on LinkedIn or by email to plan.</p>
               </div>
               <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
               <div class="scratch-glare"></div>
@@ -5271,9 +5251,9 @@
               <div class="scratch-card" id="scratchCardDark">
                 <div class="scratch-coupon">
                   <span class="coupon-emoji">☕</span>
-                  <h3 class="coupon-title">One Complimentary Coffee</h3>
-                  <p class="coupon-sub">Redeemable upon meeting<br>Let’s connect and plan</p>
-                  <p class="coupon-fine">Bearer is entitled to one coffee and a good conversation</p>
+                  <h3 class="coupon-title">One Coffee, On Me</h3>
+                  <p class="coupon-sub">Thank you for spending time here.<br>Let’s spend another hour in person.</p>
+                  <p class="coupon-fine">Reach me on LinkedIn or by email to plan.</p>
                 </div>
                 <canvas class="scratch-canvas" id="scratchCanvasDark"></canvas>
                 <div class="scratch-glare"></div>
