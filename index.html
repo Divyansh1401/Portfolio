@@ -67,22 +67,21 @@
       --gap-grid:    clamp(16px, 2vw, 32px);
       --cs-pad:      clamp(40px, 5vw, 88px);
 
-      /* ── Side-panel redesign tokens ───────────────────────
-         Doc card is a free-floating surface inside an 80px
-         left/right gutter. Card width = 5/6 of the inner area
-         (vw - 160px) and hugs the right side. The remaining
-         1/6 stays empty — homepage shows through the dim. */
+      /* ── Side-panel geometry tokens ────────────────────────
+         Layout from left → right of viewport:
+           80px left gutter · 120px peek (homepage shows through)
+           · doc card · 80px right gutter (icon column)
+         Card width grows linearly with viewport (vw − 280) so the
+         inner content area lands at exactly 1040px at vw=1440 —
+         matching the Figma authoring width 1:1. */
       --cs-gutter:   80px;                              /* L/R margin from viewport edge */
       --cs-icon-pad: 40px;                              /* top/bottom padding for icon column */
-      --cs-inner:    calc(100vw - var(--cs-gutter) * 2);
-      --cs-card-w:   calc(var(--cs-inner) * 5 / 6);
-      /* Reference design width (px). The doc was authored at this card width;
-         every internal pixel value is multiplied by --u so the entire card
-         scales 1:1 with viewport — no media queries, no responsive shifts.
-         1u = 1 designed pixel at the reference width, scales linearly. */
-      --cs-ref-w:    1067;                              /* unitless ref */
-      /* --u is a length: card-w (length) ÷ ref-w (unitless) = length per "designed pixel".
-         Use as: calc(N * var(--u)) where N is the original pixel value. */
+      --cs-peek:     120px;                             /* fixed homepage-peek strip on the left */
+      --cs-card-w:   calc(100vw - var(--cs-gutter) * 2 - var(--cs-peek));
+      /* Reference design width (px). At vw=1440 the card is 1160 wide →
+         minus 2×60 side padding = 1040 inner = Figma authoring width.
+         1u = 1 designed pixel at reference width; scales linearly. */
+      --cs-ref-w:    1160;                              /* unitless ref */
       --u:           calc(var(--cs-card-w) / var(--cs-ref-w));
     }
 
