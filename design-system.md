@@ -174,7 +174,7 @@ font-size: 12px; font-weight: 500;
 ### Case Study Meta Row
 ```css
 /* Label */
-font-size: 10px; text-transform: uppercase;
+font-size: 12px; text-transform: uppercase;
 letter-spacing: 0.12em; font-weight: 600; opacity: 0.4;
 
 /* Value */
