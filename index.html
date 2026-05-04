@@ -3458,27 +3458,87 @@
       color: var(--c-orange); margin-left: calc(8 * var(--u));
     }
 
-    /* ── Documentation & Handoff ────────────────────── */
+    /* ── Documentation & Handoff — Figma 1:1 (dark terminal style) ── */
     .cs-filetree {
-      border: calc(1 * var(--u)) solid rgba(27,28,26,0.1);
-      border-radius: calc(12 * var(--u)); overflow: hidden;
+      background: #1B1C1A;
+      border: none;
+      border-radius: calc(12 * var(--u));
+      overflow: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
     }
     .cs-ft-header {
-      display: flex; align-items: center; gap: calc(6 * var(--u));
-      padding: calc(10 * var(--u)) calc(16 * var(--u)); background: rgba(27,28,26,0.05);
-      border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+      padding: calc(12 * var(--u)) calc(14 * var(--u));
+      background: rgba(255,255,255,0.05);
+      border-bottom: none;
     }
-    .cs-ft-dot { width: calc(10 * var(--u)); height: calc(10 * var(--u)); border-radius: 50%; }
-    .cs-ft-path { font-size: calc(12 * var(--u)); color: var(--c-mid); margin-left: calc(8 * var(--u)); }
-    .cs-ft-body { padding: calc(16 * var(--u)); background: var(--c-light); display: flex; flex-direction: column; gap: calc(4 * var(--u)); }
-    .cs-ft-row { display: flex; align-items: baseline; gap: calc(10 * var(--u)); font-size: calc(12 * var(--u)); line-height: 1.6; }
-    .cs-ft-dir { font-size: calc(12 * var(--u)); font-weight: 700; color: var(--c-dark); margin-top: calc(4 * var(--u)); }
-    .cs-ft-child { padding-left: calc(20 * var(--u)); }
-    .cs-ft-last { padding-left: calc(20 * var(--u)); }
-    .cs-ft-file { color: var(--c-dark); font-weight: 600; white-space: nowrap; }
-    .cs-ft-comment { color: var(--c-mid); font-size: calc(12 * var(--u)); }
-    .cs-ft-muted { color: var(--c-mid); font-style: italic; font-size: calc(12 * var(--u)); }
+    .cs-ft-dot {
+      width: calc(10 * var(--u));
+      height: calc(10 * var(--u));
+      border-radius: calc(5 * var(--u));
+      flex-shrink: 0;
+    }
+    .cs-ft-path {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      margin-left: 0;
+      white-space: nowrap;
+    }
+    .cs-ft-body {
+      padding: calc(16 * var(--u)) calc(20 * var(--u)) calc(20 * var(--u));
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: calc(2 * var(--u));
+    }
+    .cs-ft-row {
+      display: flex;
+      align-items: baseline;
+      gap: calc(10 * var(--u));
+      font-size: calc(12 * var(--u));
+      line-height: calc(20 * var(--u));
+    }
+    .cs-ft-dir {
+      font-size: calc(13 * var(--u));
+      font-weight: 700;
+      line-height: calc(22 * var(--u));
+      color: rgba(255,255,255,0.92);
+      margin-top: 0;
+    }
+    .cs-ft-child {
+      padding-left: calc(24 * var(--u));
+    }
+    .cs-ft-last {
+      padding-left: calc(24 * var(--u));
+    }
+    .cs-ft-file {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 600;                                 /* SemiBold per Figma */
+      color: #A8D5B0;                                   /* Figma light green */
+      white-space: nowrap;
+    }
+    .cs-ft-comment {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      flex: 1;
+      min-width: 0;
+    }
+    .cs-ft-muted {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: calc(12 * var(--u));
+      font-weight: 400;
+      font-style: normal;
+      color: rgba(255,255,255,0.4);
+    }
 
     .cs-handoff-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(12 * var(--u));
@@ -7221,12 +7281,12 @@
 
             <div class="cs-research-imgs">
               <div class="cs-research-img">
-                <img src="projects/02-settlr/Splitwise%20Screens/Research%20Documentation/Group%20144.png" alt="Task 5 — Settle Up · HTA + SHERPA + Cognitive Walkthrough">
-                <div class="cs-research-img-caption">Task 5 — Settle up a group · HTA + SHERPA + Cognitive Walkthrough</div>
+                <img src="assets/images/settlr/research-userflow.webp" alt="Complete user flow used to identify the 5 core flows">
+                <div class="cs-research-img-caption">Complete User flow. Used to identify 5 core flows.</div>
               </div>
               <div class="cs-research-img">
-                <img src="projects/02-settlr/Splitwise%20Screens/Research%20Documentation/Group%20142.png" alt="Task 3 — Split Rs.340 · HTA + SHERPA + Cognitive Walkthrough">
-                <div class="cs-research-img-caption">Task 3 — Split Rs.340 between friends · HTA + SHERPA</div>
+                <img src="assets/images/settlr/research-sherpa.webp" alt="SHERPA analysis documentation across users and tasks">
+                <div class="cs-research-img-caption">Sherpa analysis documentation.</div>
               </div>
             </div>
             <div class="cs-research-imgs" style="margin-top: 12px;">
