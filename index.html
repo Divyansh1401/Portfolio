@@ -2984,7 +2984,7 @@
       padding: calc(24 * var(--u));
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: flex-start;          /* Figma: title at top, swatches at bottom */
       gap: calc(5 * var(--u));
     }
     .cp-hero-role {
@@ -6200,28 +6200,7 @@
             <h2 class="cs-section-title">4 families. 10 steps each. Every color earns its place.</h2>
 
             <div class="cp-grid">
-              <!-- OLIVE -->
-              <div class="cp-row">
-                <div class="cp-hero" style="background:#31401A; color:#FEF9EE;">
-                  <span class="cp-hero-role">Brand · Primary · CTAs</span>
-                  <p class="cp-hero-name">Olive</p>
-                  <p class="cp-hero-why">Earthy and warm — trustworthy without feeling institutional</p>
-                </div>
-                <div class="cp-scale">
-                  <div class="cp-step" style="background:#F2F4EB"></div>
-                  <div class="cp-step" style="background:#DDE3C8"></div>
-                  <div class="cp-step" style="background:#BFCB9A"></div>
-                  <div class="cp-step" style="background:#96A96A"></div>
-                  <div class="cp-step" style="background:#6E8742"></div>
-                  <div class="cp-step" style="background:#4E6629"></div>
-                  <div class="cp-step" style="background:#31401A"></div>
-                  <div class="cp-step" style="background:#243012"></div>
-                  <div class="cp-step" style="background:#16200A"></div>
-                  <div class="cp-step" style="background:#0A1005"></div>
-                </div>
-              </div>
-
-              <!-- NEUTRAL -->
+              <!-- NEUTRAL — top-left -->
               <div class="cp-row" style="box-shadow: inset 0 0 0 1px rgba(27,28,26,0.1);">
                 <div class="cp-hero" style="background:#FEF9EE; color:#1B1C1A;">
                   <span class="cp-hero-role">Backgrounds · Surfaces</span>
@@ -6242,28 +6221,28 @@
                 </div>
               </div>
 
-              <!-- CORAL -->
+              <!-- OLIVE — top-right -->
               <div class="cp-row">
-                <div class="cp-hero" style="background:#BF6550; color:#FEF9EE;">
-                  <span class="cp-hero-role">Amounts you owe</span>
-                  <p class="cp-hero-name">Coral</p>
-                  <p class="cp-hero-why">Owing between friends is normal — warm, not alarming</p>
+                <div class="cp-hero" style="background:#31401A; color:#FEF9EE;">
+                  <span class="cp-hero-role">Brand · Primary · CTAs</span>
+                  <p class="cp-hero-name">Olive</p>
+                  <p class="cp-hero-why">Earthy and warm — trustworthy without feeling institutional</p>
                 </div>
                 <div class="cp-scale">
-                  <div class="cp-step" style="background:#FBF0EE"></div>
-                  <div class="cp-step" style="background:#F5D8D2"></div>
-                  <div class="cp-step" style="background:#E8B0A4"></div>
-                  <div class="cp-step" style="background:#D4876F"></div>
-                  <div class="cp-step" style="background:#BF6550"></div>
-                  <div class="cp-step" style="background:#9E4C39"></div>
-                  <div class="cp-step" style="background:#7D3829"></div>
-                  <div class="cp-step" style="background:#5C271B"></div>
-                  <div class="cp-step" style="background:#3B180F"></div>
-                  <div class="cp-step" style="background:#1C0B07"></div>
+                  <div class="cp-step" style="background:#F2F4EB"></div>
+                  <div class="cp-step" style="background:#DDE3C8"></div>
+                  <div class="cp-step" style="background:#BFCB9A"></div>
+                  <div class="cp-step" style="background:#96A96A"></div>
+                  <div class="cp-step" style="background:#6E8742"></div>
+                  <div class="cp-step" style="background:#4E6629"></div>
+                  <div class="cp-step" style="background:#31401A"></div>
+                  <div class="cp-step" style="background:#243012"></div>
+                  <div class="cp-step" style="background:#16200A"></div>
+                  <div class="cp-step" style="background:#0A1005"></div>
                 </div>
               </div>
 
-              <!-- GREEN -->
+              <!-- GREEN — bottom-left -->
               <div class="cp-row">
                 <div class="cp-hero" style="background:#357A42; color:#FEF9EE;">
                   <span class="cp-hero-role">Amounts you're owed</span>
@@ -6281,6 +6260,27 @@
                   <div class="cp-step" style="background:#1D4624"></div>
                   <div class="cp-step" style="background:#122E17"></div>
                   <div class="cp-step" style="background:#091A0D"></div>
+                </div>
+              </div>
+
+              <!-- CORAL — bottom-right -->
+              <div class="cp-row">
+                <div class="cp-hero" style="background:#BF6550; color:#FEF9EE;">
+                  <span class="cp-hero-role">Amounts you owe</span>
+                  <p class="cp-hero-name">Coral</p>
+                  <p class="cp-hero-why">Owing between friends is normal — warm, not alarming</p>
+                </div>
+                <div class="cp-scale">
+                  <div class="cp-step" style="background:#FBF0EE"></div>
+                  <div class="cp-step" style="background:#F5D8D2"></div>
+                  <div class="cp-step" style="background:#E8B0A4"></div>
+                  <div class="cp-step" style="background:#D4876F"></div>
+                  <div class="cp-step" style="background:#BF6550"></div>
+                  <div class="cp-step" style="background:#9E4C39"></div>
+                  <div class="cp-step" style="background:#7D3829"></div>
+                  <div class="cp-step" style="background:#5C271B"></div>
+                  <div class="cp-step" style="background:#3B180F"></div>
+                  <div class="cp-step" style="background:#1C0B07"></div>
                 </div>
               </div>
             </div>
@@ -6471,9 +6471,9 @@
           <!-- ACCESSIBILITY -->
           <div class="cs-section">
             <p class="cs-tag">Accessibility</p>
-            <h2 class="cs-section-title">Contrast baked in. Not bolted on.</h2>
+            <h2 class="cs-section-title">Built for accessibility from the first token.</h2>
             <div class="cs-body">
-              <p>Contrast was verified against WCAG 2.1 while defining semantic tokens — not as an afterthought. Every foreground/background pair was tested at the token level so compliance is guaranteed by design, not by manual audit.</p>
+              <p>Contrast pairs were verified against WCAG 2.1 AA while defining semantic tokens — not after the fact. But colour is one part of the picture. Every primitive carries a responsibility: 16px minimum body type with system scaling, 44px touch targets on every interactive surface, two-state focus rings on inputs, and motion that respects prefers-reduced-motion. Compliance is guaranteed by tokens, not by audits.</p>
             </div>
 
             <div style="display:flex; align-items:start; gap:44px; margin-top:32px;">
