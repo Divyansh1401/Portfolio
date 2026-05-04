@@ -3551,6 +3551,12 @@
       flex-direction: column;
       gap: calc(10 * var(--u));
     }
+    /* Figma alternates 02 and 04 with a darker gray fill for rhythm */
+    .cs-principle-card:nth-child(2),
+    .cs-principle-card:nth-child(4) {
+      background: #DDDBD7;
+      border-color: rgba(27,28,26,0.05);
+    }
     .cs-principle-num {
       font-size: calc(12 * var(--u));
       font-weight: 700;
@@ -3588,7 +3594,7 @@
       background: var(--c-light);
       display: flex; flex-direction: column; gap: calc(8 * var(--u));
     }
-    .cs-tier-col--mid { background: #ecefdf; border-color: rgba(49,64,26,0.15); }
+    .cs-tier-col--mid { background: #F5EFD6; border-color: rgba(49,64,26,0.15); }   /* Figma cream highlight */
     .cs-tier-num {
       font-size: calc(12 * var(--u)); font-weight: 700; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--c-mid);
@@ -6054,20 +6060,19 @@
             </div>
           </div>
 
-          <!-- OVERVIEW: meta + project hook -->
+          <!-- OVERVIEW: meta + project hook (matches Figma exactly) -->
           <div class="cs-overview">
             <div class="cs-meta-block">
-              <div class="cs-meta-item"><p class="cs-meta-label">Role</p><p class="cs-meta-value">UX Designer</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Type</p><p class="cs-meta-value">UX Audit &amp; Redesign</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Timeline</p><p class="cs-meta-value">Sept 2023</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Guide</p><p class="cs-meta-value">Prof. Wricha Mishra</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma · Claude · Figma MCP</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Role</p><p class="cs-meta-value">Product Designer</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Type</p><p class="cs-meta-value">UI Design, Design System, Design handoff,</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Dated</p><p class="cs-meta-value">February 2026</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma · Claude</p></div>
             </div>
             <div>
               <p class="cs-tag">The Project</p>
               <h2 class="cs-section-title">Group expense splitting, rebuilt from scratch.</h2>
               <div class="cs-body">
-                <p>10-day ergonomics study of Splitwise → findings too good to leave in a report → rebuilt the whole thing. New IA, new flows, complete design system — and a test bed for a Figma MCP + Claude workflow.</p>
+                <p>10–day ergonomics study of Splitwise → findings too good to leave in a report → rebuilt the whole thing. New IA, new flows, complete design system — and a test bed for a Figma MCP + Claude workflow.</p>
               </div>
               <div class="cs-highlights">
                 <span class="cs-chip">HTA analysis</span>
