@@ -1872,8 +1872,8 @@
     .overlay-body {
       flex: 1;
       overflow-y: auto;
-      /* All inner padding scales with the card width via --u */
-      padding: calc(80 * var(--u)) calc(80 * var(--u)) calc(112 * var(--u));
+      /* top | sides | bottom — all scale with the card width via --u */
+      padding: calc(80 * var(--u)) calc(60 * var(--u)) calc(112 * var(--u));
       scroll-behavior: smooth;
       --f-body: 'Plus Jakarta Sans', sans-serif;
       font-family: var(--f-body);
