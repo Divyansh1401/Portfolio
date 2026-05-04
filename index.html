@@ -7128,44 +7128,25 @@
 
             <div class="cs-finding-list">
 
-              <!-- Finding 01: Settle Up — highest error rate -->
+              <!-- Finding 01: No home screen (Figma order) -->
               <div class="cs-finding-trio">
                 <div class="cs-finding-text">
                   <span class="cs-decision-num">01</span>
-                  <p class="cs-decision-title">Settle up had the highest error rate of all 5 tasks</p>
-                  <blockquote class="cs-finding-quote">"messed up the form, added an expense to settle" — user testing, Task 5 fail</blockquote>
+                  <p class="cs-decision-title">App opened to a flat friends list — no home</p>
+                  <blockquote class="cs-finding-quote">"At first glance they were confused since there was no homepage." — observer note, user testing</blockquote>
                   <div class="cs-evidence">
-                    <span class="cs-ev-code">T5.1</span><span class="cs-ev-code">A1</span><span class="cs-ev-code">A4</span><span class="cs-ev-code">A10</span><span class="cs-ev-code">I2</span><span class="cs-ev-code">A6</span>
-                    <span class="cs-ev-note">— highest task failure rate of all 5</span>
+                    <span class="cs-ev-note">Cognitive walkthrough — no spatial anchor, no actions, balance buried in one line of text</span>
                   </div>
                   <div class="cs-finding-fix">
                     <span class="cs-fix-label">Settlr fixed it</span>
-                    <p class="cs-decision-body">Primary home action — above the fold, no navigation needed. select → amount → method → done.</p>
-                  </div>
-                  <div class="cs-path-compare">
-                    <div class="cs-path-col cs-path-col--sw">
-                      <span class="cs-path-head cs-path-head--sw">Splitwise path</span>
-                      <div class="cs-path-step"><span class="cs-step-num">1</span><span>Open app → flat friends list</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">2</span><span>Switch to Friends tab<span class="cs-path-err">↳ A10 — wrong section errors</span></span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">3</span><span>Find specific friend (scroll)</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">4</span><span>Scroll to bottom of friend page</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">5</span><span>Find "Settle Up"<span class="cs-path-err">↳ users tapped + → Task fail</span></span></div>
-                    </div>
-                    <div class="cs-path-col cs-path-col--settlr">
-                      <span class="cs-path-head cs-path-head--settlr">Settlr path</span>
-                      <div class="cs-path-step"><span class="cs-step-num">1</span><span>Open app → home dashboard</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">2</span><span><span class="cs-path-win">Tap "Settle Up"</span> — above the fold</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">3</span><span>Select person</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">4</span><span>Enter amount</span></div>
-                      <div class="cs-path-step"><span class="cs-step-num">5</span><span><span class="cs-path-win">Done ✓</span></span></div>
-                    </div>
+                    <p class="cs-decision-body">Real dashboard: balance → primary actions → recent groups → activity. Information before action.</p>
                   </div>
                 </div>
                 <div class="cs-finding-phone-col">
                   <span class="cs-phone-badge">Splitwise</span>
                   <div class="cs-mini-bezel">
                     <div class="cs-mini-screen">
-                      <img src="assets/images/settlr/splitwise/sw-settle-up.webp" alt="Splitwise — Friend detail with Settle Up">
+                      <img src="assets/images/settlr/splitwise/sw-friends-home.webp" alt="Splitwise — Friends list as home screen">
                     </div>
                   </div>
                   <p class="cs-mini-caption">Splitwise</p>
@@ -7174,10 +7155,10 @@
                   <span class="cs-phone-badge cs-phone-badge--settlr">Settlr</span>
                   <div class="cs-mini-bezel">
                     <div class="cs-mini-screen">
-                      <img src="assets/images/settlr/screens/settle-select.webp" alt="Settlr — Settle Select">
+                      <img src="assets/images/settlr/screens/home-dashboard.webp" alt="Settlr — Home">
                     </div>
                   </div>
-                  <p class="cs-mini-caption">Settlr — Settle Select</p>
+                  <p class="cs-mini-caption">Settlr — Home</p>
                 </div>
               </div>
 
@@ -7216,44 +7197,10 @@
                 </div>
               </div>
 
-              <!-- Finding 03: No home screen -->
+              <!-- Finding 03: Add Expense / split method buried -->
               <div class="cs-finding-trio">
                 <div class="cs-finding-text">
                   <span class="cs-decision-num">03</span>
-                  <p class="cs-decision-title">App opened to a flat friends list — no home</p>
-                  <blockquote class="cs-finding-quote">"At first glance they were confused since there was no homepage." — observer note, user testing</blockquote>
-                  <div class="cs-evidence">
-                    <span class="cs-ev-note">Cognitive walkthrough — no spatial anchor, no actions, balance buried in one line of text</span>
-                  </div>
-                  <div class="cs-finding-fix">
-                    <span class="cs-fix-label">Settlr fixed it</span>
-                    <p class="cs-decision-body">Real dashboard: balance → primary actions → recent groups → activity. Information before action.</p>
-                  </div>
-                </div>
-                <div class="cs-finding-phone-col">
-                  <span class="cs-phone-badge">Splitwise</span>
-                  <div class="cs-mini-bezel">
-                    <div class="cs-mini-screen">
-                      <img src="assets/images/settlr/splitwise/sw-friends-home.webp" alt="Splitwise — Friends list as home screen">
-                    </div>
-                  </div>
-                  <p class="cs-mini-caption">Splitwise</p>
-                </div>
-                <div class="cs-finding-phone-col">
-                  <span class="cs-phone-badge cs-phone-badge--settlr">Settlr</span>
-                  <div class="cs-mini-bezel">
-                    <div class="cs-mini-screen">
-                      <img src="assets/images/settlr/screens/home-dashboard.webp" alt="Settlr — Home">
-                    </div>
-                  </div>
-                  <p class="cs-mini-caption">Settlr — Home</p>
-                </div>
-              </div>
-
-              <!-- Finding 04: Add Expense / split method buried -->
-              <div class="cs-finding-trio">
-                <div class="cs-finding-text">
-                  <span class="cs-decision-num">04</span>
                   <p class="cs-decision-title">Add expense front-loaded every decision at once</p>
                   <blockquote class="cs-finding-quote">"There was no clear callout for different split methods. Users struggled to find options to split." — observer note, Task 3</blockquote>
                   <div class="cs-evidence">
@@ -7285,10 +7232,10 @@
                 </div>
               </div>
 
-              <!-- Finding 05: No review step -->
+              <!-- Finding 04: No review step -->
               <div class="cs-finding-trio">
                 <div class="cs-finding-text">
-                  <span class="cs-decision-num">05</span>
+                  <span class="cs-decision-num">04</span>
                   <p class="cs-decision-title">No review step — expenses were final the moment you hit Save</p>
                   <blockquote class="cs-finding-quote">"Users frequently had to re-open submitted expenses to correct amounts or descriptions." — observer note, post-task</blockquote>
                   <div class="cs-evidence">
