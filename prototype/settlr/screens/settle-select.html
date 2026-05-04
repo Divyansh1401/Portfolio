@@ -66,7 +66,7 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="home-dashboard" class="top-app-bar__back" aria-label="Back">
+    <a href="home-dashboard.html" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Settle Up</span>
@@ -107,7 +107,7 @@
           '<span class="expense-item__label expense-item__label--' + dir + '">' + label + '</span>' +
           '<span class="expense-item__amount expense-item__amount--' + dir + '">' + Store.formatINR(bal.amount) + '</span>' +
         '</div>';
-        return '<a class="person-item' + mod + '" href="group-detail?id=' + group.id + '">' +
+        return '<a class="person-item' + mod + '" href="group-detail.html?id=' + group.id + '">' +
           '<div class="person-item__group-icon">' + (group.emoji || '👥') + '</div>' +
           '<div class="person-item__text">' +
             '<span class="person-item__name">' + group.name + '</span>' +
@@ -127,7 +127,7 @@
           '<span class="expense-item__label expense-item__label--' + dir + '">' + label + '</span>' +
           '<span class="expense-item__amount expense-item__amount--' + dir + '">' + Store.formatINR(bal.amount) + '</span>' +
         '</div>';
-        return '<a class="person-item' + mod + '" href="settle-amount?contactId=' + contact.id + '">' +
+        return '<a class="person-item' + mod + '" href="settle-amount.html?contactId=' + contact.id + '">' +
           '<div class="avatar avatar--initials avatar--md">' + contact.initials + '</div>' +
           '<div class="person-item__text">' +
             '<span class="person-item__name">' + contact.name + '</span>' +
