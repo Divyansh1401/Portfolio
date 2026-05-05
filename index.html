@@ -129,51 +129,62 @@
     }
     #cursor-glass {
       position: fixed;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      border-radius: 42% 58% 60% 40% / 50% 38% 62% 50%;
       pointer-events: none;
       z-index: 10000;
       top: 0;
       left: 0;
-      transform: translate(-50%, -50%) scale(0.18);
+      transform: translate(-50%, -50%) scale(0) rotate(-30deg);
       opacity: 0;
+      filter: blur(6px);
+      will-change: transform, opacity, border-radius, filter;
       display: flex;
       align-items: center;
       justify-content: center;
       background:
-        radial-gradient(circle at 30% 22%, rgba(255,210,160,0.55), rgba(255,210,160,0) 55%),
-        radial-gradient(circle at 60% 60%, rgba(234,118,35,0.85), rgba(180,75,15,0.85) 70%);
-      border: 1px solid rgba(255,255,255,0.28);
-      backdrop-filter: blur(14px) saturate(150%);
-      -webkit-backdrop-filter: blur(14px) saturate(150%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.5),
-        inset 0 -16px 36px rgba(120,50,5,0.55),
-        0 24px 60px rgba(180,80,15,0.42),
-        0 6px 18px rgba(0,0,0,0.28);
-      transition: opacity 0.28s ease, transform 0.42s cubic-bezier(.34,1.5,.64,1);
+        radial-gradient(circle at 35% 30%, rgba(255,200,130,0.32), rgba(255,200,130,0) 55%),
+        radial-gradient(circle at 60% 70%, rgba(255,120,30,0.22), rgba(180,60,5,0.28) 80%);
+      border: 1px solid rgba(255,200,140,0.55);
+      box-shadow: inset 0 0 18px rgba(255,160,80,0.32);
+      backdrop-filter: blur(0.6px) saturate(160%) contrast(108%) url(#glassRefract);
+      -webkit-backdrop-filter: blur(0.6px) saturate(160%) contrast(108%);
+      transition:
+        opacity 0.32s ease,
+        transform 0.7s cubic-bezier(.22,1.7,.36,1),
+        border-radius 0.9s cubic-bezier(.4,1.4,.5,1),
+        filter 0.4s ease;
     }
     #cursor-glass .cc-text {
       font-family: 'Unbounded', var(--f-heading), sans-serif;
       font-weight: 700;
-      font-size: 22px;
+      font-size: 16px;
       line-height: 1.05;
       color: #fff;
       text-align: center;
       letter-spacing: 0.01em;
       pointer-events: none;
-      text-shadow: 0 1px 10px rgba(60,20,0,0.45);
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transform: translateY(8px) scale(0.7);
+      transition: opacity 0.28s ease, transform 0.5s cubic-bezier(.22,1.5,.36,1);
     }
     body.cursor-glass-active #cursor-glass {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      border-radius: 50%;
+      filter: blur(0);
+      animation: cursorGlassWobble 2.6s ease-in-out 0.7s infinite;
     }
     body.cursor-glass-active #cursor-glass .cc-text {
       opacity: 1;
-      transition-delay: 0.12s;
+      transform: translateY(0) scale(1);
+      transition-delay: 0.18s;
+    }
+    @keyframes cursorGlassWobble {
+      0%, 100% { border-radius: 50%; }
+      33%      { border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%; }
+      66%      { border-radius: 54% 46% 48% 52% / 48% 54% 46% 52%; }
     }
     body.cursor-glass-active #cursor-ring {
       opacity: 0 !important;
@@ -1964,50 +1975,11 @@
       background: #fef9ee;
       display: block;
       position: relative;
-      container-type: inline-size;
     }
-    .cs-hero--settlr .sh-phone {
-      position: absolute;
-      left: 46.5%;
-      top: 0;
-      width: 81%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    .cs-hero--settlr .sh-phone img {
-      position: absolute;
-      width: 138.6%;
-      height: 144%;
-      left: -38.6%;
-      top: -22%;
-      max-width: none;
-      object-fit: cover;
-    }
-    .cs-hero--settlr .sh-text {
-      position: absolute;
-      left: 9.5%;
-      top: 42%;
-    }
-    .cs-hero--settlr .sh-title {
-      font-family: 'Unbounded', sans-serif;
-      font-weight: 900;
-      font-size: 3.6cqw;
-      line-height: 1.06;
-      letter-spacing: -0.04em;
-      color: #1B1C1A;
-      white-space: nowrap;
-      margin: 0 0 0.25em 0;
-    }
-    .cs-hero--settlr .sh-sub {
-      font-family: 'Unbounded', sans-serif;
-      font-weight: 900;
-      font-size: 1.55cqw;
-      line-height: 1.2;
-      letter-spacing: -0.03em;
-      color: #1B1C1A;
-      white-space: nowrap;
-      margin: 0;
+    .cs-hero--settlr > img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .cs-overview {
@@ -5915,6 +5887,28 @@
   <div id="custom-cursor"></div>
   <div id="cursor-ring"></div>
   <div id="cursor-glass" aria-hidden="true"><span class="cc-text">Click<br>to<br>view</span></div>
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+    <filter id="glassRefract" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <!-- noise field driving displacement -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="4" result="turb"/>
+
+      <!-- Red channel: large displacement -->
+      <feDisplacementMap in="SourceGraphic" in2="turb" scale="48" xChannelSelector="R" yChannelSelector="G" result="distR"/>
+      <feColorMatrix in="distR" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="rOnly"/>
+
+      <!-- Green channel: medium displacement -->
+      <feDisplacementMap in="SourceGraphic" in2="turb" scale="40" xChannelSelector="R" yChannelSelector="G" result="distG"/>
+      <feColorMatrix in="distG" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="gOnly"/>
+
+      <!-- Blue channel: small displacement -->
+      <feDisplacementMap in="SourceGraphic" in2="turb" scale="32" xChannelSelector="R" yChannelSelector="G" result="distB"/>
+      <feColorMatrix in="distB" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="bOnly"/>
+
+      <!-- additive recombine for chromatic aberration -->
+      <feComposite in="rOnly" in2="gOnly" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="rg"/>
+      <feComposite in="rg" in2="bOnly" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+  </svg>
   <div id="ego-transition-overlay" aria-hidden="true"></div>
 
   <!-- ── Main Nav ── -->
@@ -6012,10 +6006,8 @@
       <div class="exp-card reveal case-link" data-project="settlr">
         <div class="exp-card-inner">
           <div class="parallax-wrap">
-              <img src="assets/images/settlr/thumbnail.webp" class="exp-card-img" alt="Settlr Project">
-            <span class="exp-label">UX Research · Redesign · Design System</span>
+            <img src="assets/images/settlr/thumbnail.webp" class="exp-card-img" alt="Settlr">
           </div>
-
           <div class="exp-border-inner"></div>
           <div class="exp-border-outer"></div>
         </div>
@@ -6025,10 +6017,8 @@
       <div class="exp-card reveal case-link" data-project="refer-earn">
         <div class="exp-card-inner">
           <div class="parallax-wrap">
-              <img src="assets/images/refer-earn/thumbnail.webp" class="exp-card-img" alt="Refer & Earn">
-            <span class="exp-label">Head Digital Works · A23 Games</span>
+            <img src="assets/images/refer-earn/thumbnail.webp" class="exp-card-img" alt="Refer & Earn">
           </div>
-
           <div class="exp-border-inner"></div>
           <div class="exp-border-outer"></div>
         </div>
@@ -6038,13 +6028,8 @@
       <div class="exp-card reveal case-link" data-project="kinko">
         <div class="exp-card-inner">
           <div class="parallax-wrap">
-              <img src="assets/images/kinko/thumbnail.webp" class="exp-card-img" alt="Kinko Insurance">
-            </div>
-
-          <div class="exp-card-text">
-            <span class="exp-label">Head digital works</span>
+            <img src="assets/images/kinko/thumbnail.webp" class="exp-card-img" alt="Kinko Insurance">
           </div>
-
           <div class="exp-border-inner"></div>
           <div class="exp-border-outer"></div>
         </div>
@@ -7186,13 +7171,7 @@
 
           <!-- HERO -->
           <div class="cs-hero cs-hero--settlr">
-            <div class="sh-phone">
-              <img src="assets/images/settlr/cover-phone.webp" alt="Settlr app — home dashboard on iPhone in wooden hands">
-            </div>
-            <div class="sh-text">
-              <h1 class="sh-title" style="font-size: clamp(40px, 8vw, 72px); margin: 0; line-height: 1;">Settlr</h1>
-              <p class="sh-sub">splitting made easy</p>
-            </div>
+            <img src="assets/images/settlr/cover-phone.webp" alt="Settlr — splitting made easy">
           </div>
 
           <!-- OVERVIEW: meta + project hook (matches Figma exactly) -->
