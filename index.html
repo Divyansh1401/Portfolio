@@ -127,8 +127,63 @@
       border-color: rgba(234, 118, 35, 0.9);
       opacity: 0.85;
     }
+    #cursor-glass {
+      position: fixed;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%) scale(0.18);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,210,160,0.55), rgba(255,210,160,0) 55%),
+        radial-gradient(circle at 60% 60%, rgba(234,118,35,0.85), rgba(180,75,15,0.85) 70%);
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(14px) saturate(150%);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.5),
+        inset 0 -16px 36px rgba(120,50,5,0.55),
+        0 24px 60px rgba(180,80,15,0.42),
+        0 6px 18px rgba(0,0,0,0.28);
+      transition: opacity 0.28s ease, transform 0.42s cubic-bezier(.34,1.5,.64,1);
+    }
+    #cursor-glass .cc-text {
+      font-family: 'Unbounded', var(--f-heading), sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.05;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.01em;
+      pointer-events: none;
+      text-shadow: 0 1px 10px rgba(60,20,0,0.45);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    body.cursor-glass-active #cursor-glass {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    body.cursor-glass-active #cursor-glass .cc-text {
+      opacity: 1;
+      transition-delay: 0.12s;
+    }
+    body.cursor-glass-active #cursor-ring {
+      opacity: 0 !important;
+    }
+    body.cursor-glass-active #custom-cursor {
+      opacity: 0 !important;
+    }
     body.cursor-out #custom-cursor,
-    body.cursor-out #cursor-ring {
+    body.cursor-out #cursor-ring,
+    body.cursor-out #cursor-glass {
       opacity: 0 !important;
     }
     #ego-transition-overlay {
@@ -5859,6 +5914,7 @@
   <!-- ── Hero Masking Container ── -->
   <div id="custom-cursor"></div>
   <div id="cursor-ring"></div>
+  <div id="cursor-glass" aria-hidden="true"><span class="cc-text">Click<br>to<br>view</span></div>
   <div id="ego-transition-overlay" aria-hidden="true"></div>
 
   <!-- ── Main Nav ── -->
@@ -6370,12 +6426,14 @@
   <script>
     // ── Custom Cursor ──────────────────────────────────────
     (function initCursor() {
-      const dot  = document.getElementById('custom-cursor');
-      const ring = document.getElementById('cursor-ring');
+      const dot   = document.getElementById('custom-cursor');
+      const ring  = document.getElementById('cursor-ring');
+      const glass = document.getElementById('cursor-glass');
       if (!dot || !ring) return;
 
       let mX = window.innerWidth / 2, mY = window.innerHeight / 2;
       let rX = mX, rY = mY;
+      let gX = mX, gY = mY;
 
       window.addEventListener('mousemove', e => {
         mX = e.clientX;
@@ -6388,19 +6446,41 @@
       document.addEventListener('mouseleave', () => document.body.classList.add('cursor-out'));
 
       const HOVER_SEL = 'a, button, .small-card, .project-row, [role="button"]';
+      const GLASS_SEL = '.exp-card.case-link';
       document.addEventListener('mouseover', e => {
         if (e.target.closest(HOVER_SEL)) ring.classList.add('is-hovering');
+        if (e.target.closest(GLASS_SEL)) {
+          document.body.classList.add('cursor-glass-active');
+        }
       });
       document.addEventListener('mouseout', e => {
         if (e.target.closest(HOVER_SEL)) ring.classList.remove('is-hovering');
+        const fromGlass = e.target.closest(GLASS_SEL);
+        if (fromGlass) {
+          const to = e.relatedTarget;
+          if (!to || (to.closest && !to.closest(GLASS_SEL))) {
+            document.body.classList.remove('cursor-glass-active');
+          }
+        }
       });
+      document.addEventListener('click', e => {
+        if (e.target.closest(GLASS_SEL)) {
+          document.body.classList.remove('cursor-glass-active');
+        }
+      }, true);
 
-      // rAF loop: lerp ring behind cursor
+      // rAF loop: lerp ring + glass disc behind cursor
       (function tick() {
         rX += (mX - rX) * 0.14;
         rY += (mY - rY) * 0.14;
         ring.style.left = rX + 'px';
         ring.style.top  = rY + 'px';
+        if (glass) {
+          gX += (mX - gX) * 0.22;
+          gY += (mY - gY) * 0.22;
+          glass.style.left = gX + 'px';
+          glass.style.top  = gY + 'px';
+        }
         requestAnimationFrame(tick);
       })();
     })();
