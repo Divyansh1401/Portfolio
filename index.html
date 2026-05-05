@@ -5554,12 +5554,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(247, 246, 244, 0.28);
-      backdrop-filter: blur(28px) saturate(140%);
-      -webkit-backdrop-filter: blur(28px) saturate(140%);
+      background: rgba(247, 246, 244, 0.06);
+      backdrop-filter: blur(4px) saturate(108%);
+      -webkit-backdrop-filter: blur(4px) saturate(108%);
       border-radius: inherit;
       pointer-events: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 0 0 1px rgba(255,255,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 0 0 1px rgba(255,255,255,0.10);
     }
     .exp-nda-content {
       text-align: center;
@@ -5574,35 +5574,41 @@
       display: inline-block;
       padding: 6px 14px;
       border-radius: 100px;
-      background: rgba(27,28,26,0.08);
-      color: rgba(27,28,26,0.7);
+      background: rgba(27,28,26,0.12);
+      color: rgba(27,28,26,0.78);
       font-family: var(--f-body);
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
     .exp-nda-title {
       font-family: var(--f-heading);
-      font-size: clamp(40px, 4.6vw, 64px);
+      font-size: clamp(28px, 2.8vw, 40px);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.05;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
       margin: 0;
       color: var(--c-dark);
+      text-shadow: 0 1px 2px rgba(255,255,255,0.4);
     }
     .exp-nda-sub {
       font-family: var(--f-body);
-      font-size: clamp(15px, 1.3vw, 18px);
+      font-size: clamp(14px, 1.1vw, 16px);
       line-height: 1.55;
       margin: 0;
-      color: rgba(27,28,26,0.7);
-      max-width: 30ch;
+      color: rgba(27,28,26,0.78);
+      max-width: 32ch;
+    }
+    .exp-nda-cta {
+      pointer-events: auto;
+      margin-top: 8px;
+      cursor: pointer;
     }
     .exp-card--nda:hover .exp-nda-overlay {
-      background: rgba(247, 246, 244, 0.22);
+      background: rgba(247, 246, 244, 0.10);
       transition: background 0.5s ease;
     }
 
@@ -6225,7 +6231,8 @@
             <div class="exp-nda-content">
               <span class="exp-nda-tag">Confidential</span>
               <h3 class="exp-nda-title">Under NDA</h3>
-              <p class="exp-nda-sub">Let's hop on a call — I'll walk you through it.</p>
+              <p class="exp-nda-sub">Let's hop on a call. I'll walk you through it.</p>
+              <a href="#connect" class="btn-hero btn-solid exp-nda-cta" data-stop="true"><span>Lets Connect</span></a>
             </div>
           </div>
           <div class="exp-border-inner"></div>
@@ -9052,6 +9059,8 @@
     // Link clicks
     document.querySelectorAll('.case-link').forEach(link => {
       link.addEventListener('click', e => {
+        // Don't hijack inner CTAs (e.g. NDA "Lets Connect" button)
+        if (e.target.closest('[data-stop="true"]')) return;
         e.preventDefault();
         openOverlay(link.dataset.project);
       });
@@ -9110,6 +9119,16 @@
 
     let alterEgoMode = false;
     let egoTransitionInFlight = false;
+
+    // Route #connect → #alter-connect when alter ego is active
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a[href="#connect"]');
+      if (!link) return;
+      if (!document.body.classList.contains('alter-ego')) return;
+      e.preventDefault();
+      const target = document.getElementById('alter-connect');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, true);
 
     function setHeroAlterEgoState(enabled) {
       const heroContainer = document.querySelector('.hero-container');
@@ -9277,13 +9296,7 @@
     })();
     // ── Alter Ego — lazy-init data + functions ───────────
     const ART_CATS = [
-      {
-        id: 'traditional', label: 'Traditional Art', link: null,
-        items: [
-          { bg: '#4a4b47' }, { bg: '#424340' }, { bg: '#464743' },
-          { bg: '#3e3f3b' }, { bg: '#484a45' }, { bg: '#404239' },
-        ]
-      },
+      // Traditional Art — temporarily removed; will be re-added once images are ready
       {
         id: 'cyanotype', label: 'Cyanotype', link: null,
         items: [
