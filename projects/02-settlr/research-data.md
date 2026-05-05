@@ -78,7 +78,7 @@
 | T1.1.3 | C3 |
 | T1.1.4 | R1 |
 
-**Summary**: Wrong info communicated (A1), wrong object (A3), wrong direction (A10), wrong selection (S2). Users confused about navigation — went to wrong section instead of Groups.
+**Summary**: Wrong info communicated (A1), wrong object (A3), wrong direction (A10), wrong selection (S2). Users confused about navigation, went to wrong section instead of Groups.
 
 ### Task 2 — Split Unequally (Rs.1846)
 | Step | Codes |
@@ -87,7 +87,7 @@
 | T2.3.2 | S2, R1 |
 | T2.3.3 | A3, R1, R2 |
 
-**Summary**: S1 (option to create group not visible). A2 (+ button confusion — users thought it = "Add Group", not "Add Expense"). Wrong section entered, errors cascaded.
+**Summary**: S1 (option to create group not visible). A2 (+ button confusion: users thought it = "Add Group", not "Add Expense"). Wrong section entered, errors cascaded.
 
 ### Task 3 — Add Expense with Custom Split ⚠️ HIGHEST FAILURE RATE
 | Step | Codes |
@@ -238,11 +238,11 @@
 
 **Bottom Nav**: Activity | Groups | [+] | Friends | Account
 
-**+ button** opens: Add Expense (NOT Create Group — this is the root cause of T1/T2 errors)
+**+ button** opens: Add Expense (NOT Create Group; this is the root cause of T1/T2 errors)
 
 **Add Expense split options** (buried): "Paid by you and split equally" as two small tappable chips at the bottom of the form
 
-**Settle Up entry**: Only accessible from inside a specific Friend's page — not from home, not from any primary nav
+**Settle Up entry**: Only accessible from inside a specific Friend's page. Not from home, not from any primary nav.
 
 ---
 

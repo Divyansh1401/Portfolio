@@ -1,5 +1,5 @@
 # Splitwise — Cognitive Ergonomics Assessment
-> Raw documentation storage. Do not process — to be used as reference.
+> Raw documentation storage. Do not process. To be used as reference.
 
 ---
 
@@ -53,7 +53,7 @@ Splitwise is an expense-sharing app tailored for **tech-savvy users aged 16 to 3
 #### Insights from Literature Review
 **Simplicity**: Overloading the app with details and complex features can overwhelm users. A well-designed finance app should appear minimalistic and straightforward, making users feel that financial management is simple. Complexity can deter users and lead to dissatisfaction.
 
-*(More insights from Literature Review — see slide content for full details)*
+*(More insights from Literature Review; see slide content for full details)*
 
 ---
 
@@ -65,7 +65,7 @@ After defining the user and learning what is important in a Financial applicatio
 ### Heuristic Analysis
 Heuristic analysis is a usability evaluation method used to assess the user-friendliness of a digital interface or system. It involves expert evaluators systematically examining a user interface against a set of predefined usability principles or "heuristics" to identify potential usability issues and areas for improvement. These heuristics are typically based on established usability guidelines and best practice.
 
-*(Insights from Heuristic Analysis — see slide images)*
+*(Insights from Heuristic Analysis; see slide images)*
 
 ---
 
@@ -242,7 +242,7 @@ An approach to usability testing and user interface design is the cognitive walk
   - **T4.2**: View Transaction Details
     - Tap the activity to see the selected transaction's details
   - **T4.3.1**: Add Comment
-    - Tap on "Add Comment" or "Comment" — tap on it to open a text field where you can enter your comment
+    - Tap on "Add Comment" or "Comment", which opens a text field where you can enter your comment
   - **T4.3.1**: Enter Comment
     - Type in your comment, e.g. "will repay next week", into the text field
   - **T4.4**: Save Comment
@@ -317,7 +317,7 @@ An approach to usability testing and user interface design is the cognitive walk
 ---
 
 ### Insights from User Flow Analysis
-*(Top section of slide — text too small at current resolution; refer to image for full content)*
+*(Top section of slide; text too small at current resolution. Refer to image for full content)*
 - Multiple insight callout boxes summarising findings from the User Flow Exploration phase
 - Covers gaps and intervention points identified in Splitwise's current structure
 
@@ -335,19 +335,19 @@ The NASA Task Load Index (NASA-TLX) is a multi-dimensional assessment tool that 
 
 #### Time Taken in Each Task
 - Bar chart showing time taken across Tasks 1–5
-- *(Exact values — refer to image)*
+- *(Exact values; refer to image)*
 
 #### Results of NASA TLX
-- *(Scores/table — refer to image for exact values)*
+- *(Scores/table; refer to image for exact values)*
 
 #### Results of SUS (System Usability Scale)
-- *(Scores — refer to image for exact values)*
+- *(Scores; refer to image for exact values)*
 
 ---
 
 ### Insights from User Evaluation
 Grid of colour-coded insight blocks (green / orange / red indicating severity or category):
-- *(Full insight text — refer to image; blocks too small to read at current resolution)*
+- *(Full insight text; refer to image. Blocks too small to read at current resolution)*
 
 ---
 
@@ -358,22 +358,22 @@ Four design interventions proposed based on findings:
 #### 1. Creation of a Home Page
 Creation of a Home page to view necessary information and perform actions at one place.
 - Shows iPhone mockup of proposed home screen
-- *(Detailed description — refer to image)*
+- *(Detailed description; refer to image)*
 
 #### 2. Updated Add Expense Menu
 Updated add expense menu.
 - Shows iPhone mockup of redesigned add expense flow
-- *(Detailed description — refer to image)*
+- *(Detailed description; refer to image)*
 
 #### 3. Merged Friends with Groups Page
 Merged Friends with groups page.
 - Shows iPhone mockup combining Friends and Groups into a single view
-- *(Detailed description — refer to image)*
+- *(Detailed description; refer to image)*
 
 #### 4. Changes in the Activity Section
 Changes in the Activity Section.
 - Shows iPhone mockup of redesigned Activity feed
-- *(Detailed description — refer to image)*
+- *(Detailed description; refer to image)*
 
 ---
 

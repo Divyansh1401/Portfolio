@@ -16,30 +16,23 @@
 | Label | 03 |
 | Title | Refer & Earn |
 | Company | Head Digital Works · A23 |
-| Thumbnail | Layered (BG + FG parallax) |
+| Thumbnail | `thumbnail.webp` (single image, full bleed) |
 
-### Thumbnail — Layered Approach
-- **BG layer**: CSS `background-image: url('assets/images/refer-earn/thumbnail-bg.png')` on `.project-img-inner`
-  - `background-size: auto 100%; background-position: left center; background-repeat: no-repeat`
-  - Preserves aspect ratio, left-aligned
-- **FG layer**: `<img id="p3-fg" src="assets/images/refer-earn/thumbnail-fg.png">` centered absolutely
-  - `height: 100%; width: auto`
-  - JS parallax: moves up to 18px towards cursor on `.project-row.p3` mousemove
-  - Base transform: `translate(-50%, -50%)` + cursor offset: `translate(calc(-50% + Xpx), calc(-50% + Ypx))`
-  - CSS transition: `transform 0.4s cubic-bezier(...)`
+### Thumbnail
+- Single image at `assets/images/refer-earn/thumbnail.webp`, set as `<img class="exp-card-img">` inside the homepage Featured Projects card.
+- Replaces the earlier layered BG/FG parallax approach (those `thumbnail-bg.png` / `thumbnail-fg.png` files are no longer used).
 
 ---
 
 ## Image Assets
 All in `/Users/divyanshrastogi/Desktop/Website/assets/images/refer-earn/`
 
-### ✅ In use (linked in index.html — all verified loading)
+### ✅ In use (linked in index.html; all verified loading)
 
 | File | Where used |
 |------|------------|
-| `thumbnail-bg.png` | Homepage P3 thumbnail — BG layer (CSS background, left-aligned) |
-| `thumbnail-fg.png` | Homepage P3 thumbnail — FG layer (centered, parallax) |
-| `cover.png` | Case study hero image (top of overlay) |
+| `thumbnail.webp` | Homepage Featured Projects card (single image, replaced 2026-05-05) |
+| `cover.webp` | Case study hero image, top of overlay (replaced 2026-05-05) |
 | `approach-1.png` | Ideation: Approach 1 — Minimal UI + Gamification Layer |
 | `approach-2.png` | Ideation: Approach 2 — Contextual Primary CTA |
 | `infographic-v1.png` | Iteration: infographic structure v1 (light list) |
@@ -71,14 +64,13 @@ All in `/Users/divyanshrastogi/Desktop/Website/assets/images/refer-earn/`
 | `three-brands.png` | Three-brand overview image |
 | `treasure-referrals.png` | Treasure Referrals hero or overview |
 | `wireframes.png` | Wireframe explorations |
-| `thumbnail.png` | Original P3 thumbnail (superseded by layered approach) |
 
 ---
 
 ## Case Study — Built Sections (all verified in preview)
 
 ### Hero
-- `cover.png` — full-width banner at top of overlay
+- `cover.webp` — full-width banner at top of overlay
 
 ### The Challenge
 - Stats + copy (no images)
@@ -101,7 +93,7 @@ All in `/Users/divyanshrastogi/Desktop/Website/assets/images/refer-earn/`
 ### Before / After
 - 3-column grid: `screen-before.png` | `screen-tooltip.png` | `screen-final.png`
 - "BEFORE" label: `grid-column: 1` | "AFTER" label: `grid-column: 2 / 4`
-- Static — no animation
+- Static, no animation
 
 ### Multi-Brand
 - Three phones: `screen-rummy.png` | `screen-poker.png` | `screen-adda52.png`

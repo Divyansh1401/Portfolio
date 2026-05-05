@@ -10,7 +10,7 @@
 ## What This Project Is
 
 **Portfolio website** at `/Users/divyanshrastogi/Desktop/Website/index.html` — single HTML file, no build step.
-**Preview server**: `npx serve -p 3456 .` — use `mcp__Claude_Preview__preview_start` with name `"portfolio"`.
+**Preview server**: `npx serve -p 3456 .`. Use `mcp__Claude_Preview__preview_start` with name `"portfolio"`.
 
 Divyansh Rastogi, product designer, IDC IIT Bombay AIR 5. Goal: get hired.
 
@@ -20,12 +20,12 @@ Divyansh Rastogi, product designer, IDC IIT Bombay AIR 5. Goal: get hired.
 
 ### Last session tasks (in order):
 1. ✅ Fetched updated Settlr prototype screens from `/Desktop/Settlr/` into `Website/prototype/settlr/`
-2. ✅ Built Settlr case study in `index.html` — phone row (4 iframes), findings section (4 findings with Splitwise mockups + Settlr iframes), full gallery (24 screens in 6 rows)
+2. ✅ Built Settlr case study in `index.html`: phone row (4 iframes), findings section (4 findings with Splitwise mockups + Settlr iframes), full gallery (24 screens in 6 rows)
 3. ✅ Replaced coded Splitwise HTML mockups with **real Splitwise screenshots** (`sw-settle-up.png`, `sw-groups.png`, `sw-friends-home.png`, `sw-add-expense.png`) in the cs-finding-trio sections
 4. ✅ User put all research documentation in `/projects/02-settlr/Splitwise Screens/Research Documentation/` — **26 image files**
 5. 🔲 **LAST TASK (incomplete):** Read all research images → consolidate into a text file → revise case study plan
 
-The session cut out while reading the research images. **This KT doc IS the consolidation** — everything extracted from the images is below. The next task is to use this data to improve the case study copy and docs.
+The session cut out while reading the research images. **This KT doc IS the consolidation.** Everything extracted from the images is below. The next task is to use this data to improve the case study copy and docs.
 
 ---
 
@@ -150,19 +150,19 @@ All in: `/Users/divyanshrastogi/Desktop/Website/projects/02-settlr/Splitwise Scr
 **Task 1 (Create Group):**
 Most users encountered A1/A2, S2 (wrong direction communicated), A10 (wrong operation direction), S2 (selection made incorrectly).
 - Wrong options selected → confused between navigation items
-- Wrong action — went to wrong section instead of Groups
+- Wrong action: went to wrong section instead of Groups
 - **Summary**: Wrong information communicated (A1), wrong information (A3), wrong direction (A10), selection made wrong (S2).
 
 **Task 2 (Split Unequally):**
 S1 — "option to create group not visible to them". A2 — confused + → created expense button with wrong direction. Users thought + button = "Add Group". Wrong section entered, error propagated.
-- **Summary**: S1 (info not obtained), A2 (confused about expand button), S2 (wrong direction, wrong section). Users thought + was "Add Group" option — error thinking persists through the task.
+- **Summary**: S1 (info not obtained), A2 (confused about expand button), S2 (wrong direction, wrong section). Users thought + was "Add Group" option, and that error thinking persists through the task.
 
 **Task 3 (Add Expense with Custom Split):**
 S2 (wrong operation on right object), S1 (info not obtained), I1 (operation too long, ran out of time). A3 (wrong direction in navigation). A7 (wrong selection made). TASK FAIL in multiple users.
 - **Summary**: S2 + I1 + A3. Wrong selection while adding up. Task failed for users who couldn't find the percentage split option.
 
 **Task 4 (Add Comment):**
-A1 (wrong operation on right object), S1 (information was not communicated). Some A2 (information too much, overwhelming). Right operation but wrong direction — found friend but went to wrong transaction.
+A1 (wrong operation on right object), S1 (information was not communicated). Some A2 (information too much, overwhelming). Right operation but wrong direction: found friend but went to wrong transaction.
 - **Summary**: A1 (right object, wrong action), S1 (info not obtained), A2 (operation in wrong direction overall).
 
 **Task 5 (Settle Up):**
@@ -369,7 +369,7 @@ The slide shows a redesign preview with 3 phone mockups (redesigned screens). De
 **1. Research section — add real data**
 - Add exact SHERPA error counts per task (Task 5 has the most, Task 3 = TASK FAIL in multiple users)
 - Name the actual methods used with one-line descriptions (HTA, SHERPA, Cognitive Walkthrough, Heuristic Evaluation, NASA-TLX, SUS)
-- Add SUS score if readable from Slide 16_9 - 28 (currently unclear — the image is small)
+- Add SUS score if readable from Slide 16_9 - 28 (currently unclear; the image is small)
 - Add NASA-TLX finding: Task 3 (Add Expense with split) = highest cognitive load
 
 **2. Findings section — strengthen each finding with real evidence**
@@ -377,16 +377,16 @@ The slide shows a redesign preview with 3 phone mockups (redesigned screens). De
 | Finding | Add this data |
 |---------|--------------|
 | 01 Settle Up | SHERPA T5.1: A1, A4, A10, I2, A6 (5 error types in one step). Multiple TASK FAILs. Quote: *"messed up the form, added an expense to settle"* |
-| 02 Two worlds | SHERPA T1.1 wrong section errors (A10, S2) + T5.2 = A7 (wrong section). Users navigated to Friends for settle, Groups for create — neither was right. |
+| 02 Two worlds | SHERPA T1.1 wrong section errors (A10, S2) + T5.2 = A7 (wrong section). Users navigated to Friends for settle, Groups for create. Neither was right. |
 | 03 No home screen | Every task starts with orientation confusion. SU07: "overall complex... not very easy to use". SU06: "doesn't seem friendly at glance". Observer: "at first glance they were confused since there was no homepage" |
 | 04 Split method hidden | T3 = most TASK FAILs. SHERPA T3.2.1 = A10, R1, S2, I2, A3, A7 (6 error types). SU04: added wrong amounts. Multiple users couldn't find percentage split. |
 
 **3. User quotes — use verbatim from research (not paraphrased)**
 Now confirmed exact quotes available:
-- *"The app is difficult to understand, doesn't seem friendly at glance"* — SU06
-- *"The information looks very crowded on the app, not very readable"* — SU07
-- *"I would not recommend this app right now because it is complicated"* — SU06
-- *"Several features seemed difficult to access"* — SU07
+- *"The app is difficult to understand, doesn't seem friendly at glance"* (SU06)
+- *"The information looks very crowded on the app, not very readable"* (SU07)
+- *"I would not recommend this app right now because it is complicated"* (SU06)
+- *"Several features seemed difficult to access"* (SU07)
 - *"Cannot cancel member once selected"* (pain point)
 - *"Not able to find 'add expense' after opening the app"* (pain point)
 - *"Unclear who pays whom"* (pain point)
@@ -407,7 +407,7 @@ The actual numbers are in `Slide 16_9 - 28.png` but too small to read precisely.
 | `/Users/divyanshrastogi/Desktop/Website/CLAUDE.md` | Full design system, what's built, gotchas |
 | `/Users/divyanshrastogi/Desktop/Website/projects/02-settlr/project-docs.md` | Source of truth for Settlr case study copy |
 | `/Users/divyanshrastogi/Desktop/Website/projects/02-settlr/case-study-plan.md` | Narrative structure plan |
-| `/Users/divyanshrastogi/Desktop/Website/projects/02-settlr/research-splitwise.md` | Existing research data (has content — may need merging with this doc) |
+| `/Users/divyanshrastogi/Desktop/Website/projects/02-settlr/research-splitwise.md` | Existing research data (has content; may need merging with this doc) |
 | `/Users/divyanshrastogi/Desktop/Website/prototype/settlr/screens/` | 24+ Settlr screen HTML files |
 
 ---

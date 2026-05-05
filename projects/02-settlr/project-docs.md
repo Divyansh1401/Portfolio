@@ -1,28 +1,28 @@
 # Settlr — Full Project Documentation
 > Unified record of the complete arc: Splitwise research → Settlr redesign.
 > Source of truth for case study copy. Updated with design rationale, story arc, and research-to-decision mappings.
-> Last updated: 2026-05-02 (post Campaign 1 — design system grew to 40 components, prototype synced)
+> Last updated: 2026-05-02 (post Campaign 1: design system grew to 40 components, prototype synced)
 
 ---
 
 ## Project Arc (One-Line Summary)
-A college ergonomics study of Splitwise revealed real usability failures — so instead of stopping at a report, the findings were used to build Settlr: an independent redesign of the group expense splitting experience, complete with a 40-component design system and 31 built screens.
+A college ergonomics study of Splitwise revealed real usability failures, so instead of stopping at a report, the findings were used to build Settlr: an independent redesign of the group expense splitting experience, complete with a 40-component design system and 31 built screens.
 
 ---
 
 ## The Real Story Arc
-> Use this when writing the narrative. This is the honest version — 3 acts.
+> Use this when writing the narrative. This is the honest version, in 3 acts.
 
 ### Act 1 — Frustration (the research)
-It started with Splitwise's Add Expense flow. The split method selector was buried and unclear — users couldn't figure out how to split unequally without hunting through the interface. This wasn't a hypothesis. It was observed directly in user testing, and confirmed by NASA-TLX: Task 3 (Add Expense) scored as the most cognitively demanding task of the five studied. That's the moment the project stopped being academic.
+It started with Splitwise's Add Expense flow. The split method selector was buried and unclear. Users couldn't figure out how to split unequally without hunting through the interface. This wasn't a hypothesis. It was observed directly in user testing, and confirmed by NASA-TLX: Task 3 (Add Expense) scored as the most cognitively demanding task of the five studied. That's the moment the project stopped being academic.
 
 ### Act 2 — Experiment (the question behind the app)
-The research was complete. The findings could have lived in a report. Instead, Settlr became the answer to a bigger question: *can you build a production-quality design system and 30+ screens solo, using AI as the executor rather than the author?* The app wasn't the point — it was the test environment. Settlr was built to learn how a 3-tier token system actually works in practice, and to figure out what a disciplined Figma MCP + Claude workflow looks like when the designer stays in control.
+The research was complete. The findings could have lived in a report. Instead, Settlr became the answer to a bigger question: *can you build a production-quality design system and 30+ screens solo, using AI as the executor rather than the author?* The app wasn't the point. It was the test environment. Settlr was built to learn how a 3-tier token system actually works in practice, and to figure out what a disciplined Figma MCP + Claude workflow looks like when the designer stays in control.
 
 ### Act 3 — Execution (the build)
-The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values — every color, spacing, and radius tracing back through the token system. From there, the system scaled: **40 components, 31 screens, 290+ semantic tokens** across **42 component CSS files**, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research. The app itself is still in progress — user testing is planned once the build is complete.
+The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values, every color, spacing, and radius tracing back through the token system. From there, the system scaled: **40 components, 31 screens, 290+ semantic tokens** across **42 component CSS files**, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research. The app itself is still in progress; user testing is planned once the build is complete.
 
-> **Campaign 1 (2026-04-29 → 2026-05-01):** Eight new components shipped in a single sweep — `hero-section`, `toggle`, `settings-row`, `detail-row`, `notes-card`, `summary-card`, `success-state`, `invite-banner` — plus avatar `--xl`, icon-btn `--overlay`, the `confetti` utility, and two new patterns (`screen-footer`, `update-item`). 22 screens were swept and ~150 custom one-off classes were consolidated back into the system. The `notifications` screen was deleted; all events now flow through the Activity screen via an "Updates" filter chip — one screen, one mental model.
+> **Campaign 1 (2026-04-29 → 2026-05-01):** Eight new components shipped in a single sweep (`hero-section`, `toggle`, `settings-row`, `detail-row`, `notes-card`, `summary-card`, `success-state`, `invite-banner`), plus avatar `--xl`, icon-btn `--overlay`, the `confetti` utility, and two new patterns (`screen-footer`, `update-item`). 22 screens were swept and ~150 custom one-off classes were consolidated back into the system. The `notifications` screen was deleted; all events now flow through the Activity screen via an "Updates" filter chip. One screen, one mental model.
 
 ---
 
@@ -31,12 +31,12 @@ The workflow compressed what would have been months of solo design work into wee
 > Updated with verbatim user observations from testing sessions.
 
 ### Raw User Observations (verbatim, from testing)
-1. **No home screen** — "At first glance they were confused since there was no homepage." Splitwise opens to a Friends list — there is no overview, no balance summary, no sense of where you are.
-2. **Add expense: split method invisible** — "There was no clear callout for different split methods. Users struggled to find options to split." In Splitwise, the split method is two small tappable words — "Paid by **you** and split **equally**" — buried at the bottom of the form. Not a choice, not a prompt. Easy to miss entirely.
+1. **No home screen** — "At first glance they were confused since there was no homepage." Splitwise opens to a Friends list. There is no overview, no balance summary, no sense of where you are.
+2. **Add expense: split method invisible** — "There was no clear callout for different split methods. Users struggled to find options to split." In Splitwise, the split method is two small tappable words ("Paid by **you** and split **equally**") buried at the bottom of the form. Not a choice, not a prompt. Easy to miss entirely.
 3. **Split calculation friction** — "When users got to the split page, they struggled with calculating the expenses before putting the exact number or percentage." Users were expected to arrive with the math already done. No help, no calculator, no smart defaults.
 4. **+ button confusion** — "When asked to create a group, most users clicked the bottom + button which was the Add Expense button and then got confused." The global + in Splitwise opens Add Expense, not Create Group. Users' mental model was: + = create something = create a group. The app violated that expectation silently.
 
-### Screenshots captured (before assets — in hand)
+### Screenshots captured (before assets, in hand)
 - `splitwise-home.png` — Friends list as home. No dashboard. Balance shown as one line of text at top.
 - `splitwise-add-expense.png` — Add Expense form. Split method = "Paid by you and split equally" as two tiny tappable chips at bottom of form.
 
@@ -44,14 +44,14 @@ The workflow compressed what would have been months of solo design work into wee
 
 | Finding (observed) | Evidence | Settlr Decision |
 |---------|----------|----------------|
-| No home screen — users had no spatial anchor | First observation in all 5 tasks; users repeatedly lost orientation | Settlr opens to a **real dashboard** — named "Settlr" in large type as an explicit anchor. Profile icon top-right follows familiar convention. Layout: (1) **Total balance** at top — insight before action; this is expense *tracking*, users need to understand their position before they act. Planned: lent vs. owed breakdown. (2) **Two primary actions under balance** — Add Expense (most frequent) + Settle Up. (3) **Settle Up as batch action** — people settle at end of month or end of trip, not per-expense. Settle Up shows all outstanding balances at once — one place to close everything. (4) **Recent Groups (3)** — most users don't have more than 4 active groups; 3 is the right default. Create Group option alongside. (5) **No individual expense list** — deliberate omission. 1:1 expenses take the same effort to log in Settlr as to just settle via UPI. Groups are where the app adds real value. (6) Recent activity below. |
-| Split method buried as two small words | Directly observed in Task 3; NASA-TLX: highest cognitive demand score | Split method is a **dedicated screen** in the add expense flow — not a hidden option. Uneven splits are the common case, not the edge case. Making it a dedicated step means users get **behaviourally anchored** — they learn to expect it there and stop hunting. The Splitwise failure mode: users moved past the form and only realised the split option was on the *previous* page. By then, they were confused and had to go back. |
-| Users had no help calculating split amounts | Observed on split screen — users froze, had to use calculator app | Settlr calculates live — "Equally" mode shows **₹X per person** in real time as a summary pill above the list. User picks method, app does the math. The green pill also solves a second problem: even if the user chooses "Equally" and makes no change, the screen **doesn't feel like a wasted step** — it's showing them something useful. It's information, not just a form. |
+| No home screen — users had no spatial anchor | First observation in all 5 tasks; users repeatedly lost orientation | Settlr opens to a **real dashboard**, named "Settlr" in large type as an explicit anchor. Profile icon top-right follows familiar convention. Layout: (1) **Total balance** at top — insight before action; this is expense *tracking*, users need to understand their position before they act. Planned: lent vs. owed breakdown. (2) **Two primary actions under balance** — Add Expense (most frequent) + Settle Up. (3) **Settle Up as batch action** — people settle at end of month or end of trip, not per-expense. Settle Up shows all outstanding balances at once: one place to close everything. (4) **Recent Groups (3)** — most users don't have more than 4 active groups; 3 is the right default. Create Group option alongside. (5) **No individual expense list** — deliberate omission. 1:1 expenses take the same effort to log in Settlr as to just settle via UPI. Groups are where the app adds real value. (6) Recent activity below. |
+| Split method buried as two small words | Directly observed in Task 3; NASA-TLX: highest cognitive demand score | Split method is a **dedicated screen** in the add expense flow, not a hidden option. Uneven splits are the common case, not the edge case. Making it a dedicated step means users get **behaviourally anchored**: they learn to expect it there and stop hunting. The Splitwise failure mode: users moved past the form and only realised the split option was on the *previous* page. By then, they were confused and had to go back. |
+| Users had no help calculating split amounts | Observed on split screen: users froze, had to use calculator app | Settlr calculates live: "Equally" mode shows **₹X per person** in real time as a summary pill above the list. User picks method, app does the math. The green pill also solves a second problem: even if the user chooses "Equally" and makes no change, the screen **doesn't feel like a wasted step**, it's showing them something useful. It's information, not just a form. |
 | Every expense needs a "who paid" clarification | Even equal splits require knowing who paid before any debt can be calculated | The split screen handles both problems in one place: split *method* (how to divide) and split *by* (who paid). The screen serves all users, not just those splitting unevenly. |
-| + button opened Add Expense, not Create Group | Observed when users tried to create a group — wrong action triggered | In Settlr, group creation lives inside the **People tab** — not triggered by the FAB. The + FAB on the home screen adds an expense (most frequent action). ⚠️ **Still in design** — ask Divyansh about the final FAB behaviour once the project is complete. |
-| Friends and Groups are separate tabs | SHERPA errors Tasks 1 and 5: users accessed wrong section | Merged into a unified **People tab** — friends and groups in one list. Mental model: WhatsApp doesn't separate "people" from "groups" — conversations are conversations. Same logic here: the user is looking for someone to settle with or view, not for a category. Bottom nav: Home · People · Activity. |
-| No review step — users submitted expenses they immediately wanted to change | Post-task observation: users frequently had to re-open expenses to correct amounts or descriptions | Settlr adds a **Review screen** at the end of the add expense flow — framed like a final bill. User sees the full transaction (amount, split breakdown, who paid) before it's saved. Also allows adding a comment. The metaphor shifts from "form submission" to "confirm your order" — lower anxiety, fewer mistakes. |
-| Settlement flow had most SHERPA errors — and wrong entry point | Task 5 (Settle Up): T5.1 = A1, A4, A10, I2, A6 (wrong path, repeated action, omission); T5.2 = A7 (wrong section); T5.3 = A7, R1 (wrong action, confusion). Sticky note quotes: *"messed up the form, added an expense to settle"* / *"Added an expense to settle up — TASK FAIL"* / *"Wrong action direction, clicked overtime add expense ERR"*. Root cause: Splitwise settle-up was buried in the Friends tab — users had to navigate there, find a specific friend, then find the settle option. Many couldn't find it at all and tried to use the + button instead. | Settlr settle flow solves two distinct problems: (1) **Entry point** — Settle Up is a primary action on the home screen (batch view of everyone you owe/are owed by). Also accessible contextually from individual person page or group page — two mental models served. (2) **The flow itself** — Select person → Enter amount → Select payment method → Confirmed. Key details: users can enter a **partial amount** (partial settlement — realistic, not all users have the full sum ready) or tap a button to auto-fill the full amount. Payment method selection is currently UI-level (no live payment integration yet) — records the method and adjusts the balance. No Splitwise ambiguity about whether this is an "expense" or a "settlement". |
+| + button opened Add Expense, not Create Group | Observed when users tried to create a group: wrong action triggered | In Settlr, group creation lives inside the **People tab** — not triggered by the FAB. The + FAB on the home screen adds an expense (most frequent action). ⚠️ **Still in design** — ask Divyansh about the final FAB behaviour once the project is complete. |
+| Friends and Groups are separate tabs | SHERPA errors Tasks 1 and 5: users accessed wrong section | Merged into a unified **People tab** — friends and groups in one list. Mental model: WhatsApp doesn't separate "people" from "groups". Conversations are conversations. Same logic here: the user is looking for someone to settle with or view, not for a category. Bottom nav: Home · People · Activity. |
+| No review step — users submitted expenses they immediately wanted to change | Post-task observation: users frequently had to re-open expenses to correct amounts or descriptions | Settlr adds a **Review screen** at the end of the add expense flow, framed like a final bill. User sees the full transaction (amount, split breakdown, who paid) before it's saved. Also allows adding a comment. The metaphor shifts from "form submission" to "confirm your order": lower anxiety, fewer mistakes. |
+| Settlement flow had most SHERPA errors, and wrong entry point | Task 5 (Settle Up): T5.1 = A1, A4, A10, I2, A6 (wrong path, repeated action, omission); T5.2 = A7 (wrong section); T5.3 = A7, R1 (wrong action, confusion). Sticky note quotes: *"messed up the form, added an expense to settle"* / *"Added an expense to settle up — TASK FAIL"* / *"Wrong action direction, clicked overtime add expense ERR"*. Root cause: Splitwise settle-up was buried in the Friends tab. Users had to navigate there, find a specific friend, then find the settle option. Many couldn't find it at all and tried to use the + button instead. | Settlr settle flow solves two distinct problems: (1) **Entry point** — Settle Up is a primary action on the home screen (batch view of everyone you owe/are owed by). Also accessible contextually from individual person page or group page, so two mental models are served. (2) **The flow itself** — Select person → Enter amount → Select payment method → Confirmed. Key details: users can enter a **partial amount** (partial settlement, realistic since not all users have the full sum ready) or tap a button to auto-fill the full amount. Payment method selection is currently UI-level (no live payment integration yet); it records the method and adjusts the balance. No Splitwise ambiguity about whether this is an "expense" or a "settlement". |
 
 ---
 
@@ -59,16 +59,16 @@ The workflow compressed what would have been months of solo design work into wee
 > Why the design looks and works the way it does. Use these when writing design system sections.
 
 ### Colour — Why Olive?
-Most fintech apps go blue or purple — it signals trust, authority, establishment. Olive was a deliberate contrast. Settlr is about splitting expenses with friends, not banking. The brand needed to feel personal and warm, not corporate and cold. Olive is earthy and grounded — it reads as trustworthy without reading as institutional.
+Most fintech apps go blue or purple. It signals trust, authority, establishment. Olive was a deliberate contrast. Settlr is about splitting expenses with friends, not banking. The brand needed to feel personal and warm, not corporate and cold. Olive is earthy and grounded; it reads as trustworthy without reading as institutional.
 
 ### Colour — Why Coral for "Owe" instead of Red?
-Red signals error. Danger. Something went wrong. Owing money between friends is normal — it's the entire point of the app. Coral is warm and honest without being alarming. The amount is sometimes uncomfortable enough; the colour shouldn't amplify anxiety. Coral sits in the same warm family as the rest of the palette. Red would have felt like a foreign object.
+Red signals error. Danger. Something went wrong. Owing money between friends is normal; it's the entire point of the app. Coral is warm and honest without being alarming. The amount is sometimes uncomfortable enough; the colour shouldn't amplify anxiety. Coral sits in the same warm family as the rest of the palette. Red would have felt like a foreign object.
 
 ### Typography — Why Unbounded for amounts?
-Amounts are the most important data in any finance app. Unbounded's wide letterforms and tight tracking make numbers feel heavy and intentional — not just rendered text. Plus Jakarta Sans handles all UI text. The two fonts create a clear hierarchy: UI chrome vs. the data that matters.
+Amounts are the most important data in any finance app. Unbounded's wide letterforms and tight tracking make numbers feel heavy and intentional, not just rendered text. Plus Jakarta Sans handles all UI text. The two fonts create a clear hierarchy: UI chrome vs. the data that matters.
 
 ### Token Architecture — How it came together
-The 3-tier structure (primitive → semantic → component) didn't arrive fully formed. There was a rough idea from studying how systems like Material Design and Polaris work. But the exact structure was refined through building — specifically through the pain of changing something in one place and having to chase it through 20 files. The rule "nothing hardcoded, ever" was the constraint that forced the architecture to work properly.
+The 3-tier structure (primitive → semantic → component) didn't arrive fully formed. There was a rough idea from studying how systems like Material Design and Polaris work. But the exact structure was refined through building, specifically through the pain of changing something in one place and having to chase it through 20 files. The rule "nothing hardcoded, ever" was the constraint that forced the architecture to work properly.
 
 ---
 
@@ -91,18 +91,18 @@ The foundation fixed the inconsistency. Once the token system and rules were def
 The first component that came out of Claude with zero hardcoded values. Every colour, spacing, and border radius traced back through the token system. That's when the workflow became real.
 
 ### Result
-Weeks instead of months. A design system that a developer could actually implement — because the code structure mirrors the design structure exactly.
+Weeks instead of months. A design system that a developer could actually implement, because the code structure mirrors the design structure exactly.
 
 ---
 
 ## User Testing Status
 ⚠️ **Settlr has not been tested with users yet.** The app is still in progress.
 
-Every design decision is grounded in the Splitwise research findings — not assumed to work, but intentionally designed to address specific, observed failures. The hypothesis is clear. User testing is planned once the build is complete.
+Every design decision is grounded in the Splitwise research findings, not assumed to work, but intentionally designed to address specific, observed failures. The hypothesis is clear. User testing is planned once the build is complete.
 
 ### What to test (planned)
-- Task 3 equivalent: Add expense with unequal split — does the dedicated split screen reduce cognitive load vs Splitwise?
-- Task 5 equivalent: Settle up — can users find and complete the flow without confusion?
+- Task 3 equivalent: Add expense with unequal split. Does the dedicated split screen reduce cognitive load vs Splitwise?
+- Task 5 equivalent: Settle up. Can users find and complete the flow without confusion?
 - Navigation: does merging Friends + Groups into People tab reduce wrong-section errors?
 - Overall SUS score — baseline comparison against Splitwise's score from the original study.
 
@@ -164,7 +164,7 @@ A usability evaluation method where expert evaluators examine the interface agai
 **Cognitive Walkthrough**
 1. Open app → recognisable icon, launches swiftly
 2. Navigate to "Groups" in bottom nav (label/icon makes it easy)
-3. Find "Create New Group" — button or plus icon, intuitive
+3. Find "Create New Group" (button or plus icon, intuitive)
 4. Name the group (clear text field, e.g. "Family")
 5. Add Members → contacts or email entry
 6. Review and confirm → "Create" / "Confirm," app provides feedback
@@ -308,7 +308,7 @@ Standard questionnaire measuring perceived usability.
 #### SHERPA Validation
 Errors found in user testing were compared against pre-defined SHERPA codes to validate predictions.
 
-*(Exact scores for NASA-TLX and SUS — see `/Users/divyanshrastogi/Downloads/part 3.png`)*
+*(Exact scores for NASA-TLX and SUS; see `/Users/divyanshrastogi/Downloads/part 3.png`)*
 
 ---
 
@@ -346,7 +346,7 @@ Four interventions proposed based on findings:
 - **Role**: UX Designer
 
 ### What it is
-Settlr is an independent redesign of the group expense splitting experience. The Splitwise research findings were used as the foundation — the IA was restructured, user flows were simplified, and an entirely new design system was built from scratch.
+Settlr is an independent redesign of the group expense splitting experience. The Splitwise research findings were used as the foundation: the IA was restructured, user flows were simplified, and an entirely new design system was built from scratch.
 
 ---
 
@@ -567,7 +567,7 @@ screens/*.html → screens (use semantic tokens only)
 | `/Users/divyanshrastogi/Desktop/settlr/css/` | 42 CSS component files |
 | `/Users/divyanshrastogi/Desktop/settlr/components/` | 41 component spec markdown files |
 | `/Users/divyanshrastogi/Desktop/settlr/screens/` | 31 user-facing screen HTML files (+9 dev/preview pages) |
-| `/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/` | **Mirror** of source — used by the case study iframes (synced 2026-05-02) |
+| `/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/` | **Mirror** of source, used by the case study iframes (synced 2026-05-02) |
 
 ---
 ---
@@ -582,7 +582,7 @@ screens/*.html → screens (use semantic tokens only)
 > "Group expense splitting shouldn't feel like a chore."
 
 **Problem body:**
-> "Started as an ergonomic evaluation of Splitwise — a college course project. But the findings were too good to leave in a report. Splitwise had real usability gaps: cognitive load in settlement flows, unclear information hierarchy, and an onboarding experience that assumed too much prior knowledge."
+> "Started as an ergonomic evaluation of Splitwise, a college course project. But the findings were too good to leave in a report. Splitwise had real usability gaps: cognitive load in settlement flows, unclear information hierarchy, and an onboarding experience that assumed too much prior knowledge."
 
 **Research section title:**
 > "Three methods. One clear picture."
@@ -591,7 +591,7 @@ screens/*.html → screens (use semantic tokens only)
 > "Cleaner IA. Smarter flows. A complete design system."
 
 **Redesign body:**
-> "Used this project as an experimental ground for design systems thinking — built a full component library using Figma, Claude, and Figma MCP integration."
+> "Used this project as an experimental ground for design systems thinking. Built a full component library using Figma, Claude, and Figma MCP integration."
 
 **Chips shown:** HTA analysis · NASA TLX · SHERPA · Competitive analysis · Full design system
 
@@ -601,10 +601,10 @@ screens/*.html → screens (use semantic tokens only)
 > Source: LinkedIn post series documenting the same workflow used for Settlr.
 
 ### The Core Enabler
-Figma's MCP server integration with Claude. Claude reads the Figma file directly — components, tokens, structure — as **live structured data**. Not screenshots. Not exports. Actual understanding of the system.
+Figma's MCP server integration with Claude. Claude reads the Figma file directly (components, tokens, structure) as **live structured data**. Not screenshots. Not exports. Actual understanding of the system.
 
 ### Why it was needed
-Multiple AI tools were generating screens fast but inconsistently — cramped layouts, tiny fonts, no accessibility, outputs that looked nothing like each other. Couldn't compare directions. Couldn't lock in a look and feel. The foundation (design system + rules) fixed the inconsistency completely.
+Multiple AI tools were generating screens fast but inconsistently: cramped layouts, tiny fonts, no accessibility, outputs that looked nothing like each other. Couldn't compare directions. Couldn't lock in a look and feel. The foundation (design system + rules) fixed the inconsistency completely.
 
 ### Token Architecture — 3 Tiers
 1. **Primitive tokens** — raw values only. Every color, spacing, font size, radius, shadow. No meaning attached.
@@ -614,11 +614,11 @@ Multiple AI tools were generating screens fast but inconsistently — cramped la
 3. **Component tokens** — scoped to each component, reference the semantic layer only.
    - e.g. `button-background → color-background-primary`
 
-**Why 3 tiers**: When something changes (and it always does) — change it in one place, it flows through the entire system automatically. That's what makes it scalable. That's what makes it a source of truth.
+**Why 3 tiers**: When something changes (and it always does), change it in one place, and it flows through the entire system automatically. That's what makes it scalable. That's what makes it a source of truth.
 
 ### Component Build Approach
 - All rules defined upfront: which token goes where, which text style, which padding, which icon size
-- Claude wasn't guessing — it was executing a fully defined vision
+- Claude wasn't guessing. It was executing a fully defined vision
 - Hand it one component design → it creates every state, every size, every variant with the right properties
 - Then generates complete code for all of it
 - Design control stays with the designer. Grunt work automated.
@@ -631,11 +631,11 @@ Multiple AI tools were generating screens fast but inconsistently — cramped la
 
 2. **Custom skills** — Skills created to tell Claude exactly what to do at each stage. Which tools to use, in what order, for what purpose. No guessing. No getting overwhelmed.
 
-3. **Figma first, always** — Before writing a single line of code, Claude builds the component directly in Figma. Auto layout, dimensions, tokens — all as described.
+3. **Figma first, always** — Before writing a single line of code, Claude builds the component directly in Figma. Auto layout, dimensions, tokens, all as described.
 
 4. **Live review + iterate** — Designer reviews in real time. Padding off → fix it. Wrong color → describe the change. Auto layout wrong → adjust. Repeat until it looks exactly right.
 
-5. **Designer approves → token cleanup** — Claude refreshes all tokens used in that component. Removes unused tokens. Ensures no color is pulled from the semantic layer directly — every value has a proper component-level token.
+5. **Designer approves → token cleanup** — Claude refreshes all tokens used in that component. Removes unused tokens. Ensures no color is pulled from the semantic layer directly; every value has a proper component-level token.
 
 6. **Only then: write the code** — Code structure mirrors the design system exactly:
    - Primitive tokens → one CSS file
@@ -647,7 +647,7 @@ Multiple AI tools were generating screens fast but inconsistently — cramped la
 8. **Right-sized chunks** — Enough context for Claude to work well, not so much it loses the thread. Sequenced carefully.
 
 ### The Result
-"A workflow that felt less like using a tool — and more like working with someone who understood the system as well as I did."
+"A workflow that felt less like using a tool, and more like working with someone who understood the system as well as I did."
 
 ---
 
@@ -657,4 +657,4 @@ Multiple AI tools were generating screens fast but inconsistently — cramped la
 - Screenshots of built screens (from `/screens/`)
 - Hero image for case study overlay
 - Before/After comparisons (Splitwise vs Settlr screens)
-- Exact NASA-TLX and SUS scores (from `part 3.png` — needs higher-res image)
+- Exact NASA-TLX and SUS scores (from `part 3.png`; needs higher-res image)
