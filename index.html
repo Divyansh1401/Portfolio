@@ -1780,9 +1780,10 @@
       flex-direction: row-reverse;                   /* icon right, label appears to the left */
       justify-content: flex-start;                   /* with row-reverse, this anchors icon to right */
     }
+    .resume-actions .btn-icon-expand:hover { width: 128px; }   /* tighter — no empty space on the left */
     .resume-actions .btn-icon-expand .btn-label {
       padding-right: 0;
-      padding-left: 16px;
+      padding-left: 10px;                            /* gap between label text and icon */
       transform: translateX(6px);                    /* slide in from the right (toward icon) */
     }
     .resume-actions .btn-icon-expand:hover .btn-label {
