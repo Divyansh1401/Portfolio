@@ -6237,8 +6237,8 @@
         </div>
       </div>
 
-      <!-- Card 3: Kinko Insurance -->
-      <div class="exp-card reveal case-link exp-card--nda" data-project="kinko">
+      <!-- Card 3: Kinko Insurance — not clickable until docs are written -->
+      <div class="exp-card reveal exp-card--nda" data-project="kinko">
         <div class="exp-card-inner">
           <div class="parallax-wrap">
             <img src="assets/images/kinko/thumbnail.webp" class="exp-card-img" alt="Kinko Insurance">
@@ -9096,10 +9096,10 @@
     backdrop.addEventListener('click', closeOverlay);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
 
-    // Hash on load (for direct/shared links).
+    // Hash on load (for direct/shared links). Kinko gated until docs are written.
     if (location.hash) {
       const slug = location.hash.slice(1);
-      if (caseStudies[slug]) openOverlay(slug);
+      if (caseStudies[slug] && slug !== 'kinko') openOverlay(slug);
     }
 
     // ── Settlr overlay interactions (proto switcher + chip toggle) ──
