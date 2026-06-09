@@ -49,3 +49,7 @@
 @import './success-state.css';
 @import './invite-banner.css';
 @import './confetti.css';
+
+/* Global motion — must come last to override component transitions */
+@import './motion.css';
+@import './transitions.css';

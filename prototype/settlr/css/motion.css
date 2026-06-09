@@ -1,0 +1,116 @@
+/* ============================================
+   Settlr Motion — global animations & transitions
+   Performance-first: cheap properties only (transform, opacity).
+   No box-shadow / background-color in transitions.
+   No body-level animations (forces full-page repaints).
+   ============================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ── Tap / press feedback ────────────────────────────────
+     Only `transform` is transitioned — composite-only, GPU-friendly.
+     Listening for `transitionend` is cheap per element. */
+
+  .btn,
+  .fab,
+  .icon-btn,
+  .chip,
+  .currency-chip,
+  .toggle-control,
+  .type-chip,
+  .card-create,
+  .summary-card,
+  .invite-banner,
+  .settings-row,
+  .detail-row,
+  .radio-item,
+  .radio-item-boxed,
+  .checkbox-item {
+    transition: transform var(--duration-fast) var(--ease-out);
+    will-change: transform;
+  }
+
+  .btn:active,
+  .fab:active,
+  .card-create:active,
+  .summary-card:active,
+  .invite-banner:active,
+  .settings-row:active,
+  .detail-row:active,
+  .radio-item:active,
+  .radio-item-boxed:active,
+  .checkbox-item:active,
+  .type-chip:active {
+    transform: scale(var(--press-scale));
+  }
+
+  .icon-btn:active,
+  .chip:active,
+  .currency-chip:active,
+  .toggle-control:active {
+    transform: scale(var(--press-scale-sm));
+  }
+
+  /* List rows / cards: avoid scaling images during press —
+     subpixel rescaling on photos looks blurry & laggy.
+     Use a subtle opacity dim instead. */
+  .person-item,
+  .expense-item,
+  .update-item,
+  .group-row,
+  .balance-row,
+  .card-group {
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .person-item:active,
+  .expense-item:active,
+  .update-item:active,
+  .group-row:active,
+  .balance-row:active,
+  .card-group:active {
+    opacity: 0.7;
+  }
+
+  /* ── Avatar / photo fade-in ──────────────────────────────
+     Photos in avatar tiles, group cards, and balance rows fade
+     in once. Decoded image paint coincides with `to` keyframe. */
+  @keyframes settlr-img-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .avatar--photo img,
+  .card-group__image img,
+  .person-item__group-icon img,
+  .group-row__icon img,
+  .balance-row__avatar img {
+    animation: settlr-img-fade-in var(--duration-base) var(--ease-out) both;
+  }
+
+  /* ── Sheet / overlay open animations ─────────────────────
+     Only animated when actually opening (one-shot keyframes). */
+  @keyframes settlr-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes settlr-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .sheet {
+    animation: settlr-sheet-in var(--duration-slow) var(--ease-out) both;
+  }
+
+  .sheet-overlay {
+    animation: settlr-overlay-in var(--duration-base) var(--ease-out) both;
+  }
+}

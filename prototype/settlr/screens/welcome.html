@@ -24,7 +24,6 @@
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
-      overflow: hidden;
     }
 
     /* ── Status Bar ── */
@@ -34,7 +33,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
     }
     .status-bar__time {
       font-family: var(--font-body);
@@ -51,34 +50,77 @@
       color: var(--text-primary);
     }
 
-    /* ── Welcome Content ── */
-    .welcome-content {
+    /* ── Welcome layout ── */
+    .welcome {
       flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--spacing-32) var(--spacing-24);
+      padding: var(--spacing-32) var(--spacing-24) var(--spacing-16);
       gap: var(--spacing-24);
-      text-align: center;
-      position: relative;
     }
 
-    /* ── Celebration Icon ── */
-    .welcome-icon {
+    .welcome__hero {
       width: 96px;
       height: 96px;
       border-radius: var(--radius-full);
-      background: var(--type-chip-bg-on);
+      background: var(--btn-secondary-bg);
       display: flex;
       align-items: center;
       justify-content: center;
       animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
     }
-    .welcome-icon__emoji {
-      font-size: 44px;
+    .welcome__hero-emoji {
+      font-size: 48px;
       line-height: 1;
-      animation: wiggle 0.5s ease 0.8s both;
+      animation: wiggle 0.6s ease 0.8s both;
+    }
+
+    .welcome__eyebrow {
+      animation: fadeUp 0.5s ease 0.4s both;
+      color: var(--text-brand);
+    }
+
+    .welcome__title {
+      animation: fadeUp 0.5s ease 0.5s both;
+      color: var(--top-app-bar-title);
+    }
+    .welcome__title-brand {
+      color: var(--text-brand);
+    }
+
+    .welcome__body {
+      animation: fadeUp 0.5s ease 0.6s both;
+      color: var(--text-secondary);
+      max-width: 320px;
+    }
+
+    .welcome__divider {
+      height: var(--border-small);
+      background: var(--border-subtle);
+      margin: var(--spacing-8) 0;
+      animation: fadeUp 0.5s ease 0.7s both;
+    }
+
+    .welcome__features {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-16);
+      animation: fadeUp 0.5s ease 0.8s both;
+    }
+    .welcome__feature {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-12);
+    }
+    .welcome__feature-bullet {
+      width: var(--spacing-8);
+      height: var(--spacing-8);
+      border-radius: var(--radius-full);
+      background: var(--text-brand);
+      flex-shrink: 0;
+    }
+    .welcome__feature-text {
+      color: var(--text-primary);
     }
 
     @keyframes bounceIn {
@@ -92,89 +134,18 @@
       75% { transform: rotate(-6deg); }
       100% { transform: rotate(0deg); }
     }
-
-    /* ── Text ── */
-    .welcome-heading {
-      font-family: var(--font-display);
-      font-size: var(--font-size-32);
-      font-weight: var(--weight-black);
-      line-height: var(--line-height-36);
-      letter-spacing: -1.28px;
-      color: var(--top-app-bar-title);
-      animation: fadeUp 0.5s ease 0.6s both;
-    }
-    .welcome-subheading {
-      font-family: var(--font-body);
-      font-size: var(--font-size-16);
-      font-weight: var(--weight-regular);
-      line-height: var(--line-height-27);
-      color: var(--text-secondary);
-      max-width: 300px;
-      animation: fadeUp 0.5s ease 0.8s both;
-    }
-
-    /* ── Feature Cards ── */
-    .features {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-12);
-      width: 100%;
-      padding: 0 var(--spacing-8);
-      animation: fadeUp 0.5s ease 1s both;
-    }
-    .feature-card {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-12);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      background: var(--surface-card);
-      border: var(--border-small) solid var(--border-subtle);
-    }
-    .feature-card__icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--icon-md);
-      flex-shrink: 0;
-    }
-    .feature-card__icon--groups {
-      background: var(--type-chip-bg-on);
-    }
-    .feature-card__icon--split {
-      background: var(--label-success-bg);
-    }
-    .feature-card__icon--settle {
-      background: var(--btn-icon-bg);
-    }
-    .feature-card__text {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-    .feature-card__title {
-      font-family: var(--font-body);
-      font-size: var(--font-size-14);
-      font-weight: var(--weight-semibold);
-      color: var(--text-primary);
-    }
-    .feature-card__desc {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      line-height: var(--line-height-19);
-      color: var(--text-tertiary);
-    }
-
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
+    @media (prefers-reduced-motion: reduce) {
+      .welcome__hero, .welcome__eyebrow, .welcome__title,
+      .welcome__body, .welcome__divider, .welcome__features {
+        animation: none;
+      }
+    }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -188,58 +159,50 @@
     </div>
   </div>
 
-  <!-- ── Confetti ── -->
-  <div class="confetti confetti--slow">
-    <div class="confetti__dot" style="width: 10px; height: 10px; left: 12%; top: 18%; background: var(--fab-bg); animation-delay: 0.3s;"></div>
-    <div class="confetti__dot" style="width: 8px; height: 8px; left: 28%; top: 12%; background: var(--expense-lent-fg); animation-delay: 0.5s;"></div>
-    <div class="confetti__dot" style="width: 6px; height: 6px; left: 52%; top: 15%; background: var(--text-brand); animation-delay: 0.4s;"></div>
-    <div class="confetti__dot" style="width: 10px; height: 10px; left: 72%; top: 20%; background: var(--label-success-fg); animation-delay: 0.6s;"></div>
-    <div class="confetti__dot" style="width: 8px; height: 8px; left: 88%; top: 14%; background: var(--btn-secondary-bg); animation-delay: 0.35s;"></div>
-    <div class="confetti__dot" style="width: 6px; height: 6px; left: 42%; top: 10%; background: var(--expense-lent-bg); animation-delay: 0.55s;"></div>
-    <div class="confetti__dot" style="width: 10px; height: 10px; left: 8%; top: 24%; background: var(--type-chip-border-off); animation-delay: 0.7s;"></div>
-    <div class="confetti__dot" style="width: 8px; height: 8px; left: 62%; top: 26%; background: var(--label-success-bg); animation-delay: 0.45s;"></div>
-  </div>
+  <!-- ── Welcome content ── -->
+  <div class="welcome">
 
-  <!-- ── Welcome Content ── -->
-  <div class="welcome-content">
-    <div class="welcome-icon">
-      <span class="welcome-icon__emoji">🎉</span>
+    <div class="welcome__hero">
+      <span class="welcome__hero-emoji">🎉</span>
     </div>
 
-    <h1 class="welcome-heading">Welcome to Settlr!</h1>
-    <p class="welcome-subheading">You're all set. Here's what you can do:</p>
+    <div class="welcome__eyebrow text-overline-md">You're all set</div>
 
-    <!-- Feature Cards -->
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-card__icon feature-card__icon--groups">👥</div>
-        <div class="feature-card__text">
-          <div class="feature-card__title">Create Groups</div>
-          <div class="feature-card__desc">Organize trips, roommates, or any shared expenses</div>
-        </div>
+    <h1 class="welcome__title text-display-lg">
+      Welcome to<br><span class="welcome__title-brand">Settlr</span>
+    </h1>
+
+    <p class="welcome__body text-body-md">
+      Less math. More memories.
+    </p>
+
+    <div class="welcome__divider"></div>
+
+    <div class="welcome__features">
+      <div class="welcome__feature">
+        <span class="welcome__feature-bullet"></span>
+        <span class="welcome__feature-text text-title-sm">Create groups in seconds</span>
       </div>
-      <div class="feature-card">
-        <div class="feature-card__icon feature-card__icon--split">💸</div>
-        <div class="feature-card__text">
-          <div class="feature-card__title">Split Expenses</div>
-          <div class="feature-card__desc">Divide bills equally, by amount, or by percentage</div>
-        </div>
+      <div class="welcome__feature">
+        <span class="welcome__feature-bullet"></span>
+        <span class="welcome__feature-text text-title-sm">Split equally, by amount, or by share</span>
       </div>
-      <div class="feature-card">
-        <div class="feature-card__icon feature-card__icon--settle">🤝</div>
-        <div class="feature-card__text">
-          <div class="feature-card__title">Settle Up</div>
-          <div class="feature-card__desc">Track who owes what and settle debts easily</div>
-        </div>
+      <div class="welcome__feature">
+        <span class="welcome__feature-bullet"></span>
+        <span class="welcome__feature-text text-title-sm">Settle up in a single tap</span>
       </div>
     </div>
+
   </div>
 
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
-    <a href="home-dashboard.html" class="btn btn--primary btn--lg btn--full">Let's Go!</a>
-    <a href="home-dashboard.html" class="btn btn--ghost btn--md btn--full">Skip &amp; Explore</a>
+    <a href="home-dashboard" class="btn btn--primary btn--lg btn--full">Let's Go!</a>
   </div>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

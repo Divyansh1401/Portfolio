@@ -63,8 +63,12 @@
       padding-bottom: 112px;
     }
 
-    .fab i { font-size: var(--icon-lg); }
+    /* ── Bottom nav fills width (no FAB on this screen) ── */
+    .bottom-nav-bar { padding: var(--spacing-16); }
+    .bottom-nav { flex: 1; }
+    .bottom-nav__tab { flex: 1; width: auto; }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -130,28 +134,25 @@
   <!-- ── Fixed Bottom: Nav Pill + FAB ── -->
   <div class="bottom-nav-bar">
     <nav class="bottom-nav">
-      <a href="home-dashboard.html" class="bottom-nav__tab">
+      <a href="home-dashboard" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
-      <a href="people.html" class="bottom-nav__tab">
+      <a href="people" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-user"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
-      <a href="activity.html" class="bottom-nav__tab is-active">
+      <a href="activity" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-clock"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>
-    <a href="add-amount.html" class="fab" aria-label="Add expense">
-      <i class="ph-bold ph-plus"></i>
-    </a>
   </div>
 
   <script src="../js/store.js"></script>
@@ -210,7 +211,7 @@
           time: '3 days ago',
           group: 'Friends',
           unread: false,
-          actions: [{ label: 'View', href: 'expense-detail.html' }]
+          actions: []
         },
         {
           id: 'u6',
@@ -263,7 +264,6 @@
             '</div>' +
             (actionsHtml ? '<div class="update-item__actions">' + actionsHtml + '</div>' : '') +
           '</div>' +
-          '<div class="update-item__dot"></div>' +
         '</div>';
       }
 
@@ -363,5 +363,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

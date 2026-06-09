@@ -66,7 +66,7 @@
     }
     .photo-upload__text {
       font-family: var(--font-body);
-      font-size: 12px;
+      font-size: 10px;
       font-weight: var(--weight-medium);
       color: var(--text-brand);
       letter-spacing: 0.5px;
@@ -81,7 +81,7 @@
     }
     .type-section__label {
       font-family: var(--font-body);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: var(--weight-semibold);
       letter-spacing: 1.76px;
       text-transform: uppercase;
@@ -93,6 +93,7 @@
       gap: var(--spacing-8);
     }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -108,7 +109,7 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="home-dashboard.html" class="top-app-bar__back" aria-label="Back">
+    <a href="home-dashboard" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">New Group</span>
@@ -133,55 +134,15 @@
     </div>
 
     <!-- Group Name -->
-    <div class="input-field">
+    <div class="input-field input-field--rect">
       <label class="input-field__label">Group name</label>
       <div class="input-field__box">
         <input type="text" id="js-group-name" placeholder="e.g. Goa Trip, Flat Expenses..." autofocus>
       </div>
-      <span class="input-field__helper">Give your group a memorable name</span>
-    </div>
-
-    <!-- Group Type -->
-    <div class="type-section">
-      <span class="type-section__label">Group Type</span>
-      <div class="type-grid">
-        <div class="type-chip is-selected" onclick="selectType(this)">
-          <span class="type-chip__emoji">✈️</span>
-          <span class="type-chip__name">Trip</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">🏠</span>
-          <span class="type-chip__name">Home</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">🍕</span>
-          <span class="type-chip__name">Food</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">💼</span>
-          <span class="type-chip__name">Work</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">🎉</span>
-          <span class="type-chip__name">Event</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">❤️</span>
-          <span class="type-chip__name">Couple</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">⚽</span>
-          <span class="type-chip__name">Sports</span>
-        </div>
-        <div class="type-chip" onclick="selectType(this)">
-          <span class="type-chip__emoji">📝</span>
-          <span class="type-chip__name">Other</span>
-        </div>
-      </div>
     </div>
 
     <!-- Description (optional) -->
-    <div class="input-field">
+    <div class="input-field input-field--multiline">
       <label class="input-field__label">Description (optional)</label>
       <div class="input-field__box">
         <textarea id="js-group-description" placeholder="Add a short note about this group..." rows="3" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-body);font-size:var(--font-size-14);font-weight:var(--weight-regular);color:var(--input-fg-active);resize:none;line-height:var(--line-height-23);"></textarea>
@@ -192,15 +153,10 @@
 
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
-    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next — Add Members</button>
+    <button id="js-next" class="btn btn--primary btn--lg btn--full">Next → Add Members</button>
   </div>
 
   <script>
-    function selectType(el) {
-      document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('is-selected'));
-      el.classList.add('is-selected');
-    }
-
     document.getElementById('js-next').addEventListener('click', function() {
       var nameInput = document.getElementById('js-group-name');
       var name = nameInput.value.trim();
@@ -209,13 +165,14 @@
         nameInput.closest('.input-field').classList.add('input-field--error');
         return;
       }
-      var selectedChip = document.querySelector('.type-chip.is-selected');
-      var type = selectedChip ? selectedChip.querySelector('.type-chip__name').textContent.trim().toLowerCase() : 'other';
-      var emoji = selectedChip ? selectedChip.querySelector('.type-chip__emoji').textContent.trim() : '📝';
-      sessionStorage.setItem('settlr_new_group', JSON.stringify({ name: name, type: type, emoji: emoji }));
+      sessionStorage.setItem('settlr_new_group', JSON.stringify({ name: name, type: 'other', emoji: '📝' }));
       location.href = 'create-group-members';
     });
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

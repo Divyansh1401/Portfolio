@@ -1,0 +1,116 @@
+/* ============================================
+   Settlr — View Transitions
+   Cross-document page transitions via the View Transitions API.
+   Direction class on <html> selects the animation.
+   Set by js/router.js based on link intent (data-tx attribute,
+   route table, or browser back).
+   ============================================ */
+
+/* Enable cross-document view transitions on every page that loads
+   this stylesheet (effectively all of them). */
+@view-transition {
+  navigation: auto;
+}
+
+/* ============================================
+   Default crossfade (replace) — used when no
+   direction class is applied (e.g. auth flow).
+   ============================================ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-slow);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+
+/* ============================================
+   Lateral — peer screens (Home ↔ People ↔ Activity)
+   Right: outgoing slides left, incoming enters from right.
+   Left: mirrored.
+   ============================================ */
+@keyframes settlr-tx-out-left  { to   { transform: translateX(-30%); opacity: 0.6; } }
+@keyframes settlr-tx-in-right  { from { transform: translateX(100%); } }
+@keyframes settlr-tx-out-right { to   { transform: translateX(30%);  opacity: 0.6; } }
+@keyframes settlr-tx-in-left   { from { transform: translateX(-100%); } }
+
+html.tx-lateral-right::view-transition-old(root) { animation-name: settlr-tx-out-left; }
+html.tx-lateral-right::view-transition-new(root) { animation-name: settlr-tx-in-right; }
+
+html.tx-lateral-left::view-transition-old(root)  { animation-name: settlr-tx-out-right; }
+html.tx-lateral-left::view-transition-new(root)  { animation-name: settlr-tx-in-left; }
+
+/* Persistent bottom dock during lateral tab transitions.
+   Assigning a unique view-transition-name to .bottom-nav-bar
+   pulls it out of the root transition group so the dock stays
+   pinned to the viewport while only the content above slides.
+   Default behavior between old and new is a crossfade — exactly
+   right since the active-tab highlight differs between pages. */
+html.tx-lateral-left  .bottom-nav-bar,
+html.tx-lateral-right .bottom-nav-bar {
+  view-transition-name: settlr-bottom-dock;
+}
+
+::view-transition-old(settlr-bottom-dock),
+::view-transition-new(settlr-bottom-dock) {
+  animation-duration: var(--duration-base);
+  animation-timing-function: var(--ease-out);
+}
+
+/* ============================================
+   Push — drill-down (forward)
+   Outgoing parallaxes left ~30%, incoming slides full from right.
+   ============================================ */
+@keyframes settlr-tx-push-out { to   { transform: translateX(-30%); } }
+@keyframes settlr-tx-push-in  { from { transform: translateX(100%); } }
+
+html.tx-push::view-transition-old(root) { animation-name: settlr-tx-push-out; }
+html.tx-push::view-transition-new(root) { animation-name: settlr-tx-push-in; }
+
+/* ============================================
+   Pop — back (mirror of push)
+   Outgoing slides right (off-screen), incoming parallaxes back from left ~30%.
+   ============================================ */
+@keyframes settlr-tx-pop-out  { to   { transform: translateX(100%); } }
+@keyframes settlr-tx-pop-in   { from { transform: translateX(-30%); } }
+
+html.tx-pop::view-transition-old(root) { animation-name: settlr-tx-pop-out; }
+html.tx-pop::view-transition-new(root) { animation-name: settlr-tx-pop-in; }
+
+/* ============================================
+   Modal-up — new task (Add Expense, Add Group, Settle)
+   Incoming rises from below; outgoing dims slightly in place.
+   ============================================ */
+@keyframes settlr-tx-modal-in   { from { transform: translateY(100%); } }
+@keyframes settlr-tx-modal-fade { to   { opacity: 0.5; } }
+
+html.tx-modal-up::view-transition-old(root) {
+  animation-name: settlr-tx-modal-fade;
+  animation-duration: var(--duration-base);
+}
+html.tx-modal-up::view-transition-new(root) {
+  animation-name: settlr-tx-modal-in;
+}
+
+/* ============================================
+   Modal-down — dismissing the modal back to caller.
+   ============================================ */
+@keyframes settlr-tx-modal-out  { to   { transform: translateY(100%); } }
+@keyframes settlr-tx-modal-restore { from { opacity: 0.5; } }
+
+html.tx-modal-down::view-transition-old(root) {
+  animation-name: settlr-tx-modal-out;
+}
+html.tx-modal-down::view-transition-new(root) {
+  animation-name: settlr-tx-modal-restore;
+  animation-duration: var(--duration-base);
+}
+
+/* ============================================
+   Strict reduced-motion: cancel all transitions.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

@@ -107,53 +107,10 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    .full-amount-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--spacing-4);
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      background: var(--type-chip-bg-on);
-      color: var(--btn-secondary-fg);
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-semibold);
-      border: none;
-      cursor: pointer;
-      margin-top: var(--spacing-8);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .full-amount-chip:active { background: var(--btn-secondary-bg); }
 
-    /* ── Numpad ── */
-    .numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border-subtle);
-      border-top: var(--border-small) solid var(--border-subtle);
-      flex-shrink: 0;
-    }
-    .numpad__key {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 56px;
-      background: var(--surface-card);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: var(--font-size-20);
-      font-weight: var(--weight-semibold);
-      color: var(--text-primary);
-      transition: background 0.1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .numpad__key:active { background: var(--btn-icon-bg); }
-    .numpad__key--action { color: var(--text-brand); }
-    .numpad__key i { font-size: var(--font-size-24); }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -169,7 +126,7 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="settle-select.html" class="top-app-bar__back" aria-label="Back">
+    <a href="settle-select" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Settle Up</span>
@@ -195,29 +152,12 @@
   <div class="amount-area">
     <span class="currency-badge">₹ INR</span>
     <div class="amount-display">₹1,220<span class="cursor"></span></div>
-    <button class="full-amount-chip">✓ Full amount</button>
   </div>
 
-  <!-- ── Numpad ── -->
-  <div class="numpad">
-    <button class="numpad__key">1</button>
-    <button class="numpad__key">2</button>
-    <button class="numpad__key">3</button>
-    <button class="numpad__key">4</button>
-    <button class="numpad__key">5</button>
-    <button class="numpad__key">6</button>
-    <button class="numpad__key">7</button>
-    <button class="numpad__key">8</button>
-    <button class="numpad__key">9</button>
-    <button class="numpad__key numpad__key--action">.</button>
-    <button class="numpad__key">0</button>
-    <button class="numpad__key numpad__key--action">
-      <i class="ph ph-backspace"></i>
-    </button>
-  </div>
 
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
+    <button class="btn btn--lg btn--secondary full-amount-btn">Pay full amount</button>
     <button class="btn btn--lg btn--primary" id="js-continue">Continue</button>
   </div>
 
@@ -254,7 +194,7 @@
       updateDisplay();
 
       // Pre-fill full amount
-      document.querySelector('.full-amount-chip').addEventListener('click', function() {
+      document.querySelector('.full-amount-btn').addEventListener('click', function() {
         raw = String(Math.round(bal.amount));
         updateDisplay();
       });
@@ -290,5 +230,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

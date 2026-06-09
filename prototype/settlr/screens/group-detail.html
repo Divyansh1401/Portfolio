@@ -36,7 +36,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
       z-index: 10;
     }
     .status-bar__time {
@@ -226,6 +226,7 @@
     .tab-panel.is-empty .tab-empty { display: flex; }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -257,10 +258,10 @@
     <span class="hero-section__emoji" id="js-group-emoji">🏖️</span>
     <!-- Overlay back + settings -->
     <div class="hero-section__actions">
-      <a href="home-dashboard.html" class="icon-btn icon-btn--overlay" aria-label="Back">
+      <a href="home-dashboard" class="icon-btn icon-btn--overlay" aria-label="Back">
         <i class="ph-bold ph-caret-left icon-btn__icon"></i>
       </a>
-      <a href="edit-group.html" class="icon-btn icon-btn--overlay" aria-label="Edit group">
+      <a href="edit-group" class="icon-btn icon-btn--overlay" aria-label="Edit group">
         <i class="ph ph-gear icon-btn__icon"></i>
       </a>
     </div>
@@ -268,7 +269,7 @@
 
   <!-- ── Group Avatar ── -->
   <div class="hero-section__avatar-wrap">
-    <div class="avatar avatar--xl avatar--initials">
+    <div class="avatar avatar--xl avatar--initials avatar--group">
       <span id="js-group-avatar-emoji">🏖️</span>
     </div>
   </div>
@@ -291,9 +292,9 @@
       </button>
       <button class="segment-item" data-tab="balances">
         <span class="segment-item__icon">
-          <i class="ph ph-arrow-up"></i>
+          <i class="ph ph-users"></i>
         </span>
-        Balances
+        Members
       </button>
     </div>
   </div>
@@ -339,13 +340,13 @@
 
   <!-- ── Screen Footer ── -->
   <div class="screen-footer">
-    <a href="settle-select.html" class="btn btn--lg btn--secondary">
+    <a href="settle-select" class="btn btn--lg btn--secondary">
       <span class="btn__content">
         Settle up
         <i class="btn__icon ph-bold ph-arrow-right"></i>
       </span>
     </a>
-    <a href="add-amount.html" class="btn btn--lg btn--primary">
+    <a href="add-amount" class="btn btn--lg btn--primary">
       <span class="btn__content">
         Add expense
         <i class="btn__icon ph-bold ph-plus"></i>
@@ -476,5 +477,10 @@
     });
   </script>
 
+<script src="../js/segment-slider.js" defer></script>
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

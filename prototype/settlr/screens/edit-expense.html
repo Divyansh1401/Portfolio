@@ -45,11 +45,11 @@
       padding: var(--spacing-16) 0;
     }
     .amount-input-wrap {
-      display: flex;
-      align-items: center;
+      display: inline-flex;
+      align-items: baseline;
       justify-content: center;
       gap: var(--spacing-4);
-      width: 100%;
+      width: auto;
     }
     .amount-input-wrap__symbol {
       font-family: var(--font-display);
@@ -67,9 +67,12 @@
       font-weight: var(--weight-bold);
       letter-spacing: -1.44px;
       color: var(--text-primary);
-      text-align: center;
-      width: 180px;
+      text-align: left;
       caret-color: var(--text-brand);
+      padding: 0;
+      width: auto;
+      field-sizing: content;
+      min-width: 1ch;
     }
 
     /* ── Category Chips (screen-unique horizontal scroller) ── */
@@ -86,7 +89,151 @@
     }
     .chips-row::-webkit-scrollbar { display: none; }
 
+    /* ── Paid by row (matches add-split pattern) ── */
+    .paid-by {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-radius: var(--radius-12);
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+    }
+    .paid-by__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+    .paid-by__label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-regular);
+      color: var(--text-secondary);
+    }
+    .paid-by__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .paid-by__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-12);
+      background: var(--surface-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    /* ── Split section (mirrors add-split) ── */
+    .split-section {
+      display: flex; flex-direction: column; gap: var(--spacing-12);
+    }
+    .split-section__summary {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--spacing-8); padding: var(--spacing-12);
+      background: var(--card-create-bg); border-radius: var(--radius-8);
+    }
+    .split-section__summary-amount {
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-brand);
+    }
+    .split-section__summary-label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      color: var(--text-secondary);
+    }
+    .split-section__list {
+      display: flex; flex-direction: column;
+      background: var(--surface-card);
+      border-radius: var(--radius-12);
+      border: var(--border-small) solid var(--border-subtle);
+      overflow: hidden;
+    }
+    .split-section__row {
+      display: flex; align-items: center; gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .split-section__row:last-child { border-bottom: none; }
+    .split-section__check {
+      width: 22px; height: 22px; border-radius: var(--radius-8);
+      background: var(--btn-primary-bg); color: var(--btn-primary-fg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .split-section__check i { font-size: 14px; }
+    .split-section__text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .split-section__name {
+      font-family: var(--font-body);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+    }
+    .split-section__share {
+      font-family: var(--font-body);
+      font-size: var(--font-size-12);
+      color: var(--text-secondary);
+    }
+    .split-section__amount-pill {
+      min-width: 88px; padding: var(--spacing-8) var(--spacing-12);
+      background: var(--input-bg);
+      border-radius: var(--radius-8);
+      font-family: var(--font-display);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      color: var(--text-primary);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .split-section__total {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16);
+      border-top: var(--border-small) solid var(--border-subtle);
+      background: var(--card-create-bg);
+    }
+    .split-section__total-label {
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      color: var(--text-secondary);
+    }
+    .split-section__total-value {
+      font-family: var(--font-display);
+      font-size: var(--font-size-14);
+      font-weight: var(--weight-semibold);
+      color: var(--expense-lent-fg);
+      display: flex; align-items: center; gap: var(--spacing-4);
+    }
+
+    /* ── Comments section (mirrors expense-detail) ── */
+    .comments-section { display: flex; flex-direction: column; gap: var(--spacing-12); }
+    .comment-input {
+      display: flex; align-items: center; gap: var(--spacing-8);
+    }
+    .comment-input__avatar {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      background: var(--avatar-bg); color: var(--avatar-fg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-body); font-size: var(--font-size-12); font-weight: var(--weight-bold);
+      flex-shrink: 0;
+    }
+    .comment-input__field {
+      flex: 1; display: flex; align-items: center;
+      background: var(--input-bg); border: var(--border-small) solid var(--input-border-default);
+      border-radius: var(--radius-full); padding: var(--spacing-4) var(--spacing-4) var(--spacing-4) var(--spacing-16);
+    }
+    .comment-input__field input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-family: var(--font-body); font-size: var(--font-size-14); color: var(--text-primary);
+    }
+    .comment-input__send {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      background: var(--btn-primary-bg); color: var(--btn-primary-fg);
+      display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer; flex-shrink: 0;
+    }
+
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -102,7 +249,7 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="expense-detail.html" class="top-app-bar__back" aria-label="Back">
+    <a href="expense-detail" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Edit Expense</span>
@@ -125,7 +272,7 @@
 
     <!-- Description -->
     <div class="input-field">
-      <label class="input-field__label">Description</label>
+      <span class="section-label">Description</span>
       <div class="input-field__box">
         <input type="text" value="Dinner at Olive">
       </div>
@@ -133,7 +280,7 @@
 
     <!-- Category -->
     <div class="chips-section">
-      <span class="input-field__label">Category</span>
+      <span class="section-label">Category</span>
       <div class="chips-row">
         <span class="chip chip--md chip--on" onclick="selectCat(this)">🍽 Food</span>
         <span class="chip chip--md" onclick="selectCat(this)">✈️ Travel</span>
@@ -143,24 +290,71 @@
       </div>
     </div>
 
-    <!-- Paid by -->
-    <div class="detail-row detail-row--clickable">
-      <div class="detail-row__icon">💳</div>
-      <div class="detail-row__text">
-        <span class="detail-row__label">Paid by</span>
-        <span class="detail-row__value">You paid ₹850</span>
+    <!-- Paid by (paid-by component) -->
+    <div class="paid-by">
+      <div class="avatar avatar--initials avatar--md">DR</div>
+      <div class="paid-by__text">
+        <span class="paid-by__label">Paid by</span>
+        <span class="paid-by__name">You · ₹850</span>
       </div>
-      <i class="ph ph-caret-right detail-row__chevron"></i>
+      <button class="btn btn--secondary btn--sm">Change</button>
     </div>
 
-    <!-- Group -->
-    <div class="detail-row detail-row--clickable">
-      <div class="detail-row__icon">🏝</div>
-      <div class="detail-row__text">
-        <span class="detail-row__label">Group</span>
-        <span class="detail-row__value">Goa Trip</span>
+    <!-- Split section -->
+    <div class="split-section">
+      <span class="section-label">Split</span>
+      <div class="segment-control">
+        <button class="segment-item is-active">Equally</button>
+        <button class="segment-item">Amount</button>
+        <button class="segment-item">%</button>
+        <button class="segment-item">Shares</button>
       </div>
-      <i class="ph ph-caret-right detail-row__chevron"></i>
+      <div class="split-section__summary">
+        <span class="split-section__summary-amount">₹212.5</span>
+        <span class="split-section__summary-label">per person</span>
+      </div>
+      <div class="split-section__list">
+        <div class="split-section__row">
+          <span class="split-section__check"><i class="ph-bold ph-check"></i></span>
+          <div class="avatar avatar--initials avatar--md">DR</div>
+          <div class="split-section__text">
+            <span class="split-section__name">You</span>
+            <span class="split-section__share">Paid ₹850</span>
+          </div>
+          <span class="split-section__amount-pill">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><i class="ph-bold ph-check"></i></span>
+          <div class="avatar avatar--initials avatar--md">RA</div>
+          <div class="split-section__text">
+            <span class="split-section__name">Rahul</span>
+            <span class="split-section__share">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><i class="ph-bold ph-check"></i></span>
+          <div class="avatar avatar--initials avatar--md">PS</div>
+          <div class="split-section__text">
+            <span class="split-section__name">Priya</span>
+            <span class="split-section__share">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><i class="ph-bold ph-check"></i></span>
+          <div class="avatar avatar--initials avatar--md">AK</div>
+          <div class="split-section__text">
+            <span class="split-section__name">Arjun</span>
+            <span class="split-section__share">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill">₹212.5</span>
+        </div>
+        <div class="split-section__total">
+          <span class="split-section__total-label">Total</span>
+          <span class="split-section__total-value">₹850 <i class="ph-fill ph-check-circle"></i></span>
+        </div>
+      </div>
     </div>
 
     <!-- Date -->
@@ -173,28 +367,32 @@
       <i class="ph ph-caret-right detail-row__chevron"></i>
     </div>
 
-    <!-- Split -->
-    <div class="detail-row detail-row--clickable">
-      <div class="detail-row__icon">🔄</div>
-      <div class="detail-row__text">
-        <span class="detail-row__label">Split method</span>
-        <span class="detail-row__value">Equal split · 4 people</span>
-      </div>
-      <i class="ph ph-caret-right detail-row__chevron"></i>
-    </div>
-
     <!-- Notes -->
     <div class="notes-card notes-card--editable">
       <label class="notes-card__label" for="js-notes">Notes (optional)</label>
-      <textarea id="js-notes" class="notes-card__textarea" rows="3" maxlength="280" placeholder="Add a note for this expense…">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time! 🎂</textarea>
+      <textarea id="js-notes" class="notes-card__textarea" rows="3" placeholder="Add a note for this expense…">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time! 🎂</textarea>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <span class="section-label">Comments</span>
+      <div class="comment-input">
+        <div class="comment-input__avatar">DR</div>
+        <div class="comment-input__field">
+          <input type="text" placeholder="Add a comment…" autocomplete="off">
+          <button class="comment-input__send" aria-label="Post comment">
+            <i class="ph-bold ph-paper-plane-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
 
   <!-- ── Screen Footer ── -->
   <div class="screen-footer">
-    <a href="expense-detail.html" class="btn btn--lg btn--ghost">Discard</a>
-    <a href="expense-detail.html" class="btn btn--lg btn--primary">Save Changes</a>
+    <a href="expense-detail" class="btn btn--lg btn--ghost">Discard</a>
+    <a href="expense-detail" class="btn btn--lg btn--primary">Save Changes</a>
   </div>
 
   <script>
@@ -204,5 +402,9 @@
     }
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

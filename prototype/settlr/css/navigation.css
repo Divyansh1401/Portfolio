@@ -93,12 +93,51 @@
 
 /* ---- Segment Control (Container) ---- */
 .segment-control {
+  position: relative;
   display: flex;
   gap: var(--spacing-4);
   padding: var(--spacing-2);
   border-radius: var(--radius-12);
   background-color: var(--tab-bg-track);
   width: 100%;
+}
+
+/* Animated sliding pill — positioned by js/segment-slider.js.
+   Items keep their own .is-active styles as fallback. */
+.segment-control__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-8);
+  background-color: var(--tab-bg-active);
+  box-shadow: 0 0 0 var(--border-small) var(--tab-border-active);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .segment-control__pill {
+    transition: transform var(--duration-base) var(--ease-out),
+                width var(--duration-base) var(--ease-out),
+                height var(--duration-base) var(--ease-out);
+  }
+}
+
+/* Items sit above the pill so text stays clickable */
+.segment-control > .segment-item {
+  position: relative;
+  z-index: 1;
+}
+
+/* When the JS slider is active, hide each item's individual active bg
+   so only the moving pill shows. */
+.segment-control[data-slider-init="1"] .segment-item.is-active,
+.segment-control[data-slider-init="1"] .segment-item--active {
+  background-color: transparent;
+  box-shadow: none;
 }
 
 /* ---- Segment Item ---- */

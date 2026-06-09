@@ -81,6 +81,22 @@
       text-align: center;
     }
 
+    /* ── Title + Category column (chip above text) ── */
+    .title-cat-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: 0 var(--spacing-32) var(--spacing-8);
+    }
+    .title-cat-row .title-area {
+      width: 100%;
+      padding: 0;
+    }
+    .title-cat-row .category-area {
+      padding: 0;
+    }
+
     /* ── Title Input ── */
     .title-area {
       padding: 0 var(--spacing-32) var(--spacing-8);
@@ -177,6 +193,7 @@
     }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -192,7 +209,7 @@
 
   <!-- Top Bar -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="home-dashboard.html" class="top-app-bar__back" aria-label="Back">
+    <a href="home-dashboard" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title text-heading-md">Add Expense</span>
@@ -228,25 +245,25 @@
       </div>
     </div>
 
-    <!-- Title -->
-    <div class="title-area">
-      <input
-        class="title-input text-title-md"
-        id="js-title"
-        type="text"
-        placeholder="What's this for?"
-        autocomplete="off"
-        enterkeyhint="next"
-      >
-    </div>
-
-    <!-- Category -->
-    <div class="category-area">
-      <button class="category-chip-btn text-title-xs" id="js-cat-btn" onclick="openCategorySheet()">
-        <span class="category-chip-btn__emoji">🏷️</span>
-        <span id="js-cat-label">Category</span>
-        <i class="ph ph-caret-down"></i>
-      </button>
+    <!-- Title + Category row -->
+    <div class="title-cat-row">
+      <div class="category-area">
+        <button class="category-chip-btn text-title-xs" id="js-cat-btn" onclick="openCategorySheet()">
+          <span class="category-chip-btn__emoji">🏷️</span>
+          <span id="js-cat-label">Category</span>
+          <i class="ph ph-caret-down"></i>
+        </button>
+      </div>
+      <div class="title-area">
+        <input
+          class="title-input text-title-md"
+          id="js-title"
+          type="text"
+          placeholder="What's this for?"
+          autocomplete="off"
+          enterkeyhint="next"
+        >
+      </div>
     </div>
   </div>
 
@@ -495,5 +512,9 @@
     });
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

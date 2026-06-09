@@ -47,7 +47,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  animation: successStateIconIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .success-state__icon {
+    animation: successStateIconIn var(--duration-slow) var(--ease-spring) 0.2s both;
+  }
 }
 
 .success-state__icon-emoji {
@@ -70,7 +75,7 @@
   line-height: var(--line-height-34);
   letter-spacing: -0.84px;
   color: var(--success-state-heading-fg);
-  animation: successStateFadeUp 0.4s ease 0.6s both;
+  animation: successStateFadeUp var(--duration-slow) var(--ease-out) 0.6s both;
 }
 
 /* ---- Body / supporting copy ---- */

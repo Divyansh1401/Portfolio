@@ -30,6 +30,17 @@
   transition: all 0.15s ease;
 }
 
+/* ---- Rectangular variant: light radius (instead of fully-rounded pill) ---- */
+.input-field--rect .input-field__box,
+.input-field--multiline .input-field__box {
+  border-radius: var(--radius-12);
+}
+
+/* ---- Multiline (textarea) extends rect: top-aligned content ---- */
+.input-field--multiline .input-field__box {
+  align-items: flex-start;
+}
+
 .input-field__box input {
   flex: 1;
   border: none;
@@ -40,6 +51,13 @@
   font-size: var(--font-size-14);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-23);
+}
+
+/* ---- Suffix icon (right-aligned action affordance, e.g. pencil) ---- */
+.input-field__suffix-icon {
+  flex-shrink: 0;
+  font-size: var(--icon-md);
+  color: var(--text-brand);
 }
 
 .input-field__box input::placeholder {

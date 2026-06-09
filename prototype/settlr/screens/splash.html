@@ -34,7 +34,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
     }
     .status-bar__time {
       font-family: var(--font-body);
@@ -194,6 +194,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -226,9 +227,13 @@
 
   <!-- ── Bottom ── -->
   <div class="splash__bottom">
-    <a href="login.html" class="btn btn--primary btn--lg btn--full">Get Started</a>
+    <a href="login" class="btn btn--secondary btn--lg btn--full">Get Started</a>
     <p class="splash__footer">By continuing, you agree to our Terms &amp; Privacy Policy</p>
   </div>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

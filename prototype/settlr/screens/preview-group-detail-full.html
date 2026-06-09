@@ -156,7 +156,7 @@
     .avatar-stack__item {
       display: inline-flex; align-items: center; justify-content: center;
       width: 22px; height: 22px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: var(--weight-semibold);
+      font-size: 7px; font-weight: var(--weight-semibold);
       background: var(--contact-avatar-bg); color: var(--contact-avatar-fg);
       border: 2px solid var(--color-gray-0);
     }
@@ -164,7 +164,7 @@
     .avatar-stack__overflow {
       display: inline-flex; align-items: center; justify-content: center;
       width: 22px; height: 22px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: var(--weight-semibold);
+      font-size: 7px; font-weight: var(--weight-semibold);
       background: var(--color-gray-100); color: var(--color-neutral-600);
       border: 2px solid var(--color-gray-0); margin-left: -5px;
     }
@@ -193,7 +193,7 @@
     .balance-label {
       display: inline-flex; align-items: center;
       padding: 3px 10px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: var(--weight-semibold);
+      font-size: 11px; font-weight: var(--weight-semibold);
       white-space: nowrap;
     }
     .balance-label--lent { background: var(--color-green-100); color: var(--color-green-500); }
@@ -281,11 +281,11 @@
     .txn-badge {
       display: inline-flex; align-items: center;
       padding: 2px 8px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: var(--weight-semibold);
+      font-size: 10px; font-weight: var(--weight-semibold);
     }
     .txn-badge--lent { background: var(--color-green-100); color: var(--color-green-500); }
     .txn-badge--owe  { background: var(--color-coral-100); color: var(--color-coral-500); }
-    .txn-item__time  { font-size: 12px; color: var(--color-neutral-400); font-weight: var(--weight-medium); }
+    .txn-item__time  { font-size: 10px; color: var(--color-neutral-400); font-weight: var(--weight-medium); }
 
     /* ── BUTTONS ──────────────────────────────── */
     .btn {
@@ -308,6 +308,7 @@
     }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 <div class="phone">
@@ -464,5 +465,10 @@
 
 
 </div>
+<script src="../js/segment-slider.js" defer></script>
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

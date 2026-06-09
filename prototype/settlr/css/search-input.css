@@ -46,3 +46,15 @@
 .search-input input::placeholder {
   color: var(--input-fg-default);
 }
+
+/* ---- Filled (input has value) ---- */
+.search-input:has(input:not(:placeholder-shown)) input {
+  color: var(--input-fg-active);
+  font-weight: var(--weight-medium);
+}
+
+/* ---- Focused (overrides above) ---- */
+.search-input:focus-within {
+  background-color: var(--input-bg-focused);
+  border-color: var(--input-border-focused);
+}

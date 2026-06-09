@@ -66,6 +66,14 @@
       border-bottom: var(--border-small) solid var(--contact-divider);
     }
     .participant-item:last-child { border-bottom: none; }
+    /* Inactive participant: greyed text + checkbox, but the amount
+       column stays interactive (click to reactivate). */
+    .participant-item--inactive .avatar,
+    .participant-item--inactive .participant-item__name,
+    .participant-item--inactive .participant-item__share { opacity: 0.5; }
+    .participant-item .checkbox-control { cursor: pointer; }
+    .amount-input--inactive { opacity: 0.5; cursor: pointer; }
+    .amount-input--inactive .amount-input__field { pointer-events: none; }
     .participant-item__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
     .participant-item__name {
       font-family: var(--font-body);
@@ -189,6 +197,7 @@
     }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -204,7 +213,7 @@
 
   <!-- Top Bar -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="add-group.html" class="top-app-bar__back" aria-label="Back">
+    <a href="add-group" class="top-app-bar__back" aria-label="Back">
       <i class="ph ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Split</span>
@@ -306,11 +315,27 @@
 
       var me = Store.getCurrentUser();
       var participantIds = ctx.splitAmong;
+      // activeIds = subset of participants who are actually splitting.
+      // Toggled via per-row checkbox. Calculations use activeIds; the
+      // full participantIds list is preserved so unchecked rows stay
+      // visible (greyed out) and can be re-checked.
+      var activeIds = participantIds.slice();
       var paidById = ctx.paidById || participantIds[0];
       var total = ctx.totalAmount;
       var splitMode = 'equal';
       var customSplits = {};
       var nextBtn = document.getElementById('js-next');
+
+      function isActive(id) { return activeIds.indexOf(id) !== -1; }
+      function toggleActive(id) {
+        var i = activeIds.indexOf(id);
+        if (i === -1) {
+          activeIds.push(id);
+        } else if (activeIds.length > 1) {
+          // Always keep at least one person in the split
+          activeIds.splice(i, 1);
+        }
+      }
 
       function r2(n) { return Math.round(n * 100) / 100; }
       function fmt(n) {
@@ -323,32 +348,34 @@
       }
 
       function initSplits(mode) {
-        var n = participantIds.length;
+        var ids = activeIds;
+        var n = ids.length;
         if (mode === 'amount') {
           var base = r2(total / n);
           var last = r2(total - base * (n - 1));
-          participantIds.forEach(function(id, i) { customSplits[id] = i === n - 1 ? last : base; });
+          ids.forEach(function(id, i) { customSplits[id] = i === n - 1 ? last : base; });
         } else if (mode === 'percent') {
           var basePct = Math.floor(100 / n);
-          participantIds.forEach(function(id, i) { customSplits[id] = i === n - 1 ? 100 - basePct * (n - 1) : basePct; });
+          ids.forEach(function(id, i) { customSplits[id] = i === n - 1 ? 100 - basePct * (n - 1) : basePct; });
         } else if (mode === 'shares') {
-          participantIds.forEach(function(id) { if (!customSplits[id]) customSplits[id] = 1; });
+          ids.forEach(function(id) { if (!customSplits[id]) customSplits[id] = 1; });
         }
       }
 
       function getAmountForId(id) {
-        if (splitMode === 'equal') return r2(total / participantIds.length);
+        if (!isActive(id)) return 0;
+        if (splitMode === 'equal') return r2(total / activeIds.length);
         if (splitMode === 'amount') return r2(parseFloat(customSplits[id]) || 0);
         if (splitMode === 'percent') return r2(total * (parseFloat(customSplits[id]) || 0) / 100);
         if (splitMode === 'shares') {
-          var ts = participantIds.reduce(function(s, i) { return s + (parseFloat(customSplits[i]) || 1); }, 0);
+          var ts = activeIds.reduce(function(s, i) { return s + (parseFloat(customSplits[i]) || 1); }, 0);
           return r2(total * ((parseFloat(customSplits[id]) || 1) / ts));
         }
       }
 
       function runningTotal() {
-        if (splitMode === 'amount') return r2(participantIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
-        if (splitMode === 'percent') return r2(participantIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
+        if (splitMode === 'amount') return r2(activeIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
+        if (splitMode === 'percent') return r2(activeIds.reduce(function(s, id) { return s + (parseFloat(customSplits[id]) || 0); }, 0));
         return total;
       }
 
@@ -395,16 +422,24 @@
       }
 
       function inputCol(id) {
-        var val = customSplits[id] !== undefined ? customSplits[id] : 0;
+        var active = isActive(id);
+        var val = active
+          ? (customSplits[id] !== undefined ? customSplits[id] : 0)
+          : 0;
         var step = splitMode === 'shares' ? '1' : '0.01';
-        var inp = '<input class="amount-input__field" type="number" min="0" step="' + step + '" data-pid="' + id + '" value="' + val + '">';
-        if (splitMode === 'amount')  return '<div class="amount-input amount-input--currency"><span class="amount-input__icon"><i class="ph ph-currency-inr"></i></span>' + inp + '</div>';
-        if (splitMode === 'percent') return '<div class="amount-input amount-input--percent">' + inp + '<span class="amount-input__icon"><i class="ph ph-percent"></i></span></div>';
-        if (splitMode === 'shares')  return '<div class="amount-input amount-input--shares">' + inp + '<span class="amount-input__icon"><i class="ph ph-chart-pie-slice"></i></span></div>';
+        var roAttr = active ? '' : ' readonly tabindex="-1"';
+        var inp = '<input class="amount-input__field" type="number" min="0" step="' + step +
+                  '" data-pid="' + id + '" value="' + val + '"' + roAttr + '>';
+        var inactiveCls = active ? '' : ' amount-input--inactive js-reactivate';
+        var attrs = active ? '' : ' data-pid="' + id + '"';
+        if (splitMode === 'amount')  return '<div class="amount-input amount-input--currency' + inactiveCls + '"' + attrs + '><span class="amount-input__icon"><i class="ph ph-currency-inr"></i></span>' + inp + '</div>';
+        if (splitMode === 'percent') return '<div class="amount-input amount-input--percent' + inactiveCls + '"' + attrs + '>' + inp + '<span class="amount-input__icon"><i class="ph ph-percent"></i></span></div>';
+        if (splitMode === 'shares')  return '<div class="amount-input amount-input--shares' + inactiveCls + '"' + attrs + '>' + inp + '<span class="amount-input__icon"><i class="ph ph-chart-pie-slice"></i></span></div>';
       }
 
       function renderParticipants() {
-        var pp = r2(total / participantIds.length);
+        var nActive = Math.max(1, activeIds.length);
+        var pp = r2(total / nActive);
         var summaryLabels = { equal: fmt(pp), amount: 'Custom', percent: '% split', shares: 'By shares' };
         var showLabel = { equal: true, amount: false, percent: false, shares: false };
         document.getElementById('js-per-person').textContent = summaryLabels[splitMode];
@@ -413,13 +448,28 @@
         document.getElementById('js-participants').innerHTML = participantIds.map(function(id) {
           var p = getInfo(id);
           var isPayer = id === paidById;
+          var active = isActive(id);
           var amtForId = getAmountForId(id);
-          var shareLabel = isPayer ? 'Paid ' + fmt(total) : 'Owes ' + fmt(amtForId);
-          var amtCol = splitMode === 'equal'
-            ? '<div class="participant-item__amount"><span class="participant-item__amount-value">' + fmt(amtForId) + '</span></div>'
-            : inputCol(id);
-          return '<div class="participant-item">' +
-            '<div class="checkbox-control is-selected"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
+          var shareLabel = !active
+            ? 'Not splitting'
+            : (isPayer ? 'Paid ' + fmt(total) : 'Owes ' + fmt(amtForId));
+          var amtCol;
+          if (splitMode === 'equal') {
+            // Equal mode has no input — always show the amount span.
+            // When inactive, display ₹0 in a click-to-reactivate wrapper.
+            var dispVal = active ? fmt(amtForId) : fmt(0);
+            var equalCls = active ? '' : ' js-reactivate';
+            var equalAttrs = active ? '' : ' data-pid="' + id + '"';
+            amtCol = '<div class="participant-item__amount' + equalCls + '"' + equalAttrs + '>' +
+                       '<span class="participant-item__amount-value">' + dispVal + '</span>' +
+                     '</div>';
+          } else {
+            amtCol = inputCol(id);
+          }
+          var rowMod = active ? '' : ' participant-item--inactive';
+          var checkMod = active ? ' is-selected' : '';
+          return '<div class="participant-item' + rowMod + '" data-pid="' + id + '">' +
+            '<div class="checkbox-control js-toggle-participant' + checkMod + '" data-pid="' + id + '"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
             '<div class="avatar avatar--initials avatar--md">' + p.initials + '</div>' +
             '<div class="participant-item__text">' +
               '<span class="participant-item__name">' + p.name + '</span>' +
@@ -428,6 +478,32 @@
             amtCol +
           '</div>';
         }).join('');
+
+        // Wire toggle checkboxes
+        document.querySelectorAll('#js-participants .js-toggle-participant').forEach(function(cb) {
+          cb.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            var pid = cb.getAttribute('data-pid');
+            toggleActive(pid);
+            if (splitMode !== 'equal') initSplits(splitMode);
+            renderParticipants();
+          });
+        });
+
+        // Click on inactive amount column / input also reactivates
+        document.querySelectorAll('#js-participants .js-reactivate').forEach(function(el) {
+          el.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            var pid = el.getAttribute('data-pid');
+            if (!pid || isActive(pid)) return;
+            toggleActive(pid);
+            if (splitMode !== 'equal') initSplits(splitMode);
+            renderParticipants();
+            // After re-render, focus the now-editable input for this row
+            var inp = document.querySelector('#js-participants .amount-input__field[data-pid="' + pid + '"]');
+            if (inp) inp.focus();
+          });
+        });
 
         if (splitMode !== 'equal') {
           document.querySelectorAll('#js-participants .amount-input__field').forEach(function(inp) {
@@ -488,12 +564,14 @@
       nextBtn.addEventListener('click', function() {
         ctx.paidById = paidById;
         ctx.splitMethod = splitMode;
+        // Only the active subset participates in the split
+        ctx.splitAmong = activeIds.slice();
         if (splitMode === 'equal') {
-          ctx.perPerson = r2(total / participantIds.length);
+          ctx.perPerson = r2(total / activeIds.length);
           delete ctx.splitAmounts;
         } else {
           var amounts = {};
-          participantIds.forEach(function(id) { amounts[id] = getAmountForId(id); });
+          activeIds.forEach(function(id) { amounts[id] = getAmountForId(id); });
           ctx.splitAmounts = amounts;
           ctx.perPerson = null;
         }
@@ -507,5 +585,10 @@
     }());
   </script>
 
+<script src="../js/segment-slider.js" defer></script>
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

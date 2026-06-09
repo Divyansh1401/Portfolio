@@ -39,19 +39,19 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
       z-index: 10;
     }
     .status-bar__time {
       font: 600 15px/20px -apple-system, 'SF Pro Text', sans-serif;
       letter-spacing: -0.5px;
-      color: var(--surface-card);
+      color: var(--text-primary);
     }
     .status-bar__icons {
       display: flex;
       align-items: center;
       gap: 6px;
-      color: var(--surface-card);
+      color: var(--text-primary);
     }
 
     /* ── Scrollable Form (screen-unique) ── */
@@ -63,13 +63,6 @@
       display: flex;
       flex-direction: column;
       gap: var(--spacing-24);
-    }
-
-    /* ── Type Grid (screen-unique grid layout for type-chip component) ── */
-    .type-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--spacing-8);
     }
 
     /* ── Members List (screen-unique) ── */
@@ -217,6 +210,28 @@
     .sheet-overlay { display: none; }
     .sheet-overlay.is-open { display: flex; }
 
+    /* ── Avatar edit overlay (icon-button on top of profile pic) ── */
+    .avatar-edit-btn { position: relative; display: inline-flex; }
+    .avatar-edit-btn .avatar { transition: opacity 0.15s; }
+    .avatar-edit-btn__overlay {
+      position: absolute;
+      right: -6px;
+      top: -6px;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-medium) solid var(--surface-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .avatar-edit-btn__overlay i { font-size: var(--icon-md); }
+    .avatar-edit-btn:active .avatar { opacity: var(--opacity-disabled); }
+    .avatar-edit-btn:active .avatar-edit-btn__overlay { transform: scale(0.94); }
+
     /* ── Emoji Picker (screen-unique grid inside the canonical bottom-sheet) ── */
     .emoji-grid {
       display: grid;
@@ -241,6 +256,7 @@
     .emoji-btn:active { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
     .emoji-btn.is-selected { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -257,7 +273,7 @@
   <!-- ── Hero ── -->
   <div class="hero-section hero-section--short">
     <div class="hero-section__actions">
-      <a href="group-detail.html" class="icon-btn icon-btn--overlay" aria-label="Back">
+      <a href="group-detail" class="icon-btn icon-btn--overlay" aria-label="Back">
         <i class="ph-bold ph-caret-left icon-btn__icon"></i>
       </a>
     </div>
@@ -265,11 +281,13 @@
 
   <!-- ── Group Avatar (overlapping hero) ── -->
   <button class="hero-section__avatar-wrap" id="js-avatar-btn" aria-label="Change group emoji">
-    <div class="avatar avatar--xl avatar--initials" id="js-group-avatar">
-      <span>🏖️</span>
-    </div>
-    <span class="hero-section__avatar-edit-badge">
-      <i class="ph ph-pencil"></i>
+    <span class="avatar-edit-btn">
+      <div class="avatar avatar--xl avatar--initials avatar--group" id="js-group-avatar">
+        <span>🏖️</span>
+      </div>
+      <span class="avatar-edit-btn__overlay">
+        <i class="ph ph-pencil-simple"></i>
+      </span>
     </span>
   </button>
 
@@ -279,49 +297,10 @@
     <!-- Group Name -->
     <div>
       <div class="section-label">Group Name</div>
-      <div class="input-field">
-        <label class="input-field__label">What's this group called?</label>
+      <div class="input-field input-field--rect">
         <div class="input-field__box">
           <input type="text" id="js-group-name" value="Goa Trip" placeholder="e.g. Goa Trip…">
-        </div>
-      </div>
-    </div>
-
-    <!-- Group Type -->
-    <div>
-      <div class="section-label">Group Type</div>
-      <div class="type-grid" id="js-type-grid">
-        <div class="type-chip is-selected" data-type="trip" onclick="selectType(this)">
-          <span class="type-chip__emoji">✈️</span>
-          <span class="type-chip__name">Trip</span>
-        </div>
-        <div class="type-chip" data-type="home" onclick="selectType(this)">
-          <span class="type-chip__emoji">🏠</span>
-          <span class="type-chip__name">Home</span>
-        </div>
-        <div class="type-chip" data-type="food" onclick="selectType(this)">
-          <span class="type-chip__emoji">🍕</span>
-          <span class="type-chip__name">Food</span>
-        </div>
-        <div class="type-chip" data-type="sports" onclick="selectType(this)">
-          <span class="type-chip__emoji">⚽</span>
-          <span class="type-chip__name">Sports</span>
-        </div>
-        <div class="type-chip" data-type="couple" onclick="selectType(this)">
-          <span class="type-chip__emoji">💑</span>
-          <span class="type-chip__name">Couple</span>
-        </div>
-        <div class="type-chip" data-type="work" onclick="selectType(this)">
-          <span class="type-chip__emoji">💼</span>
-          <span class="type-chip__name">Work</span>
-        </div>
-        <div class="type-chip" data-type="family" onclick="selectType(this)">
-          <span class="type-chip__emoji">👨‍👩‍👧</span>
-          <span class="type-chip__name">Family</span>
-        </div>
-        <div class="type-chip" data-type="other" onclick="selectType(this)">
-          <span class="type-chip__emoji">🎉</span>
-          <span class="type-chip__name">Other</span>
+          <i class="ph ph-pencil-simple input-field__suffix-icon" aria-hidden="true"></i>
         </div>
       </div>
     </div>
@@ -331,12 +310,15 @@
       <div class="section-label">Members · 5</div>
       <div class="members-list">
 
-        <div class="member-row">
+        <div class="member-row" data-member="you" data-self="true">
           <div class="member-row__avatar member-row__avatar--you">DR</div>
           <div class="member-row__text">
             <span class="member-row__name">You (Divyansh)</span>
-            <span class="member-row__role">Admin · Cannot be removed</span>
+            <span class="member-row__role">Admin</span>
           </div>
+          <button class="member-row__remove" onclick="removeMember(this)" aria-label="Leave group">
+            <i class="ph ph-x"></i>
+          </button>
         </div>
 
         <div class="member-row" data-member="rahul">
@@ -396,7 +378,6 @@
 
     <!-- Danger Zone -->
     <div>
-      <div class="section-label">Danger Zone</div>
       <div class="danger-card">
         <div class="danger-row" onclick="confirmDelete()">
           <div class="danger-row__icon">
@@ -404,9 +385,8 @@
           </div>
           <div class="danger-row__text">
             <span class="danger-row__label">Delete Group</span>
-            <span class="danger-row__sublabel">Permanently remove this group and all its expenses</span>
+            <span class="danger-row__sublabel">Settle group first to delete</span>
           </div>
-          <span class="danger-row__chevron"><i class="ph ph-caret-right"></i></span>
         </div>
       </div>
     </div>
@@ -416,6 +396,26 @@
   <!-- Screen Footer -->
   <div class="screen-footer">
     <button class="btn btn--lg btn--primary btn--full" onclick="saveGroup()">Save Changes</button>
+  </div>
+
+  <!-- ── Remove / Exit Confirm Sheet ── -->
+  <div class="sheet-overlay" id="js-confirm-overlay" onclick="closeConfirmSheet(event)">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title" id="js-confirm-title">Remove member?</span>
+        <button class="sheet__close" onclick="closeConfirmSheet()" aria-label="Close" type="button">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="sheet__content" style="padding: var(--spacing-16); display: flex; flex-direction: column; gap: var(--spacing-16);">
+        <p id="js-confirm-body" style="font-family: var(--font-body); font-size: var(--font-size-14); font-weight: var(--weight-regular); line-height: var(--line-height-22); color: var(--text-secondary); margin: 0;">—</p>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-8);">
+          <button id="js-confirm-action" class="btn btn--lg btn--destructive btn--full" onclick="confirmRemove()">Remove</button>
+          <button class="btn btn--lg btn--ghost btn--full" onclick="closeConfirmSheet()">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ── Emoji Picker Sheet ── -->
@@ -453,22 +453,54 @@
   </div>
 
   <script>
-    // Type selection
-    function selectType(el) {
-      document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('is-selected'));
-      el.classList.add('is-selected');
-    }
+    // Remove member — open confirm sheet (different copy for self vs other)
+    let _pendingRow = null;
 
-    // Remove member
     function removeMember(btn) {
       const row = btn.closest('.member-row');
-      row.style.transition = 'opacity 0.2s, transform 0.2s';
-      row.style.opacity = '0';
-      row.style.transform = 'translateX(16px)';
-      setTimeout(() => {
-        row.remove();
-        updateMemberCount();
-      }, 200);
+      _pendingRow = row;
+      const isSelf = row.dataset.self === 'true';
+      const name = row.querySelector('.member-row__name').textContent.trim();
+      const titleEl = document.getElementById('js-confirm-title');
+      const bodyEl = document.getElementById('js-confirm-body');
+      const actionEl = document.getElementById('js-confirm-action');
+
+      if (isSelf) {
+        titleEl.textContent = 'Leave this group?';
+        bodyEl.textContent = "You'll lose access to all expenses and balances in this group. Outstanding amounts will still need to be settled.";
+        actionEl.textContent = 'Leave group';
+      } else {
+        titleEl.textContent = 'Remove ' + name + '?';
+        bodyEl.textContent = name + ' will lose access to this group. Outstanding balances with them will still need to be settled.';
+        actionEl.textContent = 'Remove';
+      }
+
+      document.getElementById('js-confirm-overlay').classList.add('is-open');
+    }
+
+    function confirmRemove() {
+      if (_pendingRow) {
+        const row = _pendingRow;
+        const isSelf = row.dataset.self === 'true';
+        row.style.transition = 'opacity 0.2s, transform 0.2s';
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(16px)';
+        setTimeout(() => {
+          row.remove();
+          updateMemberCount();
+          if (isSelf) {
+            // Self exited — bounce to home
+            location.href = 'home-dashboard';
+          }
+        }, 200);
+        _pendingRow = null;
+      }
+      closeConfirmSheet();
+    }
+
+    function closeConfirmSheet(e) {
+      if (e && e.target !== document.getElementById('js-confirm-overlay') && e.currentTarget === document.getElementById('js-confirm-overlay')) return;
+      document.getElementById('js-confirm-overlay').classList.remove('is-open');
     }
 
     function updateMemberCount() {
@@ -529,5 +561,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>
