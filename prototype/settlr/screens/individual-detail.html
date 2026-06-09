@@ -37,7 +37,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
       z-index: 10;
     }
     .status-bar__time {
@@ -106,6 +106,9 @@
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
     .tab-panel.is-active { display: block; }
+
+    /* Favourite star — golden when active */
+    #js-fav-btn.is-favourite { color: var(--label-warning-fg, #b8860b); }
 
 
     /* ── Transaction Item ── */
@@ -265,6 +268,7 @@
     .tab-panel.is-empty .tab-empty { display: flex; }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -295,11 +299,11 @@
   <div class="hero-section">
     <!-- Overlay back + settings -->
     <div class="hero-section__actions">
-      <a href="people.html" class="icon-btn icon-btn--overlay" aria-label="Back">
+      <a href="people" class="icon-btn icon-btn--overlay" aria-label="Back">
         <i class="ph-bold ph-caret-left icon-btn__icon"></i>
       </a>
-      <button class="icon-btn icon-btn--overlay" aria-label="Settings">
-        <i class="ph ph-gear icon-btn__icon"></i>
+      <button class="icon-btn icon-btn--overlay" id="js-fav-btn" aria-label="Add to favourites" aria-pressed="false" onclick="toggleFavourite(this)">
+        <i class="ph ph-star icon-btn__icon"></i>
       </button>
     </div>
   </div>
@@ -376,13 +380,13 @@
 
   <!-- ── Screen Footer ── -->
   <div class="screen-footer">
-    <a href="settle-amount.html" class="btn btn--lg btn--secondary">
+    <a href="settle-amount" class="btn btn--lg btn--secondary">
       <span class="btn__content">
         Settle up
         <i class="btn__icon ph-bold ph-arrow-right"></i>
       </span>
     </a>
-    <a href="add-amount.html" class="btn btn--lg btn--primary">
+    <a href="add-amount" class="btn btn--lg btn--primary">
       <span class="btn__content">
         Add expense
         <i class="btn__icon ph-bold ph-plus"></i>
@@ -511,6 +515,43 @@
         }, { passive: true });
       }
     }());
+
+    // Favourite toggle (per-contact, persisted in localStorage)
+    function toggleFavourite(btn) {
+      var icon = btn.querySelector('i');
+      var isFav = btn.getAttribute('aria-pressed') === 'true';
+      var nextFav = !isFav;
+      btn.setAttribute('aria-pressed', String(nextFav));
+      btn.setAttribute('aria-label', nextFav ? 'Remove from favourites' : 'Add to favourites');
+      icon.className = nextFav ? 'ph-fill ph-star icon-btn__icon' : 'ph ph-star icon-btn__icon';
+      btn.classList.toggle('is-favourite', nextFav);
+
+      // Persist
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var contactId = params.get('id');
+        if (contactId) {
+          var key = 'settlr_favourites';
+          var favs = JSON.parse(localStorage.getItem(key) || '[]');
+          if (nextFav && favs.indexOf(contactId) === -1) favs.push(contactId);
+          if (!nextFav) favs = favs.filter(function (x) { return x !== contactId; });
+          localStorage.setItem(key, JSON.stringify(favs));
+        }
+      } catch (e) {}
+    }
+
+    // Restore favourite state on load
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var contactId = params.get('id');
+        if (!contactId) return;
+        var favs = JSON.parse(localStorage.getItem('settlr_favourites') || '[]');
+        if (favs.indexOf(contactId) === -1) return;
+        var btn = document.getElementById('js-fav-btn');
+        if (btn) toggleFavourite(btn);
+      } catch (e) {}
+    }());
   </script>
 
   <!-- ── Tab Switching JS ── -->
@@ -529,5 +570,10 @@
     });
   </script>
 
+<script src="../js/segment-slider.js" defer></script>
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

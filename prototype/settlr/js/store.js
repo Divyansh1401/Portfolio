@@ -800,6 +800,20 @@ window.Store = (function () {
       if (e.groupId) {
         const g = _getGroupById(e.groupId);
         contextLabel = g ? g.name : e.groupId;
+      } else if (e.splitAmong && e.splitAmong.length) {
+        // Non-group expense → first names of other participants
+        const others = e.splitAmong.filter(id => id !== CURRENT_USER_ID);
+        const firstNames = others.map(id => {
+          const c = _getContactById(id);
+          return c ? c.name.split(' ')[0] : id;
+        });
+        if (firstNames.length === 0) {
+          contextLabel = '';
+        } else if (firstNames.length <= 2) {
+          contextLabel = firstNames.join(', ');
+        } else {
+          contextLabel = firstNames.slice(0, 2).join(', ') + ' +' + (firstNames.length - 2) + ' more';
+        }
       } else if (e.contactId) {
         const c = _getContactById(e.contactId);
         contextLabel = c ? c.name : e.contactId;

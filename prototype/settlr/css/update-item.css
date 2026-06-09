@@ -72,12 +72,21 @@
   font-weight: 600;
 }
 
+.update-item__text .amount--lent,
+.update-item__text .amount--owe {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+  letter-spacing: -0.32px;
+}
+
 .update-item__text .amount--lent {
-  color: var(--label-lent-fg);
+  color: var(--expense-lent-fg);
 }
 
 .update-item__text .amount--owe {
-  color: var(--label-owe-fg);
+  color: var(--expense-owe-fg);
 }
 
 /* Meta row */

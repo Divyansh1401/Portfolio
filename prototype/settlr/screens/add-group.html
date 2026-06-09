@@ -147,6 +147,7 @@
     /* Visibility utility */
     .is-hidden { display: none !important; }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -162,7 +163,7 @@
 
   <!-- Top Bar -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="add-amount.html" class="top-app-bar__back" aria-label="Back">
+    <a href="add-amount" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Select People</span>
@@ -283,7 +284,7 @@
           '<div class="avatar avatar--initials avatar--md">' + c.initials + '</div>' +
           '<div class="person-item__text">' +
             '<span class="person-item__name">' + c.name + '</span>' +
-            '<span class="person-item__subtext">Tap to add</span>' +
+            '<span class="person-item__subtext">' + (c.phone || '') + '</span>' +
           '</div>' +
           '<div class="checkbox-control"><i class="ph-bold ph-check checkbox-control__check"></i></div>' +
         '</div>';
@@ -407,5 +408,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

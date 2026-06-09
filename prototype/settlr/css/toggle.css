@@ -55,8 +55,16 @@
   border-radius: var(--radius-full);
   background: var(--toggle-thumb-bg);
   box-shadow: var(--toggle-thumb-shadow);
-  transition: transform 0.2s ease;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toggle-control__thumb {
+    transition: transform var(--duration-base) var(--ease-spring);
+  }
+  .toggle-control__track {
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
 }
 
 /* On state — drives both track and thumb via sibling combinator */

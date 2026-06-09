@@ -354,6 +354,7 @@
     .btn-delete:active { background: var(--label-error-bg); }
     .btn-delete i { font-size: var(--font-size-20); }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -494,7 +495,7 @@
 
   <!-- ── Screen Footer ── -->
   <div class="screen-footer">
-    <a href="edit-expense.html" class="btn-edit text-title-md">
+    <a href="edit-expense" class="btn-edit text-title-md">
       <i class="ph ph-pencil"></i>
       Edit Expense
     </a>
@@ -699,5 +700,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

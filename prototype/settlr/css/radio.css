@@ -25,7 +25,14 @@
   border-radius: var(--radius-full);
   background-color: var(--control-dot);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transform: scale(0.4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .radio-control__dot {
+    transition: opacity var(--duration-fast) var(--ease-out),
+                transform var(--duration-fast) var(--ease-spring);
+  }
 }
 
 /* Selected */
@@ -37,6 +44,7 @@
 .radio-control.is-selected .radio-control__dot,
 .radio-control--selected .radio-control__dot {
   opacity: 1;
+  transform: scale(1);
 }
 
 /* Disabled */

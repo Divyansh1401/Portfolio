@@ -37,7 +37,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
       background: var(--surface-primary);
     }
     .status-bar__time {
@@ -136,9 +136,12 @@
       background: var(--surface-primary);
     }
 
-    /* ── FAB icon size ── */
-    .fab i { font-size: var(--font-size-24); }
+    /* ── Bottom nav fills width (no FAB on this screen) ── */
+    .bottom-nav-bar { padding: var(--spacing-16); }
+    .bottom-nav { flex: 1; }
+    .bottom-nav__tab { flex: 1; width: auto; }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -171,7 +174,7 @@
   <!-- ── Top App Bar: Brand + Avatar ── -->
   <nav class="top-app-bar">
     <span class="top-app-bar__title text-display-sm" style="color: var(--text-brand);">Settlr</span>
-    <a href="settings.html" class="avatar avatar--initials avatar--lg text-title-lg" id="js-user-initials" aria-label="Settings">DR</a>
+    <a href="settings" class="avatar avatar--initials avatar--lg text-title-lg" id="js-user-initials" aria-label="Settings">DR</a>
   </nav>
 
   <!-- ── Scrollable Content ── -->
@@ -184,7 +187,7 @@
         <span class="hero__amount text-display-sm" id="js-hero-amount">&#8377;0</span>
       </div>
       <div class="hero__actions">
-        <a href="add-amount.html" class="btn btn--sm btn--primary text-title-xs">
+        <a href="add-amount" class="btn btn--sm btn--primary text-title-xs">
           <span class="btn__content">
             <span class="btn__label">Add expense</span>
             <span class="btn__icon">
@@ -192,7 +195,7 @@
             </span>
           </span>
         </a>
-        <a href="settle-select.html" class="btn btn--sm btn--secondary text-title-xs">
+        <a href="settle-select" class="btn btn--sm btn--secondary text-title-xs">
           <span class="btn__content">
             <span class="btn__label">Settle up</span>
             <span class="btn__icon">
@@ -206,7 +209,7 @@
     <!-- Recent Groups -->
     <div class="heading">
       <span class="heading__title text-heading-md">Recent groups</span>
-      <a href="people.html?filter=group" class="btn btn--ghost btn--sm text-title-xs">
+      <a href="people?filter=group" class="btn btn--ghost btn--sm text-title-xs">
         <span class="btn__content">
           <span class="btn__label">View all</span>
           <span class="btn__icon">
@@ -217,7 +220,7 @@
     </div>
 
     <div class="cards-row" id="js-cards-row">
-      <a href="create-group-name.html" class="card-create">
+      <a href="create-group-name" class="card-create">
         <div class="card-create__icon">
           <i class="ph-bold ph-plus"></i>
         </div>
@@ -228,7 +231,7 @@
     <!-- Activity -->
     <div class="heading mt-8">
       <span class="heading__title text-heading-md">Activity</span>
-      <a href="activity.html" class="btn btn--ghost btn--sm text-title-xs">
+      <a href="activity" class="btn btn--ghost btn--sm text-title-xs">
         <span class="btn__content">
           <span class="btn__label">View all</span>
           <span class="btn__icon">
@@ -245,28 +248,25 @@
   <!-- ── Fixed Bottom: Nav Pill + FAB ── -->
   <div class="bottom-nav-bar">
     <nav class="bottom-nav">
-      <a href="home-dashboard.html" class="bottom-nav__tab is-active">
+      <a href="home-dashboard" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-house"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
-      <a href="people.html" class="bottom-nav__tab">
+      <a href="people" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-user"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
-      <a href="activity.html" class="bottom-nav__tab">
+      <a href="activity" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-clock"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>
-    <a href="add-amount.html" class="fab" aria-label="Add expense">
-      <i class="ph-bold ph-plus"></i>
-    </a>
   </div>
 
   <script src="../js/store.js"></script>
@@ -285,28 +285,15 @@
       var labelEl  = document.getElementById('js-hero-label');
       var amountEl = document.getElementById('js-hero-amount');
       if (net.direction === 'lent') {
-        labelEl.textContent = 'Overall you are owed';
+        labelEl.textContent  = 'Overall you are owed';
+        amountEl.textContent = Store.formatINR(net.amount);
       } else if (net.direction === 'owe') {
-        labelEl.textContent = 'Overall you owe';
+        labelEl.textContent  = 'Overall you owe';
+        amountEl.textContent = Store.formatINR(net.amount);
       } else {
-        labelEl.textContent = 'All settled up';
+        labelEl.textContent  = 'All settled up';
+        amountEl.textContent = '₹0';
       }
-
-      // Count-up animation from 0 → target over ~700ms (ease-out cubic)
-      function animateCountUp(el, target, duration) {
-        var start    = performance.now();
-        var startVal = 0;
-        function frame(now) {
-          var t = Math.min(1, (now - start) / duration);
-          var eased = 1 - Math.pow(1 - t, 3);
-          var current = startVal + (target - startVal) * eased;
-          el.textContent = Store.formatINR(current);
-          if (t < 1) requestAnimationFrame(frame);
-          else el.textContent = Store.formatINR(target);
-        }
-        requestAnimationFrame(frame);
-      }
-      animateCountUp(amountEl, net.amount, 700);
 
       // ── Group cards (Fix 3: empty state when no groups) ──
       var cardsRow   = document.getElementById('js-cards-row');
@@ -350,7 +337,7 @@
           var html = Render.groupCard(g, bal);
           var tmp  = document.createElement('div');
           tmp.innerHTML = html;
-          cardsRow.insertBefore(tmp.firstChild, createCard);
+          cardsRow.appendChild(tmp.firstChild);
         });
       }
 
@@ -391,5 +378,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

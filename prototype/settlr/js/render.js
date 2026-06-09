@@ -60,7 +60,7 @@ window.Render = (function () {
       ? 'Settled'
       : Store.formatINR(net.amount);
 
-    return `<a href="expense-detail.html?id=${expense.id}" class="expense-item${mod}" data-id="${expense.id}">` +
+    return `<a href="expense-detail?id=${expense.id}" class="expense-item${mod}" data-id="${expense.id}">` +
       `<div class="expense-item__illustration">${expense.emoji}</div>` +
       `<div class="expense-item__text">` +
         `<span class="expense-item__title text-title-sm">${expense.title}</span>` +
@@ -88,7 +88,7 @@ window.Render = (function () {
       ? 'Settled'
       : Store.formatINR(net.amount);
 
-    return `<a href="expense-detail.html?id=${expense.id}" class="txn-item${mod}" data-id="${expense.id}">` +
+    return `<a href="expense-detail?id=${expense.id}" class="txn-item${mod}" data-id="${expense.id}">` +
       `<div class="txn-item__illus">${expense.emoji}</div>` +
       `<div class="txn-item__text">` +
         `<span class="txn-item__name text-title-sm">${expense.title}</span>` +
@@ -126,7 +126,7 @@ window.Render = (function () {
       : (group.emoji || '');
     const imageMod = group.photo ? ' card-group__image--photo' : '';
 
-    return `<a href="group-detail.html?id=${group.id}" class="card-group${mod}" data-id="${group.id}">` +
+    return `<a href="group-detail?id=${group.id}" class="card-group${mod}" data-id="${group.id}">` +
       `<div class="card-group__image${imageMod}">${imageInner}</div>` +
       `<div class="card-group__info${infoMod}">` +
         `<span class="card-group__name text-title-sm">${group.name}</span>` +
@@ -184,7 +184,7 @@ window.Render = (function () {
       ? `<div class="avatar avatar--photo avatar--md"><img src="${contact.photo}" alt="${contact.name}"${_imgErr(contact.initials, 'initials')}></div>`
       : `<div class="avatar avatar--initials avatar--md text-title-md">${contact.initials}</div>`;
 
-    return `<a class="person-item${mod}" href="individual-detail.html?id=${contact.id}" data-id="${contact.id}">` +
+    return `<a class="person-item${mod}" href="individual-detail?id=${contact.id}" data-id="${contact.id}">` +
       avatarHtml +
       `<div class="person-item__text">` +
         `<span class="person-item__name text-title-sm">${contact.name}</span>` +
@@ -231,7 +231,7 @@ window.Render = (function () {
       : (group.emoji || '👥');
     const groupIconMod = group.photo ? ' person-item__group-icon--photo' : '';
 
-    return `<a class="person-item${mod}" href="group-detail.html?id=${group.id}" data-id="${group.id}" data-type="group">` +
+    return `<a class="person-item${mod}" href="group-detail?id=${group.id}" data-id="${group.id}" data-type="group">` +
       `<div class="person-item__group-icon${groupIconMod}">${groupIconInner}</div>` +
       `<div class="person-item__text">` +
         `<span class="person-item__name text-title-sm">${group.name}</span>` +
@@ -298,7 +298,7 @@ window.Render = (function () {
       : (group.emoji || '');
     const rowIconMod = group.photo ? ' group-row__icon--photo' : '';
 
-    return `<a class="group-row" href="group-detail.html?id=${group.id}" data-id="${group.id}">` +
+    return `<a class="group-row" href="group-detail?id=${group.id}" data-id="${group.id}">` +
       `<div class="group-row__icon${rowIconMod}">${rowIconInner}</div>` +
       `<div class="group-row__text">` +
         `<span class="group-row__name text-title-sm">${group.name}</span>` +

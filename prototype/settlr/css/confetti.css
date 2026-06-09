@@ -46,7 +46,16 @@
 .confetti__dot {
   position: absolute;
   border-radius: var(--radius-full);
-  animation: confettiFall 2s ease-out both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .confetti__dot {
+    animation: confettiFall 2s var(--ease-out) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti__dot { display: none; }
 }
 
 .confetti--slow .confetti__dot {

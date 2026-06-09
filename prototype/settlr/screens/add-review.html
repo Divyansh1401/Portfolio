@@ -155,6 +155,7 @@
     }
 
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -170,7 +171,7 @@
 
   <!-- Top Bar -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="add-split.html" class="top-app-bar__back">
+    <a href="add-split" class="top-app-bar__back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Review</span>
@@ -220,8 +221,7 @@
     <div class="notes-section">
       <div class="notes-card notes-card--editable">
         <label class="notes-card__label" for="js-notes">Notes (optional)</label>
-        <textarea id="js-notes" class="notes-card__textarea" rows="2" maxlength="280" placeholder="Add a note for this expense…" oninput="document.getElementById('js-notes-counter').textContent = this.value.length + '/280';"></textarea>
-        <span id="js-notes-counter" class="notes-card__counter">0/280</span>
+        <textarea id="js-notes" class="notes-card__textarea" rows="2" placeholder="Add a note for this expense…"></textarea>
       </div>
     </div>
 
@@ -375,5 +375,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

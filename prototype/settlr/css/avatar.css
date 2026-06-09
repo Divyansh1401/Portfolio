@@ -16,6 +16,19 @@
   text-decoration: none;
 }
 
+/* ---- Group avatar: rounded square (people = circle, groups = square) ---- */
+.avatar--group {
+  border-radius: var(--radius-16);
+}
+.avatar--group.avatar--xs,
+.avatar--group.avatar--sm {
+  border-radius: var(--radius-8);
+}
+.avatar--group.avatar--md,
+.avatar--group.avatar--lg {
+  border-radius: var(--radius-12);
+}
+
 /* ---- Types ---- */
 .avatar--initials {
   background-color: var(--avatar-bg);

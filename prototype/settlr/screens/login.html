@@ -33,7 +33,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
     }
     .status-bar__time {
       font-family: var(--font-body);
@@ -223,6 +223,23 @@
       flex-shrink: 0;
     }
 
+    /* ── Custom login footer (button + terms stacked) ── */
+    .login-footer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 393px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-12);
+      padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
+      background: var(--screen-footer-bg);
+      border-top: var(--border-small) solid var(--screen-footer-border);
+    }
+    .login-footer .btn { width: 100%; }
+
     .login-terms {
       font-family: var(--font-body);
       font-size: var(--font-size-12);
@@ -237,6 +254,7 @@
       font-weight: var(--weight-medium);
     }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -252,15 +270,15 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="splash.html" class="top-app-bar__back" aria-label="Back">
+    <a href="splash" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
   </header>
 
   <!-- ── Hero ── -->
   <div class="login-hero">
-    <h1 class="login-hero__title">What's your<br>phone number?</h1>
-    <p class="login-hero__subtitle">We'll send you a verification code to confirm your identity.</p>
+    <h1 class="login-hero__title">Welcome to Settlr</h1>
+    <p class="login-hero__subtitle">Sign in or create an account to continue.</p>
   </div>
 
   <!-- ── Phone Input ── -->
@@ -310,10 +328,14 @@
   </div>
 
   <!-- ── Bottom CTA ── -->
-  <div class="screen-footer">
-    <a href="otp.html" class="btn btn--primary btn--lg btn--full">Send Code</a>
+  <div class="login-footer">
+    <a href="otp" class="btn btn--primary btn--lg btn--full">Continue</a>
     <p class="login-terms">By continuing, you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></p>
   </div>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

@@ -43,8 +43,15 @@
       padding-bottom: 112px;
     }
 
-    .fab i { font-size: var(--icon-lg); }
+    /* ── Bottom nav fills width (no FAB on this screen) ── */
+    .bottom-nav-bar { padding: var(--spacing-16); }
+    .bottom-nav { flex: 1; }
+    .bottom-nav__tab { flex: 1; width: auto; }
+
+    /* ── Sheet hidden state (overrides .sheet-overlay's display:flex) ── */
+    .sheet-overlay[hidden] { display: none !important; }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -74,7 +81,13 @@
   <!-- ── Top Bar ── -->
   <nav class="top-app-bar">
     <span class="top-app-bar__title text-display-sm">People</span>
-    <a href="add-friend.html" class="btn btn--sm btn--secondary text-title-xs">Add Contact</a>
+    <button class="icon-btn icon-btn--md" id="js-people-menu-btn" aria-label="More options" type="button">
+      <svg class="icon-btn__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <circle cx="10" cy="4" r="1.5"/>
+        <circle cx="10" cy="10" r="1.5"/>
+        <circle cx="10" cy="16" r="1.5"/>
+      </svg>
+    </button>
   </nav>
 
   <!-- ── Search ── -->
@@ -89,7 +102,7 @@
 
   <!-- ── Filter Chips ── -->
   <div class="chips-row">
-    <button class="chip chip--sm is-active text-title-xs" data-filter="individual">Individual</button>
+    <button class="chip chip--sm text-title-xs" data-filter="individual">Individual</button>
     <button class="chip chip--sm text-title-xs" data-filter="group">Group</button>
     <button class="chip chip--sm text-title-xs" data-filter="active">Active</button>
     <button class="chip chip--sm text-title-xs" data-filter="lend">Lend</button>
@@ -100,7 +113,7 @@
   <main class="content">
     <div class="person-list" id="js-person-list">
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">JW</div>
         <div class="person-item__text">
           <span class="person-item__name">Johnnie Walker</span>
@@ -109,7 +122,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">BG</div>
         <div class="person-item__text">
           <span class="person-item__name">Beau Geste</span>
@@ -118,7 +131,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">KC</div>
         <div class="person-item__text">
           <span class="person-item__name">Kendra Cole</span>
@@ -127,7 +140,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">SM</div>
         <div class="person-item__text">
           <span class="person-item__name">Sophie Miller</span>
@@ -136,7 +149,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">LA</div>
         <div class="person-item__text">
           <span class="person-item__name">Liam Anderson</span>
@@ -145,7 +158,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">AR</div>
         <div class="person-item__text">
           <span class="person-item__name">Avery Rivers</span>
@@ -154,7 +167,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">TM</div>
         <div class="person-item__text">
           <span class="person-item__name">Tessa Moore</span>
@@ -163,7 +176,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">GH</div>
         <div class="person-item__text">
           <span class="person-item__name">Gavin Hayes</span>
@@ -172,7 +185,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">CF</div>
         <div class="person-item__text">
           <span class="person-item__name">Clara Fields</span>
@@ -181,7 +194,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">ZM</div>
         <div class="person-item__text">
           <span class="person-item__name">Zoe Martin</span>
@@ -190,7 +203,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">DR</div>
         <div class="person-item__text">
           <span class="person-item__name">Dylan Reed</span>
@@ -199,7 +212,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">KP</div>
         <div class="person-item__text">
           <span class="person-item__name">Kylie Porter</span>
@@ -208,7 +221,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">HN</div>
         <div class="person-item__text">
           <span class="person-item__name">Henry Nash</span>
@@ -217,7 +230,7 @@
         <span class="person-item__action"><i class="ph ph-caret-right"></i></span>
       </a>
 
-      <a class="person-item" href="individual-detail.html">
+      <a class="person-item" href="individual-detail">
         <div class="avatar avatar--initials avatar--md">EB</div>
         <div class="person-item__text">
           <span class="person-item__name">Ella Brooks</span>
@@ -240,28 +253,76 @@
   <!-- ── Fixed Bottom: Nav Pill + FAB ── -->
   <div class="bottom-nav-bar">
     <nav class="bottom-nav">
-      <a href="home-dashboard.html" class="bottom-nav__tab">
+      <a href="home-dashboard" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-house"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Home</span>
         </div>
       </a>
-      <a href="people.html" class="bottom-nav__tab is-active">
+      <a href="people" class="bottom-nav__tab is-active">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph-fill ph-user"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">People</span>
         </div>
       </a>
-      <a href="activity.html" class="bottom-nav__tab">
+      <a href="activity" class="bottom-nav__tab">
         <div class="bottom-nav__tab-content">
           <span class="bottom-nav__tab-icon"><i class="ph ph-clock"></i></span>
           <span class="bottom-nav__tab-label text-caption-sm">Activity</span>
         </div>
       </a>
     </nav>
-    <a href="add-amount.html" class="fab" aria-label="Add expense">
-      <i class="ph-bold ph-plus"></i>
-    </a>
+  </div>
+
+  <!-- ── Quick-actions Sheet ── -->
+  <div class="sheet-overlay" id="js-people-menu-overlay" hidden>
+    <div class="sheet" role="dialog" aria-label="People actions">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Quick actions</span>
+        <button class="sheet__close" id="js-people-menu-close" aria-label="Close" type="button">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <a href="create-group-name" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--brand">
+            <i class="ph ph-users-three"></i>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Create new group</span>
+          </div>
+          <span class="settings-row__chevron"><i class="ph ph-caret-right"></i></span>
+        </a>
+        <a href="add-friend" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--green">
+            <i class="ph ph-user-plus"></i>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Add friend</span>
+          </div>
+          <span class="settings-row__chevron"><i class="ph ph-caret-right"></i></span>
+        </a>
+        <a href="add-friend?source=contacts" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--neutral">
+            <i class="ph ph-address-book"></i>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Import from contacts</span>
+          </div>
+          <span class="settings-row__chevron"><i class="ph ph-caret-right"></i></span>
+        </a>
+        <a href="#" class="settings-row" id="js-invite-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--coral">
+            <i class="ph ph-share-network"></i>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Invite to Settlr</span>
+          </div>
+          <span class="settings-row__chevron"><i class="ph ph-caret-right"></i></span>
+        </a>
+      </div>
+    </div>
   </div>
 
   <script src="../js/store.js"></script>
@@ -366,7 +427,38 @@
       // ── Initial render ─────────────────────────────────────
       renderList();
     }());
+
+    // ── Quick-actions sheet (kebab menu) ─────────────────────
+    (function () {
+      var btn     = document.getElementById('js-people-menu-btn');
+      var overlay = document.getElementById('js-people-menu-overlay');
+      var close   = document.getElementById('js-people-menu-close');
+      if (!btn || !overlay) return;
+
+      function open() {
+        overlay.hidden = false;
+        requestAnimationFrame(function () { overlay.classList.add('is-open'); });
+      }
+      function shut() {
+        overlay.classList.remove('is-open');
+        setTimeout(function () { overlay.hidden = true; }, 250);
+      }
+
+      btn.addEventListener('click', open);
+      if (close) close.addEventListener('click', shut);
+      overlay.addEventListener('click', function (e) { if (e.target === overlay) shut(); });
+      overlay.addEventListener('settlr:sheet-dismiss', shut);
+
+      // Dismiss when a menu row is tapped (for # placeholder links too)
+      overlay.querySelectorAll('.settings-row').forEach(function (row) {
+        row.addEventListener('click', shut);
+      });
+    }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

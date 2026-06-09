@@ -33,7 +33,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--spacing-16);
+      padding: 0 var(--spacing-24);
     }
     .status-bar__time {
       font-family: var(--font-body);
@@ -73,17 +73,28 @@
       line-height: var(--line-height-27);
       color: var(--text-secondary);
     }
-    .otp-hero__phone {
-      font-weight: var(--weight-semibold);
+    .otp-hero__phone-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+    .otp-hero__phone-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-8);
       color: var(--text-primary);
     }
-    .otp-hero__edit {
+    .otp-hero__phone {
       font-family: var(--font-body);
-      font-size: var(--font-size-14);
+      font-size: var(--font-size-16);
       font-weight: var(--weight-semibold);
+      line-height: var(--line-height-24);
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    .otp-hero__phone-pen {
+      font-size: var(--icon-md);
       color: var(--text-brand);
-      text-decoration: none;
-      margin-left: var(--spacing-8);
     }
 
     /* ── OTP Section ── */
@@ -130,30 +141,8 @@
       pointer-events: auto;
     }
 
-    /* ── Security Note ── */
-    .security-note {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--spacing-8);
-      padding: var(--spacing-12) var(--spacing-16);
-      border-radius: var(--radius-12);
-      background: var(--btn-icon-bg);
-    }
-    .security-note__icon {
-      font-size: var(--icon-sm);
-      color: var(--text-brand);
-      flex-shrink: 0;
-      margin-top: var(--spacing-2);
-    }
-    .security-note__text {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-regular);
-      line-height: var(--line-height-19);
-      color: var(--top-app-bar-title);
-    }
-
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -169,7 +158,7 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="login.html" class="top-app-bar__back" aria-label="Back">
+    <a href="login" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
   </header>
@@ -178,10 +167,14 @@
   <div class="otp-hero">
     <h1 class="otp-hero__title">Enter the code</h1>
     <p class="otp-hero__subtitle">
-      We sent a 6-digit verification code to
-      <span class="otp-hero__phone">+91 98765 43210</span>
-      <a href="login.html" class="otp-hero__edit">Edit</a>
+      We sent a 6-digit verification code to:
     </p>
+    <div class="otp-hero__phone-row">
+      <a href="login" class="btn btn--ghost btn--md otp-hero__phone-btn">
+        <span class="otp-hero__phone">+91 98765 43210</span>
+        <i class="ph ph-pencil-simple otp-hero__phone-pen"></i>
+      </a>
+    </div>
   </div>
 
   <!-- ── OTP Input ── -->
@@ -208,15 +201,11 @@
     </div>
 
     <!-- Security Note -->
-    <div class="security-note">
-      <i class="ph ph-check security-note__icon"></i>
-      <span class="security-note__text">We'll never share your phone number. Your data is encrypted and secure.</span>
-    </div>
   </div>
 
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
-    <a href="welcome.html" class="btn btn--primary btn--lg btn--full">Verify &amp; Continue</a>
+    <a href="welcome" class="btn btn--primary btn--lg btn--full">Verify &amp; Continue</a>
   </div>
 
   <!-- ── OTP Auto-advance Script ── -->
@@ -266,5 +255,9 @@
     }, 1000);
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>

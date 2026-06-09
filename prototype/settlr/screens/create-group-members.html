@@ -25,17 +25,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Top Bar ── */
-    .top-bar__count {
-      font-family: var(--font-body);
-      font-size: var(--font-size-12);
-      font-weight: var(--weight-semibold);
-      color: var(--text-brand);
-      background: var(--type-chip-bg-on);
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      flex-shrink: 0;
-    }
 
     /* ── Selected Members Row (screen-unique horizontal scroller) ── */
     .selected-row {
@@ -82,6 +71,7 @@
       padding: 0 var(--spacing-16) var(--spacing-8);
     }
   </style>
+  <script src="../js/router.js"></script>
 </head>
 <body>
 
@@ -97,11 +87,10 @@
 
   <!-- ── Top Bar ── -->
   <header class="top-app-bar top-app-bar--nav">
-    <a href="create-group-name.html" class="top-app-bar__back" aria-label="Back">
+    <a href="create-group-name" class="top-app-bar__back" aria-label="Back">
       <i class="ph-bold ph-caret-left"></i>
     </a>
     <span class="top-app-bar__title">Add Members</span>
-    <span class="top-bar__count" id="js-count">0 selected</span>
   </header>
 
   <!-- ── Step Progress ── -->
@@ -124,7 +113,7 @@
 
   <!-- ── Invite by Link ── -->
   <div class="invite-banner-wrap">
-    <a href="add-friend.html" class="invite-banner">
+    <a href="add-friend" class="invite-banner">
       <div class="invite-banner__icon">
         <i class="ph ph-plus"></i>
       </div>
@@ -162,7 +151,7 @@
           '<div class="person-item__avatar-circle">' + c.initials + '</div>' +
           '<div class="person-item__text">' +
             '<span class="person-item__name">' + c.name + '</span>' +
-            '<span class="person-item__subtext">Tap to add</span>' +
+            '<span class="person-item__subtext">' + (c.phone || '') + '</span>' +
           '</div>' +
           '<div class="checkbox-control">' +
             '<svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none">' +
@@ -219,7 +208,7 @@
 
       function updateCount() {
         var n = Object.keys(selectedIds).length;
-        countEl.textContent = n + ' selected';
+        if (countEl) countEl.textContent = n + ' selected';
         if (n > 0) {
           createBtn.style.opacity = '';
           createBtn.style.pointerEvents = '';
@@ -241,7 +230,8 @@
         ctx.groupId = newId;
         ctx.memberIds = memberIds;
         sessionStorage.setItem('settlr_new_group', JSON.stringify(ctx));
-        location.href = 'create-group-done';
+        // Skip standalone "Group Created" screen — go straight to group detail
+        location.href = 'group-detail?id=' + encodeURIComponent(newId);
       });
 
       searchInput.addEventListener('input', function() { renderList(this.value); });
@@ -249,5 +239,9 @@
     }());
   </script>
 
+<script src="../js/list-stagger.js" defer></script>
+<script src="../js/sheet-drag.js" defer></script>
+<script src="../js/swipe-back.js" defer></script>
+<script src="../js/pull-refresh.js" defer></script>
 </body>
 </html>
