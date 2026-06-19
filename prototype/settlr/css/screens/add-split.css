@@ -1,0 +1,150 @@
+/* ============================================
+   Settlr — Add Split screen layout
+   Step 3 of the add-expense flow (the split editor). Genuine
+   screen-specific structure only, scoped under [data-view="add-split"] so it
+   never leaks into other views in the compiled shell. Component styling
+   (segment-control, amount-input, checkbox, avatar, button, screen-footer,
+   bottom-sheet, top-app-bar, step-progress) lives in component/navigation CSS.
+
+   Typography is applied via text-* classes in MARKUP where an exact token
+   style matches; the remaining font props (no matching text-* token, or a
+   className that JS overwrites at runtime) are kept scoped and flagged below
+   under NON-TOKEN VALUES / typography notes.
+   ============================================ */
+
+/* Scrollable content region. Mirrors the old standalone `.scroll-content`:
+   the sections own their own padding (full-bleed rows), so the scroll
+   container only carries the bottom clearance for the fixed .screen-footer.
+   Original standalone pad was `calc(var(--spacing-96) + var(--spacing-4))`.
+   Override the shell's bottom-nav dock clearance — this flow screen has a
+   footer, not a dock. No top/horizontal padding (matches the original). */
+[data-view="add-split"] .view__content {
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-4));
+  /* Neutral/warm page bg (inherits the app-shell surface, matching the header
+     and edit-expense) so the white .paid-by card and section blocks read. */
+  background: var(--surface-primary);
+}
+
+/* Paid by → shared .paid-by component (--card variant); see css/paid-by.css.
+   add-split is a full-bleed sheet, so inset the card from the screen edges. */
+[data-view="add-split"] .paid-by {
+  margin: var(--spacing-16);
+}
+
+/* ── Split header (screen-unique) ── */
+[data-view="add-split"] .split-header {
+  padding: var(--spacing-16);
+  display: flex; flex-direction: column; gap: var(--spacing-16);
+  background: var(--surface-card);
+}
+[data-view="add-split"] .split-summary {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--spacing-8); padding: var(--spacing-12);
+  background: var(--card-create-bg); border-radius: var(--radius-8);
+}
+/* summary amount — display 14px/semibold has no matching text-* token
+   (text-amount-xs is 13px); kept exact (see NON-TOKEN VALUES). */
+[data-view="add-split"] .split-summary__amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  color: var(--text-brand);
+}
+/* summary label — text style via .text-body-sm in markup */
+[data-view="add-split"] .split-summary__label {
+  color: var(--text-secondary);
+}
+
+/* ── Participant list (screen-unique) ── */
+[data-view="add-split"] .participant-list {
+  display: flex; flex-direction: column;
+  background: var(--surface-card);
+}
+[data-view="add-split"] .participant-item {
+  display: flex; align-items: center; gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--contact-divider);
+}
+[data-view="add-split"] .participant-item:last-child { border-bottom: none; }
+/* Inactive participant: greyed text + checkbox, but the amount
+   column stays interactive (click to reactivate). */
+[data-view="add-split"] .participant-item--inactive .avatar,
+[data-view="add-split"] .participant-item--inactive .participant-item__name,
+[data-view="add-split"] .participant-item--inactive .participant-item__share { opacity: 0.5; }
+[data-view="add-split"] .participant-item .checkbox-control { cursor: pointer; }
+[data-view="add-split"] .amount-input--inactive { opacity: 0.5; cursor: pointer; }
+[data-view="add-split"] .amount-input--inactive .amount-input__field { pointer-events: none; }
+[data-view="add-split"] .participant-item__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+/* name — text style via .text-title-sm in markup; only color overridden */
+[data-view="add-split"] .participant-item__name {
+  color: var(--contact-name);
+}
+/* share — text style via .text-body-xs in markup; only color overridden */
+[data-view="add-split"] .participant-item__share {
+  color: var(--contact-subtext);
+}
+[data-view="add-split"] .participant-item__amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* TODO(spacing): 120px column / 40px row have no spacing token — kept exact
+     to avoid a visual change; see NON-TOKEN VALUES. */
+  width: 120px;
+  height: 40px;
+  padding: var(--spacing-8);
+  background: var(--amount-input-bg);
+  border: var(--border-small) solid transparent;
+  border-radius: var(--radius-8);
+}
+/* amount value — text style via .text-amount-sm in markup; only color
+   overridden (display 16/regular/lh20/-0.32px == .text-amount-sm). */
+[data-view="add-split"] .participant-item__amount-value {
+  color: var(--amount-input-fg-disabled);
+}
+
+/* ── Total bar (screen-unique) ── */
+[data-view="add-split"] .total-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--btn-icon-bg);
+  border-top: var(--border-medium) solid var(--border-default);
+}
+/* total label — text style via .text-title-sm in markup */
+[data-view="add-split"] .total-bar__label {
+  color: var(--text-secondary);
+}
+/* total value (ok/err) — display 13px/semibold. NO text-* snap: the view JS
+   sets `el.className = 'total-bar__ok'|'total-bar__err'` at runtime, which
+   would clobber any text-* class added in markup. Type kept scoped here so it
+   survives the className swap. (see NON-TOKEN VALUES note.) */
+[data-view="add-split"] .total-bar__ok {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  color: var(--expense-lent-fg);
+}
+[data-view="add-split"] .total-bar__err {
+  font-family: var(--font-display);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  color: var(--expense-owe-fg);
+}
+
+/* ── Split error message (screen-unique) ── */
+/* type via .text-body-xs in markup; only color + spacing + display toggle
+   live here. */
+[data-view="add-split"] .split-error {
+  color: var(--expense-owe-fg);
+  padding: var(--spacing-4) var(--spacing-16);
+  display: none;
+}
+[data-view="add-split"] .split-error--visible { display: block; }
+
+/* Amount input in split context */
+[data-view="add-split"] .participant-item .amount-input {
+  /* TODO(spacing): 120px column width has no spacing token — kept exact. */
+  width: 120px;
+  flex-shrink: 0;
+}
+
+/* Payer-sheet rows + hint → shared css/payer-sheet.css (SettlrPayerSheet). */

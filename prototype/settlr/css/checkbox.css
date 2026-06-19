@@ -23,7 +23,7 @@
 
 /* ---- Checkmark icon (hidden by default) ---- */
 .checkbox-control__check {
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   line-height: 1;
   color: var(--control-dot);
   /* Always rendered but invisible until selected — enables animation */

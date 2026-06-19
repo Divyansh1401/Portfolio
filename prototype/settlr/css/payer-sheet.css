@@ -1,0 +1,40 @@
+/* ============================================
+   Settlr — Payer Sheet rows (shared)
+   Styling for the multi-payer "Paid by" bottom-sheet rendered by
+   js/payer-sheet.js (SettlrPayerSheet). Shared by add-split + edit-expense.
+   Row = checkbox + avatar + name + a 120px amount-input; a running sum hint
+   sits under the list (coral when the amounts don't add up).
+   ============================================ */
+
+.payer-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--contact-divider);
+}
+.payer-row:last-child { border-bottom: none; }
+
+.payer-row__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+.payer-row__name { color: var(--text-primary); }
+.payer-row__sub  { color: var(--text-tertiary); }
+
+/* Per-payer amount input (reuses the .amount-input component, fixed 120px col). */
+.payer-row .amount-input {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+/* Running payer-sum hint under the list; coral when amounts don't add up. */
+.payer-hint {
+  padding: var(--spacing-8) var(--spacing-16);
+  text-align: center;
+  color: var(--text-secondary);
+}
+.payer-hint--err { color: var(--expense-owe-fg); }

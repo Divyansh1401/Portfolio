@@ -205,7 +205,7 @@
 }/* Label text above the amount (e.g. "lent", "owe") */
 .expense-item__label {
   font-family: var(--font-body);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 .expense-item__label--lent { color: var(--expense-lent-fg); }

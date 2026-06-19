@@ -25,9 +25,6 @@ window.handleAvatarError = function (img, fallback, mode) {
 window.Render = (function () {
   'use strict';
 
-  const CHEVRON_SVG =
-    '<i class="ph ph-caret-right"></i>';
-
   // Build an onerror attribute that swaps a broken <img> with fallback text.
   // mode: 'initials' for avatars | 'tile' for emoji/group tiles.
   function _imgErr(fallback, mode) {
@@ -59,12 +56,14 @@ window.Render = (function () {
     const amtStr = dir === 'settled'
       ? 'Settled'
       : Store.formatINR(net.amount);
+    const time = Store.formatTime(expense.occurredAt);
+    const subtitle = [contextLabel, time].filter(Boolean).join(' \u00b7 ');
 
     return `<a href="expense-detail?id=${expense.id}" class="expense-item${mod}" data-id="${expense.id}">` +
       `<div class="expense-item__illustration">${expense.emoji}</div>` +
       `<div class="expense-item__text">` +
         `<span class="expense-item__title text-title-sm">${expense.title}</span>` +
-        `<span class="expense-item__subtitle text-body-xs">${contextLabel}</span>` +
+        `<span class="expense-item__subtitle text-body-xs">${subtitle}</span>` +
       `</div>` +
       `<div class="expense-item__right">` +
         `<span class="expense-item__label${cls} text-label-xs">${label}</span>` +
@@ -87,12 +86,14 @@ window.Render = (function () {
     const amtStr = dir === 'settled'
       ? 'Settled'
       : Store.formatINR(net.amount);
+    const time = Store.formatTime(expense.occurredAt);
+    const subtitle = [contextLabel, time].filter(Boolean).join(' \u00b7 ');
 
     return `<a href="expense-detail?id=${expense.id}" class="txn-item${mod}" data-id="${expense.id}">` +
       `<div class="txn-item__illus">${expense.emoji}</div>` +
       `<div class="txn-item__text">` +
         `<span class="txn-item__name text-title-sm">${expense.title}</span>` +
-        `<span class="txn-item__subtitle text-body-xs">${contextLabel}</span>` +
+        `<span class="txn-item__subtitle text-body-xs">${subtitle}</span>` +
       `</div>` +
       `<div class="txn-item__right">` +
         `<span class="txn-item__badge text-label-xs">${badge}</span>` +
@@ -309,6 +310,33 @@ window.Render = (function () {
     `</a>`;
   }
 
+  // ── Settlement Item (individual-detail + group-detail history) ──
+
+  /**
+   * A settled-payment row, styled like a settled txn-item; links to
+   * settlement-detail (settlement carries its own id).
+   * @param {object}  settlement - { id, amount, method }
+   * @param {string}  name       - the other party's display name
+   * @param {boolean} youPaid    - true if the current user paid out
+   */
+  function settlementRow(settlement, name, youPaid) {
+    const title  = youPaid ? `You paid ${name}` : `${name} paid you`;
+    const method = settlement.method ? settlement.method + ' · ' : '';
+    const time   = Store.formatTime(settlement.occurredAt);
+    const subtitle = [method + 'Settlement', time].filter(Boolean).join(' \u00b7 ');
+    return `<a href="settlement-detail?id=${settlement.id}" class="txn-item txn-item--settled" data-id="${settlement.id}">` +
+      `<div class="txn-item__illus">🤝</div>` +
+      `<div class="txn-item__text">` +
+        `<span class="txn-item__name text-title-sm">${title}</span>` +
+        `<span class="txn-item__subtitle text-body-xs">${subtitle}</span>` +
+      `</div>` +
+      `<div class="txn-item__right">` +
+        `<span class="txn-item__badge text-label-xs">Settled</span>` +
+        `<span class="txn-item__amount">${Store.formatINR(settlement.amount)}</span>` +
+      `</div>` +
+    `</a>`;
+  }
+
   // ── Date Section (date heading + items as siblings) ───────
 
   /**
@@ -332,6 +360,7 @@ window.Render = (function () {
     groupItem,
     balanceRow,
     groupRow,
+    settlementRow,
     dateSection
   };
 

@@ -3,35 +3,44 @@
    Bottom Nav Bar, Segment Control
    ============================================ */
 
-/* ---- Bottom Nav Bar (floating pill + FAB wrapper) ---- */
+/* ---- Bottom Nav Bar (floating pill wrapper) ---- */
 .bottom-nav-bar {
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 393px;
+  /* Full-bleed on phones; frame to 393px only on desktop — mirrors
+     .app-shell / .screen-footer so the nav spans the same width as the
+     content above it on >393px phones like Pro Max, and stays aligned
+     with the app frame on desktop. */
+  width: 100%;
   max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
   z-index: 100;
   pointer-events: none;
+}
+
+/* Centre the nav in the 393px phone frame only on wide viewports —
+   matching the .app-shell breakpoint so the two stay aligned. */
+@media (min-width: 480px) {
+  .bottom-nav-bar {
+    max-width: 393px;
+  }
 }
 
 .bottom-nav-bar > * {
   pointer-events: auto;
 }
 
-.bottom-nav-bar .fab {
-  position: static;
-  flex-shrink: 0;
-}
-
 /* ---- Nav Pill ---- */
 .bottom-nav {
+  position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
   gap: var(--spacing-8);
   padding: var(--spacing-4);
   border-radius: var(--radius-full);
@@ -43,10 +52,12 @@
 
 /* ---- Nav Tab ---- */
 .bottom-nav__tab {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 83px;
+  flex: 1;
   height: var(--spacing-48);
   border-radius: var(--radius-full);
   text-decoration: none;
@@ -60,6 +71,42 @@
 .bottom-nav__tab.is-active {
   background: var(--nav-tab-bg-active);
   color: var(--nav-tab-fg-active);
+}
+
+/* ---- Sliding active indicator (pill that slides between tabs) ----
+   js/bottom-nav-slider.js injects .bottom-nav__indicator and positions it
+   over the active tab; it slides on active change. The per-tab .is-active
+   background is suppressed once the slider is wired (the pill provides it). */
+.bottom-nav__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: var(--nav-tab-bg-active);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+.bottom-nav[data-slider-init="1"] .bottom-nav__tab.is-active {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bottom-nav__indicator {
+    transition: transform var(--duration-base) var(--ease-out),
+                width var(--duration-base) var(--ease-out),
+                height var(--duration-base) var(--ease-out);
+  }
+  /* Tap feedback — scale the icon+label cluster, not the full-width tab */
+  .bottom-nav__tab-content {
+    transition: transform var(--duration-fast) var(--ease-out);
+    will-change: transform;
+  }
+  .bottom-nav__tab:active .bottom-nav__tab-content {
+    transform: scale(var(--press-scale-sm));
+  }
 }
 
 .bottom-nav__tab-content {
@@ -84,7 +131,7 @@
 
 .bottom-nav__tab-label {
   font-family: var(--font-body);
-  font-size: var(--font-size-11);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-17);
 }

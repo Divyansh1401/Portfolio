@@ -1,0 +1,198 @@
+/* ============================================
+   Settlr — Select People screen layout
+   (file is screens/add-group.html — the "Select People" step of the
+   add-expense flow). Genuine screen-specific structure only, scoped under
+   [data-view="add-group"] so it never leaks into other views in the compiled
+   shell. Component styling (search-input, search-wrap, step-progress,
+   top-app-bar, person-item, avatar, checkbox, member-pill, screen-footer,
+   empty-state, input-field helper) lives in component CSS. Typography is
+   applied via text-* classes in markup where a text-* style matches; remaining
+   color/spacing-only rules stay scoped here.
+
+   COMPONENT OVERRIDES TO PROMOTE
+   ------------------------------
+   The following blocks are screen-unique compositions kept scoped here to
+   avoid touching shared CSS during this migration, but are candidates to be
+   promoted into components later:
+     - .selected-row (horizontal selected-people chip strip)  → candidate
+       "member-pill row" / chip-strip layout shared with other selector flows.
+     - .save-group-row / .save-group-row__* / .save-group-input  → candidate
+       "save-as-group" inline-form row used by the people-selection flow.
+     - .bottom-stack  → candidate "footer-stack" wrapper (an extra row stacked
+       above .screen-footer); overlaps the screen-footer dock pattern.
+     - .section-header (rendered by JS into the list)  → candidate shared
+       "list section header" overline; overlaps .text-overline-md but keeps a
+       distinct size/line-height/letter-spacing, so left as a screen-unique
+       style (no exact text-* match — font props retained here).
+     - .search-empty  → overlaps .empty-state; kept as an inline (search
+       no-results) visibility wrapper around the shared empty-state markup.
+
+   NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
+   ---------------------------------------------------------------------
+     - .save-group-row__icon width/height: 36px  (no 36px sizing token)
+     - .save-group-row__icon font-size: var(--icon-sm)  (icon glyph size token,
+       drives the bare emoji glyph — kept exact)
+     - .save-group-input height: 40px  (no 40px control-height spacing token)
+     - .section-header letter-spacing: 1.92px  (no letter-spacing token)
+   ============================================ */
+
+/* ── Selected People Chips Row (screen-unique strip below search) ── */
+[data-view="add-group"] .selected-row {
+  display: none;
+  padding: 0 var(--spacing-16) var(--spacing-8);
+  gap: var(--spacing-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+[data-view="add-group"] .selected-row::-webkit-scrollbar { display: none; }
+[data-view="add-group"] .selected-row--visible { display: flex; }
+
+/* ── List ──
+   The combined Groups/Friends list. In the compiled shell the scroll region is
+   the view's .view__content; the list is a plain flow container inside it. The
+   bottom clearance for the fixed .bottom-stack lives on the scroller via
+   --app-shell-content-pad (see bottom of file) — replicating the original
+   .people-list padding-bottom: calc(var(--spacing-64) * 2 + var(--spacing-32)). */
+
+/* Empty state inline (search no results) */
+[data-view="add-group"] .search-empty {
+  display: none;
+  padding: var(--spacing-32) var(--spacing-16);
+  text-align: center;
+}
+[data-view="add-group"] .search-empty--visible { display: block; }
+[data-view="add-group"] .search-empty .empty-state__title {
+  margin-bottom: var(--spacing-4);
+}
+
+/* Section header (rendered by JS — no static markup to carry a text-* class,
+   and no exact text-* match: 12/semibold/lh16/ls1.92 uppercase). Font props
+   retained here as a screen-unique style. */
+[data-view="add-group"] .section-header {
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-4);
+  color: var(--text-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  /* NON-TOKEN: 1.92px tracking — no letter-spacing token; kept exact. */
+  letter-spacing: 1.92px;
+  text-transform: uppercase;
+  line-height: var(--line-height-16);
+  position: sticky;
+  top: 0;
+  background: var(--surface-primary);
+  z-index: 2;
+}
+
+/* ── Bottom container holding save-as-group + screen-footer ── */
+[data-view="add-group"] .bottom-stack {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Full-bleed on phones; frame to 393px only on desktop — mirrors
+     .app-shell / .screen-footer so it never sits narrower than the
+     content above it on >393px phones like Pro Max. */
+  width: 100%;
+  max-width: 100%;
+  background: var(--surface-card);
+  border-top: var(--border-small) solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+@media (min-width: 480px) {
+  [data-view="add-group"] .bottom-stack { max-width: 393px; }
+}
+[data-view="add-group"] .bottom-stack .screen-footer {
+  position: static;
+  transform: none;
+  width: 100%;
+  border-top: none;
+}
+
+/* Save-as-group row (screen-unique) */
+[data-view="add-group"] .save-group-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--border-small) solid var(--border-subtle);
+}
+[data-view="add-group"] .save-group-row__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="add-group"] .save-group-row__icon {
+  /* NON-TOKEN: 36px tile — no sizing token; kept exact. */
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-8);
+  background: var(--card-create-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* NON-TOKEN(icon): drives the bare emoji glyph; kept exact (--icon-sm). */
+  font-size: var(--icon-sm);
+  flex-shrink: 0;
+}
+[data-view="add-group"] .save-group-row__text { flex: 1; }
+/* title — no exact text-* match (13/semibold/lh18); font props kept here. */
+[data-view="add-group"] .save-group-row__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-18);
+  color: var(--text-primary);
+}
+/* sub — text style via .text-caption-sm in markup; only color stays here. */
+[data-view="add-group"] .save-group-row__sub {
+  color: var(--text-tertiary);
+}
+
+/* Group name input (shown when checked) */
+[data-view="add-group"] .save-group-row__form {
+  display: none;
+  padding: 0 var(--spacing-16) var(--spacing-12);
+  gap: var(--spacing-8);
+}
+[data-view="add-group"] .save-group-row__form--visible { display: flex; flex-direction: column; }
+
+/* group name input — text style via .text-body-sm in markup (line-height
+   snaps 18→21, accepted minor delta to reuse the token); box + color here. */
+[data-view="add-group"] .save-group-input {
+  width: 100%;
+  /* NON-TOKEN: 40px control height — no spacing token; kept exact. */
+  height: 40px;
+  padding: 0 var(--spacing-12);
+  background: var(--surface-primary);
+  border: var(--border-medium) solid var(--input-border-default);
+  border-radius: var(--radius-8);
+  color: var(--text-primary);
+  outline: none;
+}
+[data-view="add-group"] .save-group-input::placeholder { color: var(--input-fg-default); }
+[data-view="add-group"] .save-group-input:focus { border-color: var(--input-border-focused); background: var(--input-bg-focused); }
+
+/* Error state for group name input */
+[data-view="add-group"] .save-group-input--error { border-color: var(--input-border-error); background: var(--input-bg-error); }
+
+/* Disabled CTA */
+[data-view="add-group"] .btn--disabled {
+  opacity: var(--opacity-strong);
+  pointer-events: none;
+}
+
+/* Visibility utility */
+[data-view="add-group"] .is-hidden { display: none !important; }
+
+/* ── Content scroll clearance ──
+   The fixed .bottom-stack overlaps the page. The original screen put this
+   clearance on the scrolling .people-list; in the shell the scroller is
+   .view__content, so the same value is applied via --app-shell-content-pad to
+   keep the scroll bottom clearance identical (zero visual change). */
+[data-view="add-group"] {
+  --app-shell-content-pad: calc(var(--spacing-64) * 2 + var(--spacing-32));
+}

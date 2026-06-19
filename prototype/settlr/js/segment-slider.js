@@ -12,7 +12,13 @@
                 window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function init(control) {
-    if (control.dataset.sliderInit === '1') return;
+    // Already wired: re-measure instead (the control may have been initialized
+    // while its view was hidden — 0×0 rect — so the pill needs repositioning
+    // now that it is visible, e.g. after an SPA view swap).
+    if (control.dataset.sliderInit === '1') {
+      if (control._sliderReposition) control._sliderReposition();
+      return;
+    }
     control.dataset.sliderInit = '1';
 
     // Find/create the pill element
@@ -54,6 +60,10 @@
         pill.style.transform = 'translate(' + x + 'px,' + y + 'px)';
       }
     }
+
+    // Expose a reposition hook so initAll() can re-measure a control that was
+    // first wired while hidden (zero-size rect) once its view becomes visible.
+    control._sliderReposition = function () { position(getActive(), false); };
 
     // Initial position (snap, no animation)
     position(getActive(), false);

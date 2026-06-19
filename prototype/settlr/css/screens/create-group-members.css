@@ -1,0 +1,82 @@
+/* ============================================
+   Settlr — Add Members screen layout
+   (file is screens/create-group-members.html — the 2nd step of group
+   creation). Genuine screen-specific structure only, scoped under
+   [data-view="create-group-members"] so it never leaks into other views in the
+   compiled shell. Component styling (top-app-bar, step-progress, search-input,
+   search-wrap, person-item, checkbox, member-pill, avatar, invite-banner,
+   heading, screen-footer, button) lives in component CSS. Typography is applied
+   via text-* classes in markup where a text-* style matches; remaining
+   color/spacing-only rules stay scoped here.
+
+   COMPONENT OVERRIDES TO PROMOTE
+   ------------------------------
+   The following blocks are screen-unique compositions kept scoped here to
+   avoid touching shared CSS during this migration, but are candidates to be
+   promoted into components later:
+     - .selected-row (horizontal selected-members chip strip)  → candidate
+       "member-pill row" / chip-strip layout shared with other selector flows
+       (overlaps add-group's .selected-row almost exactly).
+     - .invite-banner-wrap  → candidate outer-margin wrapper for the shared
+       invite-banner component (the banner's spec says the parent applies the
+       margin); overlaps a generic "banner wrap" padding utility.
+     - .person-item.is-selected + .person-item__avatar-circle  → candidate
+       "selectable contact row" composition. .person-item__avatar-circle is a
+       40px initials circle distinct from the .avatar component (different
+       size/token set), so it is kept screen-scoped rather than swapped to
+       .avatar to guarantee zero visual change.
+     - .contact-list  → candidate scroll-wrapper; in the compiled shell the
+       scroll region is the view's .view__content, so .contact-list becomes a
+       plain flow container and its original bottom clearance moves to
+       --app-shell-content-pad (see bottom of file).
+
+   NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
+   ---------------------------------------------------------------------
+     - .person-item__avatar-circle width/height: 40px  (no 40px sizing token)
+   ============================================ */
+
+/* ── Selected Members Row (screen-unique strip below search) ── */
+[data-view="create-group-members"] .selected-row {
+  display: flex;
+  padding: var(--spacing-4) var(--spacing-16) var(--spacing-8);
+  gap: var(--spacing-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+[data-view="create-group-members"] .selected-row::-webkit-scrollbar { display: none; }
+
+/* ── Contact List ──
+   In the compiled shell the scroll region is the view's .view__content; the
+   list is a plain flow container inside it. The original screen's
+   padding-bottom: 120px clearance moves to --app-shell-content-pad on the
+   scroller (see bottom of file). */
+[data-view="create-group-members"] .contact-list {
+  flex: 1;
+}
+
+/* ── Selected state on person-item ── */
+[data-view="create-group-members"] .person-item.is-selected {
+  background: var(--contact-bg-selected);
+}
+
+/* ── Avatar circle for contact rows ──
+   Conformed to the standard Avatar component
+   (.avatar.avatar--initials.avatar--md, 40px) — rendered by
+   js/views/create-group-members.js. No longer scoped here. */
+
+/* ── Invite banner outer margin (per spec, parent applies margin) ── */
+[data-view="create-group-members"] .invite-banner-wrap {
+  padding: 0 var(--spacing-16) var(--spacing-8);
+}
+
+/* ── Content scroll clearance ──
+   The original screen put a 120px bottom clearance on the scrolling
+   .contact-list (to clear the fixed .screen-footer). In the shell the scroller
+   is .view__content, so the same value is applied via --app-shell-content-pad
+   to keep the scroll bottom clearance identical (zero visual change). */
+[data-view="create-group-members"] {
+  /* NON-TOKEN: 120px footer clearance — matches the original .contact-list
+     padding-bottom: 120px; no spacing token for 120px; kept exact. */
+  --app-shell-content-pad: 120px;
+}

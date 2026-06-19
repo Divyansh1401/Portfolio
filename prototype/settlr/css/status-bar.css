@@ -26,3 +26,16 @@
   gap: var(--spacing-4);
   color: var(--text-primary);
 }
+
+/* ---- Overlay variant ----
+   Transparent bar pinned over a full-bleed hero so the hero extends to the
+   very top (hero detail screens: group-detail, individual-detail, edit-group).
+   The shell router toggles this on the persistent status bar per view. */
+.status-bar--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: transparent;
+}

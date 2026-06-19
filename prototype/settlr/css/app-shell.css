@@ -1,0 +1,81 @@
+/* ============================================
+   Settlr — App Shell
+   Layout primitives for the COMPILED single-document app (index.html):
+   persistent chrome (status-bar + bottom-nav) + a stack of swappable views.
+
+   Everything is scoped under `.app-shell` (carried by the shell <body>) so
+   the 30+ standalone screens that still load css/index.css during migration
+   are completely unaffected. The `.view*` classes are new, so they are safe
+   to define unscoped.
+
+   Replaces the per-screen inline shell rules (html/body flex column,
+   `.content` scroll container) that were duplicated across screens.
+   ============================================ */
+
+/* ---- Shell frame ---- */
+.app-shell {
+  /* Self-contained height — no dependency on html/body sizing, and dvh
+     accounts for mobile browser chrome. */
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Full-bleed on a real phone (fills the device width). The 393px phone
+     frame is only applied on larger screens (tablet/desktop) below. */
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--surface-primary);
+  /* Anchor absolutely-positioned descendants (e.g. an overlay status bar)
+     to the shell column, not the viewport. */
+  position: relative;
+}
+
+/* Centre the shell as a 393px phone frame only on wide viewports. */
+@media (min-width: 480px) {
+  .app-shell {
+    max-width: 393px;
+  }
+}
+
+/* The mock status bar is gone — the app relies on the OS status bar. Clear the
+   notch / home indicator with safe-area insets so content isn't occluded.
+   (Requires `viewport-fit=cover` on the viewport meta.) */
+.app-shell {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---- View host ---- */
+/* Holds every inlined screen as a stacked `.view`; only one is shown. */
+.app-shell__view-host {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- View ---- */
+/* Each former screen becomes a view: a flex column filling the host, with
+   its own scrollable content region. Hidden views are display:none so they
+   cost no layout and their `js-*` IDs never collide with the active view. */
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+/* Canonical scrollable content region inside a view — replaces the
+   per-screen inline `.content` block. The default bottom padding clears the
+   floating bottom-nav dock (two 48px rows + 16px gap, composed from spacing
+   tokens); views without the dock can override `--app-shell-content-pad`. */
+.view__content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--app-shell-content-pad, calc(var(--spacing-48) + var(--spacing-48) + var(--spacing-16)));
+  background: var(--surface-primary);
+}

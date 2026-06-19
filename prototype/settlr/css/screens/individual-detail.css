@@ -1,0 +1,105 @@
+/* ============================================
+   Settlr — Individual (contact) Detail screen layout
+   Migrated from the former inline <style> in screens/individual-detail.html.
+   ALL rules scoped under [data-view="individual-detail"] so nothing leaks into
+   other views in the compiled shell. Component styling (hero-section,
+   segment-control, empty-state, screen-footer, avatar, icon-btn, avatar-stack)
+   lives in component CSS. Typography is applied via text-* classes in markup
+   where a clean snap exists; the display sizes (24/32px) below have no matching
+   text-* token, so their font props stay here and are FLAGGED.
+
+   NOTE — several rules below OVERRIDE / extend shared patterns:
+     - .status-bar is forced absolute to overlay the hero (component default is
+       non-absolute) — same override group-detail flagged.
+     - the .group-row family here is the contact's "Common Groups" list layout
+       (Render.groupRow markup) which is screen-specific, NOT the shared
+       .group-row component CSS. Kept scoped and listed under "COMPONENT
+       OVERRIDES TO PROMOTE" in the migration report (the .balance-row* family
+       group-detail flagged is, here, the analogous .group-row* family).
+   ============================================ */
+
+/* Scrollable content region. The old standalone `.detail-content` had
+   `padding-bottom: 100px` to clear the fixed .screen-footer. This screen has a
+   footer, NOT a bottom-nav dock, so override the shell's dock clearance and
+   keep the original 100px exactly. (100px has no spacing token — flagged.) */
+[data-view="individual-detail"] .view__content {
+  --app-shell-content-pad: 100px;
+  background: transparent;
+}
+
+/* ── Status Bar (overlaid on hero — absolute, like the original) ──
+   OVERRIDE of shared .status-bar (component default is non-absolute). Kept
+   scoped; flagged to promote as a hero-overlay status-bar variant. */
+[data-view="individual-detail"] .status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-24);
+  z-index: 10;
+}
+[data-view="individual-detail"] .status-bar__icons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--text-primary);
+}
+
+/* ── Info Section ── */
+[data-view="individual-detail"] .info-section {
+  text-align: center;
+  padding: var(--spacing-12) var(--spacing-16) var(--spacing-20);
+  background: var(--surface-primary);
+}
+/* name — display 24px/30 bold. No exact text-* STYLE match (text-display-sm is
+   24px but uses 28 line-height + -0.96 ls), but size/line-height now use tokens. */
+[data-view="individual-detail"] .info-section__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-24);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.72px;
+  color: var(--text-primary);
+  line-height: var(--line-height-30);
+}
+[data-view="individual-detail"] .info-section__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-medium);
+  margin-top: var(--spacing-4);
+}
+[data-view="individual-detail"] .info-section__label--owe { color: var(--expense-owe-fg); }
+[data-view="individual-detail"] .info-section__label--lent { color: var(--expense-lent-fg); }
+/* amount — typography via .text-amount-md (32px black). Screen-local: spacing + color. */
+[data-view="individual-detail"] .info-section__amount {
+  margin-top: var(--spacing-4);
+}
+[data-view="individual-detail"] .info-section__amount--owe { color: var(--expense-owe-fg); }
+[data-view="individual-detail"] .info-section__amount--lent { color: var(--expense-lent-fg); }
+
+/* ── Segment Wrapper ── */
+[data-view="individual-detail"] .segment-wrap {
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  background: var(--surface-primary);
+}
+
+/* ── Tab Panels ── */
+[data-view="individual-detail"] .tab-panel { display: none; }
+[data-view="individual-detail"] .tab-panel.is-active { display: block; }
+
+/* Favourite star — golden when active. Uses the gold `--label-warning-fg`
+   semantic token (→ --color-gold-500 #B8860B), so the previous hardcoded hex
+   fallback is gone with zero visual change. */
+[data-view="individual-detail"] #js-fav-btn.is-favourite { color: var(--label-warning-fg); }
+
+/* ── Transaction Item ── now a shared component (css/txn-item.css).
+   Illustration radius standardized to --radius-8 (was --radius-12 here). ── */
+
+/* ── Common Groups Tab ── .group-row → shared component css/group-row.css */
+
+/* ── Empty State (hidden by default; shown when a tab list is empty) ── */
+[data-view="individual-detail"] .tab-empty { display: none; }
+[data-view="individual-detail"] .tab-panel.is-empty .tab-empty { display: flex; }

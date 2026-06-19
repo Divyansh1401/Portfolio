@@ -140,7 +140,7 @@
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.detail-row--selectable.is-selected .detail-row__radio {
+.detail-row.is-selected .detail-row__radio {
   border-color: var(--detail-row-radio-border-selected);
   background: var(--detail-row-radio-bg-selected);
 }
@@ -154,6 +154,6 @@
   transition: opacity 0.15s ease;
 }
 
-.detail-row--selectable.is-selected .detail-row__radio-dot {
+.detail-row.is-selected .detail-row__radio-dot {
   opacity: 1;
 }

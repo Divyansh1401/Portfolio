@@ -1,0 +1,94 @@
+/* ============================================
+   Settlr — Invite Card
+   "Invite via link" composition (add-friend). A copyable link field with an
+   inline copy icon, plus a single Share secondary CTA that opens the native
+   OS share sheet (navigator.share).
+   Family: .invite-card / __title / __subtitle / __row / .invite-link-box (+ __url, __copy).
+   The link box + Share CTA sit side by side in .invite-card__row (link flexes,
+   Share is a standard .btn.btn--secondary on the right).
+
+   NON-TOKEN VALUES (kept exact; flagged): .invite-link-box height 40px,
+   .invite-link-box__copy 32px tap target (no matching spacing tokens).
+   ============================================ */
+
+.invite-card {
+  margin: var(--spacing-12) var(--spacing-16);
+  padding: var(--spacing-16);
+  background: var(--surface-card);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+/* title — text style via .text-title-sm in markup; only color stays here */
+.invite-card__title {
+  color: var(--text-primary);
+}
+/* subtitle — text style via .text-body-xs in markup; color + spacing here */
+.invite-card__subtitle {
+  color: var(--text-tertiary);
+  margin-top: calc(-1 * var(--spacing-8));
+}
+
+/* ── Link box + Share CTA in one row (link flexes, Share on the right) ── */
+.invite-card__row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-8);
+}
+.invite-card__row .invite-link-box {
+  flex: 1;
+  min-width: 0;
+}
+.invite-card__row .btn {
+  flex-shrink: 0;
+}
+
+/* ── Link field with inline copy ── */
+.invite-link-box {
+  /* NON-TOKEN: 40px control height — no spacing token; kept exact. */
+  height: 40px;
+  padding: 0 var(--spacing-4) 0 var(--spacing-12);
+  background: var(--surface-primary);
+  border: var(--border-small) solid var(--border-default);
+  border-radius: var(--radius-8);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  overflow: hidden;
+}
+/* link text — text style via .text-body-xs in markup; color + truncation here */
+.invite-link-box__url {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* inline copy icon button */
+.invite-link-box__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* NON-TOKEN: 32px tap target — no spacing token; kept exact. */
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-8);
+  color: var(--text-brand);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .invite-link-box__copy {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+  .invite-link-box__copy:active {
+    transform: scale(var(--press-scale-sm));
+  }
+}

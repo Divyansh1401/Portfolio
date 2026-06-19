@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Settlr</title>
+  <!-- Embedded-prototype base shim: relative asset/script paths resolve correctly
+       whether this file is served with a trailing slash, as /index.html, or as a
+       clean URL (e.g. `serve` strips the slash). Must run before any other tag. -->
+  <script>
+    (function () {
+      var p = location.pathname.replace(/index\.html$/, '');
+      if (!/\/$/.test(p)) p += '/';
+      document.write('<base href="' + p + '">');
+    }());
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokens/index.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/screens/home-dashboard.css">
+  <link rel="stylesheet" href="css/screens/people.css">
+  <link rel="stylesheet" href="css/screens/activity.css">
+  <link rel="stylesheet" href="css/screens/group-detail.css">
+  <link rel="stylesheet" href="css/screens/individual-detail.css">
+  <link rel="stylesheet" href="css/screens/settings.css">
+  <link rel="stylesheet" href="css/screens/edit-profile.css">
+  <link rel="stylesheet" href="css/screens/add-friend.css">
+  <link rel="stylesheet" href="css/screens/search.css">
+  <link rel="stylesheet" href="css/screens/create-group-name.css">
+  <link rel="stylesheet" href="css/screens/create-group-members.css">
+  <link rel="stylesheet" href="css/screens/edit-group.css">
+  <link rel="stylesheet" href="css/screens/add-amount.css">
+  <link rel="stylesheet" href="css/screens/add-group.css">
+  <link rel="stylesheet" href="css/screens/add-split.css">
+  <link rel="stylesheet" href="css/screens/add-review.css">
+  <link rel="stylesheet" href="css/screens/expense-detail.css">
+  <link rel="stylesheet" href="css/screens/edit-expense.css">
+  <link rel="stylesheet" href="css/screens/settle-select.css">
+  <link rel="stylesheet" href="css/screens/settle-amount.css">
+  <link rel="stylesheet" href="css/screens/settle-method.css">
+  <link rel="stylesheet" href="css/screens/settle-success.css">
+  <link rel="stylesheet" href="css/screens/settlement-detail.css">
+  <link rel="stylesheet" href="css/screens/onboarding-welcome.css">
+  <meta name="theme-color" content="#31401A">
+  <!-- Component definitions must exist before the parser hits the shell chrome -->
+  <script src="js/components.js"></script>
+</head>
+<body class="app-shell" data-shell>
+
+  <main class="app-shell__view-host" id="view-host">
+
+<section class="view" id="view-home-dashboard" data-view="home-dashboard" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top App Bar: Brand + Avatar ── -->
+  <settlr-top-app-bar title="Settlr" brand>
+    <a href="settings" class="avatar avatar--initials avatar--lg text-title-lg" id="js-user-initials" aria-label="Settings">DR</a>
+  </settlr-top-app-bar>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Hero: Balance + Actions -->
+    <section class="hero">
+      <div class="hero__info">
+        <span class="hero__label text-body-sm" id="js-hero-label">Overall you are owed</span>
+        <span class="hero__amount text-display-sm" id="js-hero-amount">&#8377;0</span>
+      </div>
+      <div class="hero__actions">
+        <a href="add-amount" class="btn btn--sm btn--primary text-title-xs">
+          <span class="btn__content">
+            <span class="btn__label">Add expense</span>
+            <span class="btn__icon">
+              <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span>
+            </span>
+          </span>
+        </a>
+        <a href="settle-select" class="btn btn--sm btn--secondary text-title-xs">
+          <span class="btn__content">
+            <span class="btn__label">Settle up</span>
+            <span class="btn__icon">
+              <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg></span>
+            </span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Recent Groups -->
+    <div class="heading">
+      <span class="heading__title text-heading-md">Recent groups</span>
+      <a href="people?filter=group" class="btn btn--ghost btn--sm text-title-xs">
+        <span class="btn__content">
+          <span class="btn__label">View all</span>
+          <span class="btn__icon">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div class="cards-row" id="js-cards-row">
+      <a href="create-group-name" class="card-create">
+        <div class="card-create__icon">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span>
+        </div>
+        <span class="card-create__text text-title-sm">Create new group</span>
+      </a>
+    </div>
+
+    <!-- Activity -->
+    <div class="heading mt-8">
+      <span class="heading__title text-heading-md">Activity</span>
+      <a href="activity" class="btn btn--ghost btn--sm text-title-xs">
+        <span class="btn__content">
+          <span class="btn__label">View all</span>
+          <span class="btn__icon">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div class="expense-list" id="js-activity-list"></div>
+
+  </main>
+
+  <!-- ── Fixed Bottom: Nav Pill ── -->
+  <settlr-bottom-nav active="home"></settlr-bottom-nav>
+</section>
+
+<section class="view" id="view-people" data-view="people" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="People">
+    <button class="icon-btn icon-btn--md" id="js-people-menu-btn" aria-label="More options" type="button">
+      <svg class="icon-btn__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <circle cx="10" cy="4" r="1.5"/>
+        <circle cx="10" cy="10" r="1.5"/>
+        <circle cx="10" cy="16" r="1.5"/>
+      </svg>
+    </button>
+  </settlr-top-app-bar>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+      </span>
+      <input type="text" id="js-people-search" placeholder="Search people">
+    </div>
+  </div>
+
+  <!-- ── Filter Chips ── -->
+  <div class="header-chips header-chips--compact">
+    <button class="chip chip--sm text-title-xs" data-filter="individual">Individual</button>
+    <button class="chip chip--sm text-title-xs" data-filter="group">Group</button>
+    <button class="chip chip--sm text-title-xs" data-filter="active">Active</button>
+    <button class="chip chip--sm text-title-xs" data-filter="lend">Lend</button>
+    <button class="chip chip--sm text-title-xs" data-filter="owe">Owe</button>
+  </div>
+
+  <!-- ── Scrollable List ── -->
+  <main class="view__content">
+    <div class="person-list" id="js-person-list">
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">JW</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Johnnie Walker</span>
+          <span class="person-item__subtext">829338-192</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">BG</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Beau Geste</span>
+          <span class="person-item__subtext">837291-203</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">KC</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Kendra Cole</span>
+          <span class="person-item__subtext">849205-314</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">SM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Sophie Miller</span>
+          <span class="person-item__subtext">865432-404</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">LA</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Liam Anderson</span>
+          <span class="person-item__subtext">872450-150</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">AR</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Avery Rivers</span>
+          <span class="person-item__subtext">711209-567</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">TM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Tessa Moore</span>
+          <span class="person-item__subtext">703918-678</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">GH</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Gavin Hayes</span>
+          <span class="person-item__subtext">921563-778</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">CF</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Clara Fields</span>
+          <span class="person-item__subtext">849203-887</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">ZM</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Zoe Martin</span>
+          <span class="person-item__subtext">890231-998</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">DR</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Dylan Reed</span>
+          <span class="person-item__subtext">811054-119</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">KP</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Kylie Porter</span>
+          <span class="person-item__subtext">832950-230</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">HN</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Henry Nash</span>
+          <span class="person-item__subtext">760112-341</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+      <a class="person-item" href="individual-detail">
+        <div class="avatar avatar--initials avatar--md">EB</div>
+        <div class="person-item__text">
+          <span class="person-item__name">Ella Brooks</span>
+          <span class="person-item__subtext">812345-456</span>
+        </div>
+        <span class="person-item__action"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+      </a>
+
+    </div>
+
+    <div class="empty-state" id="empty-people" style="display:none;">
+      <div class="empty-state__illustration"></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title text-heading-sm">No people yet</p>
+        <p class="empty-state__body text-body-md">People you've shared expenses with will appear here.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Fixed Bottom: Nav Pill ── -->
+  <settlr-bottom-nav active="people"></settlr-bottom-nav>
+
+  <!-- ── Quick-actions Sheet ── -->
+  <div class="sheet-overlay" id="js-people-menu-overlay" hidden>
+    <div class="sheet" role="dialog" aria-label="People actions">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Quick actions</span>
+        <button class="icon-btn icon-btn--sm" id="js-people-menu-close" aria-label="Close" type="button">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <a href="create-group-name" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--brand">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1-7.37-4.89,8,8,0,0,1,0-6.22A8,8,0,0,1,192,112a24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.84,8,57,57,0,0,0-98.16,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/></svg></span>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Create new group</span>
+          </div>
+          <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+        </a>
+        <a href="add-friend" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--green">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-12.26,10.3C165.75,181.19,138.09,168,108,168s-57.75,13.19-77.87,37.15a8,8,0,0,1-12.25-10.3c14.94-17.78,33.52-30.41,54.17-37.17a68,68,0,1,1,71.9,0C164.6,164.44,183.18,177.07,198.13,194.85ZM108,152a52,52,0,1,0-52-52A52.06,52.06,0,0,0,108,152Z"/></svg></span>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Add friend</span>
+          </div>
+          <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+        </a>
+        <a href="add-friend?source=contacts" class="settings-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--neutral">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M83.19,174.4a8,8,0,0,0,11.21-1.6,52,52,0,0,1,83.2,0,8,8,0,1,0,12.8-9.6A67.88,67.88,0,0,0,163,141.51a40,40,0,1,0-53.94,0A67.88,67.88,0,0,0,81.6,163.2,8,8,0,0,0,83.19,174.4ZM112,112a24,24,0,1,1,24,24A24,24,0,0,1,112,112Zm96-88H64A16,16,0,0,0,48,40V64H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v24a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V40A16,16,0,0,0,208,24Zm0,192H64V40H208Z"/></svg></span>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Import from contacts</span>
+          </div>
+          <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+        </a>
+        <a role="button" tabindex="0" class="settings-row" id="js-invite-row">
+          <span class="settings-row__icon-wrap settings-row__icon-wrap--coral">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span>
+          </span>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Invite to Settlr</span>
+          </div>
+          <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-activity" data-view="activity" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Activity"></settlr-top-app-bar>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+      </span>
+      <input type="text" placeholder="Search activity">
+    </div>
+  </div>
+
+  <!-- ── Filter Chips ── -->
+  <div class="header-chips header-chips--compact">
+    <button class="chip chip--sm" data-filter="individual" data-group="expense">Individual</button>
+    <button class="chip chip--sm" data-filter="group" data-group="expense">Group</button>
+    <button class="chip chip--sm" data-filter="lend" data-group="expense">Lend</button>
+    <button class="chip chip--sm" data-filter="owe" data-group="expense">Owe</button>
+  </div>
+
+  <!-- ── Scrollable Feed ── -->
+  <main class="view__content">
+    <div class="expense-list" id="js-expense-list"></div>
+    <div class="empty-state" id="empty-activity" style="display:none;">
+      <div class="empty-state__illustration"></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">No activity yet</p>
+        <p class="empty-state__body">Your expense and settlement history will appear here.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Fixed Bottom: Nav Pill ── -->
+  <settlr-bottom-nav active="activity"></settlr-bottom-nav>
+</section>
+
+<section class="view" id="view-group-detail" data-view="group-detail" hidden>
+<!-- ── Status Bar (overlaid on hero) ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Scrollable Content (whole screen scrolls; footer stays fixed) ── -->
+  <main class="view__content">
+
+  <!-- ── Hero Section ── -->
+  <div class="hero-section hero-section--tall">
+    <!-- Overlay back + settings -->
+    <div class="hero-section__actions">
+      <a href="home-dashboard" class="icon-btn icon-btn--surface icon-btn--md" aria-label="Back">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg></span>
+      </a>
+      <a href="edit-group" class="icon-btn icon-btn--surface icon-btn--md" aria-label="Edit group">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Group Avatar ── -->
+  <div class="hero-section__avatar-wrap">
+    <div class="avatar avatar--xl avatar--initials avatar--group">
+      <span id="js-group-avatar-emoji">🏖️</span>
+    </div>
+  </div>
+
+  <!-- ── Info Section ── -->
+  <div class="info-section">
+    <h1 class="info-section__name" id="js-group-name-detail">Goa Trip</h1>
+    <p class="info-section__label" id="js-group-balance-label">Overall you owe</p>
+    <p class="info-section__amount text-amount-md" id="js-group-balance-amount">—</p>
+  </div>
+
+  <!-- ── Segment Control ── -->
+  <div class="segment-wrap">
+    <div class="segment-control">
+      <button class="segment-item is-active" data-tab="transactions">
+        <span class="segment-item__icon">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg></span>
+        </span>
+        Transactions
+      </button>
+      <button class="segment-item" data-tab="balances">
+        <span class="segment-item__icon">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg></span>
+        </span>
+        Members
+      </button>
+    </div>
+  </div>
+
+    <!-- ── Transactions Tab ── -->
+    <div class="tab-panel is-active" id="tab-transactions">
+      <!-- Empty state — shown when there are no transactions -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 14C8 11.8 9.8 10 12 10h24c2.2 0 4 1.8 4 4v24c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V14z" fill="currentColor" opacity="0.2"/>
+            <path d="M16 22h16M16 28h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">No transactions yet</p>
+          <p class="empty-state__body">Add your first expense for this group to start tracking splits.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Balances Tab ── -->
+    <div class="tab-panel" id="tab-balances">
+      <!-- Empty state — shown when all balances are settled -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="16" fill="currentColor" opacity="0.2"/>
+            <path d="M17 24l5 5 9-10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">All settled up!</p>
+          <p class="empty-state__body">Everyone in this group is even. No outstanding balances.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="settle-select" class="btn btn--lg btn--secondary">
+      <span class="btn__content">
+        Settle up
+        <span class="icon-holder btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg></span>
+      </span>
+    </a>
+    <a href="add-amount" class="btn btn--lg btn--primary">
+      <span class="btn__content">
+        Add expense
+        <span class="icon-holder btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<section class="view" id="view-individual-detail" data-view="individual-detail" hidden>
+<!-- ── Status Bar (overlaid on hero) ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Scrollable Content (whole screen scrolls; footer stays fixed) ── -->
+  <main class="view__content">
+
+  <!-- ── Hero Section ── -->
+  <div class="hero-section">
+    <!-- Overlay back + favourite -->
+    <div class="hero-section__actions">
+      <a href="people" class="icon-btn icon-btn--surface icon-btn--md" aria-label="Back">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg></span>
+      </a>
+      <button class="icon-btn icon-btn--surface icon-btn--md" id="js-fav-btn" aria-label="Add to favourites" aria-pressed="false">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z"/></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Person Avatar ── -->
+  <div class="hero-section__avatar-wrap">
+    <div class="avatar avatar--xl avatar--initials" id="js-person-initials">JW</div>
+  </div>
+
+  <!-- ── Info Section ── -->
+  <div class="info-section">
+    <h1 class="info-section__name" id="js-person-name">Johnnie Walker</h1>
+    <p class="info-section__label" id="js-person-balance-label">Overall you owe</p>
+    <p class="info-section__amount text-amount-md" id="js-person-balance-amount">—</p>
+  </div>
+
+  <!-- ── Segment Control ── -->
+  <div class="segment-wrap">
+    <div class="segment-control">
+      <button class="segment-item is-active" data-tab="transactions-indiv">
+        <span class="segment-item__icon">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg></span>
+        </span>
+        Transactions
+      </button>
+      <button class="segment-item" data-tab="groups">
+        <span class="segment-item__icon">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></svg></span>
+        </span>
+        Common Groups
+      </button>
+    </div>
+  </div>
+
+    <!-- ── Transactions Tab ── -->
+    <div class="tab-panel is-active" id="tab-transactions-indiv">
+      <!-- Empty state — shown when there are no shared transactions -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 14C8 11.8 9.8 10 12 10h24c2.2 0 4 1.8 4 4v24c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V14z" fill="currentColor" opacity="0.2"/>
+            <path d="M16 22h16M16 28h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">No transactions yet</p>
+          <p class="empty-state__body">Add your first shared expense to start tracking what you owe each other.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Common Groups Tab ── -->
+    <div class="tab-panel" id="tab-groups">
+      <!-- Empty state — shown when no common groups exist -->
+      <div class="empty-state tab-empty">
+        <div class="empty-state__illustration">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="8" fill="currentColor" opacity="0.2"/>
+            <circle cx="30" cy="18" r="8" fill="currentColor" opacity="0.2"/>
+            <path d="M8 36c0-5.5 4.5-10 10-10h12c5.5 0 10 4.5 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="empty-state__text">
+          <p class="empty-state__title">No common groups</p>
+          <p class="empty-state__body">You and this person are not in any groups together yet.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="settle-amount" class="btn btn--lg btn--secondary">
+      <span class="btn__content">
+        Settle up
+        <span class="icon-holder btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg></span>
+      </span>
+    </a>
+    <a href="add-amount" class="btn btn--lg btn--primary">
+      <span class="btn__content">
+        Add expense
+        <span class="icon-holder btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<section class="view" id="view-settings" data-view="settings" hidden>
+<!-- Status Bar -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Settings" back="home-dashboard"></settlr-top-app-bar>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <a href="edit-profile" class="profile-hero__avatar-wrap" style="text-decoration:none;" aria-label="Edit profile">
+        <div class="avatar avatar--xl avatar--initials" id="js-settings-avatar">DR</div>
+        <div class="icon-btn icon-btn--surface icon-btn--xs profile-hero__edit-badge">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM51.31,160,136,75.31,152.69,92,68,176.68ZM48,179.31,76.69,208H48Zm48,25.38L79.31,188,164,103.31,180.69,120Zm96-96L147.31,64l24-24L216,84.68Z"/></svg></span>
+        </div>
+      </a>
+      <span class="profile-hero__name text-heading-md" id="js-settings-name">Divyansh Rastogi</span>
+      <span class="profile-hero__phone text-body-sm" id="js-settings-phone">+91 98765 43210</span>
+    </div>
+
+    <!-- Section: Account -->
+    <div class="settings-section">
+      <span class="settings-section__label">Account</span>
+      <div class="settings-card">
+
+        <a href="edit-profile" class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Display Name</span>
+            <span class="settings-row__value">Divyansh Rastogi</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </a>
+
+        <div class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46ZM176,208A128.14,128.14,0,0,1,48,80,40.2,40.2,0,0,1,82.87,40a.61.61,0,0,0,0,.12l21,47L83.2,111.86a6.13,6.13,0,0,0-.57.77,16,16,0,0,0-1,15.7c9.06,18.53,27.73,37.06,46.46,46.11a16,16,0,0,0,15.75-1.14,8.44,8.44,0,0,0,.74-.56L168.89,152l47,21.05h0s.08,0,.11,0A40.21,40.21,0,0,1,176,208Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Phone Number</span>
+            <span class="settings-row__value">+91 98765 43210</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,80a8,8,0,0,1-8,8H167.85c.09,1.32.15,2.65.15,4a60.07,60.07,0,0,1-60,60H92.69l72.69,66.08a8,8,0,1,1-10.76,11.84l-88-80A8,8,0,0,1,72,136h36a44.05,44.05,0,0,0,44-44c0-1.35-.07-2.68-.19-4H72a8,8,0,0,1,0-16h75.17A44,44,0,0,0,108,48H72a8,8,0,0,1,0-16H200a8,8,0,0,1,0,16H148.74a60.13,60.13,0,0,1,15.82,24H200A8,8,0,0,1,208,80Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">UPI ID</span>
+            <span class="settings-row__value">divyansh@okaxis</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Notifications -->
+    <div class="settings-section">
+      <span class="settings-section__label">Notifications</span>
+      <div class="settings-card">
+
+        <div class="settings-row settings-row--no-pointer">
+          <div class="settings-row__icon-wrap--brand settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Push Notifications</span>
+            <span class="settings-row__value">Expenses, settlements, reminders</span>
+          </div>
+          <div class="settings-row__right">
+            <label class="toggle-control" role="switch" aria-checked="true" aria-label="Push notifications">
+              <input type="checkbox" checked>
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row settings-row--no-pointer">
+          <div class="settings-row__icon-wrap--neutral settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,136.66A104.12,104.12,0,1,1,119.34,24,8,8,0,0,1,120.66,40,88.12,88.12,0,1,0,216,135.34,8,8,0,0,1,232,136.66ZM120,72v56a8,8,0,0,0,8,8h56a8,8,0,0,0,0-16H136V72a8,8,0,0,0-16,0Zm40-24a12,12,0,1,0-12-12A12,12,0,0,0,160,48Zm36,24a12,12,0,1,0-12-12A12,12,0,0,0,196,72Zm24,36a12,12,0,1,0-12-12A12,12,0,0,0,220,108Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Expense Reminders</span>
+            <span class="settings-row__value">Remind unpaid members</span>
+          </div>
+          <div class="settings-row__right">
+            <label class="toggle-control" role="switch" aria-checked="true" aria-label="Expense reminders">
+              <input type="checkbox" checked>
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row settings-row--no-pointer">
+          <div class="settings-row__icon-wrap--green settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Settlement Alerts</span>
+            <span class="settings-row__value">When someone settles with you</span>
+          </div>
+          <div class="settings-row__right">
+            <label class="toggle-control" role="switch" aria-checked="false" aria-label="Settlement alerts">
+              <input type="checkbox">
+              <span class="toggle-control__track"></span>
+              <span class="toggle-control__thumb"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Preferences -->
+    <div class="settings-section">
+      <span class="settings-section__label">Preferences</span>
+      <div class="settings-card">
+
+        <div class="settings-row" id="js-pref-currency">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm40-68a28,28,0,0,1-28,28h-4v8a8,8,0,0,1-16,0v-8H104a8,8,0,0,1,0-16h36a12,12,0,0,0,0-24H116a28,28,0,0,1,0-56h4V72a8,8,0,0,1,16,0v8h16a8,8,0,0,1,0,16H116a12,12,0,0,0,0,24h24A28,28,0,0,1,168,148Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Currency</span>
+            <span class="settings-row__value" id="js-pref-currency-val">₹ Indian Rupee (INR)</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row" id="js-pref-rates">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M197.67,186.37a8,8,0,0,1,0,11.29C196.58,198.73,170.82,224,128,224c-37.39,0-64.53-22.4-72-29.46V216a8,8,0,0,1-16,0V176a8,8,0,0,1,8-8H88a8,8,0,0,1,0,16H55.32C61.93,190.55,85.86,208,128,208c36,0,58.14-21.46,58.36-21.68A8,8,0,0,1,197.67,186.37ZM216,32a8,8,0,0,0-8,8V61.46C200.53,54.4,173.39,32,136,32,93.18,32,67.42,57.27,66.34,58.34a8,8,0,0,0,11.3,11.34C77.86,69.46,100,48,136,48c42.14,0,66.07,17.45,72.68,24H176a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Exchange rates</span>
+            <span class="settings-row__value" id="js-pref-rates-val">Static rates</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row" id="js-pref-split">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM128,80a16,16,0,1,0-16-16A16,16,0,0,0,128,80Zm0,96a16,16,0,1,0,16,16A16,16,0,0,0,128,176Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Default Split</span>
+            <span class="settings-row__value" id="js-pref-split-val">Equal split</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row" id="js-pref-language">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M247.15,212.42l-56-112a8,8,0,0,0-14.31,0l-21.71,43.43A88,88,0,0,1,108,126.93,103.65,103.65,0,0,0,135.69,64H160a8,8,0,0,0,0-16H104V32a8,8,0,0,0-16,0V48H32a8,8,0,0,0,0,16h87.63A87.76,87.76,0,0,1,96,116.35a87.74,87.74,0,0,1-19-31,8,8,0,1,0-15.08,5.34A103.63,103.63,0,0,0,84,127a87.55,87.55,0,0,1-52,17,8,8,0,0,0,0,16,103.46,103.46,0,0,0,64-22.08,104.18,104.18,0,0,0,51.44,21.31l-26.6,53.19a8,8,0,0,0,14.31,7.16L148.94,192h70.11l13.79,27.58A8,8,0,0,0,240,224a8,8,0,0,0,7.15-11.58ZM156.94,176,184,121.89,211.05,176Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Language</span>
+            <span class="settings-row__value" id="js-pref-language-val">English</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Support -->
+    <div class="settings-section">
+      <span class="settings-section__label">Support</span>
+      <div class="settings-card">
+
+        <div class="settings-row">
+          <div class="settings-row__icon-wrap--brand settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,80H184V48a16,16,0,0,0-16-16H40A16,16,0,0,0,24,48V176a8,8,0,0,0,13,6.22L72,154V184a16,16,0,0,0,16,16h93.59L219,230.22a8,8,0,0,0,5,1.78,8,8,0,0,0,8-8V96A16,16,0,0,0,216,80ZM66.55,137.78,40,159.25V48H168v88H71.58A8,8,0,0,0,66.55,137.78ZM216,207.25l-26.55-21.47a8,8,0,0,0-5-1.78H88V152h80a16,16,0,0,0,16-16V96h32Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Share Feedback</span>
+            <span class="settings-row__value">Help us improve Settlr</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Help & FAQ</span>
+            <span class="settings-row__value">Common questions answered</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Privacy Policy</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Section: Danger Zone -->
+    <div class="settings-section">
+      <span class="settings-section__label">Account Actions</span>
+      <div class="settings-card">
+
+        <div class="settings-row settings-row--logout" data-confirm="true">
+          <div class="settings-row__icon-wrap--neutral settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Log Out</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+        <div class="settings-row settings-row--destructive" data-confirm="true">
+          <div class="settings-row__icon-wrap--coral settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Delete Account</span>
+            <span class="settings-row__value">Permanently remove all your data</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- App Version -->
+    <div class="app-version text-body-xs">
+      Settlr v1.0.0 · Made with ❤️ in India
+    </div>
+
+    <!-- ── Preference picker sheets (populated by settings.js) ── -->
+    <div class="sheet-overlay" id="js-currency-sheet" style="display:none;">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+        <div class="sheet__header">
+          <span class="sheet__title text-heading-sm">Currency</span>
+          <button class="icon-btn icon-btn--sm" data-sheet-close="js-currency-sheet" aria-label="Close">
+            <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+        <div class="sheet__content" id="js-pref-currency-list"></div>
+      </div>
+    </div>
+
+    <div class="sheet-overlay" id="js-split-sheet" style="display:none;">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+        <div class="sheet__header">
+          <span class="sheet__title text-heading-sm">Default Split</span>
+          <button class="icon-btn icon-btn--sm" data-sheet-close="js-split-sheet" aria-label="Close">
+            <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+        <div class="sheet__content" id="js-pref-split-list"></div>
+      </div>
+    </div>
+
+    <div class="sheet-overlay" id="js-language-sheet" style="display:none;">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+        <div class="sheet__header">
+          <span class="sheet__title text-heading-sm">Language</span>
+          <button class="icon-btn icon-btn--sm" data-sheet-close="js-language-sheet" aria-label="Close">
+            <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+        <div class="sheet__content" id="js-pref-language-list"></div>
+      </div>
+    </div>
+
+  </main>
+</section>
+
+<section class="view" id="view-edit-profile" data-view="edit-profile" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top App Bar ── -->
+  <settlr-top-app-bar title="Edit Profile" back="settings">
+    <button class="top-app-bar__done" id="js-save-btn-profile">Save</button>
+  </settlr-top-app-bar>
+
+  <!-- ── Content ── -->
+  <main class="view__content">
+
+    <!-- Avatar -->
+    <div class="avatar-section">
+      <div class="avatar-wrap" id="js-avatar-wrap">
+        <div class="avatar avatar--xl avatar--initials" id="js-avatar">DR</div>
+        <div class="icon-btn icon-btn--primary icon-btn--xs avatar-camera">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/></svg></span>
+        </div>
+      </div>
+      <p class="avatar-hint text-body-xs">Tap to change photo</p>
+      <input type="file" id="js-avatar-input" accept="image/*" style="display:none">
+    </div>
+
+    <!-- Settlr ID Banner -->
+    <div class="id-banner">
+      <div class="id-banner__icon">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24a104,104,0,0,0,0,208c21.51,0,44.1-6.48,60.43-17.33a8,8,0,0,0-8.86-13.33C166,210.38,146.21,216,128,216a88,88,0,1,1,88-88c0,26.45-10.88,32-20,32s-20-5.55-20-32V88a8,8,0,0,0-16,0v4.26a48,48,0,1,0,5.93,65.1c6,12,16.35,18.64,30.07,18.64,22.54,0,36-17.94,36-48A104.11,104.11,0,0,0,128,24Zm0,136a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg></span>
+      </div>
+      <div class="id-banner__text">
+        <p class="id-banner__label text-overline-md">Your Settlr ID</p>
+        <p class="id-banner__value text-heading-sm">@divyansh</p>
+      </div>
+      <button class="id-banner__copy" id="js-copy-id" aria-label="Copy ID">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
+      </button>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="form-section">
+
+      <!-- Display Name -->
+      <div class="input-field">
+        <label class="input-field__label" for="input-name">Display Name</label>
+        <div class="input-field__box">
+          <input
+            id="input-name"
+            type="text"
+            value="Divyansh Rastogi"
+            placeholder="Your full name"
+            maxlength="50"
+          >
+        </div>
+      </div>
+
+      <!-- Phone (read-only) -->
+      <div class="input-field input-field--disabled">
+        <label class="input-field__label" for="input-phone">
+          Phone Number
+          <span>· can't be changed</span>
+        </label>
+        <div class="input-field__box">
+          <input
+            id="input-phone"
+            type="tel"
+            value="+91 98765 43210"
+            disabled
+          >
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- UPI ID -->
+      <div class="input-field">
+        <label class="input-field__label" for="input-upi">UPI ID</label>
+        <div class="input-field__box">
+          <input
+            id="input-upi"
+            type="text"
+            value="divyansh@okaxis"
+            placeholder="yourname@bank"
+          >
+        </div>
+        <span class="input-field__helper">Used when others pay you via UPI</span>
+      </div>
+
+      <!-- Bank / Payment info note -->
+      <div class="input-field">
+        <label class="input-field__label" for="input-bank-name">Bank Name <span>· optional</span></label>
+        <div class="input-field__box">
+          <input
+            id="input-bank-name"
+            type="text"
+            placeholder="e.g. Axis Bank, HDFC"
+          >
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- Bio -->
+      <div class="notes-card notes-card--editable">
+        <label class="notes-card__label" for="input-bio">Bio <span>· optional</span></label>
+        <textarea
+          class="notes-card__textarea"
+          id="input-bio"
+          placeholder="A short note about you..."
+          maxlength="120"
+        ></textarea>
+        <span class="notes-card__counter" id="js-char-count">0 / 120</span>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Save CTA -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary" id="js-save-cta">
+      <span class="btn__content">Save Changes</span>
+    </button>
+  </div>
+</section>
+
+<section class="view" id="view-add-friend" data-view="add-friend" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Add Friend" back="people"></settlr-top-app-bar>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
+      <input type="text" placeholder="Search name, phone or @settlrid" autofocus>
+    </div>
+  </div>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Real add-by-Settlr-ID search results (populated by JS) -->
+    <div class="af-search-results" id="js-af-search-results" hidden>
+      <div class="heading"><span class="heading__title text-heading-md">Search results</span></div>
+      <div id="js-af-search-list"></div>
+    </div>
+
+    <!-- Add a new contact (inline form) -->
+    <div class="add-contact">
+      <div class="heading"><span class="heading__title text-heading-md">Add a new contact</span></div>
+      <div class="input-field">
+        <label class="input-field__label" for="js-nc-name">Name</label>
+        <div class="input-field__box">
+          <input id="js-nc-name" type="text" placeholder="e.g. Riya Sharma" autocomplete="name">
+        </div>
+      </div>
+      <div class="input-field">
+        <label class="input-field__label" for="js-nc-phone">Phone (optional)</label>
+        <div class="input-field__box">
+          <span class="input-field__prefix text-body-sm">+91</span>
+          <input id="js-nc-phone" type="tel" inputmode="numeric" maxlength="10" placeholder="98765 43210" autocomplete="tel">
+        </div>
+      </div>
+      <p class="add-contact__error text-body-xs" id="js-nc-error" hidden>Enter a name to add a contact.</p>
+      <button class="btn btn--primary btn--md btn--full text-title-sm" id="js-nc-save" type="button">
+        <span class="btn__content">
+          <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-12.26,10.3C165.75,181.19,138.09,168,108,168s-57.75,13.19-77.87,37.15a8,8,0,0,1-12.25-10.3c14.94-17.78,33.52-30.41,54.17-37.17a68,68,0,1,1,71.9,0C164.6,164.44,183.18,177.07,198.13,194.85ZM108,152a52,52,0,1,0-52-52A52.06,52.06,0,0,0,108,152Z"/></svg></span></span>
+          <span class="btn__label">Add contact</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Invite via link: copyable link field (inline copy) + native Share CTA -->
+    <div class="invite-card">
+      <p class="invite-card__title text-title-sm">Invite via link</p>
+      <p class="invite-card__subtitle text-body-xs">Share your personal invite link and start splitting instantly</p>
+      <div class="invite-card__row">
+        <div class="invite-link-box">
+          <span class="invite-link-box__url text-body-xs" id="js-af-invite-url">settlr.app/invite/…</span>
+          <button class="invite-link-box__copy" id="js-copy-link" type="button" aria-label="Copy invite link">
+            <span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
+          </button>
+        </div>
+        <button class="btn btn--secondary btn--sm text-title-xs" id="js-share-link" type="button">
+          <span class="btn__content">
+            <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span></span>
+            <span class="btn__label">Share</span>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- QR Code (tap card or eye to open the QR overlay) -->
+    <div class="qr-section" id="js-qr-card">
+      <div class="qr-placeholder">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm0,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48ZM200,40H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-64,72V144a8,8,0,0,1,16,0v32a8,8,0,0,1-16,0Zm80-16a8,8,0,0,1-8,8H184v40a8,8,0,0,1-8,8H144a8,8,0,0,1,0-16h24V144a8,8,0,0,1,16,0v8h24A8,8,0,0,1,216,160Zm0,32v16a8,8,0,0,1-16,0V192a8,8,0,0,1,16,0Z"/></svg></span>
+      </div>
+      <div class="qr-text">
+        <p class="qr-text__title text-title-sm">Your QR Code</p>
+        <p class="qr-text__sub text-body-xs">Friends can scan to add you directly</p>
+      </div>
+      <button class="btn btn--secondary btn--sm text-title-xs" id="js-view-qr" type="button" style="flex-shrink:0">
+        <span class="btn__content">
+          <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg></span></span>
+          <span class="btn__label">View</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- QR overlay — minimal placeholder, to be redesigned later -->
+    <div class="sheet-overlay" id="js-qr-overlay" hidden>
+      <div class="sheet">
+        <div class="sheet__handle"><span class="sheet__handle-bar"></span></div>
+        <div class="sheet__header">
+          <span class="sheet__title">Your QR Code</span>
+          <button class="icon-btn icon-btn--sm" id="js-qr-close" type="button" aria-label="Close">
+            <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+        <div class="sheet__content qr-sheet">
+          <div class="qr-placeholder qr-placeholder--lg">
+            <img class="qr-placeholder__img" id="js-af-qr-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Your invite QR code" width="160" height="160">
+          </div>
+          <p class="qr-text__id" id="js-af-qr-id">@…</p>
+          <button class="btn btn--primary btn--md btn--full text-title-sm" id="js-qr-share" type="button">
+            <span class="btn__content">
+              <span class="btn__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span></span>
+              <span class="btn__label">Share</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- On Settlr (suggested contacts) -->
+    <div class="heading"><span class="heading__title text-heading-md">On Settlr</span></div>
+    <div>
+
+      <div class="person-item">
+        <div class="avatar avatar--initials avatar--md">SM</div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Smita Joshi</p>
+          <p class="person-item__subtext text-body-xs">@smitajoshi · Joined today</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm js-add-btn" type="button">
+            <span class="btn__content">
+              <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span></span>
+              <span class="btn__label text-title-xs">Add</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="avatar avatar--initials avatar--md">AK</div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Arjun Kumar</p>
+          <p class="person-item__subtext text-body-xs">@arjunk · 2 mutual friends</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm js-add-btn" type="button">
+            <span class="btn__content">
+              <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span></span>
+              <span class="btn__label text-title-xs">Add</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="avatar avatar--initials avatar--md">DP</div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Deepika Pillai</p>
+          <p class="person-item__subtext text-body-xs">@deepika · 1 mutual friend</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm js-add-btn" type="button">
+            <span class="btn__content">
+              <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span></span>
+              <span class="btn__label text-title-xs">Add</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- From Contacts (not yet on Settlr) -->
+    <div class="heading"><span class="heading__title text-heading-md">Invite from Contacts</span></div>
+    <div>
+
+      <div class="person-item">
+        <div class="avatar avatar--md avatar--outline">
+          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+        </div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Rohit Mehta</p>
+          <p class="person-item__subtext text-body-xs">+91 98765 11111</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="avatar avatar--md avatar--outline">
+          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+        </div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Sunita Rao</p>
+          <p class="person-item__subtext text-body-xs">+91 87654 22222</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
+        </div>
+      </div>
+
+      <div class="person-item">
+        <div class="avatar avatar--md avatar--outline">
+          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+        </div>
+        <div class="person-item__text">
+          <p class="person-item__name text-title-sm">Manish Tiwari</p>
+          <p class="person-item__subtext text-body-xs">+91 76543 33333</p>
+        </div>
+        <div class="person-item__action">
+          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="af-noresult text-body-sm" id="js-af-no-results" hidden>No contacts match your search.</p>
+
+  </main>
+</section>
+
+<section class="view" id="view-search" data-view="search" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Search Bar ── -->
+  <div class="search-bar">
+    <a href="home-dashboard" class="search-bar__back" aria-label="Back">
+      <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg></span>
+    </a>
+    <div class="search-bar__input-wrap">
+      <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+      <input
+        type="text"
+        id="js-search-input"
+        placeholder="Search people, groups, expenses..."
+        autofocus
+      >
+      <button class="search-bar__clear" id="js-clear-btn" aria-label="Clear">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Content ── -->
+  <main class="view__content">
+
+    <!-- ── Default State: Recents ── -->
+    <div id="js-recents">
+      <div class="section-header">
+        <span class="section-header__label">Recent Searches</span>
+        <button class="section-header__action" id="js-clear-recents">Clear all</button>
+      </div>
+      <div class="recents-row">
+        <button class="chip chip--sm text-title-xs" data-query="Goa Trip">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></svg></span>
+          Goa Trip
+        </button>
+        <button class="chip chip--sm text-title-xs" data-query="Priya">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></svg></span>
+          Priya
+        </button>
+        <button class="chip chip--sm text-title-xs" data-query="dinner">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></svg></span>
+          dinner
+        </button>
+        <button class="chip chip--sm text-title-xs" data-query="Rahul">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></svg></span>
+          Rahul
+        </button>
+        <button class="chip chip--sm text-title-xs" data-query="hotel">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></svg></span>
+          hotel
+        </button>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-header">
+        <span class="section-header__label">People</span>
+      </div>
+
+      <a href="individual-detail" class="result-row">
+        <div class="result-avatar">PS</div>
+        <div class="result-text">
+          <p class="result-text__name text-title-sm">Priya Sharma</p>
+          <p class="result-text__meta">@priyasharma</p>
+        </div>
+        <div class="result-right">
+          <p class="result-amount result-amount--lent">+₹2,400</p>
+        </div>
+      </a>
+
+      <a href="individual-detail" class="result-row">
+        <div class="result-avatar">RV</div>
+        <div class="result-text">
+          <p class="result-text__name text-title-sm">Rahul Verma</p>
+          <p class="result-text__meta">@rahulv</p>
+        </div>
+        <div class="result-right">
+          <span class="result-chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+        </div>
+      </a>
+
+      <div class="section-divider"></div>
+
+      <div class="section-header">
+        <span class="section-header__label">Groups</span>
+      </div>
+
+      <a href="group-detail" class="result-row">
+        <div class="result-avatar result-avatar--group">
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,216a8,8,0,0,1-8,8H24a8,8,0,0,1,0-16H168A8,8,0,0,1,176,216ZM247.86,93.15a8,8,0,0,1-3.76,5.39l-147.41,88a40.18,40.18,0,0,1-20.26,5.52,39.78,39.78,0,0,1-27.28-10.87l-.12-.12L13,145.8a16,16,0,0,1,4.49-26.21l3-1.47a8,8,0,0,1,6.08-.4l28.26,9.54L75,115.06,53.17,93.87A16,16,0,0,1,57.7,67.4l.32-.13,7.15-2.71a8,8,0,0,1,5.59,0L124.7,84.38,176.27,53.6a39.82,39.82,0,0,1,51.28,9.12l.12.15,18.64,23.89A8,8,0,0,1,247.86,93.15Zm-19.74-3.7-13-16.67a23.88,23.88,0,0,0-30.68-5.42l-54.8,32.72a8.06,8.06,0,0,1-6.87.64L68,80.58l-4,1.53.21.2L93.57,110.8a8,8,0,0,1-1.43,12.58L59.93,142.87a8,8,0,0,1-6.7.73l-28.67-9.67-.19.1-.37.17a.71.71,0,0,1,.13.12l36,35.26a23.85,23.85,0,0,0,28.42,3.18Z"/></svg></span>
+        </div>
+        <div class="result-text">
+          <p class="result-text__name text-title-sm">Goa Trip 2025</p>
+          <p class="result-text__meta">6 members · Active</p>
+        </div>
+        <div class="result-right">
+          <p class="result-amount result-amount--owe">-₹3,200</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- ── Search Results (shown when query entered; built from Store) ── -->
+    <div id="js-results" style="display:none;">
+
+      <div class="section-header">
+        <span class="section-header__label" id="js-results-count">Results</span>
+      </div>
+
+      <!-- People results (populated by search.js) -->
+      <div id="js-people-results"></div>
+
+      <div class="section-divider" data-divider="people"></div>
+
+      <!-- Groups results (populated by search.js) -->
+      <div id="js-group-results"></div>
+
+      <div class="section-divider" data-divider="group"></div>
+
+      <!-- Expenses results (populated by search.js) -->
+      <div id="js-expense-results"></div>
+
+    </div>
+
+    <!-- No Results -->
+    <div class="empty-state" id="js-no-results" style="display:none;">
+      <div class="empty-state__illustration"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title text-heading-sm">No results found</p>
+        <p class="empty-state__body text-body-md">Try a different name, group, or expense keyword</p>
+      </div>
+    </div>
+
+  </main>
+</section>
+
+<section class="view" id="view-create-group-name" data-view="create-group-name" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="New Group" back="home-dashboard"></settlr-top-app-bar>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Group Photo -->
+    <div class="photo-area">
+      <div class="photo-upload" id="js-group-photo">
+        <span class="icon-holder photo-upload__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg></span>
+        <span class="photo-upload__text">Photo</span>
+      </div>
+      <input type="file" id="js-group-photo-input" accept="image/*" hidden>
+    </div>
+
+    <!-- Group Name -->
+    <div class="input-field input-field--rect">
+      <label class="input-field__label">Group name</label>
+      <div class="input-field__box">
+        <input type="text" id="js-group-name" placeholder="e.g. Goa Trip, Flat Expenses..." autofocus>
+      </div>
+    </div>
+
+    <!-- Description (optional) -->
+    <div class="input-field input-field--multiline">
+      <label class="input-field__label">Description (optional)</label>
+      <div class="input-field__box">
+        <textarea id="js-group-description" class="text-body-md" placeholder="Add a short note about this group..." rows="3"></textarea>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="screen-footer">
+    <button id="js-next-cgn" class="btn btn--primary btn--lg btn--full">Next → Add Members</button>
+  </div>
+</section>
+
+<section class="view" id="view-create-group-members" data-view="create-group-members" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Add Members" back="create-group-name"></settlr-top-app-bar>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
+      <input type="text" placeholder="Search contacts...">
+    </div>
+  </div>
+
+  <!-- ── Selected Members ── -->
+  <div class="selected-row" id="js-chips"></div>
+
+  <!-- ── Invite by Link ── -->
+  <div class="invite-banner-wrap">
+    <a href="add-friend" class="invite-banner">
+      <div class="invite-banner__icon">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg></span>
+      </div>
+      <div class="invite-banner__text">
+        <div class="invite-banner__title">Invite via link</div>
+        <div class="invite-banner__subtitle">Share a join link with friends</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+    <!-- Contact List (rendered by JS) -->
+    <div class="contact-list" id="js-contact-list"></div>
+  </main>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="screen-footer">
+    <button id="js-create" class="btn btn--primary btn--lg btn--full" style="opacity:0.4;pointer-events:none;">Create Group</button>
+  </div>
+</section>
+
+<section class="view" id="view-edit-group" data-view="edit-group" hidden>
+<!-- ── Status Bar (overlaid on hero) ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Scrollable Content (whole screen scrolls; footer stays fixed) ── -->
+  <main class="view__content">
+
+  <!-- ── Hero ── -->
+  <div class="hero-section hero-section--short">
+    <div class="hero-section__actions">
+      <a href="group-detail" class="icon-btn icon-btn--surface icon-btn--md" aria-label="Back">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Group Avatar (overlapping hero) ── -->
+  <button class="hero-section__avatar-wrap" id="js-avatar-btn" aria-label="Change group emoji">
+    <span class="avatar-edit-btn">
+      <div class="avatar avatar--xl avatar--initials avatar--group" id="js-group-avatar">
+        <span>🏖️</span>
+      </div>
+      <span class="icon-btn icon-btn--surface icon-btn--sm avatar-edit-btn__overlay">
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg></span>
+      </span>
+    </span>
+  </button>
+
+    <div class="edit-group__form">
+    <!-- Group Name -->
+    <div>
+      <div class="section-label">Group Name</div>
+      <div class="input-field input-field--rect">
+        <div class="input-field__box">
+          <input type="text" id="js-group-name-edit" class="text-body-md" value="Goa Trip" placeholder="e.g. Goa Trip…">
+          <span class="icon-holder input-field__suffix-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members -->
+    <div>
+      <div class="section-label" id="js-member-count">Members · 5</div>
+      <div class="members-list" id="js-members-list">
+
+        <div class="member-row" data-member="you" data-self="true">
+          <div class="member-row__avatar member-row__avatar--you text-title-sm">DR</div>
+          <div class="member-row__text">
+            <span class="member-row__name text-title-sm">You (Divyansh)</span>
+            <span class="member-row__role text-body-xs">Admin</span>
+          </div>
+          <button class="icon-btn icon-btn--destructive icon-btn--xs member-row__remove" data-remove aria-label="Leave group">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="rahul">
+          <div class="member-row__avatar text-title-sm">RK</div>
+          <div class="member-row__text">
+            <span class="member-row__name text-title-sm">Rahul Kumar</span>
+            <span class="member-row__role text-body-xs">Member</span>
+          </div>
+          <button class="icon-btn icon-btn--destructive icon-btn--xs member-row__remove" data-remove aria-label="Remove Rahul">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="priya">
+          <div class="member-row__avatar text-title-sm">PS</div>
+          <div class="member-row__text">
+            <span class="member-row__name text-title-sm">Priya Sharma</span>
+            <span class="member-row__role text-body-xs">Member</span>
+          </div>
+          <button class="icon-btn icon-btn--destructive icon-btn--xs member-row__remove" data-remove aria-label="Remove Priya">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="ankit">
+          <div class="member-row__avatar text-title-sm">AV</div>
+          <div class="member-row__text">
+            <span class="member-row__name text-title-sm">Ankit Verma</span>
+            <span class="member-row__role text-body-xs">Member</span>
+          </div>
+          <button class="icon-btn icon-btn--destructive icon-btn--xs member-row__remove" data-remove aria-label="Remove Ankit">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+
+        <div class="member-row" data-member="kavya">
+          <div class="member-row__avatar text-title-sm">KR</div>
+          <div class="member-row__text">
+            <span class="member-row__name text-title-sm">Kavya Reddy</span>
+            <span class="member-row__role text-body-xs">Member</span>
+          </div>
+          <button class="icon-btn icon-btn--destructive icon-btn--xs member-row__remove" data-remove aria-label="Remove Kavya">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+          </button>
+        </div>
+
+        <!-- Add Member Row -->
+        <div class="add-member-row" data-add-member>
+          <div class="add-member-row__icon">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-12.26,10.3C165.75,181.19,138.09,168,108,168s-57.75,13.19-77.87,37.15a8,8,0,0,1-12.25-10.3c14.94-17.78,33.52-30.41,54.17-37.17a68,68,0,1,1,71.9,0C164.6,164.44,183.18,177.07,198.13,194.85ZM108,152a52,52,0,1,0-52-52A52.06,52.06,0,0,0,108,152Z"/></svg></span>
+          </div>
+          <span class="add-member-row__label">Add a member</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div>
+      <div class="danger-card">
+        <div class="danger-row" data-delete-group>
+          <div class="danger-row__icon">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg></span>
+          </div>
+          <div class="danger-row__text">
+            <span class="danger-row__label">Delete Group</span>
+            <span class="danger-row__sublabel text-body-xs">Settle group first to delete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </main>
+
+  <!-- Screen Footer -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary btn--full" id="js-save-btn">Save Changes</button>
+  </div>
+
+  <!-- ── Remove / Exit Confirm Sheet ── -->
+  <div class="sheet-overlay" id="js-confirm-overlay">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title" id="js-confirm-title">Remove member?</span>
+        <button class="icon-btn icon-btn--sm" id="js-confirm-close" aria-label="Close" type="button">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content confirm-sheet__content">
+        <p id="js-confirm-body" class="confirm-sheet__body text-body-md">—</p>
+        <div class="confirm-sheet__actions">
+          <button id="js-confirm-action" class="btn btn--lg btn--destructive btn--full">Remove</button>
+          <button class="btn btn--lg btn--ghost btn--full" id="js-confirm-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Emoji Picker Sheet ── -->
+  <div class="sheet-overlay" id="js-emoji-overlay">
+    <div class="sheet">
+      <div class="sheet__handle">
+        <div class="sheet__handle-bar"></div>
+      </div>
+      <div class="sheet__header">
+        <span class="sheet__title">Pick a Group Emoji</span>
+      </div>
+      <div class="sheet__content">
+        <div class="emoji-grid">
+          <button class="emoji-btn is-selected" data-emoji="🏖️">🏖️</button>
+          <button class="emoji-btn" data-emoji="✈️">✈️</button>
+          <button class="emoji-btn" data-emoji="🏠">🏠</button>
+          <button class="emoji-btn" data-emoji="🍕">🍕</button>
+          <button class="emoji-btn" data-emoji="🎉">🎉</button>
+          <button class="emoji-btn" data-emoji="⚽">⚽</button>
+          <button class="emoji-btn" data-emoji="🏔️">🏔️</button>
+          <button class="emoji-btn" data-emoji="🚗">🚗</button>
+          <button class="emoji-btn" data-emoji="🎵">🎵</button>
+          <button class="emoji-btn" data-emoji="📚">📚</button>
+          <button class="emoji-btn" data-emoji="💼">💼</button>
+          <button class="emoji-btn" data-emoji="👨‍👩‍👧">👨‍👩‍👧</button>
+          <button class="emoji-btn" data-emoji="🌴">🌴</button>
+          <button class="emoji-btn" data-emoji="🎭">🎭</button>
+          <button class="emoji-btn" data-emoji="🍻">🍻</button>
+          <button class="emoji-btn" data-emoji="🐾">🐾</button>
+          <button class="emoji-btn" data-emoji="🌍">🌍</button>
+          <button class="emoji-btn" data-emoji="💑">💑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-add-amount" data-view="add-amount" hidden>
+<!-- Status Bar -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- Top Bar -->
+  <settlr-top-app-bar title="Add Expense" back="home-dashboard"></settlr-top-app-bar>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <main class="view__content">
+    <!-- Amount (currency follows the global Settings preference) -->
+    <div class="amount-area">
+      <div class="amount-row">
+        <span class="amount-prefix text-display-lg">&#8377;</span>
+        <input
+          class="amount-field text-display-lg"
+          id="js-amount"
+          type="text"
+          inputmode="decimal"
+          placeholder="0"
+          autocomplete="off"
+        >
+      </div>
+      <div class="amount-error">
+        <p class="input-field__helper input-field__helper--error text-label-xs" id="amount-error" style="display:none;">Please enter a valid amount.</p>
+      </div>
+    </div>
+
+    <!-- Title + Category row -->
+    <div class="title-cat-row">
+      <div class="category-area">
+        <button class="category-chip-btn text-title-xs" id="js-cat-btn" onclick="openCategorySheet()">
+          <span class="category-chip-btn__emoji">🏷️</span>
+          <span id="js-cat-label">Category</span>
+          <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+        </button>
+      </div>
+      <div class="title-area">
+        <input
+          class="title-input text-title-md"
+          id="js-title"
+          type="text"
+          placeholder="What's this for?"
+          autocomplete="off"
+          enterkeyhint="next"
+        >
+      </div>
+    </div>
+  </main>
+
+  <!-- Screen Footer -->
+  <div class="screen-footer" id="js-cta">
+    <button id="js-next" class="btn btn--lg btn--primary btn--full text-title-sm">Next</button>
+  </div>
+
+  <!-- Category Selection Sheet -->
+  <div class="sheet-overlay" id="categorySheet" style="display:none;" onclick="closeCategorySheet(event)">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title text-heading-sm">Category</span>
+        <button class="icon-btn icon-btn--sm" onclick="closeCategorySheet()" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="cat-grid" id="js-cat-grid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-add-group" data-view="add-group" hidden>
+<!-- Status Bar -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- Top Bar -->
+  <settlr-top-app-bar title="Select People" back="add-amount"></settlr-top-app-bar>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <label class="search-input">
+      <span class="search-input__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
+      <input type="text" placeholder="Search groups or friends..." autofocus>
+    </label>
+  </div>
+
+  <!-- Selected People Chips -->
+  <div class="selected-row" id="selected-chips"></div>
+
+  <!-- Scrollable Content -->
+  <main class="view__content">
+    <!-- Combined List (rendered by JS) -->
+    <div class="people-list" id="js-list"></div>
+
+    <!-- Search empty state -->
+    <div class="search-empty empty-state" id="js-search-empty" aria-live="polite">
+      <p class="empty-state__title">No matches found</p>
+    </div>
+  </main>
+
+  <!-- Fixed Bottom Stack: save-as-group + screen-footer -->
+  <div class="bottom-stack">
+
+    <!-- Save as group -->
+    <div class="save-group-row">
+      <div class="save-group-row__trigger">
+        <div class="save-group-row__icon">&#128101;</div>
+        <div class="save-group-row__text">
+          <div class="save-group-row__title">Save as a group</div>
+          <div class="save-group-row__sub text-caption-sm">Quick access next time</div>
+        </div>
+        <div class="checkbox-control" id="save-check">
+          <span class="icon-holder checkbox-control__check" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,85.66l-96,96a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L104,164.69l90.34-90.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+        </div>
+      </div>
+      <div class="save-group-row__form" id="save-group-form">
+        <input type="text" class="save-group-input text-body-sm" id="js-group-name-input" placeholder="Group name e.g. Goa Trip…">
+        <p class="input-field__helper input-field__helper--error is-hidden" id="js-group-name-error">Please enter a group name.</p>
+      </div>
+    </div>
+
+    <!-- Next CTA -->
+    <div class="screen-footer">
+      <button id="js-next-group" class="btn btn--primary btn--lg btn--full btn--disabled" disabled>Next</button>
+    </div>
+
+  </div>
+</section>
+
+<section class="view" id="view-add-split" data-view="add-split" hidden>
+<!-- Status Bar -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- Top Bar -->
+  <settlr-top-app-bar title="Split" back="add-group"></settlr-top-app-bar>
+
+  <!-- Steps -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+  </div>
+
+  <main class="view__content">
+
+    <!-- Paid By -->
+    <div class="paid-by paid-by--card" onclick="openPayerSheet()">
+      <div class="paid-by__avatars" id="js-paid-avatars"></div>
+      <div class="paid-by__text">
+        <span class="paid-by__label text-body-xs">Paid by</span>
+        <span class="paid-by__name text-title-sm" id="js-paid-name">—</span>
+      </div>
+      <button class="btn btn--secondary btn--sm">Change</button>
+    </div>
+
+    <!-- Split method & summary -->
+    <div class="split-header">
+      <div class="segment-control">
+        <button class="segment-item is-active">Equally</button>
+        <button class="segment-item">Amount</button>
+        <button class="segment-item">%</button>
+        <button class="segment-item">Shares</button>
+      </div>
+      <div class="split-summary">
+        <span class="split-summary__amount" id="js-per-person">—</span>
+        <span class="split-summary__label text-body-sm" id="js-per-person-label">per person</span>
+      </div>
+    </div>
+
+    <!-- Participants (rendered by JS) -->
+    <div class="participant-list" id="js-participants"></div>
+
+    <!-- Total bar -->
+    <div class="total-bar">
+      <span class="total-bar__label text-title-sm">Total</span>
+      <span class="total-bar__ok" id="js-total">—</span>
+    </div>
+    <!-- Validation error message -->
+    <p id="js-split-error" class="split-error text-body-xs"></p>
+
+  </main>
+
+  <!-- Screen Footer -->
+  <div class="screen-footer">
+    <button id="js-next-split" class="btn btn--lg btn--primary btn--full">Next</button>
+  </div>
+
+  <!-- PAYER BOTTOM SHEET (canonical .sheet-overlay / .sheet) -->
+  <div class="sheet-overlay" id="payer-sheet" style="display:none;" onclick="closePayerSheet(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Paid by</span>
+        <button class="icon-btn icon-btn--sm" onclick="closePayerSheet()" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content" id="js-payer-list"></div>
+      <p class="payer-hint text-body-sm" id="js-payer-hint"></p>
+      <div style="padding: var(--spacing-8) var(--spacing-16) var(--spacing-16); flex-shrink: 0;">
+        <button class="btn btn--primary btn--lg btn--full" onclick="closePayerSheet()">Done</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-add-review" data-view="add-review" hidden>
+<!-- Status Bar -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- Top Bar -->
+  <settlr-top-app-bar title="Review" back="add-split"></settlr-top-app-bar>
+
+  <!-- Step Progress -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <main class="view__content">
+
+    <!-- Expense Hero -->
+    <div class="expense-hero" id="js-hero">
+      <span class="expense-hero__category text-label-xs" id="js-category">—</span>
+      <div class="expense-hero__amount text-amount-lg" id="js-amount-review">—</div>
+      <div class="expense-hero__desc" id="js-desc">—</div>
+      <div class="expense-hero__date text-body-xs" id="js-date">—</div>
+      <div class="expense-hero__balance" id="js-balance">
+        <span class="expense-hero__balance-label" id="js-balance-label">—</span>
+        <span class="expense-hero__balance-amount" id="js-balance-amount">—</span>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="detail-section" id="js-details"></div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Split Breakdown -->
+    <div class="split-section">
+      <div class="split-section__header">
+        <span class="split-section__label">Split Breakdown</span>
+        <span class="split-section__method text-label-xs" id="js-split-method">—</span>
+      </div>
+      <div id="js-split-list"></div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Notes -->
+    <div class="notes-section">
+      <div class="notes-card notes-card--editable">
+        <label class="notes-card__label" for="js-notes">Notes (optional)</label>
+        <textarea id="js-notes" class="notes-card__textarea" rows="2" placeholder="Add a note for this expense…"></textarea>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Screen Footer -->
+  <div class="screen-footer">
+    <button id="js-add" class="btn btn--lg btn--primary btn--full">Add Expense</button>
+  </div>
+</section>
+
+<section class="view" id="view-expense-detail" data-view="expense-detail" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top App Bar ── -->
+  <settlr-top-app-bar title="Expense" back="javascript:history.back()"></settlr-top-app-bar>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Expense Hero -->
+    <div class="expense-hero">
+      <span class="expense-hero__category text-label-xs">🍽️ Food</span>
+      <div class="expense-hero__amount text-display-lg">₹4,890</div>
+      <div class="expense-hero__desc text-title-lg">Beach dinner at Baga</div>
+      <div class="expense-hero__date text-body-sm">27 Feb 2025 · 9:15 PM</div>
+      <div class="balance-pill balance-pill--lent text-title-sm">
+        <span class="balance-pill__label">You get back</span>
+        <span class="balance-pill__amount text-amount-sm">₹3,667.50</span>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="detail-section">
+      <div class="detail-row">
+        <div class="detail-row__icon">🏝</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label text-body-xs">Group</span>
+          <span class="detail-row__value text-title-sm">Goa Trip</span>
+        </div>
+        <span class="icon-holder detail-row__chevron" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">💳</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label text-body-xs">Paid by</span>
+          <span class="detail-row__value text-title-sm">You paid ₹4,890</span>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">📅</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label text-body-xs">Date</span>
+          <span class="detail-row__value text-title-sm">27 Feb 2025</span>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-row__icon">🔄</div>
+        <div class="detail-row__text">
+          <span class="detail-row__label text-body-xs">Split method</span>
+          <span class="detail-row__value text-title-sm">Equal split</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <div class="comments-section__header">
+        <span class="comments-section__label text-overline-md">Comments</span>
+        <span class="comments-section__count text-label-xs" id="comments-count"></span>
+      </div>
+      <div id="comments-list"></div>
+      <div class="comment-input">
+        <div class="input-field input-field--multiline">
+          <div class="input-field__box">
+            <textarea class="text-body-md" id="comment-text" placeholder="Add a comment…" rows="1" maxlength="300"></textarea>
+          </div>
+        </div>
+        <button class="icon-btn icon-btn--primary icon-btn--md comment-input__send" id="comment-send" aria-label="Post comment">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M231.87,114l-168-95.89A16,16,0,0,0,40.92,37.34L71.55,128,40.92,218.67A16,16,0,0,0,56,240a16.15,16.15,0,0,0,7.93-2.1l167.92-96.05a16,16,0,0,0,.05-27.89ZM56,224a.56.56,0,0,0,0-.12L85.74,136H144a8,8,0,0,0,0-16H85.74L56.06,32.16A.46.46,0,0,0,56,32l168,95.83Z"/></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Split Breakdown -->
+    <div class="split-section">
+      <div class="split-section__header">
+        <span class="split-section__label text-overline-md">Split Breakdown</span>
+        <span class="split-section__method text-label-xs">4 people · Equal</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">DR</div>
+        <span class="split-person__name">You</span>
+        <span class="split-person__amount split-person__amount--self">₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">RA</div>
+        <span class="split-person__name">Rahul Arora</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">PS</div>
+        <span class="split-person__name">Priya Sharma</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+
+      <div class="split-person">
+        <div class="split-person__avatar">AK</div>
+        <span class="split-person__name">Arjun Kumar</span>
+        <span class="split-person__amount split-person__amount--lent">owes ₹1,222.50</span>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Notes -->
+    <div class="notes-section">
+      <div class="notes-card notes-card--readonly">
+        <div class="notes-card__label text-overline-md">Notes</div>
+        <div class="notes-card__text text-body-md">Went to the beach shack at Baga — the prawn curry and kingfish was 🔥. Included drinks, starters, and dessert for the whole group.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="edit-expense" class="btn-edit text-title-md">
+      <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM51.31,160,136,75.31,152.69,92,68,176.68ZM48,179.31,76.69,208H48Zm48,25.38L79.31,188,164,103.31,180.69,120Zm96-96L147.31,64l24-24L216,84.68Z"/></svg></span>
+      Edit Expense
+    </a>
+    <button class="icon-btn icon-btn--destructive icon-btn--lg" aria-label="Delete expense" onclick="confirmDelete()">
+      <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg></span>
+    </button>
+  </div>
+</section>
+
+<section class="view" id="view-edit-expense" data-view="edit-expense" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Edit Expense" back="javascript:history.back()"></settlr-top-app-bar>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Amount -->
+    <div class="input-field">
+      <div class="date-heading"><span class="date-heading__label text-overline-md">Amount</span></div>
+      <div class="amount-input-wrap">
+        <span class="amount-input-wrap__symbol text-amount-xl">₹</span>
+        <input type="text" inputmode="decimal" value="850" class="text-amount-xl">
+        <button class="currency-chip">
+          ₹ INR
+          <span class="icon-holder currency-chip__caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="input-field">
+      <div class="date-heading"><span class="date-heading__label text-overline-md">Description</span></div>
+      <div class="input-field__box">
+        <input type="text" value="Dinner at Olive">
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="chips-section">
+      <div class="date-heading"><span class="date-heading__label text-overline-md">Category</span></div>
+      <div class="chips-row">
+        <span class="chip chip--md chip--on" onclick="selectCat(this)">🍽 Food</span>
+        <span class="chip chip--md" onclick="selectCat(this)">✈️ Travel</span>
+        <span class="chip chip--md" onclick="selectCat(this)">🛍 Shopping</span>
+        <span class="chip chip--md" onclick="selectCat(this)">📄 Bills</span>
+        <span class="chip chip--md" onclick="selectCat(this)">📦 Other</span>
+      </div>
+    </div>
+
+    <!-- Paid by (paid-by component) — tap to open the multi-payer sheet -->
+    <div class="paid-by paid-by--card" id="js-ee-paid-card">
+      <div class="paid-by__avatars" id="js-ee-paid-avatars"><div class="avatar avatar--initials avatar--md">DR</div></div>
+      <div class="paid-by__text">
+        <span class="paid-by__label text-body-xs">Paid by</span>
+        <span class="paid-by__name text-title-sm" id="js-ee-paid-name">You · ₹850</span>
+      </div>
+      <button class="btn btn--secondary btn--sm">Change</button>
+    </div>
+
+    <!-- Split section -->
+    <div class="split-section">
+      <div class="date-heading"><span class="date-heading__label text-overline-md">Split</span></div>
+      <div class="segment-control">
+        <button class="segment-item is-active">Equally</button>
+        <button class="segment-item">Amount</button>
+        <button class="segment-item">%</button>
+        <button class="segment-item">Shares</button>
+      </div>
+      <div class="split-section__summary">
+        <span class="split-section__summary-amount">₹212.5</span>
+        <span class="split-section__summary-label text-body-sm">per person</span>
+      </div>
+      <div class="split-section__list">
+        <div class="split-section__row">
+          <span class="split-section__check"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+          <div class="avatar avatar--initials avatar--md">DR</div>
+          <div class="split-section__text">
+            <span class="split-section__name text-title-sm">You</span>
+            <span class="split-section__share text-body-xs">Paid ₹850</span>
+          </div>
+          <span class="split-section__amount-pill text-amount-xs">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+          <div class="avatar avatar--initials avatar--md">RA</div>
+          <div class="split-section__text">
+            <span class="split-section__name text-title-sm">Rahul</span>
+            <span class="split-section__share text-body-xs">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill text-amount-xs">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+          <div class="avatar avatar--initials avatar--md">PS</div>
+          <div class="split-section__text">
+            <span class="split-section__name text-title-sm">Priya</span>
+            <span class="split-section__share text-body-xs">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill text-amount-xs">₹212.5</span>
+        </div>
+        <div class="split-section__row">
+          <span class="split-section__check"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+          <div class="avatar avatar--initials avatar--md">AK</div>
+          <div class="split-section__text">
+            <span class="split-section__name text-title-sm">Arjun</span>
+            <span class="split-section__share text-body-xs">Owes ₹212.5</span>
+          </div>
+          <span class="split-section__amount-pill text-amount-xs">₹212.5</span>
+        </div>
+        <div class="split-section__total">
+          <span class="split-section__total-label text-body-sm">Total</span>
+          <span class="split-section__total-value">₹850 <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date -->
+    <div class="detail-row detail-row--clickable">
+      <div class="detail-row__icon">📅</div>
+      <div class="detail-row__text">
+        <span class="detail-row__label">Date</span>
+        <span class="detail-row__value">17 March 2026</span>
+      </div>
+      <span class="icon-holder detail-row__chevron" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-card notes-card--editable">
+      <label class="notes-card__label" for="js-notes-edit">Notes (optional)</label>
+      <textarea id="js-notes-edit" class="notes-card__textarea" rows="3" placeholder="Add a note for this expense…">Birthday dinner for Priya. Included drinks and dessert. Everyone had a great time! 🎂</textarea>
+    </div>
+
+  </main>
+
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <a href="expense-detail" class="btn btn--lg btn--ghost">Discard</a>
+    <a href="expense-detail" class="btn btn--lg btn--primary">Save Changes</a>
+  </div>
+
+  <!-- PAYER BOTTOM SHEET (multi-payer; unique ids to avoid cross-view clashes) -->
+  <div class="sheet-overlay" id="ee-payer-sheet" style="display:none;">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">Paid by</span>
+        <button class="icon-btn icon-btn--sm" id="ee-payer-close" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content" id="js-ee-payer-list"></div>
+      <p class="payer-hint text-body-sm" id="js-ee-payer-hint"></p>
+      <div style="padding: var(--spacing-8) var(--spacing-16) var(--spacing-16); flex-shrink: 0;">
+        <button class="btn btn--primary btn--lg btn--full" id="ee-payer-done">Done</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-settle-select" data-view="settle-select" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Settle Up" back="home-dashboard"></settlr-top-app-bar>
+
+  <!-- ── Step Progress (Step 1 of 3) ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- ── Search ── -->
+  <div class="search-wrap">
+    <div class="search-input">
+      <span class="search-input__icon">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+      </span>
+      <input type="text" placeholder="Search people">
+    </div>
+  </div>
+
+  <!-- ── Scrollable List ── -->
+  <main class="view__content">
+    <div id="js-groups-label" class="heading" hidden><span class="heading__text">Groups</span></div>
+    <div id="js-groups-list"></div>
+    <div id="js-people-label" class="heading" hidden><span class="heading__text">People</span></div>
+    <div id="js-people-list"></div>
+    <div class="empty-state" id="js-settle-empty" style="display:none;">
+      <div class="empty-state__illustration"></div>
+      <div class="empty-state__text">
+        <p class="empty-state__title">All settled up</p>
+        <p class="empty-state__body">You have no outstanding balances to settle.</p>
+      </div>
+    </div>
+  </main>
+</section>
+
+<section class="view" id="view-settle-amount" data-view="settle-amount" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Settle Up" back="settle-select"></settlr-top-app-bar>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step"></div>
+  </div>
+
+  <!-- ── Person Preview ── -->
+  <div class="person-preview">
+    <div class="person-preview__avatar text-title-sm">JW</div>
+    <div class="person-preview__text">
+      <div class="person-preview__name text-title-sm">Johnnie Walker</div>
+      <div class="person-preview__balance text-body-xs">You owe ₹1,220</div>
+    </div>
+  </div>
+
+  <!-- ── Amount Entry ── -->
+  <div class="amount-area">
+    <span class="currency-badge text-label-xs">₹ INR</span>
+    <div class="amount-row">
+      <span class="amount-prefix text-amount-xl">₹</span>
+      <input
+        class="amount-field text-amount-xl"
+        id="js-settle-amount"
+        type="text"
+        inputmode="decimal"
+        placeholder="0"
+        autocomplete="off"
+      >
+    </div>
+    <div class="amount-error">
+      <p class="input-field__helper input-field__helper--error text-label-xs" id="settle-amount-error" style="display:none;">Please enter a valid amount.</p>
+      <p class="input-field__helper text-label-xs" id="settle-amount-warn" style="display:none;">This is more than the outstanding balance.</p>
+    </div>
+  </div>
+
+
+  <!-- ── Bottom CTA ── -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--secondary full-amount-btn">Pay full amount</button>
+    <button class="btn btn--lg btn--primary" id="js-continue">Continue</button>
+  </div>
+</section>
+
+<section class="view" id="view-settle-method" data-view="settle-method" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top Bar ── -->
+  <settlr-top-app-bar title="Settle Up" back="settle-amount"></settlr-top-app-bar>
+
+  <!-- ── Step Progress ── -->
+  <div class="step-progress">
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+    <div class="step-progress__step step-progress__step--active"></div>
+  </div>
+
+  <!-- ── Summary Card ── -->
+  <div class="summary-card" id="js-summary">
+    <div class="summary-card__avatar" id="js-avatar-method">JW</div>
+    <div class="summary-card__name" id="js-name">Johnnie Walker</div>
+    <div class="summary-card__amount summary-card__amount--owe" id="js-amount-method">₹1,220</div>
+    <div class="summary-card__meta">Settlement amount</div>
+  </div>
+
+  <!-- ── Payment Methods ── -->
+  <main class="view__content">
+    <div class="heading"><span class="heading__text">Payment Method</span></div>
+
+    <div class="detail-row detail-row--selectable is-selected" data-method="UPI">
+      <div class="detail-row__icon">💳</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">UPI</span>
+        <span class="detail-row__label">Pay via UPI apps</span>
+      </div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="detail-row detail-row--selectable" data-method="Cash">
+      <div class="detail-row__icon">💵</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Cash</span>
+        <span class="detail-row__label">Paid in cash</span>
+      </div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="detail-row detail-row--selectable" data-method="Bank Transfer">
+      <div class="detail-row__icon">🏦</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Bank Transfer</span>
+        <span class="detail-row__label">Direct bank transfer</span>
+      </div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="detail-row detail-row--selectable" data-method="Other">
+      <div class="detail-row__icon">📝</div>
+      <div class="detail-row__text">
+        <span class="detail-row__value">Other</span>
+        <span class="detail-row__label">Record as settled</span>
+      </div>
+      <div class="detail-row__radio">
+        <div class="detail-row__radio-dot"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Bottom CTA ── -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--primary" id="js-confirm">Confirm Settlement</button>
+  </div>
+</section>
+
+<section class="view" id="view-settle-success" data-view="settle-success" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Confetti (decorative) ── -->
+  <div class="confetti">
+    <div class="confetti__dot" style="left: 15%; top: 20%; background: var(--color-olive-300); animation-delay: 0.3s;"></div>
+    <div class="confetti__dot" style="left: 30%; top: 15%; background: var(--color-green-300); animation-delay: 0.5s;"></div>
+    <div class="confetti__dot" style="left: 55%; top: 18%; background: var(--color-olive-400); animation-delay: 0.4s;"></div>
+    <div class="confetti__dot" style="left: 75%; top: 22%; background: var(--color-green-200); animation-delay: 0.6s;"></div>
+    <div class="confetti__dot" style="left: 85%; top: 16%; background: var(--color-olive-200); animation-delay: 0.35s;"></div>
+    <div class="confetti__dot" style="left: 45%; top: 12%; background: var(--color-green-400); animation-delay: 0.55s;"></div>
+    <div class="confetti__dot" style="left: 10%; top: 25%; background: var(--color-olive-500); animation-delay: 0.7s;"></div>
+    <div class="confetti__dot" style="left: 65%; top: 28%; background: var(--color-green-100); animation-delay: 0.45s;"></div>
+  </div>
+
+  <!-- ── Success State ── -->
+  <div class="success-state success-state--confirmation">
+
+    <!-- Checkmark -->
+    <div class="success-state__icon">
+      <span class="icon-holder success-state__icon-glyph" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="success-state__heading">Settled!</h1>
+
+    <!-- Details -->
+    <div class="summary-card summary-card--success">
+      <div class="summary-card__avatar" id="js-avatar-success">JW</div>
+      <p class="summary-card__meta" id="js-summary-success">You paid <strong>Johnnie Walker</strong></p>
+      <p class="summary-card__amount" id="js-amount-success">₹1,220</p>
+      <span class="summary-card__meta" id="js-method">💳 via UPI</span>
+      <p class="summary-card__meta" id="js-ts"></p>
+    </div>
+
+  </div>
+
+  <!-- ── Bottom Actions ── -->
+  <div class="screen-footer">
+    <a href="home-dashboard" class="btn btn--lg btn--primary btn--full" id="js-done">Done</a>
+    <a href="individual-detail" class="btn btn--md btn--ghost btn--full" id="js-view-link">View Details</a>
+  </div>
+</section>
+
+<section class="view" id="view-settlement-detail" data-view="settlement-detail" hidden>
+<!-- ── Status Bar ── -->
+  <settlr-status-bar></settlr-status-bar>
+
+  <!-- ── Top App Bar ── -->
+  <settlr-top-app-bar title="Settlement" back="javascript:history.back()"></settlr-top-app-bar>
+
+  <!-- ── Scrollable Content ── -->
+  <main class="view__content">
+
+    <!-- Settlement Hero -->
+    <div class="settle-hero">
+      <div class="settle-hero__illus" aria-hidden="true">🤝</div>
+      <div class="settle-hero__amount text-display-lg" id="js-sd-amount">₹0</div>
+      <div class="settle-hero__title text-title-lg" id="js-sd-title">Settlement</div>
+      <div class="settle-hero__date text-body-sm" id="js-sd-date"></div>
+    </div>
+
+    <!-- Details (built in JS) -->
+    <div class="detail-section" id="js-sd-details"></div>
+
+  </main>
+
+  <!-- ── Screen Footer ── -->
+  <div class="screen-footer">
+    <button class="btn btn--lg btn--secondary btn--full btn-undo text-title-md" id="js-sd-undo">Undo settlement</button>
+  </div>
+</section>
+
+<section class="view" id="view-onboarding-welcome" data-view="onboarding-welcome" hidden>
+<!-- ═══ PANEL: Welcome (first-run entry) ═══
+       A clean single page: import contacts is the primary path; a secondary
+       "Show more ways" toggle reveals add-by-ID, invite link, and QR inline. -->
+  <section class="onb-screen" data-screen="welcome">
+    <settlr-top-app-bar title="Settlr" brand>
+      <span class="avatar avatar--initials avatar--lg text-title-lg" aria-hidden="true">DR</span>
+    </settlr-top-app-bar>
+
+    <main class="onb-screen__content onb-home">
+
+      <section class="onb-firstrun">
+        <span class="onb-firstrun__art"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></svg></span></span>
+        <span class="onb-firstrun__title text-display-sm">Welcome to Settlr 👋</span>
+        <span class="onb-firstrun__sub text-body-md">Add the people you split with. Pick any way to get started.</span>
+      </section>
+
+      <!-- Two clean choices: the primary import path + a secondary toggle that
+           expands the other methods inline (no separate page). -->
+      <div class="onb-actions">
+        <button type="button" class="btn btn--primary btn--lg btn--full text-title-md js-onb-import" id="js-onb-import-home">
+          <span class="btn__content">
+            <span class="btn__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M83.19,174.4a8,8,0,0,0,11.21-1.6,52,52,0,0,1,83.2,0,8,8,0,1,0,12.8-9.6A67.88,67.88,0,0,0,163,141.51a40,40,0,1,0-53.94,0A67.88,67.88,0,0,0,81.6,163.2,8,8,0,0,0,83.19,174.4ZM112,112a24,24,0,1,1,24,24A24,24,0,0,1,112,112Zm96-88H64A16,16,0,0,0,48,40V64H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v24a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V40A16,16,0,0,0,208,24Zm0,192H64V40H208Z"/></svg></span></span>
+            <span class="btn__label">Import Contacts</span>
+          </span>
+        </button>
+        <button type="button" class="btn btn--secondary btn--lg btn--full text-title-md onb-more-btn" id="js-onb-more" aria-expanded="false" aria-controls="js-onb-more-panel">
+          <span class="btn__content">
+            <span class="btn__label">Show more ways</span>
+            <span class="btn__icon onb-more-btn__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Other methods, revealed inline when "Show more ways" is tapped. -->
+      <div class="onb-more-panel" id="js-onb-more-panel" hidden>
+          <button type="button" class="onb-cta onb-cta--feature" data-go="userid">
+            <span class="onb-cta__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M200,112a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h40A8,8,0,0,1,200,112Zm-8,24H152a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm40-88V208a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V48A16,16,0,0,1,40,32H216A16,16,0,0,1,232,48ZM216,208V48H40V208H216Zm-80.26-34a8,8,0,0,1-15.5,4c-2.63-10.26-13.06-18-24.25-18s-21.61,7.74-24.25,18a8,8,0,0,1-15.5-4,40.66,40.66,0,0,1,18.62-24.88,32,32,0,1,1,42.25,0A40.62,40.62,0,0,1,135.74,174ZM96,136a16,16,0,1,0-16-16A16,16,0,0,0,96,136Z"/></svg></span></span>
+            <span class="onb-cta__text">
+              <span class="onb-cta__label text-title-md">Add by user ID</span>
+              <span class="onb-cta__sub text-body-xs">Search a friend's Settlr ID</span>
+            </span>
+          </button>
+
+          <!-- Invite via link: copyable link field (inline copy) + native Share CTA.
+               Reuses the global .invite-card component (same as add-friend). -->
+          <div class="invite-card">
+            <p class="invite-card__title text-title-sm">Invite via link</p>
+            <p class="invite-card__subtitle text-body-xs">Friends auto-connect when they join through your link</p>
+            <div class="invite-card__row">
+              <div class="invite-link-box">
+                <span class="invite-link-box__url text-body-xs" id="js-onb-invite-url">settlr.app/invite/divyansh</span>
+                <button class="invite-link-box__copy" id="js-onb-copy-link" type="button" aria-label="Copy invite link">
+                  <span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
+                </button>
+              </div>
+              <button class="btn btn--secondary btn--sm text-title-xs" id="js-onb-share-link" type="button">
+                <span class="btn__content">
+                  <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span></span>
+                  <span class="btn__label">Share</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- My QR card: tap View to open the QR bottom sheet.
+               Reuses the global .qr-section component (same as add-friend). -->
+          <div class="qr-section" id="js-onb-qr-card">
+            <div class="qr-placeholder">
+              <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm0,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48ZM200,40H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-64,72V144a8,8,0,0,1,16,0v32a8,8,0,0,1-16,0Zm80-16a8,8,0,0,1-8,8H184v40a8,8,0,0,1-8,8H144a8,8,0,0,1,0-16h24V144a8,8,0,0,1,16,0v8h24A8,8,0,0,1,216,160Zm0,32v16a8,8,0,0,1-16,0V192a8,8,0,0,1,16,0Z"/></svg></span>
+            </div>
+            <div class="qr-text">
+              <p class="qr-text__title text-title-sm">Your QR Code</p>
+              <p class="qr-text__sub text-body-xs">Friends can scan to add you directly</p>
+            </div>
+            <button class="btn btn--secondary btn--sm text-title-xs" id="js-onb-view-qr" type="button" style="flex-shrink:0">
+              <span class="btn__content">
+                <span class="btn__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg></span></span>
+                <span class="btn__label">View</span>
+              </span>
+            </button>
+          </div>
+
+          <!-- Revealed after Share: explains the no-screen-change / auto-connect
+               behaviour when a friend joins through the link. -->
+          <div class="onb-sharehint" id="js-onb-sharehint" hidden>
+            <p class="onb-sharehint__text text-body-xs">Invite shared. Nothing changes here yet — when a friend joins through your link, we connect you automatically.</p>
+          </div>
+      </div>
+
+      <!-- Quiet escape: contacts is an accelerant, not a gate. Skipping lands on
+           the real home, which keeps "Add people" one tap away. -->
+      <button type="button" class="onb-textlink text-title-xs" id="js-onb-skip">I'll do this later</button>
+
+    </main>
+  </section>
+
+  <!-- ═══ PANEL: Add by user ID ═══ -->
+  <section class="onb-screen" data-screen="userid" hidden>
+    <settlr-top-app-bar title="Add by user ID" back="#" data-back="welcome"></settlr-top-app-bar>
+
+    <main class="onb-screen__content">
+      <div class="search-wrap">
+        <div class="search-input">
+          <span class="search-input__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
+          <input type="text" id="js-onb-userid-search" placeholder="Search by user ID" autocomplete="off" autocapitalize="none" spellcheck="false">
+        </div>
+      </div>
+
+      <p class="onb-userid-hint text-body-xs">Every Settlr user has a unique ID. Ask a friend for theirs, then add them instantly.</p>
+
+      <div class="onb-userid-result" id="js-onb-userid-result"></div>
+    </main>
+  </section>
+
+  <!-- ═══ PANEL: Contact-import result (sub-flow from Import) ═══ -->
+  <section class="onb-screen" data-screen="import" hidden>
+    <settlr-top-app-bar title="From Contacts" back="#" data-back="welcome"></settlr-top-app-bar>
+
+    <main class="onb-screen__content">
+      <div class="search-wrap">
+        <div class="search-input">
+          <span class="search-input__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
+          <input type="text" id="js-onb-import-search" placeholder="Search contacts" autocomplete="off">
+        </div>
+      </div>
+
+      <p class="onb-import-summary text-body-xs">9 contacts · 5 added automatically</p>
+
+      <div class="onb-import-list" id="js-onb-import-list">
+        <!-- Matched: already on Settlr → auto-connected on import -->
+        <div class="heading"><span class="heading__title text-heading-md">Added from contacts</span></div>
+
+        <div class="person-item">
+          <div class="avatar avatar--initials avatar--md">RS</div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Riya Sharma</p>
+            <p class="person-item__subtext text-body-xs">+91 98765 43210</p>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--initials avatar--md">AM</div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Aarav Mehta</p>
+            <p class="person-item__subtext text-body-xs">+91 99201 55678</p>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--initials avatar--md">PP</div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Priya Patel</p>
+            <p class="person-item__subtext text-body-xs">+91 98330 11223</p>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--initials avatar--md">KS</div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Karan Singh</p>
+            <p class="person-item__subtext text-body-xs">+91 97411 88990</p>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--initials avatar--md">SR</div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Sneha Reddy</p>
+            <p class="person-item__subtext text-body-xs">+91 90080 44556</p>
+          </div>
+        </div>
+
+        <!-- Unmatched: not on Settlr → Invite -->
+        <div class="heading"><span class="heading__title text-heading-md">Not on Settlr yet</span></div>
+
+        <div class="person-item">
+          <div class="avatar avatar--md avatar--outline">
+            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+          </div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Vikram Nair</p>
+            <p class="person-item__subtext text-body-xs">+91 87654 22222</p>
+          </div>
+          <div class="person-item__action">
+            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--md avatar--outline">
+            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+          </div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Ananya Iyer</p>
+            <p class="person-item__subtext text-body-xs">+91 88123 77665</p>
+          </div>
+          <div class="person-item__action">
+            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--md avatar--outline">
+            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+          </div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Rohan Gupta</p>
+            <p class="person-item__subtext text-body-xs">+91 96540 33221</p>
+          </div>
+          <div class="person-item__action">
+            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
+          </div>
+        </div>
+
+        <div class="person-item">
+          <div class="avatar avatar--md avatar--outline">
+            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
+          </div>
+          <div class="person-item__text">
+            <p class="person-item__name text-title-sm">Meera Joshi</p>
+            <p class="person-item__subtext text-body-xs">+91 94220 66778</p>
+          </div>
+          <div class="person-item__action">
+            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
+          </div>
+        </div>
+
+        <p class="onb-noresult text-body-sm" id="js-onb-import-empty" hidden>No contacts match your search.</p>
+      </div>
+
+      <div class="onb-import-footer">
+        <button type="button" class="btn btn--primary btn--md btn--full text-title-sm" id="js-onb-import-continue">
+          <span class="btn__content"><span class="btn__label">Continue to Settlr</span></span>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ═══ My QR — bottom sheet ═══ -->
+  <div class="sheet-overlay onb-sheet" id="js-onb-qr-sheet" hidden>
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title">My QR code</span>
+        <button type="button" class="icon-btn icon-btn--sm" id="js-onb-qr-close" aria-label="Close">
+          <span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="onb-qr">
+          <div class="qr-placeholder qr-placeholder--lg">
+            <img class="qr-placeholder__img" id="js-onb-qr-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="QR code for your invite link" width="160" height="160">
+          </div>
+          <div class="onb-qr__caption">
+            <span class="onb-qr__name text-title-md" id="js-onb-qr-name">Divyansh Rastogi</span>
+            <span class="onb-qr__phone text-body-sm" id="js-onb-qr-sub">@divyansh · +91 88812 34567</span>
+          </div>
+          <p class="onb-qr__hint text-body-xs">Friends scan this to add you instantly</p>
+        </div>
+
+        <button class="btn btn--primary btn--md btn--full text-title-sm" id="js-onb-qr-share" type="button">
+          <span class="btn__content">
+            <span class="btn__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></span></span>
+            <span class="btn__label">Share invite link</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ OS contacts-permission prompt (mock) ═══
+       Mimics the native iOS permission alert. Tapping "Import Contacts" opens
+       this; "Allow" → import result, "Don't Allow" / backdrop → dismiss. -->
+  <div class="onb-os-prompt" id="js-onb-os-prompt" role="dialog" aria-modal="true" aria-labelledby="js-onb-os-title" hidden>
+    <div class="onb-os-prompt__card">
+      <div class="onb-os-prompt__body">
+        <p class="onb-os-prompt__title text-title-sm" id="js-onb-os-title">“Settlr” Would Like to Access Your Contacts</p>
+        <p class="onb-os-prompt__text text-body-xs">Settlr checks which of your contacts are already on Settlr so you can split expenses with them.</p>
+      </div>
+      <div class="onb-os-prompt__actions">
+        <button type="button" class="onb-os-prompt__btn text-title-sm" id="js-onb-os-deny">Don’t Allow</button>
+        <button type="button" class="onb-os-prompt__btn onb-os-prompt__btn--primary text-title-md" id="js-onb-os-allow">Allow</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <settlr-bottom-nav id="shell-bottom-nav" active="home"></settlr-bottom-nav>
+
+  <!-- Data + render + lifecycle (load once) -->
+  <script src="js/store.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/view-registry.js"></script>
+  <script src="js/router-spa.js"></script>
+  <script src="js/payer-sheet.js"></script>
+  <!-- Offline QR generation (per-user invite QR) -->
+  <script src="js/lib/qrcode.js"></script>
+  <script src="js/qr.js"></script>
+  <!-- View modules (register with SettlrViews; bootstrap skipped since router exists) -->
+  <script src="js/views/home-dashboard.js"></script>
+  <script src="js/views/people.js"></script>
+  <script src="js/views/activity.js"></script>
+  <script src="js/views/group-detail.js"></script>
+  <script src="js/views/individual-detail.js"></script>
+  <script src="js/views/settings.js"></script>
+  <script src="js/views/edit-profile.js"></script>
+  <script src="js/views/add-friend.js"></script>
+  <script src="js/views/search.js"></script>
+  <script src="js/views/create-group-name.js"></script>
+  <script src="js/views/create-group-members.js"></script>
+  <script src="js/views/edit-group.js"></script>
+  <script src="js/views/add-amount.js"></script>
+  <script src="js/views/add-group.js"></script>
+  <script src="js/views/add-split.js"></script>
+  <script src="js/views/add-review.js"></script>
+  <script src="js/views/expense-detail.js"></script>
+  <script src="js/views/edit-expense.js"></script>
+  <script src="js/views/settle-select.js"></script>
+  <script src="js/views/settle-amount.js"></script>
+  <script src="js/views/settle-method.js"></script>
+  <script src="js/views/settle-success.js"></script>
+  <script src="js/views/settlement-detail.js"></script>
+  <script src="js/views/onboarding-welcome.js"></script>
+  <!-- Enhancers -->
+  <script src="js/list-stagger.js" defer></script>
+  <script src="js/segment-slider.js" defer></script>
+  <script src="js/sheet-drag.js" defer></script>
+  <script src="js/swipe-back.js" defer></script>
+  <script src="js/pull-refresh.js" defer></script>
+  <script src="js/bottom-nav-slider.js" defer></script>
+  <script src="js/supabase-config.js" defer></script>
+  <script src="js/supabase-client.js" defer></script>
+  <!-- Boot the shell: auth-gate + hydrate (Supabase mode), else local/demo. -->
+  <script>
+    (function () {
+      function start() { window.SettlrRouterSPA.start('home-dashboard'); }
+      function boot() {
+        // Local/demo mode (no Supabase configured): keep working on localStorage.
+        if (!(window.SettlrAuth && window.SettlrAuth.configured)) { start(); return; }
+        // Supabase mode: require a session, hydrate the Store, then force the
+        // one-time profile step (phone) before entering the app.
+        window.SettlrAuth.requireAuth('/screens/login.html').then(function (authed) {
+          if (!authed) return; // requireAuth already redirected to login
+          return window.Store.init().then(function () {
+            var u = window.Store.getCurrentUser();
+            if (!u || !u.phone) { window.location.replace('/screens/complete-profile.html'); return; }
+            start();
+          });
+        }).catch(function (e) { console.error('[boot]', e); start(); });
+      }
+      if (document.readyState !== 'loading') boot();
+      else document.addEventListener('DOMContentLoaded', boot);
+    }());
+  </script>
+</body>
+</html>

@@ -36,6 +36,12 @@
   --error-surface:        var(--color-coral-50);   /* error input bg, owe card bg */
   --error-border:         var(--color-coral-300);  /* toast error border */
 
+  /* ---- Warning / Favourite (Gold) ---- */
+  --warning-fg:      var(--color-gold-500);  /* favourite star, warning text (#B8860B) */
+  --warning-strong:  var(--color-gold-600);  /* stronger warning text */
+  --warning-subtle:  var(--color-gold-100);  /* warning label bg */
+  --warning-border:  var(--color-gold-300);  /* warning border */
+
   /* ---- Success / Lent (Green) ---- */
   --success-fg:      var(--color-green-600);  /* label/lent text */
   --success-strong:  var(--color-green-700);  /* toast success text */
@@ -105,9 +111,31 @@
   --btn-destructive-fg:         var(--text-inverse);
 
   /* ---- Button: Icon ---- */
+  /* Default / neutral */
   --btn-icon-bg:         var(--surface-input);
   --btn-icon-bg-pressed: var(--surface-track);
   --btn-icon-fg:         var(--text-primary);
+  /* Variant: primary (olive filled) */
+  --btn-icon-primary-bg:         var(--btn-primary-bg);
+  --btn-icon-primary-bg-pressed: var(--btn-primary-bg-pressed);
+  --btn-icon-primary-fg:         var(--btn-primary-fg);
+  /* Variant: destructive (coral tint; pressed darkens for visible feedback) */
+  --btn-icon-destructive-bg:         var(--list-remove-bg);
+  --btn-icon-destructive-bg-pressed: var(--error-border);
+  --btn-icon-destructive-fg:         var(--list-remove-fg);
+  /* Variant: ghost (transparent; subtle pressed fill) */
+  --btn-icon-ghost-fg:         var(--text-primary);
+  --btn-icon-ghost-bg-pressed: var(--surface-input);
+  /* Variant: surface (white + hairline border) */
+  --btn-icon-surface-bg:         var(--surface-card);
+  --btn-icon-surface-bg-pressed: var(--surface-input);
+  --btn-icon-surface-fg:         var(--text-primary);
+  --btn-icon-surface-border:     var(--border-default);
+  /* Fixed-footprint sizes (xs/sm reuse spacing tokens; md/lg are off-scale) */
+  --icon-btn-size-xs: var(--spacing-32);
+  --icon-btn-size-sm: var(--spacing-40);
+  --icon-btn-size-md: 44px;
+  --icon-btn-size-lg: 52px;
 
   /* ---- Action Button Row ---- */
   --action-btn-row-bg:     var(--surface-input);
@@ -146,6 +174,8 @@
   --label-owe-fg:     var(--error-fg);
   --label-settled-bg: var(--neutral-surface);
   --label-settled-fg: var(--neutral-fg);
+  --label-warning-bg: var(--warning-subtle);
+  --label-warning-fg: var(--warning-fg);   /* favourite star, warning badge */
 
   /* ---- Input ---- */
   --input-bg:             var(--surface-input);
@@ -235,16 +265,16 @@
   --contact-divider:     var(--border-default);
   --contact-settled-fg:  var(--text-placeholder);
 
-  /* ---- FAB ---- */
-  --fab-bg: var(--action-accent);
-  --fab-fg: var(--action-dark);
-
   /* ---- Navigation Bar ---- */
   --nav-bar-bg:         var(--surface-card);
   --nav-bar-border:     var(--border-subtle);
   --nav-tab-bg-active:  var(--neutral-mid);
   --nav-tab-fg-active:  var(--text-primary);
   --nav-tab-fg-default: var(--text-primary);
+
+  /* ---- Icon Holder ---- */
+  --icon-holder-bg-brand: var(--action-muted);   /* brand tint behind icon (olive/100) */
+  --icon-holder-fg-brand: var(--text-brand);      /* icon color on brand bg (olive/600) */
 
   /* ---- List ---- */
   --list-remove-bg: var(--error-subtle);

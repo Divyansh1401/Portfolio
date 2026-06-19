@@ -41,12 +41,19 @@
   object-fit: cover;
 }
 
+/* ---- Outline: icon / placeholder avatar (surface bg + hairline border) ---- */
+.avatar--outline {
+  background: var(--surface-primary);
+  border: var(--border-small) solid var(--border-default);
+  color: var(--text-tertiary);
+}
+
 /* ---- Sizes ---- */
 /* XS — 20px — text-label-xs: 10px medium */
 .avatar--xs {
   width: 20px;
   height: 20px;
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 
@@ -54,7 +61,7 @@
 .avatar--sm {
   width: 28px;
   height: 28px;
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 

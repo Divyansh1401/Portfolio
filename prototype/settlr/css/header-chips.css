@@ -23,3 +23,15 @@
 .header-chips::-webkit-scrollbar {
   display: none;
 }
+
+/* ---- Compact ----
+   Tighter filter strip used directly below a search field (people, activity).
+   Promoted from the per-screen `.chips-row` (zero visual change): the base
+   already supplies display:flex, overflow-x:auto, hidden scrollbar, and the
+   same border-bottom (--border-small solid --border-default); this modifier
+   only overrides gap + padding and adds flex-shrink. */
+.header-chips--compact {
+  gap: var(--spacing-8);
+  padding: 0 var(--spacing-16) var(--spacing-12);
+  flex-shrink: 0;
+}

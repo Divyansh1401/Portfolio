@@ -9,6 +9,7 @@
 @import './radius.css';
 @import './typography.css';
 @import './shadows.css';
+@import './motion.css';
 
 /* ── Phosphor Icons (stored locally in icons/) ── */
 @import '../icons/phosphor/regular/style.css';

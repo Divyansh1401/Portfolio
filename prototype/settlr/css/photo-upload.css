@@ -1,0 +1,61 @@
+/* ============================================
+   Settlr — Photo Upload Component
+   Dashed image-picker tile used in group creation.
+   Promoted from the create-group-name screen-scoped block (zero visual
+   change). Non-token values kept exact: 96px tile, 2px dashed border, the
+   "all 0.15s ease" transition, 28px icon glyph, 10px caption font.
+   ============================================ */
+
+.photo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+.photo-upload {
+  /* NON-TOKEN: 96px tile — no sizing token; kept exact. */
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-24);
+  background: var(--type-chip-bg-on);
+  /* NON-TOKEN: 2px dashed — kept exact for the dashed style shorthand. */
+  border: 2px dashed var(--toast-brand-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  /* NON-TOKEN: transition carried over verbatim from source. */
+  transition: all 0.15s ease;
+}
+.photo-upload:active {
+  background: var(--btn-secondary-bg);
+}
+/* Selected-photo state: the chosen image fills the tile (set as an inline
+   background-image by JS); the dashed border + icon/caption are dropped. */
+.photo-upload--photo {
+  border-style: solid;
+  border-color: transparent;
+  background-size: cover;
+  background-position: center;
+}
+.photo-upload--photo .photo-upload__icon,
+.photo-upload--photo .photo-upload__text {
+  display: none;
+}
+.photo-upload__icon {
+  /* NON-TOKEN: 28px drives the bare .icon-holder glyph; no 28px icon token. */
+  font-size: 28px;
+  color: var(--card-create-fg);
+}
+/* upload caption — no text-* style ≤ 11px exists; font props kept (flagged). */
+.photo-upload__text {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  color: var(--text-brand);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

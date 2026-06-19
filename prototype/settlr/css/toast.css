@@ -9,7 +9,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-8);
-  width: 361px; /* 393px screen − 16px margin each side */
+  width: 100%;
+  max-width: 361px; /* 393px screen − 16px margin each side */
   padding: var(--spacing-12) var(--spacing-16);
   border-radius: var(--radius-12);
   border: var(--border-small) solid transparent;

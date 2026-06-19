@@ -1,0 +1,49 @@
+/* ============================================
+   Settlr — Balance Row
+   Shared list row produced by Render.balanceRow, used by the group-detail
+   "Balances" tab. Promoted verbatim from the [data-view="group-detail"]
+   scoped block (the [data-view] prefix was dropped — zero visual change).
+   Property values are kept identical, including the non-token 44px avatar
+   tile and the kept display font props on __amount (these were flagged in
+   the original as having no matching text-* token).
+   ============================================ */
+
+.balance-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--border-subtle);
+}
+.balance-row__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* text — text style via .text-body-md in Render.balanceRow markup
+   (snaps 14/20 → 14/23 line-height; same delta accepted in expense-detail) */
+.balance-row__text {
+  flex: 1;
+  color: var(--text-secondary);
+}
+.balance-row__text strong { color: var(--text-primary); font-weight: var(--weight-semibold); }
+/* amount — Render.balanceRow markup carries .text-amount-xs (13/18 semibold).
+   Original inline was display 14px bold; keep the original type here so the
+   text-amount-xs class does not change the look. Flagged. */
+.balance-row__amount {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-bold);
+}
+.balance-row__amount--lent { color: var(--expense-lent-fg); }
+.balance-row__amount--owe  { color: var(--expense-owe-fg); }

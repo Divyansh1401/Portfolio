@@ -9,31 +9,39 @@
 /* Layout & Utilities */
 @import './layout.css';
 
+/* App shell (compiled single-document app — scoped under .app-shell) */
+@import './app-shell.css';
+
 /* Components */
+@import './icon-holder.css';
 @import './button.css';
 @import './icon-button.css';
 @import './chip.css';
 @import './type-chip.css';
 @import './input-field.css';
 @import './labels.css';
-@import './badge.css';
 @import './avatar.css';
 @import './avatar-stack.css';
 @import './radio.css';
 @import './checkbox.css';
 @import './otp.css';
 @import './list-items.css';
+@import './txn-item.css';
+@import './balance-row.css';
+@import './group-row.css';
 @import './cards.css';
 @import './navigation.css';
-@import './fab.css';
 @import './heading.css';
 @import './top-app-bar.css';
 @import './header-chips.css';
 @import './action-button-row.css';
 @import './screen-footer.css';
 @import './settlement-item.css';
+@import './paid-by.css';
+@import './payer-sheet.css';
 @import './bottom-sheet.css';
 @import './empty-state.css';
+@import './toast.css';
 @import './faq.css';
 @import './currency-chip.css';
 @import './amount-input.css';
@@ -48,6 +56,9 @@
 @import './summary-card.css';
 @import './success-state.css';
 @import './invite-banner.css';
+@import './invite-card.css';
+@import './qr-section.css';
+@import './photo-upload.css';
 @import './confetti.css';
 
 /* Global motion — must come last to override component transitions */

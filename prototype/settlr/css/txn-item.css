@@ -1,0 +1,76 @@
+/* ============================================
+   Settlr — Transaction Item
+   Shared list row produced by Render.txnItem, used by the group-detail and
+   individual-detail "Transactions" tabs. Promoted from two identical per-screen
+   scoped copies. The illustration radius is standardized to --radius-8 to match
+   expense-item (the dominant list-row illustration); individual-detail's former
+   --radius-12 was the outlier.
+   ============================================ */
+
+.txn-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  background: transparent;
+  border-bottom: var(--border-small) solid var(--border-subtle);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+.txn-item:active { background: var(--contact-bg-selected); }
+
+/* Emoji/illustration tile. 48px has no spacing token (flagged), kept exact. */
+.txn-item__illus {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-8);
+  background: var(--btn-icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-20);
+  flex-shrink: 0;
+}
+
+.txn-item__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+/* name — text style via .text-title-sm in Render.txnItem markup */
+.txn-item__name {
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* subtitle — text style via .text-body-xs in Render.txnItem markup */
+.txn-item__subtitle {
+  color: var(--text-tertiary);
+}
+
+.txn-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: var(--spacing-2);
+}
+/* badge — text style via .text-label-xs in markup; color via direction modifier */
+/* amount — Render.txnItem markup has no text-* class; type kept here (no token) */
+.txn-item__amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-20);
+}
+
+.txn-item--lent .txn-item__badge,
+.txn-item--lent .txn-item__amount { color: var(--expense-lent-fg); }
+.txn-item--owe .txn-item__badge,
+.txn-item--owe .txn-item__amount { color: var(--expense-owe-fg); }
+.txn-item--settled .txn-item__badge,
+.txn-item--settled .txn-item__amount { color: var(--text-tertiary); }

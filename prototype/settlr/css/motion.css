@@ -12,7 +12,6 @@
      Listening for `transitionend` is cheap per element. */
 
   .btn,
-  .fab,
   .icon-btn,
   .chip,
   .currency-chip,
@@ -31,7 +30,6 @@
   }
 
   .btn:active,
-  .fab:active,
   .card-create:active,
   .summary-card:active,
   .invite-banner:active,
@@ -89,16 +87,12 @@
   }
 
   /* ── Sheet / overlay open animations ─────────────────────
-     Only animated when actually opening (one-shot keyframes). */
+     One-shot keyframes that fire whenever a .sheet is shown. The sheet slides
+     fully up from the bottom edge (translateY 100% → 0) so it reads as a real
+     bottom-sheet everywhere it's used. */
   @keyframes settlr-sheet-in {
-    from {
-      opacity: 0;
-      transform: translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
   }
 
   @keyframes settlr-overlay-in {
@@ -112,5 +106,25 @@
 
   .sheet-overlay {
     animation: settlr-overlay-in var(--duration-base) var(--ease-out) both;
+  }
+
+  /* ── Sheet / overlay close animations ────────────────────
+     Added by JS (SettlrSheetDrag.close) while the sheet is still shown; the
+     sheet slides back down and the overlay fades out, then the host hides it. */
+  @keyframes settlr-sheet-out {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+  }
+
+  @keyframes settlr-overlay-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  .sheet-overlay.is-closing {
+    animation: settlr-overlay-out var(--duration-base) var(--ease-in) both;
+  }
+  .sheet-overlay.is-closing .sheet {
+    animation: settlr-sheet-out var(--duration-base) var(--ease-in) both;
   }
 }

@@ -1,0 +1,79 @@
+/* ============================================
+   Settlr — QR Section
+   Screen-unique "QR share" card used by the static add-friend markup.
+   Promoted verbatim from the [data-view="add-friend"] scoped block (the
+   [data-view] prefix was dropped — zero visual change). Family:
+   .qr-section / .qr-placeholder / .qr-text / .qr-text__title /
+   .qr-text__sub / .qr-text__id.
+
+   NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
+     - .qr-placeholder width/height: 64px  (no 64px sizing token)
+     - .qr-placeholder font-size: 32px  (drives the bare .icon-holder glyph;
+       no 32px icon token — --icon-lg is 24px, would change the visual)
+   ============================================ */
+
+/* ── QR Code section (tap to open the QR overlay) ── */
+.qr-section {
+  margin: 0 var(--spacing-16) var(--spacing-8);
+  padding: var(--spacing-16);
+  background: var(--surface-card);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  cursor: pointer;
+}
+/* Action button (View) — pinned to the 40px control height shared with the
+   invite-card Share CTA so both secondary actions read at the same size.
+   NON-TOKEN: 40px control height — no spacing token; matches .invite-link-box. */
+.qr-section .btn { height: 40px; }
+
+.qr-placeholder {
+  /* NON-TOKEN: 64px tile — no sizing token; kept exact. */
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-8);
+  background: var(--surface-primary);
+  border: var(--border-small) solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-brand);
+  /* NON-TOKEN: 32px drives the bare .icon-holder glyph; no 32px icon token. */
+  font-size: 32px;
+}
+/* ── Enlarged QR tile for the overlay ── */
+.qr-placeholder--lg {
+  /* NON-TOKEN: 200px QR preview tile — no sizing token; kept exact. */
+  width: 200px;
+  height: 200px;
+  /* NON-TOKEN: 120px drives the bare .icon-holder glyph at preview scale. */
+  font-size: 120px;
+}
+/* Real QR image inside the preview tile (160px leaves a quiet-zone inside 200px).
+   NON-TOKEN: 160px — no sizing token; sized to the 200px tile. */
+.qr-placeholder__img {
+  width: 160px;
+  height: 160px;
+  display: block;
+}
+.qr-text { flex: 1; }
+/* qr title — text style via .text-title-sm in markup; color here */
+.qr-text__title {
+  color: var(--text-primary);
+}
+/* qr sub — text style via .text-body-xs in markup; color + spacing here */
+.qr-text__sub {
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-2);
+}
+/* qr id — display font, screen-unique style: font props kept (no text-* match) */
+.qr-text__id {
+  font-family: var(--font-display);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  color: var(--text-brand);
+  margin-top: var(--spacing-4);
+}

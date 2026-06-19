@@ -1,0 +1,275 @@
+/* ============================================
+   Settlr — Onboarding welcome (post-signup first-run view)
+   Shown once right after signup (entered via welcome.html#onboarding-welcome),
+   before home-dashboard. The flow is assembled from existing global components
+   (.btn, .invite-card, .qr-section, .person-item, .search-input, .sheet,
+   .avatar, .empty-state, web-component chrome); only a few screen-local
+   onboarding bits (welcome block, action CTAs, user-ID page, import result, the
+   mock OS-permission alert) are defined here. All rules scoped under
+   [data-view="onboarding-welcome"] so nothing leaks.
+
+   Design source: the standalone review harness screens/prototype.html. The
+   .onb-* classes are screen-local layout (same documented exception as the
+   harness's .proto-* / other screen scoped files) — not new global components.
+   ============================================ */
+
+/* ── In-view panels (welcome / import / userid), swapped by JS ── */
+[data-view="onboarding-welcome"] .onb-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+[data-view="onboarding-welcome"] .onb-screen[hidden] {
+  display: none;
+}
+[data-view="onboarding-welcome"] .onb-screen__content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) 0 var(--spacing-32);
+}
+
+/* ── Welcome: fresh-user single screen ──
+   A clean welcome centred on the import path + a "more ways" disclosure. */
+[data-view="onboarding-welcome"] .onb-home {
+  gap: var(--spacing-24);
+  padding-top: var(--spacing-32);
+}
+[data-view="onboarding-welcome"] .onb-firstrun {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-24) var(--spacing-24) 0;
+}
+/* Settlr logo: the app-icon mark — olive squircle tile, cream chart glyph. */
+[data-view="onboarding-welcome"] .onb-firstrun__art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-64);
+  height: var(--spacing-64);
+  border-radius: var(--radius-16);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  margin-bottom: var(--spacing-4);
+}
+[data-view="onboarding-welcome"] .onb-firstrun__art svg {
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+}
+[data-view="onboarding-welcome"] .onb-firstrun__title { color: var(--heading-fg); }
+[data-view="onboarding-welcome"] .onb-firstrun__sub {
+  color: var(--text-secondary);
+  max-width: 30ch;
+}
+
+/* Stacked priority actions. */
+[data-view="onboarding-welcome"] .onb-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  padding: 0 var(--spacing-16);
+}
+
+/* Reused .invite-card / .qr-section ship their own margins; inside the collapsed
+   "More ways" panel the panel owns spacing (gap-12 + its own 16px inset), so zero
+   out all four margins to avoid double inset/rhythm. */
+[data-view="onboarding-welcome"] .onb-more-panel .invite-card,
+[data-view="onboarding-welcome"] .onb-more-panel .qr-section {
+  margin: 0;
+}
+
+/* ── "Show more ways" disclosure ──
+   The secondary .btn toggles a panel of the demoted methods (add-by-ID, invite,
+   QR) inline within the screen. Its trailing chevron flips when expanded. The
+   panel matches .onb-actions' 16px inset + 12px gap. */
+[data-view="onboarding-welcome"] .onb-more-btn__chevron {
+  display: inline-flex;
+}
+[data-view="onboarding-welcome"] .onb-more-btn[aria-expanded="true"] .onb-more-btn__chevron {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-view="onboarding-welcome"] .onb-more-btn__chevron {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+}
+[data-view="onboarding-welcome"] .onb-more-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  padding: 0 var(--spacing-16);
+}
+[data-view="onboarding-welcome"] .onb-more-panel[hidden] { display: none; }
+
+/* Centred text link (skip / show-QR). */
+[data-view="onboarding-welcome"] .onb-textlink {
+  align-self: center;
+  padding: var(--spacing-8);
+  background: transparent;
+  border: none;
+  color: var(--text-brand);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Action CTA cards (full-width feature rows) ── */
+[data-view="onboarding-welcome"] .onb-cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-16);
+  padding: var(--spacing-20) var(--spacing-16);
+  border-radius: var(--radius-12);
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="onboarding-welcome"] .onb-cta__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--spacing-48);
+  height: var(--spacing-48);
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  color: var(--text-brand);
+}
+[data-view="onboarding-welcome"] .onb-cta__icon svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+[data-view="onboarding-welcome"] .onb-cta__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+[data-view="onboarding-welcome"] .onb-cta__label { color: var(--text-primary); }
+[data-view="onboarding-welcome"] .onb-cta__sub { color: var(--text-tertiary); }
+
+/* ── Share hint (revealed after Share) ── */
+[data-view="onboarding-welcome"] .onb-sharehint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin: 0 var(--spacing-16);
+  padding: var(--spacing-16);
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+  border-radius: var(--radius-12);
+}
+[data-view="onboarding-welcome"] .onb-sharehint[hidden] { display: none; }
+[data-view="onboarding-welcome"] .onb-sharehint__text {
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ── Add by user ID (dedicated page) ── */
+[data-view="onboarding-welcome"] .onb-userid-hint {
+  color: var(--text-tertiary);
+  padding: 0 var(--spacing-16);
+}
+[data-view="onboarding-welcome"] .onb-userid-result {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── No-results message (add-by-ID + import search) ── */
+[data-view="onboarding-welcome"] .onb-noresult {
+  color: var(--text-tertiary);
+  text-align: center;
+  padding: var(--spacing-24) var(--spacing-16);
+}
+[data-view="onboarding-welcome"] .onb-noresult[hidden] { display: none; }
+
+/* ── Import result ── */
+[data-view="onboarding-welcome"] .onb-import-summary {
+  color: var(--text-tertiary);
+  padding: 0 var(--spacing-16);
+}
+[data-view="onboarding-welcome"] .onb-import-footer {
+  margin-top: auto;
+  padding: var(--spacing-12) var(--spacing-16) 0;
+}
+
+/* ── My QR / invite (inside the bottom sheet) ── */
+[data-view="onboarding-welcome"] .onb-sheet[hidden] { display: none; }
+[data-view="onboarding-welcome"] .sheet__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  padding: var(--spacing-24) var(--spacing-16) var(--spacing-32);
+}
+[data-view="onboarding-welcome"] .onb-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+[data-view="onboarding-welcome"] .onb-qr__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+[data-view="onboarding-welcome"] .onb-qr__name { color: var(--text-primary); }
+[data-view="onboarding-welcome"] .onb-qr__phone { color: var(--text-secondary); }
+[data-view="onboarding-welcome"] .onb-qr__hint { color: var(--text-tertiary); text-align: center; }
+
+/* ── OS contacts-permission prompt (mock native alert) ──
+   Pinned over the view, dimmed backdrop, centred alert card —
+   mirrors the iOS system permission dialog. */
+[data-view="onboarding-welcome"] .onb-os-prompt {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-32);
+  background: var(--overlay-50);
+}
+[data-view="onboarding-welcome"] .onb-os-prompt[hidden] { display: none; }
+[data-view="onboarding-welcome"] .onb-os-prompt__card {
+  width: 100%;
+  max-width: 270px;
+  background: var(--surface-card);
+  border-radius: var(--radius-16);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+[data-view="onboarding-welcome"] .onb-os-prompt__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-20) var(--spacing-16);
+  text-align: center;
+}
+[data-view="onboarding-welcome"] .onb-os-prompt__title { color: var(--text-primary); }
+[data-view="onboarding-welcome"] .onb-os-prompt__text { color: var(--text-secondary); }
+[data-view="onboarding-welcome"] .onb-os-prompt__actions {
+  display: flex;
+  border-top: var(--border-small) solid var(--border-subtle);
+}
+[data-view="onboarding-welcome"] .onb-os-prompt__btn {
+  flex: 1;
+  padding: var(--spacing-12);
+  background: transparent;
+  border: none;
+  color: var(--text-brand);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="onboarding-welcome"] .onb-os-prompt__btn + .onb-os-prompt__btn {
+  border-left: var(--border-small) solid var(--border-subtle);
+}

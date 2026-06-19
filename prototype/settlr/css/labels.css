@@ -21,7 +21,7 @@
 .label--sm {
   padding: var(--spacing-2) var(--spacing-8);
   gap: var(--spacing-2);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
 }
 .label--sm .label__icon { width: var(--icon-xs); height: var(--icon-xs); }
 
@@ -66,7 +66,7 @@
   background: transparent;
   padding: 0;
   height: auto;
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-semibold);
   line-height: normal;
   border-radius: 0;
