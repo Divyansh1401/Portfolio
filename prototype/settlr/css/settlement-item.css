@@ -8,7 +8,7 @@
   align-items: center;
   gap: var(--spacing-12);
   padding: var(--spacing-12) var(--spacing-16);
-  background: var(--surface-card);
+  background: transparent;
   border-bottom: var(--border-small) solid var(--contact-divider);
   width: 100%;
 }

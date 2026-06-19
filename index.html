@@ -5007,6 +5007,42 @@
       transform-origin: top left;
       display: block;
     }
+    /* Simulated iOS status bar painted onto the frame (the SPA itself renders no
+       status bar — it relies on the real OS bar + safe-area insets). The iframe's
+       .app-shell gets a matching padding-top injected on load so screen content
+       sits cleanly below this bar. 36u here ≈ 46 logical px after the 0.7786 scale. */
+    .cs-proto-statusbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: calc(36 * var(--u));
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 calc(22 * var(--u));
+      background: #FEF9EE;
+      pointer-events: none;
+    }
+    .cs-proto-sb-time {
+      font-family: 'Nohemi', -apple-system, sans-serif;
+      font-size: calc(13 * var(--u));
+      font-weight: 600;
+      color: #1B1C1A;
+      letter-spacing: calc(-0.3 * var(--u));
+      line-height: 1;
+      padding-top: calc(2 * var(--u)); /* optically centre against the notch */
+    }
+    .cs-proto-sb-icons {
+      display: flex;
+      align-items: center;
+      gap: calc(5 * var(--u));
+      color: #1B1C1A;
+      padding-top: calc(2 * var(--u));
+    }
+    .cs-proto-sb-icons svg { display: block; }
+    .cs-proto-sb-signal  { width: calc(17 * var(--u)); height: calc(11 * var(--u)); }
+    .cs-proto-sb-wifi    { width: calc(16 * var(--u)); height: calc(11 * var(--u)); }
+    .cs-proto-sb-battery { width: calc(25 * var(--u)); height: calc(12 * var(--u)); }
     .cs-proto-caption {
       font-size: calc(13 * var(--u));
       color: var(--c-mid);
@@ -7489,7 +7525,15 @@
                   <div class="cs-proto-bezel">
                     <div class="cs-proto-notch"></div>
                     <div class="cs-proto-screen-wrap">
-                      <iframe id="settlrProto" src="prototype/settlr/screens/home-dashboard.html" scrolling="no" title="Settlr prototype"></iframe>
+                      <div class="cs-proto-statusbar" aria-hidden="true">
+                        <span class="cs-proto-sb-time">9:41</span>
+                        <span class="cs-proto-sb-icons">
+                          <svg class="cs-proto-sb-signal" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="3" height="3.5" rx="0.6"/><rect x="4.5" y="5" width="3" height="6" rx="0.6"/><rect x="9" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.5" y="0" width="3" height="11" rx="0.6"/></svg>
+                          <svg class="cs-proto-sb-wifi" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.2c2.7 0 5.2 1 7 2.8l-1.4 1.5A7.8 7.8 0 0 0 8 4.2 7.8 7.8 0 0 0 2.4 6.5L1 5C2.8 3.2 5.3 2.2 8 2.2Zm0 3.4c1.7 0 3.3.7 4.5 1.8l-1.5 1.5A4.3 4.3 0 0 0 8 7.6c-1.1 0-2.2.4-3 1.3L3.5 7.4A6.4 6.4 0 0 1 8 5.6Zm0 3.3c.8 0 1.5.3 2 .9L8 11l-2-1.3c.5-.6 1.2-.9 2-.9Z"/></svg>
+                          <svg class="cs-proto-sb-battery" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="16.5" height="8" rx="1.8" fill="currentColor"/><path d="M23 4v4c0.8-0.3 0.8-3.7 0-4Z" fill="currentColor" fill-opacity="0.5"/></svg>
+                        </span>
+                      </div>
+                      <iframe id="settlrProto" src="prototype/settlr/index.html#home-dashboard" title="Settlr prototype"></iframe>
                     </div>
                   </div>
                 </div>
@@ -7503,12 +7547,12 @@
                     <p class="cs-proto-count">6 of 31</p>
                   </div>
                   <div class="cs-proto-pills">
-                    <button class="cs-proto-pill active" data-src="prototype/settlr/screens/home-dashboard.html">Home</button>
-                    <button class="cs-proto-pill" data-src="prototype/settlr/screens/group-detail.html">Group Detail</button>
-                    <button class="cs-proto-pill" data-src="prototype/settlr/screens/add-split.html">Add Expense</button>
-                    <button class="cs-proto-pill" data-src="prototype/settlr/screens/settle-select.html">Settle Select</button>
-                    <button class="cs-proto-pill" data-src="prototype/settlr/screens/settle-success.html">Settle Success</button>
-                    <button class="cs-proto-pill" data-src="prototype/settlr/screens/activity.html">Activity</button>
+                    <button class="cs-proto-pill active" data-slug="home-dashboard">Home</button>
+                    <button class="cs-proto-pill" data-slug="group-detail" data-params='{"id":"goa-trip"}'>Group Detail</button>
+                    <button class="cs-proto-pill" data-slug="add-amount">Add Expense</button>
+                    <button class="cs-proto-pill" data-slug="settle-select">Settle Up</button>
+                    <button class="cs-proto-pill" data-slug="settle-success">Settle Success</button>
+                    <button class="cs-proto-pill" data-slug="activity">Activity</button>
                   </div>
                 </div>
                 <div class="cs-proto-stats">
@@ -9049,6 +9093,10 @@
               if (d) {
                 d.documentElement.style.background = '#FEF9EE';
                 d.body.style.background = '#FEF9EE';
+                // Push screen content below the frame's simulated status bar.
+                // 36u of the 306u-wide wrap ÷ 0.7786 scale ≈ 46 logical px.
+                const shell = d.querySelector('.app-shell');
+                if (shell) shell.style.paddingTop = '46px';
               }
             } catch (err) {}
           };
@@ -9108,17 +9156,18 @@
       if (pill) {
         const iframe = document.getElementById('settlrProto');
         if (iframe) {
-          iframe.src = pill.dataset.src;
-          // After load, paint iframe html/body cream to remove any white edge bleed
-          iframe.addEventListener('load', () => {
-            try {
-              const d = iframe.contentDocument;
-              if (d) {
-                d.documentElement.style.background = '#FEF9EE';
-                d.body.style.background = '#FEF9EE';
-              }
-            } catch (err) {}
-          }, { once: true });
+          const slug = pill.dataset.slug;
+          let params = {};
+          try { params = pill.dataset.params ? JSON.parse(pill.dataset.params) : {}; } catch (err) {}
+          const win = iframe.contentWindow;
+          // Same-origin SPA: drive its router directly (instant, animated, no reload).
+          if (win && win.SettlrRouterSPA && win.Store) {
+            win.SettlrRouterSPA.navigate(slug, params);
+          } else {
+            // Fallback (iframe not ready yet): hard-load the target hash route.
+            const qs = params.id ? ('?id=' + encodeURIComponent(params.id)) : '';
+            iframe.src = 'prototype/settlr/index.html#' + slug + qs;
+          }
         }
         overlayBody.querySelectorAll('.cs-proto-pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');

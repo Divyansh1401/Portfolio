@@ -1,0 +1,23 @@
+/* ============================================
+   Settlr — Settle Success screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="settle-success"] so it never leaks into other views in the
+   compiled shell. Component styling (status-bar, confetti, success-state,
+   summary-card, screen-footer, button) lives in component CSS.
+
+   This is a flow screen (the final step of settle-select → settle-amount →
+   settle-method → settle-success). It has NO scroll container: the
+   .success-state (flex: 1) fills the space between the status-bar and the
+   fixed .screen-footer and centers its content, exactly as the standalone
+   body did (min-height: 100dvh; flex column). The fixed footer overlays the
+   tail, so no --app-shell-content-pad clearance is needed.
+
+   Typography is supplied entirely by component CSS (success-state,
+   summary-card) — this screen's markup has no hardcoded font props, so there
+   is nothing to snap to text-* classes.
+   ============================================ */
+
+/* Nothing screen-specific to declare: the success-state's own flex:1 +
+   centering (from css/success-state.css) reproduces the original standalone
+   layout inside the app-shell flex column. Block retained for parity with the
+   other migrated screens and as the documented scope anchor. */

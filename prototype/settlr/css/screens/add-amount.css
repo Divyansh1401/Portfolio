@@ -1,0 +1,205 @@
+/* ============================================
+   Settlr — Add Amount (Add Expense, step 1) screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="add-amount"] so it never leaks into other views in the compiled
+   shell. Component styling (currency-chip, bottom-sheet, screen-footer,
+   step-progress, top-app-bar, input-field helper) lives in component CSS.
+   Typography is applied via text-* classes in markup where an exact token
+   exists; the few one-off type scales with no matching token are kept scoped
+   below and flagged.
+   ============================================ */
+
+/* Scrollable content region. Mirrors the old standalone `.content-area`:
+   flex column with a 100px bottom pad so the keyboard-aware fixed
+   .screen-footer overlaps the tail exactly as before. This is a flow screen
+   with a footer (not the bottom-nav dock), so override the shell's default
+   dock clearance with the original 100px clearance.
+   NOTE: 100px is not a spacing token — kept exact to preserve the original
+   footer clearance; flagged in NON-TOKEN VALUES. */
+[data-view="add-amount"] .view__content {
+  --app-shell-content-pad: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Amount Entry ── */
+[data-view="add-amount"] .amount-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-16);
+  padding: var(--spacing-32) var(--spacing-16) var(--spacing-24);
+}
+
+[data-view="add-amount"] .amount-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+/* prefix — text style via .text-display-lg in markup */
+[data-view="add-amount"] .amount-prefix {
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+/* field — text style via .text-display-lg in markup. caret-color + sizing
+   only; min-width 1ch / width 2ch / 1ch caret are intrinsic-unit values, not
+   spacing tokens — kept exact (flagged).
+   NOTE: calc(100vw - 80px) max-width retained exactly. */
+[data-view="add-amount"] .amount-field {
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  min-width: 1ch;
+  width: 2ch;
+  max-width: calc(100vw - 80px);
+  padding: 0;
+  text-align: left;
+  caret-color: var(--text-brand);
+}
+[data-view="add-amount"] .amount-field::placeholder { color: var(--border-default); }
+
+/* ── Amount Error ── */
+[data-view="add-amount"] .amount-error {
+  padding: 0 var(--spacing-24);
+  width: 100%;
+  text-align: center;
+}
+
+/* ── Title + Category column (chip above text) ── */
+[data-view="add-amount"] .title-cat-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: 0 var(--spacing-32) var(--spacing-8);
+}
+[data-view="add-amount"] .title-cat-row .title-area {
+  width: 100%;
+  padding: 0;
+}
+[data-view="add-amount"] .title-cat-row .category-area {
+  padding: 0;
+}
+
+/* ── Title Input ── */
+[data-view="add-amount"] .title-area {
+  padding: 0 var(--spacing-32) var(--spacing-8);
+}
+
+/* title input — text style via .text-title-md in markup; structural + caret
+   only here. */
+[data-view="add-amount"] .title-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: var(--border-medium) solid var(--border-default);
+  outline: none;
+  color: var(--text-primary);
+  text-align: center;
+  padding: var(--spacing-8) 0;
+  transition: border-color 0.15s;
+  caret-color: var(--text-brand);
+}
+[data-view="add-amount"] .title-input::placeholder { color: var(--input-fg-default); }
+[data-view="add-amount"] .title-input:focus { border-bottom-color: var(--input-border-focused); }
+
+/* ── Category Selector ── */
+[data-view="add-amount"] .category-area {
+  padding: var(--spacing-8) var(--spacing-32) var(--spacing-8);
+  display: flex;
+  justify-content: center;
+}
+/* category chip — markup carries .text-title-xs, but this one-off chip scale
+   (13px / semibold) has NO matching text-* token (text-title-xs is 12px,
+   text-body-sm is 13px but regular). Kept scoped to preserve zero visual
+   change; flagged in TYPOGRAPHY for a future token. */
+[data-view="add-amount"] .category-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  height: 40px;
+  padding: 0 var(--spacing-16);
+  background: var(--chip-bg-off);
+  border: var(--border-small) solid var(--chip-border-off);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  color: var(--chip-fg-off);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="add-amount"] .category-chip-btn.has-value {
+  background: var(--chip-bg-on);
+  border-color: var(--chip-border-on);
+  color: var(--chip-fg-on);
+}
+[data-view="add-amount"] .category-chip-btn:active { opacity: 0.8; }
+[data-view="add-amount"] .category-chip-btn__emoji { font-size: var(--font-size-16); line-height: 1; }
+/* dynamic caret icon is now an inline-SVG .icon-holder; size via .icon-sm token */
+[data-view="add-amount"] .category-chip-btn .icon-holder { width: var(--icon-sm); height: var(--icon-sm); }
+
+/* ── Category Sheet Grid ── */
+[data-view="add-amount"] .cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+}
+[data-view="add-amount"] .cat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-12) var(--spacing-4);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--border-subtle);
+  background: var(--surface-card);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="add-amount"] .cat-item:active { background: var(--contact-bg-selected); }
+[data-view="add-amount"] .cat-item.is-selected {
+  background: var(--contact-bg-selected);
+  border-color: var(--input-border-focused);
+}
+/* 24px emoji glyph — not a spacing/type token; kept exact (flagged) */
+[data-view="add-amount"] .cat-item__emoji { font-size: 24px; line-height: 1; }
+/* cat label — markup carries .text-caption-sm, but this one-off scale
+   (12px / medium / line-height-16) has NO matching text-* token (caption-sm
+   is regular / line-height-17). Kept scoped to preserve zero visual change;
+   flagged in TYPOGRAPHY. */
+[data-view="add-amount"] .cat-item__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: var(--line-height-16);
+}
+[data-view="add-amount"] .cat-item.is-selected .cat-item__label { color: var(--text-brand); }
+
+/* ── Auto-category pop feedback ── */
+@keyframes addAmountCatPop {
+  0%, 100% { transform: scale(1); }
+  40%       { transform: scale(1.1); }
+}
+[data-view="add-amount"] .category-chip-btn.is-popping {
+  animation: addAmountCatPop 0.22s ease;
+}
+
+/* ── Currency sheet rows → shared Detail Row component ──
+   Each row is a `.detail-row.detail-row--clickable` (symbol in __icon, code in
+   __value, name in __label, a radio in __radio; `.is-selected` fills it). Only
+   the list wrapper padding + the row's horizontal inset are screen-local; the
+   row look comes from css/detail-row.css. */
+[data-view="add-amount"] .currency-list { padding: var(--spacing-8) 0; }
+[data-view="add-amount"] .currency-list .detail-row {
+  padding-left: var(--spacing-16);
+  padding-right: var(--spacing-16);
+}

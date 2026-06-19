@@ -36,7 +36,7 @@
 
 .faq-item__answer {
   font-family: var(--font-body);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-regular);
   line-height: var(--line-height-16);
   color: var(--faq-answer-fg);

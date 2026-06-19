@@ -1,0 +1,165 @@
+/* ============================================
+   Settlr — Add Review screen layout
+   Final confirm step of the add-expense flow. Genuine screen-specific
+   structure only, scoped under [data-view="add-review"] so it never leaks
+   into other views in the compiled shell. Component styling (detail-row,
+   notes-card, screen-footer, balance-pill color variants, top-app-bar,
+   step-progress) lives in component/navigation CSS. Typography is applied
+   via text-* classes in markup where an exact match exists; the remaining
+   blocks below have NO exact text-* match (size/weight/ls differ) and so
+   keep their own type, scoped, exactly as the original standalone screen.
+   ============================================ */
+
+/* Scrollable content region. Mirrors the old standalone `.scroll-content`:
+   16px gap stack + the original bottom pad (the fixed .screen-footer overlaps
+   the tail, exactly as before). Override the shell's bottom-nav dock clearance
+   — this flow screen has a fixed footer, not a dock. Pad kept identical to the
+   original: calc(--spacing-96 + --spacing-4) = 100px. */
+[data-view="add-review"] .view__content {
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-4));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* ── Expense Hero (screen-unique) ── */
+[data-view="add-review"] .expense-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-24) var(--spacing-24) var(--spacing-20);
+  margin: var(--spacing-8) var(--spacing-16) 0;
+  border-radius: var(--radius-16);
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+  text-align: center;
+}
+/* category pill — text style via .text-label-xs in markup */
+[data-view="add-review"] .expense-hero__category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  color: var(--text-secondary);
+}
+/* amount — typography via .text-amount-lg (36px bold). Screen-local: color. */
+[data-view="add-review"] .expense-hero__amount {
+  color: var(--text-primary);
+}
+/* description — NO exact text-* match (body 16px / bold / no ls; .text-title-md
+   is the same size/weight but adds ls -0.16px which would change rendering).
+   Type kept scoped to preserve zero visual change. */
+[data-view="add-review"] .expense-hero__desc {
+  font-family: var(--font-body);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  line-height: 24px; /* NON-TOKEN px — preserved exactly from original (matches --line-height-24 numerically) */
+  color: var(--text-primary);
+}
+/* date — text style via .text-body-xs in markup */
+[data-view="add-review"] .expense-hero__date {
+  color: var(--contact-settled-fg);
+}
+
+/* ── Balance Pill (structural base — color comes from .balance-pill--*
+   variants in css/labels.css, which only define the color modifiers). ── */
+[data-view="add-review"] .expense-hero__balance,
+[data-view="add-review"] .balance-pill {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-16);
+  border-radius: var(--radius-8);
+  width: 100%;
+  justify-content: space-between;
+}
+/* label — NO exact text-* match (13px / semibold; no 13px-semibold class).
+   Type kept scoped, exactly as original. */
+[data-view="add-review"] .expense-hero__balance-label {
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+}
+/* amount — NO exact text-* match (display 16px / bold / ls -0.32px; .text-amount-sm
+   is display 16px but REGULAR weight). Type kept scoped, exactly as original. */
+[data-view="add-review"] .expense-hero__balance-amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.32px; /* NON-TOKEN px — preserved exactly from original */
+}
+
+/* ── Detail Section wrapper (canonical detail-row used inside) ── */
+[data-view="add-review"] .detail-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Section Divider ── */
+[data-view="add-review"] .section-divider {
+  height: var(--spacing-8);
+  background: var(--btn-icon-bg);
+}
+
+/* ── Split Breakdown (screen-unique) ── */
+[data-view="add-review"] .split-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+[data-view="add-review"] .split-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-12) 0 var(--spacing-8);
+}
+/* section label — NO exact text-* match (12px / SEMIBOLD / ls 1.76px / uppercase;
+   .text-overline-md is identical but MEDIUM weight). Type kept scoped, exactly
+   as original. */
+[data-view="add-review"] .split-section__label {
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 1.76px; /* NON-TOKEN px — preserved exactly from original */
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+/* method — text style via .text-label-xs in markup */
+[data-view="add-review"] .split-section__method {
+  color: var(--text-brand);
+}
+
+[data-view="add-review"] .split-person {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) 0;
+}
+/* avatar — text style via .text-title-xs (added in JS markup) */
+[data-view="add-review"] .split-person__avatar {
+  width: 32px; /* NON-TOKEN px — preserved exactly from original (avatar dimension) */
+  height: 32px; /* NON-TOKEN px — preserved exactly from original (avatar dimension) */
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* name — text style via .text-title-sm (added in JS markup) */
+[data-view="add-review"] .split-person__name {
+  flex: 1;
+  color: var(--text-primary);
+}
+/* amount — text style via .text-title-sm (added in JS markup) */
+[data-view="add-review"] .split-person__amount--self { color: var(--expense-settled-fg); }
+[data-view="add-review"] .split-person__amount--lent { color: var(--expense-lent-fg); }
+[data-view="add-review"] .split-person__amount--owe { color: var(--expense-owe-fg); }
+
+/* ── Notes Section wrapper (canonical notes-card used inside) ── */
+[data-view="add-review"] .notes-section {
+  padding: 0 var(--spacing-16);
+}

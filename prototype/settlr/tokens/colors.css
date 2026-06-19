@@ -65,6 +65,16 @@
   --color-coral-800: #3B180F;
   --color-coral-900: #1C0B07;
 
+  /* ---- Gold (warning / favourite) ---- */
+  --color-gold-50:  #FBF6E9;
+  --color-gold-100: #F7EBC8;
+  --color-gold-200: #ECD491;
+  --color-gold-300: #E0BC5E;
+  --color-gold-400: #CFA02E;
+  --color-gold-500: #B8860B;
+  --color-gold-600: #976E09;
+  --color-gold-700: #6F5107;
+
   /* ---- Overlay ---- */
   --overlay-20: rgba(0, 0, 0, 0.20);
   --overlay-35: rgba(0, 0, 0, 0.35);

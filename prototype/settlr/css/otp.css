@@ -66,7 +66,7 @@
 
 .otp-group__label {
   color: var(--input-label);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 
@@ -78,7 +78,7 @@
 
 .otp-group__helper {
   color: var(--input-helper);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 

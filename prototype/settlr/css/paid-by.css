@@ -1,0 +1,49 @@
+/* ============================================
+   Settlr — Paid By
+   Row showing who paid an expense: a leading avatar (single) or an avatar
+   stack (multiple payers), a "Paid by" label + payer name, and a trailing
+   Change action. Shared by the expense edit + split screens.
+
+   Surface is context-driven via a modifier:
+     --card     inset card on a warm background (edit-expense)
+     --divider  full-bleed row with a bottom hairline (add-split sheet)
+
+   Typography comes from text-* classes in markup (.text-body-xs label,
+   .text-title-sm name); only colour lives here.
+   ============================================ */
+
+.paid-by {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+}
+
+/* Leading avatar stack (multiple payers); a single .avatar also works. */
+.paid-by__avatars {
+  display: flex;
+}
+.paid-by__avatars .avatar:not(:first-child) {
+  margin-left: calc(-1 * var(--spacing-8));
+  border: var(--border-large) solid var(--surface-card);
+}
+
+.paid-by__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+.paid-by__label { color: var(--text-secondary); }
+.paid-by__name  { color: var(--text-primary); }
+
+/* ---- Surface variants ---- */
+.paid-by--card {
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+  border-radius: var(--radius-12);
+}
+.paid-by--divider {
+  background: var(--surface-primary);
+  border-bottom: var(--border-medium) solid var(--border-subtle);
+}

@@ -39,7 +39,7 @@
 /* ---- Label ---- */
 .type-chip__name {
   font-family: var(--font-body);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-semibold);
   color: var(--type-chip-fg-off);
   text-align: center;

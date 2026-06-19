@@ -1,0 +1,24 @@
+/* ============================================
+   Settlr — People screen layout
+   Genuine screen-specific structure only, scoped under [data-view="people"]
+   so it never leaks into other views in the compiled shell. Component styling
+   (search-input, chip, person-item, avatar, empty-state, bottom-nav,
+   top-app-bar, settings-row, sheet) lives in component CSS.
+   Typography is applied via text-* classes in markup, not font props here.
+   ============================================ */
+
+/* ── Filter Chips ──
+   Screen-local strip below the search field → promoted to the shared
+   Header Chips component's `.header-chips--compact` modifier
+   (css/header-chips.css; zero visual change). No longer scoped here. */
+
+/* ── Person List ── */
+[data-view="people"] .person-list { display: flex; flex-direction: column; }
+
+/* ── Bottom nav fills width (overrides shared .bottom-nav layout) ── */
+[data-view="people"] .bottom-nav-bar { padding: var(--spacing-16) var(--spacing-16) var(--spacing-24); }
+[data-view="people"] .bottom-nav { flex: 1; }
+[data-view="people"] .bottom-nav__tab { flex: 1; width: auto; }
+
+/* ── Sheet hidden state (overrides .sheet-overlay's display:flex) ── */
+[data-view="people"] .sheet-overlay[hidden] { display: none !important; }

@@ -1,0 +1,94 @@
+/* ============================================
+   Settlr — Group Detail screen layout
+   Migrated from the former inline <style> in screens/group-detail.html.
+   ALL rules scoped under [data-view="group-detail"] so nothing leaks into
+   other views in the compiled shell. Component styling (hero-section,
+   segment-control, empty-state, screen-footer, avatar, icon-btn) lives in
+   component CSS. Typography is applied via text-* classes in markup where a
+   clean snap exists; the display sizes (24/32px) below have no matching
+   text-* token, so their font props stay here and are FLAGGED.
+
+   NOTE — several rules below OVERRIDE shared component classes (.status-bar,
+   .balance-row). They are kept scoped here per the hard rule and listed in the
+   migration report under "COMPONENT OVERRIDES TO PROMOTE".
+   ============================================ */
+
+/* Scrollable content region. The old standalone `.detail-content` had
+   `padding-bottom: 100px` to clear the fixed .screen-footer. This screen has a
+   footer, NOT a bottom-nav dock, so override the shell's dock clearance and
+   keep the original 100px exactly. (100px has no spacing token — flagged.) */
+[data-view="group-detail"] .view__content {
+  --app-shell-content-pad: 100px;
+  background: transparent;
+}
+
+/* ── Status Bar (overlaid on hero — absolute, like the original) ──
+   OVERRIDE of shared .status-bar (component default is non-absolute). Kept
+   scoped; flagged to promote as a hero-overlay status-bar variant. */
+[data-view="group-detail"] .status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-24);
+  z-index: 10;
+}
+[data-view="group-detail"] .status-bar__icons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--text-primary);
+}
+
+/* ── Info Section ── */
+[data-view="group-detail"] .info-section {
+  text-align: center;
+  padding: var(--spacing-12) var(--spacing-16) var(--spacing-20);
+  background: var(--surface-primary);
+}
+/* name — display 24px/30 bold. No exact text-* STYLE match (text-display-sm is
+   24px but uses 28 line-height + -0.96 ls), but size/line-height now use tokens. */
+[data-view="group-detail"] .info-section__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-24);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.72px;
+  color: var(--text-primary);
+  line-height: var(--line-height-30);
+}
+[data-view="group-detail"] .info-section__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-medium);
+  margin-top: var(--spacing-4);
+}
+[data-view="group-detail"] .info-section__label--owe { color: var(--expense-owe-fg); }
+[data-view="group-detail"] .info-section__label--lent { color: var(--expense-lent-fg); }
+/* amount — typography via .text-amount-md (32px black). Screen-local: spacing + color. */
+[data-view="group-detail"] .info-section__amount {
+  margin-top: var(--spacing-4);
+}
+[data-view="group-detail"] .info-section__amount--owe { color: var(--expense-owe-fg); }
+[data-view="group-detail"] .info-section__amount--lent { color: var(--expense-lent-fg); }
+
+/* ── Segment Wrapper ── */
+[data-view="group-detail"] .segment-wrap {
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  background: var(--surface-primary);
+}
+
+/* ── Tab Panels ── */
+[data-view="group-detail"] .tab-panel { display: none; }
+[data-view="group-detail"] .tab-panel.is-active { display: block; }
+
+/* ── Transaction Item ── now a shared component (css/txn-item.css) ── */
+
+/* ── Balances Tab ── .balance-row → shared component css/balance-row.css */
+
+/* ── Empty State (hidden by default; shown when a tab list is empty) ── */
+[data-view="group-detail"] .tab-empty { display: none; }
+[data-view="group-detail"] .tab-panel.is-empty .tab-empty { display: flex; }

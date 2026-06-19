@@ -1,0 +1,272 @@
+/* ============================================
+   Settlr — Expense Detail screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="expense-detail"] so it never leaks into other views in the
+   compiled shell. Component styling (detail-row, notes-card, screen-footer,
+   balance-pill color variants, avatar, top-app-bar) lives in component CSS.
+   Typography is applied via text-* classes in markup, not font props here.
+   ============================================ */
+
+/* Scrollable content region. 16px gap stack. The fixed .screen-footer (~97px)
+   sits over the bottom of this scroll area, so the bottom pad must clear it or
+   the last block (Notes) stays hidden behind the footer. Override the shell's
+   bottom-nav dock clearance — this screen has a footer, not a dock. */
+[data-view="expense-detail"] .view__content {
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-16));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* ── Expense Hero Card ── */
+[data-view="expense-detail"] .expense-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-24) var(--spacing-24) var(--spacing-20);
+  margin: var(--spacing-8) var(--spacing-16) 0;
+  border-radius: var(--radius-16);
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+  text-align: center;
+}
+/* category pill — text style via .text-label-xs in markup */
+[data-view="expense-detail"] .expense-hero__category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  color: var(--text-secondary);
+}
+/* amount — text style via .text-display-lg in markup */
+[data-view="expense-detail"] .expense-hero__amount {
+  color: var(--text-primary);
+}
+/* description — text style via .text-title-lg in markup */
+[data-view="expense-detail"] .expense-hero__desc {
+  color: var(--text-primary);
+}
+/* date — text style via .text-body-sm in markup */
+[data-view="expense-detail"] .expense-hero__date {
+  color: var(--contact-settled-fg);
+}
+
+/* ── Balance Pill (structural base — color comes from .balance-pill--*
+   variants in css/labels.css, which only define the color modifiers). ── */
+[data-view="expense-detail"] .balance-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  border-radius: var(--radius-8);
+  width: 100%;
+  justify-content: space-between;
+}
+/* label has no text-* class in markup (color inherits from pill) — keep its
+   own type here. */
+[data-view="expense-detail"] .balance-pill__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+}
+/* amount — text style via .text-amount-sm in markup; ls retained inline to
+   match the original render. */
+[data-view="expense-detail"] .balance-pill__amount {
+  letter-spacing: -0.32px;
+}
+
+/* ── Detail Section wrapper ── */
+[data-view="expense-detail"] .detail-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Section Divider ── */
+[data-view="expense-detail"] .section-divider {
+  height: var(--spacing-8);
+  background: var(--btn-icon-bg);
+}
+
+/* ── Split Breakdown ── */
+[data-view="expense-detail"] .split-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+[data-view="expense-detail"] .split-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-12) 0 var(--spacing-8);
+}
+/* section label — text style via .text-overline-md in markup */
+[data-view="expense-detail"] .split-section__label {
+  color: var(--text-tertiary);
+}
+/* method — text style via .text-label-xs in markup */
+[data-view="expense-detail"] .split-section__method {
+  color: var(--text-brand);
+}
+
+[data-view="expense-detail"] .split-person {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) 0;
+}
+/* avatar — text style via .text-label-xs (added in JS markup) */
+[data-view="expense-detail"] .split-person__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* name — text style via .text-title-sm (added in JS markup) */
+[data-view="expense-detail"] .split-person__name {
+  flex: 1;
+  color: var(--text-primary);
+}
+/* amount — text style via .text-title-sm (added in JS markup) */
+[data-view="expense-detail"] .split-person__amount--self { color: var(--expense-settled-fg); }
+[data-view="expense-detail"] .split-person__amount--lent { color: var(--expense-lent-fg); }
+[data-view="expense-detail"] .split-person__amount--owe { color: var(--expense-owe-fg); }
+
+/* ── Notes Section wrapper ── */
+[data-view="expense-detail"] .notes-section {
+  padding: 0 var(--spacing-16);
+}
+
+/* ── Comments Section ── */
+[data-view="expense-detail"] .comments-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+}
+[data-view="expense-detail"] .comments-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-12) 0 var(--spacing-8);
+}
+/* section label — text style via .text-overline-md in markup */
+[data-view="expense-detail"] .comments-section__label {
+  color: var(--text-tertiary);
+}
+/* count — text style via .text-label-xs in markup */
+[data-view="expense-detail"] .comments-section__count {
+  color: var(--text-tertiary);
+}
+/* empty-state line — no text-* class in markup, keep its own type */
+[data-view="expense-detail"] .comments-empty {
+  padding: var(--spacing-8) 0 var(--spacing-12);
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  color: var(--text-tertiary);
+}
+/* comment items are built in JS without text-* classes — keep type here */
+[data-view="expense-detail"] .comment-item {
+  display: flex;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) 0;
+  border-bottom: var(--border-small) solid var(--border-subtle);
+}
+[data-view="expense-detail"] .comment-item__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-semibold);
+  flex-shrink: 0;
+}
+[data-view="expense-detail"] .comment-item__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+[data-view="expense-detail"] .comment-item__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-8);
+}
+[data-view="expense-detail"] .comment-item__name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+[data-view="expense-detail"] .comment-item__time {
+  font-family: var(--font-body);
+  font-size: var(--font-size-12);
+  font-weight: var(--weight-regular);
+  color: var(--text-tertiary);
+}
+[data-view="expense-detail"] .comment-item__text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-regular);
+  line-height: var(--line-height-20);
+  color: var(--text-primary);
+}
+/* ── Comment Input ──
+   WhatsApp-style composer: avatar + a single-row .input-field--multiline that
+   auto-grows (JS) up to ~5 lines then scrolls, with the send button OUTSIDE the
+   field on the right. Row aligns to the bottom so the send button stays at the
+   field's base as it grows. */
+[data-view="expense-detail"] .comment-input {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12) 0 var(--spacing-4);
+}
+/* the input-field fills the row between the avatar and the send button */
+[data-view="expense-detail"] .comment-input .input-field {
+  flex: 1;
+  min-width: 0;
+}
+/* auto-grow textarea: JS sets height to scrollHeight; max-height caps it at
+   ~5 lines and the textarea scrolls internally beyond that. */
+[data-view="expense-detail"] .comment-input textarea {
+  max-height: calc(var(--line-height-23) * 5);
+  overflow-y: auto;
+}
+/* Send button is the shared Icon Button (.icon-btn.icon-btn--primary.icon-btn--md);
+   only the flex behaviour in the row is screen-local. */
+[data-view="expense-detail"] .comment-input__send { flex-shrink: 0; }
+
+/* ── Footer action buttons ── */
+/* edit — text style via .text-title-md in markup */
+[data-view="expense-detail"] .btn-edit {
+  flex: 1;
+  display: flex;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="expense-detail"] .btn-edit:active { background: var(--btn-primary-bg-pressed); }
+[data-view="expense-detail"] .btn-edit i { font-size: var(--font-size-20); }
+/* Delete is the shared Icon Button (.icon-btn.icon-btn--destructive.icon-btn--lg). */

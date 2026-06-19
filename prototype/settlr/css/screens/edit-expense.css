@@ -1,0 +1,168 @@
+/* ============================================
+   Settlr — Edit Expense screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="edit-expense"] so it never leaks into other views in the
+   compiled shell. Component styling (chip, currency-chip, input-field,
+   notes-card, button, segment-control, avatar, detail-row, screen-footer,
+   top-app-bar) lives in component CSS.
+   Typography is applied via text-* classes in markup where a token style
+   matches; remaining font props (no matching text-* token) are kept scoped
+   and flagged below under NON-TOKEN VALUES.
+   ============================================ */
+
+/* Scrollable content region. Mirrors the old standalone `.scroll-content`:
+   24px gap stack + a top pad of 8px and a bottom pad sized for the fixed
+   .screen-footer (the old standalone used spacing-96 + spacing-24 of
+   clearance). Override the shell's bottom-nav dock clearance — this screen
+   has a footer, not a dock. */
+[data-view="edit-expense"] .view__content {
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-24));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  /* Original standalone `.scroll-content` padding was
+     `var(--spacing-8) var(--spacing-24) calc(var(--spacing-96) + var(--spacing-24))`.
+     The shell's `.view__content` only owns padding-bottom (via the custom
+     prop above), so restore the top + horizontal padding here exactly. */
+  padding-top: var(--spacing-8);
+  padding-left: var(--spacing-16);
+  padding-right: var(--spacing-16);
+}
+
+/* Section headers reuse the activity list's .date-heading pattern. Zero its
+   default 16px side padding for this screen so every label sits flush with the
+   field/box left edge (and the category chips) on one left rail. */
+[data-view="edit-expense"] .date-heading {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ── Amount field (editable hero) — uses the Input Field pattern: a section
+   label above a boxed input (same beige surface as Description/Notes). The box
+   holds the ₹ symbol, the amount input (flexes to fill), and the currency pill
+   as a right-aligned affordance. ── */
+[data-view="edit-expense"] .amount-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--input-border-default);
+  background: var(--input-bg);
+}
+/* symbol — typography via .text-amount-xl (48px) in markup. Screen-local: color. */
+[data-view="edit-expense"] .amount-input-wrap__symbol {
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+/* input — typography via .text-amount-xl in markup; flexes to fill so the
+   currency pill is pushed to the right edge. */
+[data-view="edit-expense"] .amount-input-wrap input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  caret-color: var(--text-brand);
+  padding: 0;
+}
+[data-view="edit-expense"] .amount-input-wrap .currency-chip {
+  flex-shrink: 0;
+}
+
+/* ── Category Chips (screen-unique horizontal scroller) ── */
+[data-view="edit-expense"] .chips-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+[data-view="edit-expense"] .chips-row {
+  display: flex;
+  gap: var(--spacing-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+[data-view="edit-expense"] .chips-row::-webkit-scrollbar { display: none; }
+
+/* Paid by → shared .paid-by component (--card variant); see css/paid-by.css. */
+
+/* ── Split section (mirrors add-split) ── */
+[data-view="edit-expense"] .split-section {
+  display: flex; flex-direction: column; gap: var(--spacing-12);
+}
+[data-view="edit-expense"] .split-section__summary {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--spacing-8); padding: var(--spacing-12);
+  background: var(--card-create-bg); border-radius: var(--radius-8);
+}
+/* summary amount — display 14px/semibold has no text-* token; kept exact
+   (see NON-TOKEN VALUES). */
+[data-view="edit-expense"] .split-section__summary-amount {
+  font-family: var(--font-display);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  color: var(--text-brand);
+}
+/* summary label — text style via .text-body-sm in markup */
+[data-view="edit-expense"] .split-section__summary-label {
+  color: var(--text-secondary);
+}
+[data-view="edit-expense"] .split-section__list {
+  display: flex; flex-direction: column;
+  background: var(--surface-card);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--border-subtle);
+  overflow: hidden;
+}
+[data-view="edit-expense"] .split-section__row {
+  display: flex; align-items: center; gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--border-subtle);
+}
+[data-view="edit-expense"] .split-section__row:last-child { border-bottom: none; }
+[data-view="edit-expense"] .split-section__check {
+  width: 22px; height: 22px; border-radius: var(--radius-8);
+  background: var(--btn-primary-bg); color: var(--btn-primary-fg);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+[data-view="edit-expense"] .split-section__check .icon-holder { font-size: 14px; }
+[data-view="edit-expense"] .split-section__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); min-width: 0; }
+/* name — text style via .text-title-sm in markup */
+[data-view="edit-expense"] .split-section__name {
+  color: var(--text-primary);
+}
+/* share — text style via .text-body-xs in markup */
+[data-view="edit-expense"] .split-section__share {
+  color: var(--text-secondary);
+}
+/* amount pill — text style via .text-amount-xs in markup */
+[data-view="edit-expense"] .split-section__amount-pill {
+  min-width: 88px; padding: var(--spacing-8) var(--spacing-12);
+  background: var(--input-bg);
+  border-radius: var(--radius-8);
+  color: var(--text-primary);
+  text-align: center;
+  flex-shrink: 0;
+}
+[data-view="edit-expense"] .split-section__total {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--spacing-12) var(--spacing-16);
+  border-top: var(--border-small) solid var(--border-subtle);
+  background: var(--card-create-bg);
+}
+/* total label — text style via .text-body-sm in markup */
+[data-view="edit-expense"] .split-section__total-label {
+  color: var(--text-secondary);
+}
+/* total value — display 14px/semibold has no text-* token; kept exact
+   (see NON-TOKEN VALUES). */
+[data-view="edit-expense"] .split-section__total-value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-semibold);
+  color: var(--expense-lent-fg);
+  display: flex; align-items: center; gap: var(--spacing-4);
+}
+

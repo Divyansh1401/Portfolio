@@ -1,0 +1,44 @@
+/* ============================================================
+   Settlr — Activity screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="activity"] so it never leaks into other views in the
+   compiled shell. Component styling (search-input, chip, update-item,
+   expense-item, empty-state, top-app-bar, bottom-nav) lives in component CSS.
+   The handful of rules below are screen-level overrides of those shared
+   components (kept scoped here, see "COMPONENT OVERRIDES TO PROMOTE"
+   in the migration report). Typography on the title/list rows comes from
+   component CSS + text-* classes already present in the rendered markup.
+   ============================================================ */
+
+/* Scrollable content region. activity HAS a bottom-nav dock, so it keeps the
+   shell default bottom padding (do NOT override --app-shell-content-pad). */
+[data-view="activity"] .view__content {
+  /* default shell padding-bottom clears the floating bottom-nav dock */
+}
+
+/* ── Filter Chips ──
+   Screen-level wrapper for the chip strip below the search field → promoted
+   to the shared Header Chips component's `.header-chips--compact` modifier
+   (css/header-chips.css; zero visual change). No longer scoped here. */
+
+/* ── Expense List ── */
+[data-view="activity"] .expense-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Expense rows transparent on this screen (overrides component bg).
+   .update-item is now transparent at the component level (css/update-item.css). ── */
+[data-view="activity"] .expense-item {
+  background: transparent;
+}
+
+/* update-item gets a divider on this screen (overrides component) */
+[data-view="activity"] .update-item {
+  border-bottom: var(--border-small) solid var(--contact-divider);
+}
+
+/* ── Bottom nav fills width (overrides component defaults) ── */
+[data-view="activity"] .bottom-nav-bar { padding: var(--spacing-16) var(--spacing-16) var(--spacing-24); }
+[data-view="activity"] .bottom-nav { flex: 1; }
+[data-view="activity"] .bottom-nav__tab { flex: 1; width: auto; }

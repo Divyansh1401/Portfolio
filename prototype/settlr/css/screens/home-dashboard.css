@@ -1,0 +1,109 @@
+/* ============================================
+   Settlr — Home Dashboard screen layout
+   Genuine screen-specific structure + component overrides only, scoped under
+   [data-view="home-dashboard"] so they never leak into other views in the
+   compiled shell. Component styling (status-bar, top-app-bar, avatar, btn,
+   heading, card-group, card-create, expense-item, empty-state, bottom-nav)
+   lives in component CSS. Typography is applied via text-* classes in markup,
+   not font props here.
+
+   The body-shell + duplicate `*{}` reset rules from the old inline <style>
+   are dropped — the compiled shell (.app-shell / .view / .view__content)
+   owns them now. This view keeps the shell's default bottom padding because
+   it has a bottom-nav dock.
+   ============================================ */
+
+/* ── Hero / Balance Area ──
+   Screen-local feature band above the scroll content. */
+[data-view="home-dashboard"] .hero {
+  background: var(--btn-icon-bg);
+  height: 200px;
+  padding: var(--spacing-12) var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-16);
+  flex-shrink: 0;
+}
+[data-view="home-dashboard"] .hero__info {
+  display: flex;
+  flex-direction: column;
+}
+[data-view="home-dashboard"] .hero__label {
+  color: var(--text-primary);
+}
+[data-view="home-dashboard"] .hero__amount {
+  color: var(--heading-fg);
+}
+[data-view="home-dashboard"] .hero__actions {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+/* ── Cards Row (horizontal scroll) ──
+   Screen-local carousel strip that holds the create card + group cards. */
+[data-view="home-dashboard"] .cards-row {
+  display: flex;
+  gap: var(--spacing-12);
+  padding: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--spacing-16);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+[data-view="home-dashboard"] .cards-row::-webkit-scrollbar { display: none; }
+[data-view="home-dashboard"] .cards-row::before,
+[data-view="home-dashboard"] .cards-row::after {
+  content: '';
+  min-width: var(--spacing-16);
+  flex-shrink: 0;
+}
+
+/* ── Group Card (carousel overrides of shared .card-group) ──
+   COMPONENT OVERRIDE TO PROMOTE → candidate `.card-group--carousel` variant.
+   Shared .card-group is a fixed 161x206 grid tile; here it becomes a
+   scroll-snap carousel card with a fixed 150px width, auto height (stretch),
+   and a shorter 120px image. Kept scoped to avoid touching shared CSS. */
+[data-view="home-dashboard"] .card-group {
+  flex-shrink: 0;
+  width: 150px;
+  height: auto;
+  scroll-snap-align: start;
+  align-self: stretch;
+}
+[data-view="home-dashboard"] .card-group__image {
+  height: 120px;
+}
+[data-view="home-dashboard"] .card-group__info {
+  padding: var(--spacing-8);
+  gap: var(--spacing-12);
+}
+[data-view="home-dashboard"] .card-group__info .card-group__amount {
+  margin-top: 0;
+}
+
+/* ── Create Card (carousel overrides of shared .card-create) ──
+   COMPONENT OVERRIDE TO PROMOTE → same `.card-group--carousel`/`.card-create`
+   carousel sizing. Shared .card-create is a fixed 160x200 tile; here it gets
+   the same 150px width + auto height (stretch) + scroll-snap so it sits
+   flush with the group cards in the row. */
+[data-view="home-dashboard"] .card-create {
+  flex-shrink: 0;
+  width: 150px;
+  height: auto;
+  scroll-snap-align: start;
+  text-decoration: none;
+  align-self: stretch;
+}
+
+/* ── Expense List (activity feed) ──
+   COMPONENT OVERRIDE TO PROMOTE → the expense-item__text gap tweak overrides
+   the shared list-items component. Kept scoped. */
+[data-view="home-dashboard"] .expense-list { display: flex; flex-direction: column; }
+[data-view="home-dashboard"] .expense-item__text { gap: var(--spacing-2); }
+
+/* ── Bottom nav fills width (overrides shared .bottom-nav layout) ── */
+[data-view="home-dashboard"] .bottom-nav-bar { padding: var(--spacing-16) var(--spacing-16) var(--spacing-24); }
+[data-view="home-dashboard"] .bottom-nav { flex: 1; }
+[data-view="home-dashboard"] .bottom-nav__tab { flex: 1; width: auto; }

@@ -1,0 +1,57 @@
+/* ============================================
+   Settlr — Settings screen layout
+   Genuine screen-specific structure only, scoped under [data-view="settings"]
+   so it never leaks into other views in the compiled shell. Component styling
+   (settings-row, toggle, avatar, top-app-bar) lives in component CSS.
+   Typography is applied via text-* classes in markup, not font props here.
+   ============================================ */
+
+[data-view="settings"] .view__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  /* No bottom dock on this screen — override the shell's dock clearance. */
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-32);
+}
+
+/* ── Profile hero ── */
+[data-view="settings"] .profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-16) 0 var(--spacing-8);
+}
+
+[data-view="settings"] .profile-hero__avatar-wrap {
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Edit badge = Icon Button (.icon-btn.icon-btn--surface.icon-btn--xs); screen-local
+   bits: avatar-overlap position, the page-bg ring border, the 28px footprint
+   (overrides icon-btn--xs 32; no spacing token — flagged), and the muted icon. */
+[data-view="settings"] .profile-hero__edit-badge {
+  position: absolute;
+  bottom: var(--spacing-2);
+  right: var(--spacing-2);
+  width: 28px;
+  height: 28px;
+  border: var(--border-large) solid var(--surface-primary);
+  color: var(--text-secondary);
+}
+
+/* Phone subtitle — text style via .text-body-sm in markup; only color +
+   spacing live here (line-height snaps 18→21, accepted minor delta). */
+[data-view="settings"] .profile-hero__phone {
+  color: var(--text-tertiary);
+  margin-top: calc(-1 * var(--spacing-4));
+}
+
+/* ── App version footer ── text style via .text-body-xs in markup. ── */
+[data-view="settings"] .app-version {
+  text-align: center;
+  padding: var(--spacing-8) 0 var(--spacing-16);
+  color: var(--text-tertiary);
+}

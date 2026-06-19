@@ -1,0 +1,108 @@
+/* ============================================
+   Settlr — Edit Profile screen layout
+   Genuine screen-specific structure only, scoped under [data-view="edit-profile"]
+   so it never leaks into other views in the compiled shell. Component styling
+   (avatar, btn, input-field, notes-card, top-app-bar) lives in component CSS.
+   Typography is applied via text-* classes in markup, not font props here.
+   ============================================ */
+
+[data-view="edit-profile"] .view__content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* No bottom dock on this screen — override the shell's dock clearance. */
+  padding-bottom: var(--spacing-32);
+}
+
+/* ── Avatar Section ── */
+[data-view="edit-profile"] .avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-24) var(--spacing-16) var(--spacing-16);
+}
+[data-view="edit-profile"] .avatar-wrap {
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Camera badge = Icon Button (.icon-btn.icon-btn--primary.icon-btn--xs); only the
+   avatar-overlap position + the white ring border are screen-local. */
+[data-view="edit-profile"] .avatar-camera {
+  position: absolute;
+  bottom: var(--spacing-2);
+  right: var(--spacing-2);
+  border: var(--border-large) solid var(--surface-card);
+}
+/* Hint text — text style via .text-body-xs in markup; only color lives here.
+   (snap: 12px/regular kept; line-height 18→19 minor delta, accepted) */
+[data-view="edit-profile"] .avatar-hint {
+  color: var(--text-tertiary);
+}
+
+/* ── Settlr ID Banner ── */
+[data-view="edit-profile"] .id-banner {
+  margin: 0 var(--spacing-16) var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--card-create-bg);
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--card-create-border);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+[data-view="edit-profile"] .id-banner__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--card-create-icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-brand);
+}
+[data-view="edit-profile"] .id-banner__icon .icon-holder { font-size: var(--font-size-18); }
+[data-view="edit-profile"] .id-banner__text { flex: 1; }
+/* Banner label — text style via .text-overline-md in markup (display family,
+   12px, uppercase). The token is medium/1.76px/lh14 but the original was
+   semibold/1.54px/lh16, so weight + letter-spacing are kept here to preserve
+   ZERO visual change (no 12px-semibold-uppercase token exists). Flagged in the
+   migration report for a future overline-strong token. */
+[data-view="edit-profile"] .id-banner__label {
+  color: var(--text-brand);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 1.54px;
+}
+/* Banner value — text style via .text-heading-sm in markup (display/18px/bold).
+   Original letter-spacing -0.36px and line-height 24px match the token exactly.
+   color + spacing kept here. */
+[data-view="edit-profile"] .id-banner__value {
+  color: var(--text-primary);
+  margin-top: var(--spacing-2);
+}
+[data-view="edit-profile"] .id-banner__copy {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-brand);
+  padding: var(--spacing-4);
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="edit-profile"] .id-banner__copy .icon-holder { font-size: var(--icon-md); }
+
+/* ── Form ── */
+[data-view="edit-profile"] .form-section {
+  padding: 0 var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* ── Section Divider ── */
+[data-view="edit-profile"] .form-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: var(--spacing-8) 0;
+}

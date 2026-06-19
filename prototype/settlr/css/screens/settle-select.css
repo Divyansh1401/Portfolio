@@ -1,0 +1,17 @@
+/* ============================================
+   Settlr — Settle Select screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="settle-select"] so it never leaks into other views in the
+   compiled shell. Component styling (top-app-bar, step-progress, search-input,
+   search-wrap, heading, person-item, expense-item, avatar) lives in component
+   CSS. Typography is applied via text-* classes in markup (and by component
+   CSS for the JS-rendered rows), not font props here.
+   ============================================ */
+
+/* Scrollable list region. This is a flow screen with no bottom-nav dock and no
+   fixed footer — the list simply ends at the bottom of the view, exactly as the
+   former standalone body flow did. Override the shell's dock clearance to 0 so
+   no extra bottom padding is introduced. */
+[data-view="settle-select"] .view__content {
+  --app-shell-content-pad: 0px;
+}

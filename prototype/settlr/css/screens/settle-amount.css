@@ -1,0 +1,117 @@
+/* ============================================
+   Settlr — Settle Amount screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="settle-amount"] so it never leaks into other views in the
+   compiled shell. Component styling (top-app-bar, step-progress, button,
+   screen-footer) lives in component CSS.
+
+   This is step 2 of the settle flow (settle-select → settle-amount →
+   settle-method → settle-success). Two genuine screen-local clusters remain
+   here: the person preview card and the centered amount display. Typography is
+   snapped to text-* classes in markup where a token match exists; the large
+   48px amount display has no typography token (like add-amount / expense-detail
+   36–40px displays), so its font props stay scoped + flagged below.
+
+   This is a flow screen: the .person-preview + .amount-area live OUTSIDE the
+   scroll container (.view__content) and there is a fixed .screen-footer (no
+   bottom-nav dock). The amount area fills the centre via flex.
+   ============================================ */
+
+/* The view itself is the column flex container the standalone <body> used to be
+   (status-bar, top-app-bar, step-progress, preview, amount area, footer). The
+   amount area grows to fill. .view__content is unused on this flow screen, but
+   override the shell's dock clearance to the original 24px tail for safety. */
+[data-view="settle-amount"] {
+  display: flex;
+  flex-direction: column;
+}
+[data-view="settle-amount"] .view__content {
+  --app-shell-content-pad: var(--spacing-24);
+}
+
+/* ── Person Preview ── */
+[data-view="settle-amount"] .person-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  margin: 0 var(--spacing-16);
+  border-radius: var(--radius-12);
+  background: var(--surface-card);
+  border: var(--border-small) solid var(--border-subtle);
+}
+[data-view="settle-amount"] .person-preview__avatar {
+  /* TODO(spacing): 40px avatar has no spacing token — kept exact to avoid a
+     visual change; flag for the spacing-enforcer pass. */
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+[data-view="settle-amount"] .person-preview__text { flex: 1; }
+[data-view="settle-amount"] .person-preview__name {
+  color: var(--text-primary);
+}
+[data-view="settle-amount"] .person-preview__balance {
+  color: var(--expense-owe-fg);
+}
+
+/* ── Amount Area ── */
+[data-view="settle-amount"] .amount-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-24) var(--spacing-16);
+}
+[data-view="settle-amount"] .currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  /* TODO(spacing): 4px/10px pill padding has no spacing token — kept exact to
+     avoid a visual change; flag for the spacing-enforcer pass. */
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--btn-icon-bg);
+  color: var(--text-secondary);
+}
+/* Amount row: ₹ prefix + native decimal input (mirrors add-amount). The field
+   grows with content; typography via .text-amount-xl (48px) in markup. */
+[data-view="settle-amount"] .amount-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+[data-view="settle-amount"] .amount-prefix {
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+[data-view="settle-amount"] .amount-field {
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  /* min-width 1ch / width 2ch / max-width are intrinsic-unit values, not
+     spacing tokens — kept exact (matches add-amount). */
+  min-width: 1ch;
+  width: 2ch;
+  max-width: calc(100vw - 80px);
+  padding: 0;
+  text-align: left;
+  caret-color: var(--text-brand);
+}
+[data-view="settle-amount"] .amount-field::placeholder { color: var(--border-default); }
+
+/* Validation message under the amount (hidden until the amount is invalid). */
+[data-view="settle-amount"] .amount-error {
+  padding: 0 var(--spacing-24);
+  width: 100%;
+  text-align: center;
+}

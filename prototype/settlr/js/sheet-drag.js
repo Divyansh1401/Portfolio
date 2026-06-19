@@ -123,6 +123,36 @@
     document.querySelectorAll('.sheet').forEach(init);
   }
 
+  /* Animated close: play the slide-down/fade-out on the still-visible overlay,
+     then run onHide() (the host's actual hide: set [hidden], display:none, or
+     remove .is-open). If the overlay isn't currently shown, or under
+     reduced-motion, hide immediately. */
+  function close(overlay, onHide) {
+    onHide = onHide || function () {};
+    var sheet = overlay && overlay.querySelector('.sheet');
+    var shown = sheet && getComputedStyle(overlay).display !== 'none';
+    if (!shown || REDUCED) {
+      if (overlay) overlay.classList.remove('is-closing');
+      onHide();
+      return;
+    }
+    var finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      sheet.removeEventListener('animationend', finish);
+      overlay.classList.remove('is-closing');
+      // Clear any inline transform/opacity left by a drag gesture.
+      sheet.style.transform = '';
+      sheet.style.transition = '';
+      overlay.style.opacity = '';
+      onHide();
+    }
+    overlay.classList.add('is-closing');
+    sheet.addEventListener('animationend', finish);
+    setTimeout(finish, 400); // safety if animationend doesn't fire
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAll);
   } else {
@@ -136,5 +166,5 @@
     mo.observe(document.body, { childList: true, subtree: true });
   }
 
-  window.SettlrSheetDrag = { init: init, initAll: initAll };
+  window.SettlrSheetDrag = { init: init, initAll: initAll, close: close };
 })();

@@ -14,7 +14,7 @@
 /* ---- Label ---- */
 .input-field__label {
   color: var(--input-label);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 
@@ -24,7 +24,7 @@
   align-items: center;
   gap: var(--spacing-4);
   padding: var(--spacing-12) var(--spacing-16);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-12);
   border: var(--border-small) solid var(--input-border-default);
   background-color: var(--input-bg);
   transition: all 0.15s ease;
@@ -53,6 +53,17 @@
   line-height: var(--line-height-23);
 }
 
+/* ---- Multiline textarea control (typography supplied by a text-* class
+   in markup; only the structural reset lives here) ---- */
+.input-field__box textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--input-fg-active);
+  resize: none;
+}
+
 /* ---- Suffix icon (right-aligned action affordance, e.g. pencil) ---- */
 .input-field__suffix-icon {
   flex-shrink: 0;
@@ -60,7 +71,8 @@
   color: var(--text-brand);
 }
 
-.input-field__box input::placeholder {
+.input-field__box input::placeholder,
+.input-field__box textarea::placeholder {
   color: var(--input-fg-default);
 }
 
@@ -75,7 +87,7 @@
 /* ---- Helper text ---- */
 .input-field__helper {
   color: var(--input-helper);
-  font-size: var(--font-size-10);
+  font-size: var(--font-size-12);
   font-weight: var(--weight-medium);
 }
 

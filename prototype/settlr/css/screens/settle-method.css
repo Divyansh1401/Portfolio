@@ -1,0 +1,24 @@
+/* ============================================
+   Settlr — Settle Method screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="settle-method"] so it never leaks into other views in the
+   compiled shell. Component styling (top-app-bar, step-progress, summary-card,
+   detail-row, heading, screen-footer, button) lives in component CSS.
+   Typography is supplied entirely by component CSS — this screen's markup has
+   no hardcoded font props, so there is nothing to snap to text-* classes.
+   ============================================ */
+
+/* Scrollable content region. Mirrors the old standalone `.content`:
+   24px/16px padding stack + 12px gap. This is a flow screen with a fixed
+   .screen-footer (no bottom-nav dock), so override the shell's dock clearance
+   to the original 24px bottom padding — the fixed footer overlaps the tail
+   exactly as before. */
+[data-view="settle-method"] .view__content {
+  --app-shell-content-pad: var(--spacing-24);
+  padding-top: var(--spacing-24);
+  padding-left: var(--spacing-16);
+  padding-right: var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}

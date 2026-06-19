@@ -28,6 +28,11 @@
   letter-spacing: -0.96px;
 }
 
+/* Brand-coloured title (e.g. "Settlr" wordmark on Home) */
+.top-app-bar__title--brand {
+  color: var(--text-brand);
+}
+
 /* "Done" ghost text action (Variant2) */
 .top-app-bar__done {
   border: none;
@@ -43,26 +48,9 @@
   line-height: var(--line-height-18);
 }
 
-/* Back button — 40×40 circle icon, used in nav/detail screens */
-.top-app-bar__back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--spacing-40);
-  height: var(--spacing-40);
-  border-radius: var(--radius-full);
-  background: var(--btn-icon-bg);
-  border: none;
-  cursor: pointer;
-  color: var(--btn-icon-fg);
-  text-decoration: none;
-  flex-shrink: 0;
-  font-size: var(--icon-md);
-  -webkit-tap-highlight-color: transparent;
-}
-.top-app-bar__back:active {
-  background: var(--btn-icon-bg-pressed);
-}
+/* Back button — now the shared Icon Button (.icon-btn.icon-btn--sm, neutral
+   40px). The .top-app-bar__back class is kept only as a flex hook. */
+.top-app-bar__back { flex-shrink: 0; text-decoration: none; }
 
 
 

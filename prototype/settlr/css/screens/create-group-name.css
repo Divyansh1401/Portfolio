@@ -1,0 +1,77 @@
+/* ============================================================
+   Settlr — Create Group (Name) screen layout
+   Genuine screen-specific structure only, scoped under
+   [data-view="create-group-name"] so it never leaks into other views in the
+   compiled shell. Component styling (input-field, button, top-app-bar,
+   step-progress, screen-footer) lives in component CSS. Typography is applied
+   via text-* classes in markup where a text-* style matches; remaining
+   color/spacing-only rules stay scoped here.
+
+   COMPONENT OVERRIDES TO PROMOTE
+   ------------------------------
+   The following blocks are screen-unique compositions kept scoped here to
+   avoid touching shared CSS during this migration, but are candidates to be
+   promoted into components later:
+     - .photo-area / .photo-upload / .photo-upload__icon / .photo-upload__text
+       → candidate "photo-upload" / "image-picker" component (the dashed
+       96px upload tile also appears on other group-creation steps).
+     - .type-section / .type-section__label / .type-grid → candidate
+       "field-group" + grid wrapper for the type-chip grid; .type-grid is a
+       layout shell for the existing .type-chip component. (Note: this screen's
+       current markup has no type-chips rendered — the grid wrapper rules are
+       carried over verbatim from the original inline <style> with no visual
+       change, since nothing fills them today.)
+
+   NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
+   ---------------------------------------------------------------------
+     - --app-shell-content-pad: 120px  (original .content bottom padding that
+       cleared the fixed .screen-footer; no spacing token = 120px — kept exact)
+     - .photo-upload width/height: 96px  (no 96px sizing token)
+     - .photo-upload border: 2px dashed  (2px is --border-large, but the
+       shorthand needs the dashed style; kept as 2px to avoid a visual change)
+     - .photo-upload transition: all 0.15s ease  (no motion token in source;
+       carried over verbatim — candidate to adopt --transition-tap later)
+     - .photo-upload__icon font-size: 28px  (drives the bare .icon-holder
+       glyph; no 28px icon token — --icon-lg is 24px, would change the visual)
+     - .photo-upload__text font-size: 10px  (no text-* style ≤ 11px exists;
+       10px font tokens were retired — font props kept to avoid a visual change)
+     - .type-section__label font-size: 11px / letter-spacing: 1.76px  (no
+       text-* style at 11px; retired token — font props kept exact)
+   ============================================================ */
+
+/* ── Content scroll clearance — footer screen (fixed .screen-footer dock) ──
+   Override the shell's bottom-nav dock clearance. This screen has a fixed
+   footer, not a bottom-nav dock; keep the original 120px bottom clearance
+   exactly. (120px has no spacing token — flagged above.) */
+[data-view="create-group-name"] .view__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-32);
+  padding: var(--spacing-24) var(--spacing-24);
+  --app-shell-content-pad: 120px;
+}
+
+/* ── Group Photo Area ──
+   .photo-area / .photo-upload family → promoted to shared component
+   css/photo-upload.css (zero visual change). No longer scoped here. */
+
+/* ── Type Section (screen-specific section header for the type-chip grid) ── */
+[data-view="create-group-name"] .type-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+/* section label — no text-* style at 11px exists; font props kept (flagged). */
+[data-view="create-group-name"] .type-section__label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 1.76px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+[data-view="create-group-name"] .type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-8);
+}

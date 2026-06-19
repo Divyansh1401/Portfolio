@@ -1,26 +1,33 @@
 /* ============================================
    Settlr — Icon Button Component
-   Sizes: SM, MD, LG
+   Circular icon-only button.
+   Variants: Default (neutral) · Primary · Destructive · Ghost · Surface · Overlay
+   Sizes (fixed footprint): XS 32 · SM 40 · MD 44 · LG 52
+   States: Default · Pressed · Disabled
    ============================================ */
 
 .icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   border: none;
   border-radius: var(--radius-full);
   background-color: var(--btn-icon-bg);
   color: var(--btn-icon-fg);
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.icon-btn:active {
+/* ---- Default / neutral pressed ---- */
+.icon-btn:active,
+.icon-btn.is-pressed {
   background-color: var(--btn-icon-bg-pressed);
 }
 
-.icon-btn:disabled {
+.icon-btn:disabled,
+.icon-btn.is-disabled {
   opacity: var(--opacity-disabled);
   pointer-events: none;
 }
@@ -32,21 +39,73 @@
   color: currentColor;
 }
 
-/* ---- Sizes ---- */
-.icon-btn--sm {
-  padding: var(--spacing-12);
-}
-.icon-btn--sm .icon-btn__icon { width: var(--icon-sm); height: var(--icon-sm); }
+/* ---- Sizes (fixed footprint; padding-free, icon scales per size) ---- */
+.icon-btn--xs,
+.icon-btn--sm,
+.icon-btn--md,
+.icon-btn--lg { padding: 0; }
 
-.icon-btn--md {
-  padding: var(--spacing-16);
-}
-.icon-btn--md .icon-btn__icon { width: var(--icon-md); height: var(--icon-md); }
+.icon-btn--xs { width: var(--icon-btn-size-xs); height: var(--icon-btn-size-xs); }
+.icon-btn--sm { width: var(--icon-btn-size-sm); height: var(--icon-btn-size-sm); }
+.icon-btn--md { width: var(--icon-btn-size-md); height: var(--icon-btn-size-md); }
+.icon-btn--lg { width: var(--icon-btn-size-lg); height: var(--icon-btn-size-lg); }
 
-.icon-btn--lg {
-  padding: var(--spacing-20);
+.icon-btn--xs .icon-btn__icon,
+.icon-btn--xs .icon-holder { width: var(--icon-sm); height: var(--icon-sm); }
+.icon-btn--xs i { font-size: var(--icon-sm); }
+
+.icon-btn--sm .icon-btn__icon,
+.icon-btn--sm .icon-holder { width: var(--icon-md); height: var(--icon-md); }
+.icon-btn--sm i { font-size: var(--icon-md); }
+
+.icon-btn--md .icon-btn__icon,
+.icon-btn--md .icon-holder { width: var(--icon-md); height: var(--icon-md); }
+.icon-btn--md i { font-size: var(--icon-md); }
+
+.icon-btn--lg .icon-btn__icon,
+.icon-btn--lg .icon-holder { width: var(--icon-lg); height: var(--icon-lg); }
+.icon-btn--lg i { font-size: var(--icon-lg); }
+
+/* ---- Variant: Primary (olive filled) ---- */
+.icon-btn--primary {
+  background-color: var(--btn-icon-primary-bg);
+  color: var(--btn-icon-primary-fg);
 }
-.icon-btn--lg .icon-btn__icon { width: var(--icon-lg); height: var(--icon-lg); }
+.icon-btn--primary:active,
+.icon-btn--primary.is-pressed {
+  background-color: var(--btn-icon-primary-bg-pressed);
+}
+
+/* ---- Variant: Destructive (coral) ---- */
+.icon-btn--destructive {
+  background-color: var(--btn-icon-destructive-bg);
+  color: var(--btn-icon-destructive-fg);
+}
+.icon-btn--destructive:active,
+.icon-btn--destructive.is-pressed {
+  background-color: var(--btn-icon-destructive-bg-pressed);
+}
+
+/* ---- Variant: Ghost (transparent; subtle pressed fill) ---- */
+.icon-btn--ghost {
+  background-color: transparent;
+  color: var(--btn-icon-ghost-fg);
+}
+.icon-btn--ghost:active,
+.icon-btn--ghost.is-pressed {
+  background-color: var(--btn-icon-ghost-bg-pressed);
+}
+
+/* ---- Variant: Surface (white + hairline border) ---- */
+.icon-btn--surface {
+  background-color: var(--btn-icon-surface-bg);
+  color: var(--btn-icon-surface-fg);
+  border: var(--border-small) solid var(--btn-icon-surface-border);
+}
+.icon-btn--surface:active,
+.icon-btn--surface.is-pressed {
+  background-color: var(--btn-icon-surface-bg-pressed);
+}
 
 /* ---- Variant: Overlay ----
    Used over .hero-section gradients (back, settings, edit).
@@ -61,4 +120,5 @@
 }
 .icon-btn--overlay .icon-btn__icon { width: var(--icon-md); height: var(--icon-md); }
 .icon-btn--overlay i { font-size: var(--icon-md); }
-.icon-btn--overlay:active { background-color: var(--icon-btn-overlay-bg-pressed); }
+.icon-btn--overlay:active,
+.icon-btn--overlay.is-pressed { background-color: var(--icon-btn-overlay-bg-pressed); }

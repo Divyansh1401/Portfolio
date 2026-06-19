@@ -9,13 +9,27 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 393px;
+  /* Mirror the .app-shell width: full-bleed on a real phone (so the footer
+     spans the same width as the content above it, even on phones wider than
+     393px), capped to the 393px phone frame only on tablet/desktop below.
+     A hard 393px cap on a wider phone left the footer narrower than the
+     content with empty side gutters. */
+  width: 100%;
+  max-width: 100%;
   display: flex;
   gap: var(--spacing-12);
   padding: var(--spacing-12) var(--spacing-16) var(--spacing-32);
   background: var(--screen-footer-bg);
   border-top: var(--border-small) solid var(--screen-footer-border);
   z-index: 20;
+}
+
+/* Centre the footer in the 393px phone frame only on wide viewports — matching
+   the .app-shell breakpoint so the two stay aligned. */
+@media (min-width: 480px) {
+  .screen-footer {
+    max-width: 393px;
+  }
 }
 
 /* All direct .btn children grow equally */

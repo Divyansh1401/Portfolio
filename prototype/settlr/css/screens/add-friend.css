@@ -1,0 +1,95 @@
+/* ============================================
+   Settlr — Add Friend screen layout
+   Genuine screen-specific structure only, scoped under [data-view="add-friend"]
+   so it never leaks into other views in the compiled shell. Component styling
+   (search-input, search-wrap, btn, person-item, heading, top-app-bar) lives in
+   component CSS. Typography is applied via text-* classes in markup where a
+   text-* style matches; remaining color/spacing-only rules stay scoped here.
+
+   COMPONENT OVERRIDES TO PROMOTE
+   ------------------------------
+   The following blocks are screen-unique compositions that duplicate the
+   "card" + "list-avatar" patterns seen elsewhere. They are kept scoped here to
+   avoid touching shared CSS during this migration, but are candidates to be
+   promoted into components later:
+     - .invite-card / .invite-link-row / .invite-link-box / .invite-card__divider
+       / .share-row / .share-btn   → candidate "invite-card" component.
+     - .qr-section / .qr-placeholder / .qr-text*   → candidate "qr-share" card.
+     - .person-item__avatar-circle (+ --invite)   → overlaps the existing
+       .avatar component (initials variant); these rows pre-date the avatar
+       migration and should adopt .avatar--initials.
+
+   NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
+   ---------------------------------------------------------------------
+     - .invite-link-box / .share-btn height: 40px  (no 40px spacing token)
+     - .invite-card__divider::before/::after height: 1px (hairline; no token)
+     - .qr-placeholder width/height: 64px  (no 64px sizing token)
+     - .qr-placeholder font-size: 32px  (drives the bare .icon-holder glyph;
+       no 32px icon token — --icon-lg is 24px, would change the visual)
+     - .person-item__avatar-circle width/height: 40px  (no 40px sizing token)
+   ============================================ */
+
+/* ── Invite Card ── .invite-card family → shared component css/invite-card.css */
+
+/* ── QR Code section ── .qr-section family → shared component css/qr-section.css */
+
+/* ── Person item avatars ──
+   Conformed to the standard Avatar component: "On Settlr" rows use
+   .avatar.avatar--initials.avatar--md (40px), and "Invite from Contacts"
+   icon rows use .avatar.avatar--md.avatar--outline (the icon-holder inside
+   carries .icon-holder--md to keep the glyph at 20px). No longer scoped here.
+   See css/avatar.css for .avatar--outline. */
+
+/* ── Content scroll clearance — footer-less flow screen ──
+   No bottom-nav dock here; override the shell's dock clearance to match the
+   footer-less flow-screen spacing used by settings/expense-detail. */
+[data-view="add-friend"] {
+  --app-shell-content-pad: var(--spacing-32);
+}
+
+/* ── No-results message (search filtered everything out) ── */
+[data-view="add-friend"] .af-noresult {
+  color: var(--text-tertiary);
+  text-align: center;
+  padding: var(--spacing-24) var(--spacing-16);
+}
+[data-view="add-friend"] .af-noresult[hidden] { display: none; }
+
+/* ── QR overlay (minimal placeholder — to be redesigned) ──
+   Composes the shared .sheet/.sheet-overlay; only the centered QR-preview
+   content layout is screen-local. [hidden] override mirrors the people screen
+   (the shared .sheet-overlay sets display:flex). */
+[data-view="add-friend"] .sheet-overlay[hidden] { display: none !important; }
+[data-view="add-friend"] .qr-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+  padding: var(--spacing-24) var(--spacing-16) var(--spacing-32);
+}
+
+/* ── Add-a-new-contact inline form ── */
+/* Inset 16px so the input boxes + full-width "Add contact" button float with
+   the same gutters as the search pill and the invite/QR cards (the input-box
+   and .btn--full both fill 100% of this container, so without the inset they
+   stretch full-bleed to the screen edges). The list-style .heading carries its
+   own 16px internal padding for full-bleed contexts — zero it here so its title
+   still aligns at 16px, not 32px. */
+[data-view="add-friend"] .add-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  margin-bottom: var(--spacing-24);
+  padding: 0 var(--spacing-16);
+}
+[data-view="add-friend"] .add-contact .heading {
+  padding-left: 0;
+  padding-right: 0;
+}
+[data-view="add-friend"] .add-contact__error {
+  color: var(--input-helper-error);
+}
+[data-view="add-friend"] .input-field__prefix {
+  color: var(--input-fg-default);
+  flex-shrink: 0;
+}

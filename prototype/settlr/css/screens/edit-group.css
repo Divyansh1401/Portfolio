@@ -1,0 +1,245 @@
+/* ============================================
+   Settlr — Edit Group screen layout
+   Migrated from the former inline <style> in screens/edit-group.html.
+   ALL rules scoped under [data-view="edit-group"] so nothing leaks into other
+   views in the compiled shell. Component styling (hero-section, avatar,
+   input-field, screen-footer, bottom-sheet, btn, icon-btn, section-label)
+   lives in component CSS. Typography is applied via text-* classes in markup
+   where a clean snap exists; the remaining font props below have no matching
+   text-* token, so they stay here and are FLAGGED.
+
+   NOTE — several rules below OVERRIDE shared component classes
+   (.status-bar overlay, .sheet-overlay show/hide helper). They are kept scoped
+   here per the hard rule and listed in the migration report under
+   "COMPONENT OVERRIDES TO PROMOTE".
+   ============================================ */
+
+/* Whole-screen scroll: the hero + avatar live at the top of `.view__content`
+   full-bleed (no side/top padding), and the form below carries its own padding
+   + column gap via `.edit-group__form`. Keep the original 140px footer
+   clearance (no spacing token — flagged). */
+[data-view="edit-group"] .view__content {
+  --app-shell-content-pad: 140px;
+  background: var(--surface-primary);
+}
+[data-view="edit-group"] .edit-group__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  padding: var(--spacing-16) var(--spacing-16) 0;
+}
+
+/* ── Status Bar (overlaid on hero — absolute, like the original) ──
+   OVERRIDE of shared .status-bar (component default is non-absolute). Kept
+   scoped; flagged to promote as a hero-overlay status-bar variant. */
+[data-view="edit-group"] .status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-24);
+  z-index: 10;
+}
+[data-view="edit-group"] .status-bar__icons {
+  display: flex;
+  align-items: center;
+  /* 6px gap — no spacing token (between --spacing-4 and --spacing-8). Kept
+     exact to avoid a visual change. FLAGGED non-token value. */
+  gap: 6px;
+  color: var(--text-primary);
+}
+
+/* ── Members List (screen-unique) ── */
+[data-view="edit-group"] .members-list {
+  background: var(--surface-card);
+  border-radius: var(--radius-12);
+  overflow: hidden;
+  border: var(--border-small) solid var(--border-subtle);
+}
+[data-view="edit-group"] .member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: var(--border-small) solid var(--border-subtle);
+}
+[data-view="edit-group"] .member-row:last-child { border-bottom: none; }
+[data-view="edit-group"] .member-row__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--contact-avatar-bg);
+  color: var(--contact-avatar-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+[data-view="edit-group"] .member-row__avatar--you {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-fg);
+}
+[data-view="edit-group"] .member-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+/* name — text style via .text-title-sm in markup (14/20 semibold — exact) */
+[data-view="edit-group"] .member-row__name {
+  color: var(--contact-name);
+}
+/* role — text style via .text-body-xs in markup (12/19 regular vs original
+   12/18; +1px line-height delta — same delta accepted elsewhere). Flagged. */
+[data-view="edit-group"] .member-row__role {
+  color: var(--contact-subtext);
+}
+/* Remove control is the shared Icon Button (.icon-btn.icon-btn--destructive.icon-btn--xs);
+   only the flex behaviour in the row is screen-local. */
+[data-view="edit-group"] .member-row__remove { flex-shrink: 0; }
+
+/* ── Add Member Row (screen-unique) ── */
+[data-view="edit-group"] .add-member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="edit-group"] .add-member-row:active { background: var(--surface-primary); }
+[data-view="edit-group"] .add-member-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--surface-primary);
+  border: var(--border-small) dashed var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+[data-view="edit-group"] .add-member-row__icon .icon-holder { width: 18px; height: 18px; }
+/* label — text style via .text-body-md in markup (14/23 — original was 14/500
+   medium; .text-body-md is 14/400 regular. Weight differs, so keep weight +
+   color here and FLAG. */
+[data-view="edit-group"] .add-member-row__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--weight-medium);
+  color: var(--text-brand);
+}
+
+/* ── Danger Zone (screen-unique) ── */
+[data-view="edit-group"] .danger-card {
+  background: var(--expense-owe-bg);
+  border-radius: var(--radius-12);
+  overflow: hidden;
+  border: var(--border-small) solid var(--card-group-owe-border);
+}
+[data-view="edit-group"] .danger-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-16);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-view="edit-group"] .danger-row:active { opacity: 0.7; }
+[data-view="edit-group"] .danger-row__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-8);
+  background: var(--label-error-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+[data-view="edit-group"] .danger-row__icon .icon-holder { width: 18px; height: 18px; color: var(--label-error-fg); }
+[data-view="edit-group"] .danger-row__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
+/* label — text style via .text-title-sm-ish (15px) has no token. Original was
+   15/20 semibold; no matching text-* token (text-title-sm is 14px). Kept here,
+   flagged. */
+[data-view="edit-group"] .danger-row__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-15);
+  font-weight: var(--weight-semibold);
+  color: var(--expense-owe-fg);
+  line-height: var(--line-height-20);
+}
+/* sublabel — text style via .text-body-xs in markup (12/19 vs original 12/18;
+   +1px delta). Color + opacity stay here. Flagged. */
+[data-view="edit-group"] .danger-row__sublabel {
+  color: var(--expense-owe-fg);
+  opacity: 0.7;
+}
+[data-view="edit-group"] .danger-row__chevron { color: var(--expense-owe-fg); opacity: 0.5; }
+[data-view="edit-group"] .danger-row__chevron .icon-holder { width: 16px; height: 16px; }
+
+/* ── Sheet visibility helper (overlay hidden by default) ──
+   OVERRIDE of shared .sheet-overlay (component default is display:flex, always
+   visible). This screen toggles sheets via .is-open. Kept scoped; flagged to
+   promote as a canonical hidden-by-default sheet behavior. */
+[data-view="edit-group"] .sheet-overlay { display: none; }
+[data-view="edit-group"] .sheet-overlay.is-open { display: flex; }
+
+/* ── Confirm sheet body copy (screen-unique) ──
+   text style via .text-body-md in markup (14/23 regular vs original 14/22;
+   +1px line-height delta — flagged). Only color + reset margin live here. */
+[data-view="edit-group"] .confirm-sheet__body {
+  color: var(--text-secondary);
+  margin: 0;
+}
+/* Confirm sheet content padding column (was an inline style attribute). */
+[data-view="edit-group"] .confirm-sheet__content {
+  padding: var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+[data-view="edit-group"] .confirm-sheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* ── Avatar edit overlay ──
+   The badge is the shared Icon Button (.icon-btn.icon-btn--surface.icon-btn--sm).
+   Screen-local: the top-right overlap position, the page-bg ring border, the lift
+   shadow, and the press feedback (avatar dims + badge scales). */
+[data-view="edit-group"] .avatar-edit-btn { position: relative; display: inline-flex; }
+[data-view="edit-group"] .avatar-edit-btn .avatar { transition: opacity 0.15s; }
+[data-view="edit-group"] .avatar-edit-btn__overlay {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  border: var(--border-medium) solid var(--surface-primary);
+  box-shadow: var(--shadow-sm);
+}
+[data-view="edit-group"] .avatar-edit-btn:active .avatar { opacity: var(--opacity-disabled); }
+[data-view="edit-group"] .avatar-edit-btn:active .avatar-edit-btn__overlay { transform: scale(0.94); }
+
+/* ── Emoji Picker (screen-unique grid inside the canonical bottom-sheet) ── */
+[data-view="edit-group"] .emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-8);
+  padding: var(--spacing-16);
+}
+[data-view="edit-group"] .emoji-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-12);
+  border: var(--border-small) solid var(--border-subtle);
+  background: var(--surface-primary);
+  font-size: var(--font-size-28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s ease;
+}
+[data-view="edit-group"] .emoji-btn:active { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
+[data-view="edit-group"] .emoji-btn.is-selected { background: var(--type-chip-bg-on); border-color: var(--type-chip-border-on); }
