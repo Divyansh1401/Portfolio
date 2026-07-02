@@ -298,6 +298,24 @@
       align-items: center;
       justify-content: center;
     }
+    /* "My Toolbar" — vertical label, bottom-aligned to the icons' top edge
+       (position/bottom offset set by JS: positionToolbarLabel) */
+    .toolbar-label {
+      position: absolute;
+      left: 50%;
+      writing-mode: vertical-rl;
+      transform: translateX(-50%) rotate(180deg);
+      font-family: var(--f-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--c-mid, #888886);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 2;
+      background: var(--bg); /* Mask the line behind the label */
+      padding: 6px 3px;
+    }
     .toolbar-line {
       position: absolute;
       left: 50%;
@@ -318,16 +336,43 @@
       padding: 20px 0;
     }
     .tool-icon {
+      position: relative;
       width: 28px;
       height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       filter: grayscale(1) opacity(0.4);
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, filter 0.2s;
     }
-    .tool-icon:hover { opacity: 0.8; }
-    .tool-icon img { width: 18px; height: 18px; object-fit: contain; }
+    .tool-icon img { width: 18px; height: 18px; object-fit: contain; transition: filter 0.2s; }
+    /* Hover: icon turns brand orange */
+    .tool-icon:hover { opacity: 1; filter: none; }
+    .tool-icon:hover img {
+      filter: brightness(0) saturate(100%) invert(52%) sepia(64%) saturate(1080%) hue-rotate(347deg) brightness(95%) contrast(92%);
+    }
+    /* Hover: label slides out to the side */
+    .tool-icon::after {
+      content: attr(data-label);
+      position: absolute;
+      left: calc(100% + 14px);
+      top: 50%;
+      transform: translateY(-50%) translateX(-6px);
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #fff;
+      background: var(--c-orange);
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .tool-icon:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
 
     /* Main Area */
     .hero-main {
@@ -613,7 +658,12 @@
     }
     .hero-container.alter-ego .toolbar-line { background: rgba(237,236,234,0.1); }
     .hero-container.alter-ego .toolbar-icons { background: #0D0E0C; }
+    .hero-container.alter-ego .toolbar-label { background: #0D0E0C; }
     .hero-container.alter-ego .tool-icon { filter: grayscale(1) opacity(0.4) invert(1); }
+    .hero-container.alter-ego .tool-icon:hover { filter: none; }
+    .hero-container.alter-ego .tool-icon:hover img {
+      filter: brightness(0) saturate(100%) invert(52%) sepia(64%) saturate(1080%) hue-rotate(347deg) brightness(95%) contrast(92%);
+    }
     .hero-container.alter-ego .photo-label { color: rgba(237,236,234,0.4); }
     .hero-container.alter-ego .photo-annotation { color: #EDECEA; }
     body.alter-ego #custom-cursor { background: #fff; }
@@ -6308,15 +6358,16 @@
   <main class="hero-container">
     <!-- Toolbar -->
     <aside class="toolbar">
+      <span class="toolbar-label">My Toolbar</span>
       <div class="toolbar-line"></div>
       <div class="toolbar-icons">
-        <div class="tool-icon"><img src="assets/Icons/codicon_claude.svg" alt="Claude"></div>
-        <div class="tool-icon"><img src="assets/Icons/bxl_cursor-ai.svg" alt="Cursor"></div>
-        <div class="tool-icon"><img src="assets/Icons/material-symbols_antigravity.svg" alt="Antigravity"></div>
-        <div class="tool-icon"><img src="https://cdn.simpleicons.org/figma/currentColor" alt="Figma"></div>
-        <div class="tool-icon"><img src="assets/Icons/devicon-plain_illustrator.svg" alt="Illustrator"></div>
-        <div class="tool-icon"><img src="assets/Icons/Photoshop.svg" alt="Photoshop"></div>
-        <div class="tool-icon"><img src="assets/Icons/logos_adobe-lightroom.svg" alt="Lightroom"></div>
+        <div class="tool-icon" data-label="Claude"><img src="assets/Icons/codicon_claude.svg" alt="Claude"></div>
+        <div class="tool-icon" data-label="Cursor"><img src="assets/Icons/bxl_cursor-ai.svg" alt="Cursor"></div>
+        <div class="tool-icon" data-label="Antigravity"><img src="assets/Icons/material-symbols_antigravity.svg" alt="Antigravity"></div>
+        <div class="tool-icon" data-label="Figma"><img src="https://cdn.simpleicons.org/figma/currentColor" alt="Figma"></div>
+        <div class="tool-icon" data-label="Illustrator"><img src="assets/Icons/devicon-plain_illustrator.svg" alt="Illustrator"></div>
+        <div class="tool-icon" data-label="Photoshop"><img src="assets/Icons/Photoshop.svg" alt="Photoshop"></div>
+        <div class="tool-icon" data-label="Lightroom"><img src="assets/Icons/logos_adobe-lightroom.svg" alt="Lightroom"></div>
       </div>
     </aside>
 
@@ -6514,7 +6565,7 @@
     </div>
     <div class="unified-footer-bottom">
       <button class="meet-other-me-link flip-trigger-btn">
-        <span class="link-text">Meet the other me</span>
+        <span class="link-text">Click to know my hobbies</span>
         <svg viewBox="0 0 32 24" fill="currentColor"><path d="M18 4l10 8-10 8v-5H2v-6h16V4z"/></svg>
       </button>
     </div>
@@ -6925,7 +6976,20 @@
         main.style.transform = 'translateY(' + (iconsCenter - ledeCenter) + 'px)';
       }
 
-      function layoutHero() { scaleName(); positionToolbar(); positionPhoto(); positionLede(); }
+      // "My Toolbar" label: bottom edge sits just above the icons' top edge
+      // (i.e. aligned to the bottom end of the line segment above the icons).
+      function positionToolbarLabel() {
+        const toolbar = document.querySelector('.toolbar');
+        const icons = document.querySelector('.toolbar-icons');
+        const label = document.querySelector('.toolbar-label');
+        if (!toolbar || !icons || !label) return;
+        const LABEL_GAP = 14;
+        const tRect = toolbar.getBoundingClientRect();
+        const iRect = icons.getBoundingClientRect();
+        label.style.bottom = (tRect.bottom - iRect.top + LABEL_GAP) + 'px';
+      }
+
+      function layoutHero() { scaleName(); positionToolbar(); positionPhoto(); positionLede(); positionToolbarLabel(); }
       window.addEventListener('resize', layoutHero);
       layoutHero();
       document.fonts.ready.then(layoutHero);
@@ -9419,14 +9483,39 @@
       const navRollTop = document.querySelector('#main-nav .nav-name-line');
       if (navRollTop) navRollTop.textContent = enabled ? 'not just a product designer' : 'Product Designer';
 
+      // Toolbar label: dark mode reads "My Hobbies" instead of "My Toolbar".
+      const toolbarLabel = document.querySelector('.toolbar-label');
+      if (toolbarLabel) toolbarLabel.textContent = enabled ? 'My Hobbies' : 'My Toolbar';
+
       // Hero lede: dark mode speaks to the person, not the product.
       const heroLede = document.querySelector('.hero-lede');
       if (heroLede) {
         heroLede.innerHTML = enabled
           ? 'Shaping <span class="lede-accent-plain">myself</span><br>\n        though films, photography, art<br>\n        and experiences.'
           : 'Shaping <span class="lede-strong">digital products,</span><br>\n        applications and design systems with<br>\n        clarity and <span class="lede-accent">character.</span>';
-        window.dispatchEvent(new Event('resize'));   // re-center lede on the icon array
       }
+
+      // Toolbar icons: dark mode swaps design tools for hobbies.
+      const toolbarIcons = document.querySelector('.toolbar-icons');
+      if (toolbarIcons) {
+        toolbarIcons.innerHTML = enabled
+          ? `<div class="tool-icon" data-label="Cooking"><img src="assets/Icons/material-symbols_chef-hat-rounded.svg" alt="Cooking"></div>
+        <div class="tool-icon" data-label="Photography"><img src="assets/Icons/solar_camera-bold.svg" alt="Photography"></div>
+        <div class="tool-icon" data-label="Filmmaking"><img src="assets/Icons/tdesign_film-filled.svg" alt="Filmmaking"></div>
+        <div class="tool-icon" data-label="Video Editing"><img src="assets/Icons/simple-icons_davinciresolve.svg" alt="Video Editing"></div>
+        <div class="tool-icon" data-label="Sketching"><img src="assets/Icons/mingcute_pencil-fill.svg" alt="Sketching"></div>
+        <div class="tool-icon" data-label="Travelling"><img src="assets/Icons/material-symbols_personal-bag-rounded.svg" alt="Travelling"></div>
+        <div class="tool-icon" data-label="3D Design"><img src="assets/Icons/file-icons_blender.svg" alt="3D Design"></div>`
+          : `<div class="tool-icon" data-label="Claude"><img src="assets/Icons/codicon_claude.svg" alt="Claude"></div>
+        <div class="tool-icon" data-label="Cursor"><img src="assets/Icons/bxl_cursor-ai.svg" alt="Cursor"></div>
+        <div class="tool-icon" data-label="Antigravity"><img src="assets/Icons/material-symbols_antigravity.svg" alt="Antigravity"></div>
+        <div class="tool-icon" data-label="Figma"><img src="https://cdn.simpleicons.org/figma/currentColor" alt="Figma"></div>
+        <div class="tool-icon" data-label="Illustrator"><img src="assets/Icons/devicon-plain_illustrator.svg" alt="Illustrator"></div>
+        <div class="tool-icon" data-label="Photoshop"><img src="assets/Icons/Photoshop.svg" alt="Photoshop"></div>
+        <div class="tool-icon" data-label="Lightroom"><img src="assets/Icons/logos_adobe-lightroom.svg" alt="Lightroom"></div>`;
+      }
+
+      window.dispatchEvent(new Event('resize'));   // re-center lede + toolbar on the icon array
 
       const standardContent = document.getElementById('standard-index-content');
       const alterContent = document.getElementById('alter-ego-content');
