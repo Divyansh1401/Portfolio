@@ -83,6 +83,9 @@
          1u = 1 designed pixel at reference width; scales linearly. */
       --cs-ref-w:    1160;                              /* unitless ref */
       --u:           calc(var(--cs-card-w) / var(--cs-ref-w));
+      /* Hero scaling unit: 1hu = 1 designed px at a 1440px viewport, scales
+         linearly with viewport width (proportional, not breakpoint-based). */
+      --hero-u:      calc(100vw / 1440);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -284,10 +287,12 @@
 
     /* Left Toolbar */
     .toolbar {
-      flex-shrink: 0;
+      position: absolute;
+      left: 16px;
       width: 48px;
-      height: 100%;
-      position: relative;
+      /* top + height driven by JS (positionToolbar) so the line/icons
+         center in the zone between the top bar and the big name text */
+      z-index: 5;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -295,7 +300,8 @@
     }
     .toolbar-line {
       position: absolute;
-      left: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       top: 0;
       bottom: 0;
       width: 1px;
@@ -325,6 +331,7 @@
 
     /* Main Area */
     .hero-main {
+      grid-column: 2;
       min-width: 0;
       max-width: min(980px, 100%);
       display: flex;
@@ -334,6 +341,20 @@
       padding-bottom: clamp(20px, 3vh, 48px);
       margin-left: 0;
     }
+    /* Hero lede — scales proportionally with viewport (32px @1440). */
+    .hero-lede {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 200;                       /* Extra Light */
+      font-size: calc(42 * var(--hero-u));
+      line-height: 1.34;
+      letter-spacing: -0.01em;
+      color: var(--c-dark);
+      margin: 0;
+      white-space: nowrap;                    /* breaks are forced via <br> */
+    }
+    .hero-lede .lede-strong { font-weight: 500; }   /* Medium */
+    .hero-lede .lede-accent { color: var(--c-orange); font-style: italic; }
+    .hero-lede .lede-accent-plain { color: var(--c-orange); }   /* orange, upright */
     .hero-para {
       font-family: var(--f-body);
       font-weight: 100;
@@ -497,6 +518,7 @@
 
     /* Right Area */
     .hero-right-area {
+      grid-column: 3;
       min-width: 0;
       width: 100%;
       display: flex;
@@ -577,6 +599,7 @@
       --c-dim:    rgba(237,236,234,0.08);
     }
     .hero-container.alter-ego .hero-para { color: #EDECEA; }
+    .hero-container.alter-ego .hero-lede { color: #EDECEA; }
     .hero-container.alter-ego .bottom-name { color: #EDECEA; }
     .hero-container.alter-ego .btn-outline {
       border-color: rgba(237,236,234,0.4);
@@ -601,7 +624,7 @@
       position: absolute;
       left: 50%;
       bottom: clamp(-4px, -0.4vw, 0px);
-      width: calc(100% - clamp(24px, 6vw, 96px));
+      width: 100%;
       font-family: var(--f-name);
       font-weight: 900;
       color: var(--text);
@@ -652,17 +675,14 @@
       background: rgba(255, 255, 255, 0.42);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       z-index: 750;  /* below all overlays (case study 800, resume 950) */
-      opacity: 0;
-      transform: translateY(-100%);
-      pointer-events: none;
-      transition:
-        opacity   0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.3s ease;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+      transition: box-shadow 0.3s ease;
     }
     #main-nav.is-visible {
       opacity: 1;
-      transform: translateY(0);
+      transform: none;
       pointer-events: auto;
     }
     #main-nav.is-scrolled {
@@ -683,6 +703,23 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--c-dark);
+      white-space: nowrap;
+      pointer-events: none;
+      height: 1.25em;        /* one line — clips the roll */
+      line-height: 1.25em;
+      overflow: hidden;
+    }
+    #main-nav .nav-name-roll {
+      display: flex;
+      flex-direction: column;
+      transform: translateY(0);
+      transition: transform 0.12s ease-out;
+      will-change: transform;
+    }
+    #main-nav .nav-name-line {
+      display: block;
+      height: 1.25em;
+      line-height: 1.25em;
       white-space: nowrap;
     }
     #main-nav.is-dark .nav-name { color: #edecea; }
@@ -6256,7 +6293,12 @@
 
   <!-- ── Main Nav ── -->
   <header id="main-nav" role="banner">
-    <span class="nav-name">Divyansh Rastogi</span>
+    <div class="nav-name" aria-label="Divyansh Rastogi">
+      <div class="nav-name-roll">
+        <span class="nav-name-line">Product Designer</span>
+        <span class="nav-name-line">Divyansh Rastogi</span>
+      </div>
+    </div>
     <div class="nav-buttons">
       <button class="btn-hero btn-outline" id="navResumeTrigger" type="button">View Resume</button>
       <a href="#connect" class="btn-hero btn-solid"><span>Lets Connect</span></a>
@@ -6280,19 +6322,11 @@
 
     <!-- Main Content -->
     <section class="hero-main">
-      <p class="hero-para" id="proximity-text" aria-label="A Product Designer, working at the intersection of UX, Strategy and AI. I think in systems and design for scale.">
-        <span class="para-line">A Product Designer, working at the</span>
-        <span class="para-line">intersection of UX, Strategy and AI.</span>
-        <span class="para-line">I think in systems and design for scale.</span>
+      <p class="hero-lede">
+        Shaping <span class="lede-strong">digital products,</span><br>
+        applications and design systems with<br>
+        clarity and <span class="lede-accent">character.</span>
       </p>
-      <p class="hero-para alter-ego-para" id="proximity-text-dark" style="display:none" aria-label="A product designer and a lot of other things. I make films, I make art, and whatever else I get curious about.">
-        <span class="para-line">A product designer and a lot of other things. I make films, I make art, and</span>
-        <span class="para-line">whatever else I get curious about.</span>
-      </p>
-      <div class="hero-actions">
-        <a href="#" class="btn-hero btn-outline" id="viewResumeBtn">View Resume</a>
-        <a href="#connect" class="btn-hero btn-solid"><span>lets connect</span></a>
-      </div>
     </section>
 
     <!-- Photo Area -->
@@ -6321,8 +6355,8 @@
           </div>
         </div>
         <div class="caption-wrap">
-          <p class="polaroid-caption">Flip to meet the other me →</p>
-          <p class="polaroid-caption polaroid-caption-alt">Flip to see the day job →</p>
+          <p class="polaroid-caption">Click to know my hobbies →</p>
+          <p class="polaroid-caption polaroid-caption-alt">Flip back to the design work →</p>
         </div>
       </div>
     </section>
@@ -6827,15 +6861,14 @@
       if (!heroName) return;
 
       function scaleName() {
-        const viewportW = window.innerWidth;
-        const viewportH = window.innerHeight;
-        const targetW = viewportW * 0.92;
+        const viewportW = document.documentElement.clientWidth;
+        const targetW = viewportW;
         const probe = document.createElement('span');
         probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-family:"Unbounded",sans-serif;font-weight:900;';
         probe.textContent = heroName.textContent;
         document.body.appendChild(probe);
         let lo = 10;
-        let hi = Math.min(viewportW * 0.19, viewportH * 0.24);
+        let hi = viewportW;
         while (hi - lo > 0.5) {
           const mid = (lo + hi) / 2;
           probe.style.fontSize = mid + 'px';
@@ -6844,9 +6877,58 @@
         heroName.style.fontSize = lo + 'px';
         document.body.removeChild(probe);
       }
-      window.addEventListener('resize', scaleName);
-      scaleName();
-      document.fonts.ready.then(scaleName);
+
+      // Center the left toolbar (line + icons) in the zone between the
+      // top bar and the big name, with an equal gap at each line end.
+      const TOOLBAR_GAP = 40;
+      function positionToolbar() {
+        const toolbar = document.querySelector('.toolbar');
+        const nav = document.getElementById('main-nav');
+        if (!toolbar || !heroName) return;
+        const navH = nav ? nav.offsetHeight : 64;
+        const zoneTop = navH + TOOLBAR_GAP;
+        const zoneBottom = heroName.offsetTop - TOOLBAR_GAP;
+        toolbar.style.top = zoneTop + 'px';
+        toolbar.style.height = Math.max(0, zoneBottom - zoneTop) + 'px';
+      }
+
+      // Vertically center the portrait in the same zone (equal gap from
+      // the top bar above and the big name below).
+      function positionPhoto() {
+        const area = document.querySelector('.hero-right-area');
+        const photo = document.querySelector('.hero-photo-wrap');
+        const nav = document.getElementById('main-nav');
+        const cont = document.querySelector('.hero-container');
+        if (!area || !photo || !heroName || !cont) return;
+        area.style.transform = 'none';
+        const contTop = cont.getBoundingClientRect().top;
+        const pr = photo.getBoundingClientRect();
+        const photoCenter = (pr.top + pr.bottom) / 2 - contTop;
+        const navH = nav ? nav.offsetHeight : 64;
+        const zoneCenter = (navH + heroName.offsetTop) / 2;
+        area.style.transform = 'translateY(' + (zoneCenter - photoCenter) + 'px)';
+      }
+
+      // Align the hero lede's vertical center to the icon array's center.
+      function positionLede() {
+        const main = document.querySelector('.hero-main');
+        const lede = document.querySelector('.hero-lede');
+        const icons = document.querySelector('.toolbar-icons');
+        const cont = document.querySelector('.hero-container');
+        if (!main || !lede || !icons || !cont) return;
+        main.style.transform = 'none';
+        const contTop = cont.getBoundingClientRect().top;
+        const lr = lede.getBoundingClientRect();
+        const ledeCenter = (lr.top + lr.bottom) / 2 - contTop;
+        const ir = icons.getBoundingClientRect();
+        const iconsCenter = (ir.top + ir.bottom) / 2 - contTop;
+        main.style.transform = 'translateY(' + (iconsCenter - ledeCenter) + 'px)';
+      }
+
+      function layoutHero() { scaleName(); positionToolbar(); positionPhoto(); positionLede(); }
+      window.addEventListener('resize', layoutHero);
+      layoutHero();
+      document.fonts.ready.then(layoutHero);
     })();
 
     // ── Smooth proximity weight (TextPressure technique) ──
@@ -7014,10 +7096,18 @@
       const hero  = document.querySelector('.hero-container');
       if (!nav || !hero) return;
 
+      const nameRoll = nav.querySelector('.nav-name-roll');
       function updateNav() {
-        const threshold = hero.offsetHeight * 0.9;
-        nav.classList.toggle('is-visible',  window.scrollY >= threshold);
-        nav.classList.toggle('is-scrolled', window.scrollY >= threshold + 40);
+        // Bar is always pinned; only the shadow + name roll react to scroll.
+        nav.classList.add('is-visible');
+        nav.classList.toggle('is-scrolled', window.scrollY > 20);
+        if (nameRoll) {
+          // Roll "Product Designer" → "Divyansh Rastogi" over the last
+          // 30% of the hero (70% → 100% scroll). One line = 1.25em.
+          const t = window.scrollY / hero.offsetHeight;
+          const prog = Math.min(Math.max((t - 0.7) / 0.3, 0), 1);
+          nameRoll.style.transform = `translateY(${-prog * 1.25}em)`;
+        }
       }
 
       window.addEventListener('scroll', updateNav, { passive: true });
@@ -9324,6 +9414,19 @@
       setHeroAlterEgoState(enabled);
       const mainNav = document.getElementById('main-nav');
       if (mainNav) mainNav.classList.toggle('is-dark', enabled);
+
+      // Nav-name roll: dark mode leads with "not just a product designer".
+      const navRollTop = document.querySelector('#main-nav .nav-name-line');
+      if (navRollTop) navRollTop.textContent = enabled ? 'not just a product designer' : 'Product Designer';
+
+      // Hero lede: dark mode speaks to the person, not the product.
+      const heroLede = document.querySelector('.hero-lede');
+      if (heroLede) {
+        heroLede.innerHTML = enabled
+          ? 'Shaping <span class="lede-accent-plain">myself</span><br>\n        though films, photography, art<br>\n        and experiences.'
+          : 'Shaping <span class="lede-strong">digital products,</span><br>\n        applications and design systems with<br>\n        clarity and <span class="lede-accent">character.</span>';
+        window.dispatchEvent(new Event('resize'));   // re-center lede on the icon array
+      }
 
       const standardContent = document.getElementById('standard-index-content');
       const alterContent = document.getElementById('alter-ego-content');
