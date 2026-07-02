@@ -39,6 +39,11 @@
   justify-content: center;
 }
 
+/* Per-expense currency chip — sits above the amount. In centered mode the
+   .amount-area gap (16px) spaces it from the amount; in keyboard mode the area
+   gap collapses to 0 (see .is-kbd below) so the chip carries its own 8px gap. */
+[data-view="add-amount"].is-kbd .currency-chip { margin-bottom: var(--spacing-8); }
+
 /* prefix — text style via .text-display-lg in markup */
 [data-view="add-amount"] .amount-prefix {
   color: var(--text-primary);
@@ -84,6 +89,26 @@
 }
 [data-view="add-amount"] .title-cat-row .category-area {
   padding: 0;
+}
+
+/* ── Keyboard-open reflow ──
+   When the soft keyboard is open the view root gets `.is-kbd` (set by the
+   visualViewport handler in js/views/add-amount.js). The centered amount layout
+   then collapses into a compact top-anchored stack — amount → category chip →
+   title, each 16px apart, snug under the step-progress. The header stays put and
+   the footer is lifted above the keyboard (inline bottom offset set by the same
+   handler). Without `.is-kbd` the default centered design is unchanged. */
+[data-view="add-amount"].is-kbd .amount-area {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  /* drop the 16px gap to the (empty, hidden-helper) .amount-error so the chip
+     sits exactly 16px under the amount, not 32px */
+  gap: 0;
+  padding: var(--spacing-16) var(--spacing-16) 0;
+}
+[data-view="add-amount"].is-kbd .title-cat-row {
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-32) 0;
 }
 
 /* ── Title Input ── */

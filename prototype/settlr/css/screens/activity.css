@@ -10,6 +10,11 @@
    component CSS + text-* classes already present in the rendered markup.
    ============================================================ */
 
+/* Pin the main tab-bar height so the title aligns across Home / Activity /
+   People (matches home-dashboard / people). The bar only sets min-height and
+   would otherwise differ per tab based on its right-side action. */
+[data-view="activity"] .top-app-bar { height: var(--spacing-64); }
+
 /* Scrollable content region. activity HAS a bottom-nav dock, so it keeps the
    shell default bottom padding (do NOT override --app-shell-content-pad). */
 [data-view="activity"] .view__content {

@@ -13,6 +13,12 @@
    it has a bottom-nav dock.
    ============================================ */
 
+/* Pin the main tab-bar height so the title aligns across Home / Activity /
+   People. Without this the bar only sets min-height and grows to fit its
+   tallest child (here the 52px brand avatar), so each tab's header was a
+   different thickness. 64px seats the avatar centered (align-items: center). */
+[data-view="home-dashboard"] .top-app-bar { height: var(--spacing-64); }
+
 /* ── Hero / Balance Area ──
    Screen-local feature band above the scroll content. */
 [data-view="home-dashboard"] .hero {

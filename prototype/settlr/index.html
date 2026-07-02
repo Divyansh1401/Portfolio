@@ -299,7 +299,7 @@
     </div>
 
     <div class="empty-state" id="empty-people" style="display:none;">
-      <div class="empty-state__illustration"></div>
+      <div class="empty-state__illustration"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1-7.37-4.89,8,8,0,0,1,0-6.22A8,8,0,0,1,192,112a24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.84,8,57,57,0,0,0-98.16,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/></svg></div>
       <div class="empty-state__text">
         <p class="empty-state__title text-heading-sm">No people yet</p>
         <p class="empty-state__body text-body-md">People you've shared expenses with will appear here.</p>
@@ -391,7 +391,7 @@
   <main class="view__content">
     <div class="expense-list" id="js-expense-list"></div>
     <div class="empty-state" id="empty-activity" style="display:none;">
-      <div class="empty-state__illustration"></div>
+      <div class="empty-state__illustration"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"/></svg></div>
       <div class="empty-state__text">
         <p class="empty-state__title">No activity yet</p>
         <p class="empty-state__body">Your expense and settlement history will appear here.</p>
@@ -524,6 +524,10 @@
       </a>
       <button class="icon-btn icon-btn--surface icon-btn--md" id="js-fav-btn" aria-label="Add to favourites" aria-pressed="false">
         <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z"/></svg></span>
+      </button>
+      <!-- Unlink (only shown for LINKED real-user contacts; wired in JS) -->
+      <button class="icon-btn icon-btn--surface icon-btn--md" id="js-unlink-btn" aria-label="Unlink contact" hidden>
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></svg></span>
       </button>
     </div>
   </div>
@@ -1107,7 +1111,7 @@
       <p class="invite-card__subtitle text-body-xs">Share your personal invite link and start splitting instantly</p>
       <div class="invite-card__row">
         <div class="invite-link-box">
-          <span class="invite-link-box__url text-body-xs" id="js-af-invite-url">settlr.app/invite/…</span>
+          <span class="invite-link-box__url text-body-xs" id="js-af-invite-url">settlrapp.in/invite/…</span>
           <button class="invite-link-box__copy" id="js-copy-link" type="button" aria-label="Copy invite link">
             <span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
           </button>
@@ -1438,6 +1442,27 @@
       </div>
     </div>
 
+    <!-- Group Type (template) -->
+    <div class="type-section">
+      <label class="type-section__label">Group type</label>
+      <div class="type-grid" id="js-cgn-types">
+        <button type="button" class="type-chip" data-type="trip" data-emoji="✈️"><span class="type-chip__emoji">✈️</span><span class="type-chip__name">Trip</span></button>
+        <button type="button" class="type-chip" data-type="home" data-emoji="🏠"><span class="type-chip__emoji">🏠</span><span class="type-chip__name">Roommates</span></button>
+        <button type="button" class="type-chip" data-type="couple" data-emoji="💑"><span class="type-chip__emoji">💑</span><span class="type-chip__name">Couple</span></button>
+        <button type="button" class="type-chip" data-type="event" data-emoji="🎉"><span class="type-chip__emoji">🎉</span><span class="type-chip__name">Event</span></button>
+        <button type="button" class="type-chip is-selected" data-type="other" data-emoji="📝"><span class="type-chip__emoji">📝</span><span class="type-chip__name">Other</span></button>
+      </div>
+    </div>
+
+    <!-- Default currency (new expenses in this group pre-select it) -->
+    <div class="input-field">
+      <label class="input-field__label">Default currency</label>
+      <button class="currency-chip" id="js-cgn-currency-btn" type="button">
+        <span id="js-cgn-currency-label">&#8377; INR</span>
+        <span class="icon-holder currency-chip__caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+      </button>
+    </div>
+
     <!-- Description (optional) -->
     <div class="input-field input-field--multiline">
       <label class="input-field__label">Description (optional)</label>
@@ -1451,6 +1476,22 @@
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
     <button id="js-next-cgn" class="btn btn--primary btn--lg btn--full">Next → Add Members</button>
+  </div>
+
+  <!-- Currency Selection Sheet -->
+  <div class="sheet-overlay" id="cgnCurrencySheet" style="display:none;">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title text-heading-sm">Default currency</span>
+        <button class="icon-btn icon-btn--sm" id="js-cgn-currency-close" type="button" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="currency-list" id="js-cgn-currency-list"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1542,6 +1583,15 @@
           <span class="icon-holder input-field__suffix-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg></span>
         </div>
       </div>
+    </div>
+
+    <!-- Default Currency -->
+    <div>
+      <div class="section-label">Default Currency</div>
+      <button class="currency-chip" id="js-eg-currency-btn" type="button">
+        <span id="js-eg-currency-label">&#8377; INR</span>
+        <span class="icon-holder currency-chip__caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+      </button>
     </div>
 
     <!-- Members -->
@@ -1691,6 +1741,22 @@
       </div>
     </div>
   </div>
+
+  <!-- ── Default Currency Sheet ── -->
+  <div class="sheet-overlay" id="egCurrencySheet" style="display:none;">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title text-heading-sm">Default currency</span>
+        <button class="icon-btn icon-btn--sm" id="js-eg-currency-close" type="button" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="currency-list" id="js-eg-currency-list"></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="view" id="view-add-amount" data-view="add-amount" hidden>
@@ -1708,8 +1774,12 @@
   </div>
 
   <main class="view__content">
-    <!-- Amount (currency follows the global Settings preference) -->
+    <!-- Amount (each expense carries its own currency, picked via the chip) -->
     <div class="amount-area">
+      <button class="currency-chip" id="js-currency-btn" onclick="openCurrencySheet()">
+        <span id="js-currency-label">&#8377; INR</span>
+        <span class="icon-holder currency-chip__caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+      </button>
       <div class="amount-row">
         <span class="amount-prefix text-display-lg">&#8377;</span>
         <input
@@ -1765,6 +1835,22 @@
       </div>
       <div class="sheet__content">
         <div class="cat-grid" id="js-cat-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currency Selection Sheet -->
+  <div class="sheet-overlay" id="currencySheet" style="display:none;" onclick="closeCurrencySheet(event)">
+    <div class="sheet">
+      <div class="sheet__handle"><div class="sheet__handle-bar"></div></div>
+      <div class="sheet__header">
+        <span class="sheet__title text-heading-sm">Currency</span>
+        <button class="icon-btn icon-btn--sm" onclick="closeCurrencySheet()" aria-label="Close">
+          <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+        </button>
+      </div>
+      <div class="sheet__content">
+        <div class="currency-list" id="js-currency-list"></div>
       </div>
     </div>
   </div>
@@ -2558,7 +2644,7 @@
             <p class="invite-card__subtitle text-body-xs">Friends auto-connect when they join through your link</p>
             <div class="invite-card__row">
               <div class="invite-link-box">
-                <span class="invite-link-box__url text-body-xs" id="js-onb-invite-url">settlr.app/invite/divyansh</span>
+                <span class="invite-link-box__url text-body-xs" id="js-onb-invite-url">settlrapp.in/invite/…</span>
                 <button class="invite-link-box__copy" id="js-onb-copy-link" type="button" aria-label="Copy invite link">
                   <span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
                 </button>
@@ -2846,7 +2932,23 @@
   <script>
     (function () {
       function start() { window.SettlrRouterSPA.start('home-dashboard'); }
+      // Capture a per-user invite (settlrapp.in/invite/<handle> or ?invite=<handle>)
+      // into localStorage BEFORE auth — so it survives the login redirect AND the
+      // Google OAuth round-trip (same origin). Then clean the URL so the SPA boots
+      // normally and a reload can't re-trigger. redeemPendingInvite (post-auth)
+      // turns it into a real connection.
+      function captureInvite() {
+        try {
+          var m = location.pathname.match(/^\/invite\/([\w.-]+)/);
+          var h = m ? m[1] : ((location.search.match(/[?&]invite=([\w.-]+)/) || [])[1] || '');
+          if (h) {
+            localStorage.setItem('settlr_pending_invite', h.replace(/^@/, ''));
+            history.replaceState({}, '', '/');
+          }
+        } catch (e) {}
+      }
       function boot() {
+        captureInvite();
         // Local/demo mode (no Supabase configured): keep working on localStorage.
         if (!(window.SettlrAuth && window.SettlrAuth.configured)) { start(); return; }
         // Supabase mode: require a session, hydrate the Store, then force the
@@ -2856,7 +2958,12 @@
           return window.Store.init().then(function () {
             var u = window.Store.getCurrentUser();
             if (!u || !u.phone) { window.location.replace('/screens/complete-profile.html'); return; }
-            start();
+            // Redeem any pending invite into a connection (fire-and-forget, idempotent).
+            if (window.Store.redeemPendingInvite) window.Store.redeemPendingInvite();
+            // Claim any ghosts that match my phone (inherit shared history), THEN enter
+            // so home paints the merged data. Idempotent + cheap (phone-indexed no-op).
+            var merge = window.Store.mergeGhostsForMe ? window.Store.mergeGhostsForMe() : Promise.resolve(0);
+            return merge.then(start, start);
           });
         }).catch(function (e) { console.error('[boot]', e); start(); });
       }

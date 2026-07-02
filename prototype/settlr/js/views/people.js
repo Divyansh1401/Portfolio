@@ -144,7 +144,14 @@
     row._wired = true;
 
     var labelEl = row.querySelector('.settings-row__label');
-    var url = location.origin || 'https://settlr-5cn.pages.dev';
+    // Per-user invite link so opening it auto-connects the invitee to me.
+    var handle = '';
+    if (window.Store && Store.getCurrentUser) {
+      var u = Store.getCurrentUser() || {};
+      handle = u.handle ? String(u.handle).replace(/^@/, '') : '';
+    }
+    var base = location.origin || 'https://settlrapp.in';
+    var url = handle ? base + '/invite/' + handle : base;
     var share = { title: 'Settlr', text: 'Split expenses with me on Settlr', url: url };
 
     function confirmCopied() {

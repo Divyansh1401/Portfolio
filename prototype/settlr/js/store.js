@@ -799,8 +799,93 @@ window.Store = (function () {
       _persist();
       _remote(function () { return _sb.from('contacts').insert(_contactToDb(rec, true)); });
     }
-    _remote(function () { return _sb.from('connections').insert({ user_a: a, user_b: b, created_by: me }); });
-    return Promise.resolve(true);
+    // Await the connection insert (chained), THEN fold any leftover ghost I had for
+    // this person (by phone) into the new linked contact, then re-hydrate if it merged.
+    return _remote(function () { return _sb.from('connections').insert({ user_a: a, user_b: b, created_by: me }); })
+      .then(function () { return _sb.rpc('fold_ghost_into', { p_user: them }); })
+      .then(function (res) {
+        if (res && res.error) { console.error('[Store] fold error:', res.error); return; }
+        if (res && res.data > 0) return _loadFromSupabase();
+      })
+      .then(function () { return true; })
+      .catch(function (e) { console.error('[Store] connect/fold error:', e); return true; });
+  }
+
+  /** Canonicalize a phone to its last 10 digits (strip everything non-numeric),
+   *  matching the server-side normalization in find_users_by_phones. '' if none. */
+  function _normalizePhone(raw) {
+    return String(raw == null ? '' : raw).replace(/\D/g, '').slice(-10);
+  }
+
+  /** Batch-match a list of phone numbers against registered Settlr users via the
+   *  capped + rate-limited RPC. Resolves to an array of { id, name, handle, photo,
+   *  phone } where `phone` is the normalized last-10 that matched (so the caller
+   *  can map a result back to the picked contact). supabase mode only; degrades
+   *  to [] on any error so an over-cap / rate-limit just yields no matches. */
+  function findUsersByPhones(phones) {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve([]);
+    var seen = {}, norm = [];
+    (phones || []).forEach(function (p) {
+      var n = _normalizePhone(p);
+      if (n && !seen[n]) { seen[n] = 1; norm.push(n); }
+    });
+    if (!norm.length) return Promise.resolve([]);
+    return _sb.rpc('find_users_by_phones', { p_phones: norm }).then(function (res) {
+      if (res && res.error) { console.error('[Store] phone match error:', res.error); return []; }
+      return ((res && res.data) || []).map(function (r) {
+        return { id: r.id, name: r.name, handle: r.handle, photo: r.photo || undefined, phone: r.match_phone || '' };
+      });
+    }).catch(function (e) { console.error('[Store] phone match error:', e); return []; });
+  }
+
+  /** Redeem a pending invite captured at boot (localStorage `settlr_pending_invite`
+   *  = an inviter handle). One-shot: the key is cleared immediately so a bad/old
+   *  handle can't loop. If it resolves to a real user other than self that we're
+   *  not already linked to, open a connection (idempotent). Resolves to the
+   *  connected profile (or null). supabase mode only. */
+  function redeemPendingInvite() {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(null);
+    var handle;
+    try { handle = localStorage.getItem('settlr_pending_invite'); localStorage.removeItem('settlr_pending_invite'); }
+    catch (e) { handle = null; }
+    handle = String(handle || '').trim().replace(/^@/, '');
+    if (!handle) return Promise.resolve(null);
+    var mine = String((data.currentUser && data.currentUser.handle) || '').replace(/^@/, '');
+    if (handle.toLowerCase() === mine.toLowerCase()) return Promise.resolve(null);
+    // Already linked to someone with this handle? Skip (no duplicate connect).
+    if (data.contacts.some(function (c) { return c.userId && c.handle && c.handle.replace(/^@/, '').toLowerCase() === handle.toLowerCase(); })) {
+      return Promise.resolve(null);
+    }
+    return findUserByHandle(handle).then(function (profile) {
+      if (!profile || !profile.id || profile.id === CURRENT_USER_ID) return null;
+      return connect(profile).then(function () { return profile; });
+    });
+  }
+
+  /** Claim every other owner's GHOST contact whose phone matches my own verified
+   *  phone, rekeying it to my real id (server-side, self-scoped). Inherits the full
+   *  shared back-history + forms a connection. Re-hydrates the cache when anything
+   *  merged. Resolves to the merge count. supabase mode only; safe no-op otherwise. */
+  function mergeGhostsForMe() {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(0);
+    return _sb.rpc('claim_ghosts_by_phone').then(function (res) {
+      if (res && res.error) { console.error('[Store] ghost merge error:', res.error); return 0; }
+      var n = (res && typeof res.data === 'number') ? res.data : (res && res.data) || 0;
+      if (n > 0) return _loadFromSupabase().then(function () { return n; });
+      return n;
+    }).catch(function (e) { console.error('[Store] ghost merge error:', e); return 0; });
+  }
+
+  /** Unlink a linked contact: severs the connection and re-ghosts each side's history
+   *  (server-side, both directions) so both keep a private copy but stop sharing.
+   *  Re-hydrates on success. supabase mode → RPC; local mode → just drop the contact. */
+  function unlinkContact(contactId) {
+    if (!contactId) return Promise.resolve(false);
+    if (MODE !== 'supabase' || !_sb) { deleteContact(contactId); return Promise.resolve(true); }
+    return _sb.rpc('unlink_contact', { p_other: contactId }).then(function (res) {
+      if (res && res.error) { console.error('[Store] unlink error:', res.error); return false; }
+      return _loadFromSupabase().then(function () { return !!(res && res.data); });
+    }).catch(function (e) { console.error('[Store] unlink error:', e); return false; });
   }
 
   function addExpense(expense) {
@@ -906,25 +991,29 @@ window.Store = (function () {
     return Object.assign({}, data.currentUser);
   }
 
-  /** Wipe all persisted app data (Delete Account). The in-memory `data`
-   *  remains until the next reload, which the caller triggers by navigating
-   *  to an auth screen. */
+  /** Permanently delete the account (Delete Account). In supabase mode this
+   *  invokes the `delete-account` Edge Function, which uses the service-role
+   *  admin API to delete the auth.users row — every owned table row then
+   *  cascade-deletes (FK `on delete cascade`). Returns a Promise the caller
+   *  MUST await before signing out + navigating, so the request isn't aborted
+   *  by page unload. Always clears the localStorage cache too. */
   function deleteAllData() {
-    if (MODE === 'supabase') {
-      var uid = CURRENT_USER_ID;
-      // Delete child rows first, then parents (FKs cascade where defined, but
-      // be explicit so nothing is orphaned). Fire-and-forget; caller signs out.
-      _remote(function () {
-        return _sb.from('comments').delete().eq('owner_id', uid)
-          .then(function () { return _sb.from('expenses').delete().eq('owner_id', uid); })
-          .then(function () { return _sb.from('settlements').delete().eq('owner_id', uid); })
-          .then(function () { return _sb.from('groups').delete().eq('owner_id', uid); })
-          .then(function () { return _sb.from('contacts').delete().eq('owner_id', uid); })
-          .then(function () { return _sb.from('profiles').delete().eq('id', uid); });
-      });
-      return;
-    }
     localStorage.removeItem(LS_KEY);
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve({ ok: true });
+    // supabase-js injects the caller's access token as the Authorization
+    // header; the function derives the uid from that verified JWT.
+    return _sb.functions.invoke('delete-account', { body: {} })
+      .then(function (res) {
+        if (res && res.error) {
+          console.error('[Store] delete-account failed:', res.error.message || res.error);
+          return { ok: false, error: res.error };
+        }
+        return { ok: true };
+      })
+      .catch(function (e) {
+        console.error('[Store] delete-account threw:', e);
+        return { ok: false, error: e };
+      });
   }
 
   function hasContactTransactions(contactId) {
@@ -1184,7 +1273,15 @@ window.Store = (function () {
   // base); we convert at two boundaries only — DISPLAY (formatINR / fromBase)
   // and amount INPUT (toBase). Static rates (no FX network).
   const CURRENCY_SYMBOLS = { INR: '\u20B9', USD: '$', EUR: '\u20AC', GBP: '\u00A3' };
+  const CURRENCY_NAMES = { INR: 'Indian Rupee', USD: 'US Dollar', EUR: 'Euro', GBP: 'British Pound' };
   const RATES_FROM_INR = { INR: 1, USD: 0.012, EUR: 0.011, GBP: 0.0095 };
+  /** The supported currencies as [{code, symbol, name}] — single source of
+   *  truth for currency pickers (add-amount, create-group, edit-group). */
+  function currencyOptions() {
+    return ['INR', 'USD', 'EUR', 'GBP'].map(function (c) {
+      return { code: c, symbol: CURRENCY_SYMBOLS[c], name: CURRENCY_NAMES[c] };
+    });
+  }
   function _currencyCode() {
     try {
       const p = JSON.parse(localStorage.getItem('settlr_prefs') || '{}') || {};
@@ -1244,6 +1341,44 @@ window.Store = (function () {
     return _currencySymbol() + formatted;
   }
 
+  // ── Per-expense currency ──────────────────────────────────
+  // An expense may carry its own `currency` ISO code; when present its OWN
+  // amount is shown in that currency (balances, which aggregate many expenses,
+  // stay in the global currency). Amounts are still STORED in INR — these
+  // helpers convert/format for an explicit code. A falsy code falls back to the
+  // global behaviour, so currency-less expenses render exactly as before.
+  function _rateFor(code) {
+    if (!code) return _rate();
+    var live = _liveRates();
+    if (live && live[code] != null) return live[code];
+    return RATES_FROM_INR[code] || 1;
+  }
+  function currencySymbolOf(code) {
+    if (!code) return _currencySymbol();
+    return CURRENCY_SYMBOLS[code] || _currencySymbol();
+  }
+  /** INR → an explicit currency's amount (prefilling inputs in that currency). */
+  function fromBaseIn(inr, code) {
+    if (!code) return fromBase(inr);
+    return _round2((inr || 0) * _rateFor(code));
+  }
+  /** An explicit currency's amount → INR (storing what the user typed). */
+  function toBaseIn(disp, code) {
+    if (!code) return toBase(disp);
+    return _round2((disp || 0) / _rateFor(code));
+  }
+  /** Format an INR amount in an explicit currency: falsy code ⇒ global formatINR. */
+  function formatIn(amount, code) {
+    if (!code) return formatINR(amount);
+    var shown = fromBaseIn(amount, code);
+    var hasFraction = Math.abs(shown - Math.round(shown)) > 0.005;
+    var formatted = new Intl.NumberFormat('en-IN', {
+      minimumFractionDigits: hasFraction ? 2 : 0,
+      maximumFractionDigits: 2
+    }).format(shown);
+    return currencySymbolOf(code) + formatted;
+  }
+
   // ── Supabase layer (active only when MODE === 'supabase') ─
 
   // New-record id: a real uuid for Supabase's uuid columns; the readable
@@ -1288,8 +1423,8 @@ window.Store = (function () {
     return out;
   }
 
-  var _EXPENSE_MAP = { groupId: 'group_id', contactId: 'contact_id', title: 'title', emoji: 'emoji', category: 'category', totalAmount: 'total_amount', paidById: 'paid_by_id', payers: 'payers', splitAmong: 'split_among', splitMethod: 'split_method', splitAmounts: 'split_amounts', date: 'date', occurredAt: 'occurred_at', notes: 'notes' };
-  var _GROUP_MAP   = { name: 'name', emoji: 'emoji', photo: 'photo', type: 'type', createdAt: 'created_at' };
+  var _EXPENSE_MAP = { groupId: 'group_id', contactId: 'contact_id', title: 'title', emoji: 'emoji', category: 'category', totalAmount: 'total_amount', paidById: 'paid_by_id', payers: 'payers', splitAmong: 'split_among', splitMethod: 'split_method', splitAmounts: 'split_amounts', date: 'date', occurredAt: 'occurred_at', notes: 'notes', currency: 'currency' };
+  var _GROUP_MAP   = { name: 'name', emoji: 'emoji', photo: 'photo', type: 'type', currency: 'currency', memberIds: 'members', createdAt: 'created_at' };
   var _SETTLE_MAP  = { fromId: 'from_id', toId: 'to_id', amount: 'amount', method: 'method', groupId: 'group_id', date: 'date', occurredAt: 'occurred_at' };
   var _COMMENT_MAP = { expenseId: 'expense_id', authorId: 'author_id', text: 'text', createdAt: 'created_at' };
   var _PROFILE_MAP = { name: 'name', initials: 'initials', handle: 'handle', phone: 'phone', upi: 'upi', bank: 'bank', bio: 'bio', photo: 'photo' };
@@ -1415,21 +1550,29 @@ window.Store = (function () {
       _sb.from('group_members').select('*'),     // RLS limits these to the user's groups
       _sb.from('expenses').select('*').eq('owner_id', uid),
       _sb.from('settlements').select('*').eq('owner_id', uid),
-      _sb.from('comments').select('*').eq('owner_id', uid),
+      // Comments: no owner filter — participant RLS returns every comment on an
+      // expense I own OR participate in (mine + co-participants' on shared expenses).
+      _sb.from('comments').select('*'),
       // Shared canonical expenses where I'm a participant but not the owner.
       _sb.from('expenses').select('*').contains('split_among', [uid]),
       // Public fields of everyone I'm connected to (bypasses owner-only profiles RLS).
-      _sb.rpc('get_connection_profiles')
+      _sb.rpc('get_connection_profiles'),
+      // Shared groups where I'm a member but not the owner.
+      _sb.from('groups').select('*').contains('members', [uid]),
+      // Shared settlements where I'm the from/to party but not the owner.
+      _sb.from('settlements').select('*').or('from_id.eq.' + uid + ',to_id.eq.' + uid)
     ]).then(function (res) {
       var profile = res[0].data || {};
       var contacts = res[1].data || [];
-      var groups = res[2].data || [];
+      var ownGroups = res[2].data || [];
       var members = res[3].data || [];
       var ownExpenses = res[4].data || [];
-      var settlements = res[5].data || [];
+      var ownSettlements = res[5].data || [];
       var comments = res[6].data || [];
       var sharedExpenses = (res[7] && res[7].data) || [];
       var connProfiles = (res[8] && res[8].data) || [];
+      var sharedGroups = (res[9] && res[9].data) || [];
+      var sharedSettlements = (res[10] && res[10].data) || [];
 
       var byGroup = {};
       members.forEach(function (m) { (byGroup[m.group_id] = byGroup[m.group_id] || []).push(m.contact_id); });
@@ -1438,6 +1581,24 @@ window.Store = (function () {
       var seen = {}, mergedExpenses = [];
       ownExpenses.concat(sharedExpenses).forEach(function (r) {
         if (seen[r.id]) return; seen[r.id] = 1; mergedExpenses.push(_expenseFromDb(r));
+      });
+
+      // Merge owner + shared groups, dedup by id. For owned groups the
+      // group_members join rows are authoritative; for shared groups (no join
+      // rows visible — that RLS stays owner-only) reconstruct the member list
+      // from the `members` array column. memberIds is kept owner-inclusive.
+      var gSeen = {}, mergedGroups = [];
+      ownGroups.concat(sharedGroups).forEach(function (g) {
+        if (gSeen[g.id]) return; gSeen[g.id] = 1;
+        var others = byGroup[g.id];
+        if (!others) others = (g.members || []).filter(function (m) { return m !== uid; });
+        mergedGroups.push(_groupFromDb(g, [uid].concat(others)));
+      });
+
+      // Merge owner + shared settlements, dedup by id.
+      var sSeen = {}, mergedSettlements = [];
+      ownSettlements.concat(sharedSettlements).forEach(function (r) {
+        if (sSeen[r.id]) return; sSeen[r.id] = 1; mergedSettlements.push(_settlementFromDb(r));
       });
 
       // Synthesize linked contact rows for connected users I don't already
@@ -1458,9 +1619,9 @@ window.Store = (function () {
       data = {
         currentUser: _profileFromDb(profile, uid),
         contacts: contactRows,
-        groups: groups.map(function (g) { return _groupFromDb(g, [uid].concat(byGroup[g.id] || [])); }),
+        groups: mergedGroups,
         expenses: mergedExpenses,
-        settlements: settlements.map(_settlementFromDb),
+        settlements: mergedSettlements,
         comments: comments.map(_commentFromDb),
         _version: SEED_VERSION
       };
@@ -1584,7 +1745,11 @@ window.Store = (function () {
     updateContact,
     deleteContact,
     findUserByHandle,
+    findUsersByPhones,
     connect,
+    redeemPendingInvite,
+    mergeGhostsForMe,
+    unlinkContact,
     getGroups,
     getGroup,
     getExpenses,
@@ -1611,8 +1776,13 @@ window.Store = (function () {
     formatTime,
     fromBase,
     toBase,
+    fromBaseIn,
+    toBaseIn,
+    formatIn,
     currencySymbol: _currencySymbol,
+    currencySymbolOf,
     currencyCode: _currencyCode,
+    currencyOptions,
     refreshRates,
     ratesUpdatedAt,
     recordSettlement,

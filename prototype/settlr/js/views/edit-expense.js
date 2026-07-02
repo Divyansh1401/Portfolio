@@ -68,11 +68,12 @@
     // ── Amount ──────────────────────────────────────────────
     // Stored INR → shown/edited in the display currency.
     var amountInput = root.querySelector('.amount-input-wrap input');
-    if (amountInput) amountInput.value = String(Store.fromBase(exp.totalAmount));
+    if (amountInput) amountInput.value = String(Store.fromBaseIn(exp.totalAmount, exp.currency));
     var amtSymbol = root.querySelector('.amount-input-wrap__symbol');
-    if (amtSymbol) amtSymbol.textContent = Store.currencySymbol();
+    if (amtSymbol) amtSymbol.textContent = Store.currencySymbolOf(exp.currency);
+    var eeCode = exp.currency || Store.currencyCode();
     var eeChip = root.querySelector('.currency-chip');
-    if (eeChip && eeChip.firstChild) eeChip.firstChild.textContent = Store.currencySymbol() + ' ' + Store.currencyCode() + ' ';
+    if (eeChip && eeChip.firstChild) eeChip.firstChild.textContent = Store.currencySymbolOf(exp.currency) + ' ' + eeCode + ' ';
 
     // ── Description ─────────────────────────────────────────
     var descInput = root.querySelector('.input-field__box input');
@@ -117,7 +118,7 @@
       var nm = root.querySelector('#js-ee-paid-name');
       if (nm) {
         var label = Store.getPayerSummary ? Store.getPayerSummary({ payers: payers, paidById: ids[0] }).label : nameOf(ids[0]);
-        nm.textContent = label + ' · ' + Store.formatINR(exp.totalAmount);
+        nm.textContent = label + ' · ' + Store.formatIn(exp.totalAmount, exp.currency);
       }
     }
     payerCtrl = window.SettlrPayerSheet.create({
@@ -127,6 +128,7 @@
       total: exp.totalAmount,
       getInfo: function (cid) { return { name: nameOf(cid), initials: initialsOf(cid) }; },
       payers: payers,
+      currency: exp.currency,
       onChange: renderPaidByCard
     });
     renderPaidByCard();
@@ -147,7 +149,7 @@
 
     // ── Split summary ───────────────────────────────────────
     var summaryAmount = root.querySelector('.split-section__summary-amount');
-    if (summaryAmount) summaryAmount.textContent = Store.formatINR(share);
+    if (summaryAmount) summaryAmount.textContent = Store.formatIn(share, exp.currency);
 
     // ── Split rows ──────────────────────────────────────────
     // Rebuild the per-person rows from the expense each show. Remove any
@@ -160,8 +162,8 @@
       exp.splitAmong.forEach(function (cid) {
         var isPayer = cid === exp.paidById;
         var shareText = isPayer
-          ? 'Paid ' + Store.formatINR(exp.totalAmount)
-          : 'Owes ' + Store.formatINR(share);
+          ? 'Paid ' + Store.formatIn(exp.totalAmount, exp.currency)
+          : 'Owes ' + Store.formatIn(share, exp.currency);
         var row = document.createElement('div');
         row.className = 'split-section__row';
         row.innerHTML =
@@ -171,7 +173,7 @@
             '<span class="split-section__name text-title-sm">' + nameOf(cid) + '</span>' +
             '<span class="split-section__share text-body-xs">' + shareText + '</span>' +
           '</div>' +
-          '<span class="split-section__amount-pill text-amount-xs">' + Store.formatINR(share) + '</span>';
+          '<span class="split-section__amount-pill text-amount-xs">' + Store.formatIn(share, exp.currency) + '</span>';
         if (total) list.insertBefore(row, total);
         else list.appendChild(row);
       });
@@ -179,7 +181,7 @@
       var totalValue = root.querySelector('.split-section__total-value');
       if (totalValue) {
         var glyph = totalValue.querySelector('.icon-holder');
-        totalValue.textContent = Store.formatINR(exp.totalAmount) + ' ';
+        totalValue.textContent = Store.formatIn(exp.totalAmount, exp.currency) + ' ';
         if (glyph) totalValue.appendChild(glyph);
       }
     }
@@ -216,10 +218,11 @@
       var chip = root.querySelector('.chips-row .chip--on');
       var fields = {
         title: descEl ? descEl.value.trim() : exp.title,
-        totalAmount: amtEl ? (Store.toBase(parseFloat(amtEl.value)) || exp.totalAmount) : exp.totalAmount,
+        totalAmount: amtEl ? (Store.toBaseIn(parseFloat(amtEl.value), exp.currency) || exp.totalAmount) : exp.totalAmount,
         notes: notes ? notes.value.trim() : exp.notes,
         payers: JSON.parse(JSON.stringify(payers)),
-        paidById: Object.keys(payers)[0] || exp.paidById
+        paidById: Object.keys(payers)[0] || exp.paidById,
+        currency: exp.currency || null
       };
       if (chip) {
         var parts = (chip.textContent || '').trim().split(/\s+/);

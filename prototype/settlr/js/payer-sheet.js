@@ -46,6 +46,21 @@
     var payers = opts.payers;
     var getInfo = opts.getInfo;
     var onChange = opts.onChange || function () {};
+    // Per-expense currency (null ⇒ global). Amounts are STORED in INR; the sheet
+    // shows + parses them in this currency.
+    var currency = opts.currency || null;
+    function fmtC(n) {
+      return (window.Store && Store.formatIn) ? Store.formatIn(n, currency) : fmt(n);
+    }
+    function dispVal(inr) {
+      return (window.Store && Store.fromBaseIn) ? Store.fromBaseIn(inr, currency) : inr;
+    }
+    function inrVal(disp) {
+      return (window.Store && Store.toBaseIn) ? Store.toBaseIn(disp, currency) : disp;
+    }
+    function curSym() {
+      return (window.Store && Store.currencySymbolOf) ? Store.currencySymbolOf(currency) : '\u20B9';
+    }
 
     function ids() { return Object.keys(payers); }
     function total() {
@@ -71,8 +86,8 @@
       if (!hint) return;
       var ok = isValid();
       hint.textContent = ok
-        ? fmt(total()) + ' of ' + fmt(opts.total) + ' \u2713'
-        : fmt(total()) + ' of ' + fmt(opts.total) + ' \u2014 must add up';
+        ? fmtC(total()) + ' of ' + fmtC(opts.total) + ' \u2713'
+        : fmtC(total()) + ' of ' + fmtC(opts.total) + ' \u2014 must add up';
       hint.classList.toggle('payer-hint--err', !ok);
     }
 
@@ -82,14 +97,17 @@
       listEl.innerHTML = opts.participantIds.map(function (id) {
         var p = getInfo(id);
         var sel = payers[id] !== undefined;
-        var val = sel ? (parseFloat(payers[id]) || 0) : 0;
+        var val = sel ? dispVal(parseFloat(payers[id]) || 0) : 0;
         var amtCls = 'amount-input amount-input--currency payer-row__amount' + (sel ? '' : ' amount-input--inactive');
         var inp = '<input class="amount-input__field" type="number" min="0" step="0.01" data-pid="' + id + '" value="' + val + '"' + (sel ? '' : ' readonly tabindex="-1"') + '>';
+        var iconHtml = currency
+          ? '<span aria-hidden="true">' + curSym() + '</span>'
+          : iconHolder(SVG_CURRENCY_INR);
         return '<div class="payer-row" data-pid="' + id + '">' +
           '<div class="checkbox-control js-payer-check' + (sel ? ' is-selected' : '') + '" data-pid="' + id + '">' + iconHolder(SVG_CHECK, 'checkbox-control__check') + '</div>' +
           '<div class="avatar avatar--initials avatar--md">' + p.initials + '</div>' +
           '<div class="payer-row__text"><span class="payer-row__name text-title-sm">' + p.name + '</span></div>' +
-          '<div class="' + amtCls + '"><span class="amount-input__icon">' + iconHolder(SVG_CURRENCY_INR) + '</span>' + inp + '</div>' +
+          '<div class="' + amtCls + '"><span class="amount-input__icon">' + iconHtml + '</span>' + inp + '</div>' +
         '</div>';
       }).join('');
       updateHint();
@@ -106,7 +124,7 @@
         inp.addEventListener('input', function () {
           var pid = inp.getAttribute('data-pid');
           if (payers[pid] === undefined) return;
-          payers[pid] = parseFloat(inp.value) || 0;
+          payers[pid] = inrVal(parseFloat(inp.value) || 0);
           updateHint();
           onChange();
         });

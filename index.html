@@ -7434,21 +7434,21 @@
           <!-- OVERVIEW: meta + project hook (matches Figma exactly) -->
           <div class="cs-overview">
             <div class="cs-meta-block">
-              <div class="cs-meta-item"><p class="cs-meta-label">Role</p><p class="cs-meta-value">Product Designer</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Type</p><p class="cs-meta-value">UI Design, Design System, Design handoff,</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Dated</p><p class="cs-meta-value">February 2026</p></div>
-              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma · Claude</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Role</p><p class="cs-meta-value">Product Designer (solo)</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Type</p><p class="cs-meta-value">UX Research · Design System · Shipped Product</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Status</p><p class="cs-meta-value" style="color:var(--c-orange);font-weight:700;">Live · settlrapp.in</p></div>
+              <div class="cs-meta-item"><p class="cs-meta-label">Tools</p><p class="cs-meta-value">Figma · Figma MCP · Claude · Supabase</p></div>
             </div>
             <div>
               <p class="cs-tag">The Project</p>
-              <h2 class="cs-section-title">Group expense splitting, rebuilt from scratch.</h2>
+              <h2 class="cs-section-title">A research report that turned into a real product.</h2>
               <div class="cs-body">
-                <p>10–day ergonomics study of Splitwise → findings too good to leave in a report → rebuilt the whole thing. New IA, new flows, complete design system, plus a test bed for a Figma MCP + Claude workflow.</p>
+                <p>A 10-day ergonomics study of Splitwise surfaced findings too good to leave in a report, so I rebuilt the whole thing. New IA, new flows, a complete design system built through a Figma MCP + Claude workflow — and then I shipped it. Settlr is now a live, multi-user app on a real backend: create groups with friends, split expenses, settle up.</p>
               </div>
               <div class="cs-highlights">
-                <span class="cs-chip">HTA analysis</span>
-                <span class="cs-chip">SHERPA</span>
-                <span class="cs-chip">NASA-TLX</span>
+                <span class="cs-chip">Live web app</span>
+                <span class="cs-chip">Multi-user</span>
+                <span class="cs-chip">Supabase backend</span>
                 <span class="cs-chip">Full design system</span>
                 <span class="cs-chip">Figma MCP</span>
               </div>
@@ -7457,7 +7457,7 @@
 
           <div class="cs-divider"></div>
 
-          <!-- STATS BLOCK — matches Figma: 57 / 290+ / 40 / 120 / 31 -->
+          <!-- STATS BLOCK — 57 / 290+ / 43 / 120 / 24 -->
           <div class="cs-section" style="padding-bottom:0">
             <p class="cs-tag">By the Numbers</p>
             <div class="cs-stat-row-grid">
@@ -7470,7 +7470,7 @@
                 <p class="cs-stat-big-label">component tokens</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">40</p>
+                <p class="cs-stat-big-num">43</p>
                 <p class="cs-stat-big-label">components built</p>
               </div>
               <div class="cs-stat-grid-item">
@@ -7478,8 +7478,8 @@
                 <p class="cs-stat-big-label">Variants</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">31</p>
-                <p class="cs-stat-big-label">screens designed</p>
+                <p class="cs-stat-big-num">24</p>
+                <p class="cs-stat-big-label">app screens</p>
               </div>
             </div>
           </div>
@@ -7514,9 +7514,9 @@
           <!-- PROTOTYPE VIEWER -->
           <div class="cs-section">
             <p class="cs-tag">Try It</p>
-            <h2 class="cs-section-title">The prototype. 31 screens. Live.</h2>
+            <h2 class="cs-section-title">The real app. Running right here.</h2>
             <div class="cs-body">
-              <p>Click through every flow without leaving the page, or jump to a specific screen with the switcher on the right.</p>
+              <p>This isn't a Figma embed or a screenshot reel — it's the actual Settlr app, driven by the same client router that runs in production. Click through every flow without leaving the page, or jump to a specific screen with the switcher on the right.</p>
             </div>
             <div class="cs-proto-viewer">
               <!-- Left: phone card -->
@@ -7544,7 +7544,7 @@
                 <div class="cs-proto-switcher">
                   <div class="cs-proto-switcher-head">
                     <p class="cs-proto-label">Jump to screen</p>
-                    <p class="cs-proto-count">6 of 31</p>
+                    <p class="cs-proto-count">6 of 24</p>
                   </div>
                   <div class="cs-proto-pills">
                     <button class="cs-proto-pill active" data-slug="home-dashboard">Home</button>
@@ -7557,7 +7557,7 @@
                 </div>
                 <div class="cs-proto-stats">
                   <div class="cs-proto-stats-text">
-                    <p class="cs-proto-stats-num">31</p>
+                    <p class="cs-proto-stats-num">24</p>
                     <p class="cs-proto-stats-label">screens shipped</p>
                   </div>
                   <div class="cs-proto-live">
@@ -7567,6 +7567,36 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="cs-divider"></div>
+
+          <!-- SECTION: From Prototype to Product -->
+          <div class="cs-section">
+            <p class="cs-tag">From Prototype to Product</p>
+            <h2 class="cs-section-title">Then it stopped being a prototype.</h2>
+            <div class="cs-body">
+              <p>A polished design system is one thing. Getting two people's phones to agree on who owes whom is another. So I took Settlr the rest of the way — from a set of static screens to a deployed, multi-user product with a real backend. Every technical decision below exists for a user reason.</p>
+            </div>
+            <div class="cs-stat-cards" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:28px;">
+              <div style="background:var(--c-surface);border-radius:16px;padding:24px;">
+                <p style="font-family:var(--f-heading);font-weight:800;font-size:15px;margin:0 0 8px;">One app, one router</p>
+                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">31 standalone HTML screens collapsed into a single-file SPA — one shell, 24 view modules, a client router with shared transitions and real back-button history. It navigates like a native app, not a slideshow.</p>
+              </div>
+              <div style="background:var(--c-surface);border-radius:16px;padding:24px;">
+                <p style="font-family:var(--f-heading);font-weight:800;font-size:15px;margin:0 0 8px;">A real backend</p>
+                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">Supabase for auth (Google + email) and persistence. A hydrate-then-sync store keeps the UI instant — reads hit an in-memory cache, writes save optimistically and persist in the background.</p>
+              </div>
+              <div style="background:var(--c-surface);border-radius:16px;padding:24px;">
+                <p style="font-family:var(--f-heading);font-weight:800;font-size:15px;margin:0 0 8px;">Shared balances, for real</p>
+                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">Groups, expenses, and settlements are shared across accounts — one canonical row per transaction, scoped so only the people involved can see it. The "shared balance" the research kept pointing to finally has a shared data model behind it.</p>
+              </div>
+              <div style="background:var(--c-surface);border-radius:16px;padding:24px;">
+                <p style="font-family:var(--f-heading);font-weight:800;font-size:15px;margin:0 0 8px;">Add friends before they join</p>
+                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">Ghost contacts, phone matching, and QR/invite links mean you can split with someone who isn't on Settlr yet — and when they sign up, their history merges automatically. Unlink is the safety net.</p>
+              </div>
+            </div>
+            <p style="font-size:12px;color:var(--c-mid);margin-top:16px;padding-left:2px;">Deployed on Cloudflare Pages at <strong>settlrapp.in</strong> · Android TWA in Play Store internal testing · participant-scoped access control, rate-limited lookups, and account deletion built in. <em>v1 tracks balances; it doesn't move money. Real SMS verification and user testing come before public launch.</em></p>
           </div>
 
           <div class="cs-divider"></div>
@@ -7730,7 +7760,7 @@
               <div class="cs-tier-col">
                 <span class="cs-tier-num">03 · Component</span>
                 <p class="cs-tier-name">Scoped to UI</p>
-                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --fab-bg, --chip-bg-on. 40 component files, nothing hardcoded.</p>
+                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --fab-bg, --chip-bg-on. 43 component files, nothing hardcoded.</p>
                 <span class="cs-tier-count">290+ component tokens</span>
               </div>
             </div>
@@ -7811,7 +7841,7 @@
 
             <div style="display:flex; justify-content:space-between; margin-top:56px; border-bottom:1px solid rgba(27,28,26,0.06); padding-bottom:8px;">
               <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid);">Component layer</span>
-              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">290+ tokens · 42 files</span>
+              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">290+ tokens · 43 files</span>
             </div>
 
             <div class="cs-comp-token-card">
@@ -7878,7 +7908,7 @@
             </div>
 
             <!-- Summary Footnote -->
-            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">40 components · Primary, secondary, ghost, and destructive variants · 290+ tokens across 42 files</p>
+            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">43 components · Primary, secondary, ghost, and destructive variants · 290+ tokens across 43 files</p>
           </div>
 
           <div class="cs-divider"></div>
@@ -8006,7 +8036,7 @@
           <!-- SECTION 5: Component Showcase -->
           <div class="cs-section">
             <p class="cs-tag">The Components</p>
-            <h2 class="cs-section-title">40 components. Each traceable to a screen.</h2>
+            <h2 class="cs-section-title">43 components. Each traceable to a screen.</h2>
             <div class="cs-body">
               <p>I designed one variant of each style in Figma. Claude generated the full size scale (SM · MD · LG), pressed states, disabled states, and mapped every semantic token. No repetitive work, just review and approve.</p>
             </div>
@@ -8016,7 +8046,7 @@
               <img src="assets/images/settlr/Components.webp" alt="Settlr Component Library" style="width:100%; height:auto; display:block;">
             </div>
 
-            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Designed in Figma · 40 components · Primary / Secondary / Ghost / Destructive · 290+ tokens</p>
+            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Designed in Figma · 43 components · Primary / Secondary / Ghost / Destructive · 290+ tokens</p>
 
             <!-- Codebase documentation -->
             <div style="margin-top:40px; display:grid; grid-template-columns:1.1fr 1fr; gap:48px; align-items:center;">
@@ -8025,7 +8055,7 @@
               <div>
                 <p style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid); margin-bottom:16px;">Every component documented</p>
                 <p style="font-size:18px; font-weight:700; color:var(--c-dark); line-height:1.4; margin-bottom:14px;">Claude wrote the docs.<br>I approved them.</p>
-                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 40 components has its own <code style="font-size:12px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file covering tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
+                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 43 components has its own <code style="font-size:12px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file covering tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
                 <div style="display:flex; gap:32px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(27,28,26,0.08);">
                   <div>
                     <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">350+</p>
@@ -8345,7 +8375,7 @@
                 <span class="cs-iter-why-num">03</span>
                 <div>
                   <p class="cs-iter-why-title">Code mirrors design exactly</p>
-                  <p class="cs-iter-why-body">Primitive CSS → Semantic CSS → 40 component files. Change one primitive, and it propagates everywhere.</p>
+                  <p class="cs-iter-why-body">Primitive CSS → Semantic CSS → 43 component files. Change one primitive, and it propagates everywhere.</p>
                 </div>
               </div>
             </div>
@@ -8597,12 +8627,12 @@
 
           <div class="cs-divider"></div>
 
-          <!-- SECTION 7: Full Gallery — all 31 screens -->
+          <!-- SECTION 7: Full Gallery — every screen -->
           <div class="cs-section">
-            <p class="cs-tag">All 31 Screens</p>
-            <h2 class="cs-section-title">Every screen. Built in Figma. Exported as code.</h2>
+            <p class="cs-tag">Every Screen</p>
+            <h2 class="cs-section-title">Every screen. Built in Figma. Shipped as code.</h2>
             <div class="cs-body">
-              <p>Auth &amp; Onboarding → Main App → Groups → Add Expense → Settlements. 31 screens. All built.</p>
+              <p>Onboarding → Main App → Groups → Add Expense → Settlements. Every screen designed, built, and running in the live app.</p>
             </div>
 
             <div class="cs-gallery-group" style="margin-top: 40px;">

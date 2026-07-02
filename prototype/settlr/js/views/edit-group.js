@@ -33,6 +33,49 @@
     return new URLSearchParams(location.search).get('id') || 'goa-trip';
   }
 
+  // ── Default-currency picker (mirrors add-amount's currency sheet) ──
+  // The selected code lives on root._egCurrency; onShow seeds it from the group.
+  function currencyByCode(code) {
+    var opts = Store.currencyOptions();
+    return opts.find(function (c) { return c.code === code; }) || opts[0];
+  }
+  function applyCurrency(root, cur) {
+    if (!cur) return;
+    root._egCurrency = cur.code;
+    var label = root.querySelector('#js-eg-currency-label');
+    if (label) label.textContent = cur.symbol + ' ' + cur.code;
+  }
+  function openCurrencySheet(root) {
+    var list = root.querySelector('#js-eg-currency-list');
+    var sel = root._egCurrency;
+    list.innerHTML = Store.currencyOptions().map(function (c) {
+      var s = c.code === sel ? ' is-selected' : '';
+      return '<div class="detail-row detail-row--clickable' + s + '" data-code="' + c.code + '">' +
+        '<span class="detail-row__icon">' + c.symbol + '</span>' +
+        '<div class="detail-row__text">' +
+          '<span class="detail-row__value">' + c.code + '</span>' +
+          '<span class="detail-row__label">' + c.name + '</span>' +
+        '</div>' +
+        '<div class="detail-row__right"><span class="detail-row__radio"><span class="detail-row__radio-dot"></span></span></div>' +
+      '</div>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('.detail-row'), function (el) {
+      el.addEventListener('click', function () {
+        applyCurrency(root, currencyByCode(el.getAttribute('data-code')));
+        closeCurrencySheet(root);
+      });
+    });
+    root.querySelector('#egCurrencySheet').style.display = 'flex';
+  }
+  function closeCurrencySheet(root) {
+    var sheet = root.querySelector('#egCurrencySheet');
+    if (window.SettlrSheetDrag && window.SettlrSheetDrag.close) {
+      window.SettlrSheetDrag.close(sheet, function () { sheet.style.display = 'none'; });
+    } else {
+      sheet.style.display = 'none';
+    }
+  }
+
   function navigateAway() {
     if (window.SettlrRouterSPA) window.SettlrRouterSPA.navigate('home-dashboard');
     else location.replace('home-dashboard');
@@ -206,6 +249,23 @@
       });
     }
 
+    // ── Default-currency picker wiring (idempotent) ──
+    var curBtn = root.querySelector('#js-eg-currency-btn');
+    if (curBtn && !curBtn._wired) {
+      curBtn._wired = true;
+      curBtn.addEventListener('click', function () { openCurrencySheet(root); });
+    }
+    var curClose = root.querySelector('#js-eg-currency-close');
+    if (curClose && !curClose._wired) {
+      curClose._wired = true;
+      curClose.addEventListener('click', function () { closeCurrencySheet(root); });
+    }
+    var curSheet = root.querySelector('#egCurrencySheet');
+    if (curSheet && !curSheet._wired) {
+      curSheet._wired = true;
+      curSheet.addEventListener('click', function (e) { if (e.target === curSheet) closeCurrencySheet(root); });
+    }
+
     // ── Delete group (danger zone) ──
     var deleteRow = root.querySelector('[data-delete-group]');
     if (deleteRow && !deleteRow._wired) {
@@ -239,6 +299,7 @@
           var fields = { memberIds: collectMemberIds(root) };
           if (nameInput) fields.name = nameInput.value.trim();
           if (avatarSpan) fields.emoji = avatarSpan.textContent;
+          if (root._egCurrency) fields.currency = root._egCurrency;
           Store.updateGroup(groupId, fields);
         }
 
@@ -277,6 +338,9 @@
 
     var avatarEl = root.querySelector('#js-group-avatar');
     if (avatarEl) avatarEl.innerHTML = '<span>' + group.emoji + '</span>';
+
+    // Reflect the group's default currency on the chip (falls back to global).
+    applyCurrency(root, currencyByCode(group.currency || Store.currencyCode()));
 
     // Sync the emoji-picker selection highlight to the stored emoji.
     var emojiGrid = root.querySelector('#js-emoji-overlay .emoji-grid');

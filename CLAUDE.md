@@ -30,15 +30,12 @@ Single-file HTML/CSS/JS portfolio for Divyansh Rastogi, product designer (IDC II
 │           ├── treasure-2.png    ← Treasure Referrals: contacts list mockup
 │           └── [13 more unused]  ← see projects/03-refer-earn/docs.md for full list
 ├── prototype/
-│   └── settlr/                   ← mirrored from /Desktop/settlr/ (last sync: 2026-05-02)
+│   └── settlr/                   ← SPA mirror of /Desktop/settlr/ (last sync: 2026-07-01 from Jun-21 build, offline seed-data mode)
+│       ├── index.html            ← SPA shell (24 inlined views); iframe entry = index.html#home-dashboard
+│       ├── js/                   ← router-spa.js + views/* + store.js (supabase neutralized → local seed mode)
+│       ├── css/                  ← component CSS + css/screens/ per-view styles
 │       ├── tokens/               ← primitive + semantic CSS tokens (57 primitives · 290+ semantic)
-│       ├── css/                  ← 42 component CSS files
-│       ├── icons/                ← Phosphor icons (regular/bold/fill, ~1.6MB)
-│       ├── screens/              ← 31 user-facing + 9 dev/preview .html (relative paths resolve via ../)
-│       ├── components/           ← 41 component spec markdown files
-│       ├── references/           ← changelog, design-review-report, etc.
-│       ├── design-system.md      ← master design system reference
-│       └── conventions.md        ← naming + code conventions
+│       └── assets/               ← group covers (webp→jpg), images
 ├── projects/                     ← per-project documentation
 │   ├── 01-kinko/
 │   │   └── docs.md               ← placeholder (content + thumbnail pending)
@@ -259,14 +256,16 @@ All images verified loading in preview (naturalWidth > 0, zero broken). Full sec
 - Hero portrait photo → replace `.photo-placeholder` with `<img>`
 - Footer work links → wire to `#kinko`, `#settlr`, `#refer-earn`
 
-### 🔲 Settlr Prototype Viewer (in-case-study interactive prototype)
-- Files are ready at `prototype/settlr/` — 31 user-facing screens + tokens + css + icons (synced from /Desktop/settlr/ on 2026-05-02)
-- **Still to build:** Add iframe phone frame + screen switcher section to the Settlr case study in `index.html`
-- Approach: a `.cs-section` with a phone-framed `<iframe>` (393×852 aspect ratio) + buttons to switch between key screens
-- Screens to feature in switcher: `home-dashboard.html`, `group-detail.html`, `add-split.html`, `settle-success.html`, `activity.html`, `settle-select.html`
-- iframe `src` set to `prototype/settlr/screens/home-dashboard.html` initially
-- Switcher buttons styled as pills (`.cs-chip` style), update iframe src on click
-- Optional: scale the iframe down (CSS `transform: scale(0.5); transform-origin: top center`) so 393px phone fits in a smaller display area
+### ✅ Settlr Prototype Viewer (DONE — SPA embed)
+- Built. `.cs-section` "Try It" has a phone-framed `<iframe id="settlrProto">` → `prototype/settlr/index.html#home-dashboard`
+- The mirror is now the real **SPA** (not standalone screens). Switcher pills use `data-slug` (+ `data-params` JSON); JS calls `iframe.contentWindow.SettlrRouterSPA.navigate(slug, params)` (same-origin), instant/animated, no reload
+- Runs offline in local seed-data mode (supabase-config neutralized). See MEMORY.md "Settlr prototype" for regen/gotchas
+
+### 🔲 Settlr case study — remaining polish
+- ✅ 2026-07-01: mirror re-synced to Jun-21 source build (onboarding polish — home-dashboard "Get started" checklist + onboarding type-templates now present). 13 landing-screen gallery shots regenerated from the SPA via `screenshot-spa.js` (in /Desktop/settlr).
+- Gallery still hardcodes 4 retired auth tiles (`login`/`otp`/`splash`/`welcome`) — these no longer exist as SPA routes; drop them from the gallery grid in `index.html` (separate content edit)
+- Mid-flow draft tiles (add-*, settle-amount/method, edit-*, create-group-members) keep their prior shots (need flow-seeding to re-capture)
+- Add a "multi-user" visual (two phones / one shared balance) for the new "From Prototype to Product" section
 
 ### 🔲 Alter Ego Dark Page
 - Triggered by flipping the polaroid portrait (3D CSS flip interaction)

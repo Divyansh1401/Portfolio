@@ -133,7 +133,7 @@
           return Render.settlementRow(it, other ? other.name.split(' ')[0] : otherId, it.fromId === meId);
         }
         var net = Store._computeUserNet(it);
-        var contextLabel = Store.getPayerSummary(it).label + ' paid \u00b7 ' + Store.formatINR(it.totalAmount) + ' total';
+        var contextLabel = Store.getPayerSummary(it).label + ' paid \u00b7 ' + Store.formatIn(it.totalAmount, it.currency) + ' total';
         return Render.txnItem(it, net, contextLabel);
       }).join('');
       txnHtml += Render.dateSection(label, itemsHtml);
@@ -166,50 +166,26 @@
     }
 
     // ── Cross-screen navigation targets (re-point each show to this group) ──
+    // The href MUST carry the param: the router intercepts clicks in the CAPTURE
+    // phase and parses the href, which fires before any bubble-phase onclick — so
+    // a bare href (no ?id=) would navigate with empty params and the target view
+    // would lose this group's id. Embedding it in the href is the canonical
+    // pattern (see Render.settlementRow's "settlement-detail?id=").
     function setNav(sel, slug) {
       var el = root.querySelector(sel);
-      if (!el) return;
-      el.onclick = function (ev) {
-        if (window.SettlrRouterSPA) {
-          ev.preventDefault();
-          window.SettlrRouterSPA.navigate(slug, { id: groupId });
-        } else {
-          el.setAttribute('href', slug + '?id=' + groupId);
-        }
-      };
-      if (!window.SettlrRouterSPA) el.setAttribute('href', slug + '?id=' + groupId);
+      if (el) el.setAttribute('href', slug + '?id=' + groupId);
     }
     setNav('.hero-section__actions a[aria-label="Edit group"]', 'edit-group');
 
     // "Add expense" carries this group as context so the flow pre-fills the
     // members and skips the people-picker step (handled in add-amount).
     var addBtn = root.querySelector('.screen-footer a.btn--primary');
-    if (addBtn) {
-      addBtn.onclick = function (ev) {
-        if (window.SettlrRouterSPA) {
-          ev.preventDefault();
-          window.SettlrRouterSPA.navigate('add-amount', { groupId: groupId });
-        } else {
-          addBtn.setAttribute('href', 'add-amount?groupId=' + groupId);
-        }
-      };
-      if (!window.SettlrRouterSPA) addBtn.setAttribute('href', 'add-amount?groupId=' + groupId);
-    }
+    if (addBtn) addBtn.setAttribute('href', 'add-amount?groupId=' + groupId);
 
     // "Settle up" → settle-select SCOPED to this group (groupId, not id) so the
     // whole settle flow stays tagged to the group.
     var settleBtn = root.querySelector('.screen-footer a.btn--secondary');
-    if (settleBtn) {
-      settleBtn.onclick = function (ev) {
-        if (window.SettlrRouterSPA) {
-          ev.preventDefault();
-          window.SettlrRouterSPA.navigate('settle-select', { groupId: groupId });
-        } else {
-          settleBtn.setAttribute('href', 'settle-select?groupId=' + groupId);
-        }
-      };
-      if (!window.SettlrRouterSPA) settleBtn.setAttribute('href', 'settle-select?groupId=' + groupId);
-    }
+    if (settleBtn) settleBtn.setAttribute('href', 'settle-select?groupId=' + groupId);
 
     // Back button → replay the inverse of the transition that brought us here
     // (router-aware). Falls back to home-dashboard for deep-link entries.

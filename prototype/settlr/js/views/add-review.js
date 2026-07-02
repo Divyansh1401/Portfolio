@@ -67,8 +67,8 @@
     }
     var myAmount = amountFor(meId);
 
-    // Route through Store.formatINR so amounts honor the currency preference.
-    function fmt(n) { return Store.formatINR(n); }
+    // Route through Store.formatIn so amounts show in the expense's own currency.
+    function fmt(n) { return Store.formatIn(n, ctx.currency); }
 
     function nameFor(id) {
       if (id === meId) return 'You';
@@ -170,7 +170,8 @@
         date: ctx.date,
         notes: notes,
         groupId: ctx.groupId || null,
-        contactId: ctx.contactIds && ctx.contactIds.length === 1 ? ctx.contactIds[0] : null
+        contactId: ctx.contactIds && ctx.contactIds.length === 1 ? ctx.contactIds[0] : null,
+        currency: ctx.currency || null
       };
       Store.addExpense(expense);
       sessionStorage.removeItem('settlr_new_expense');
