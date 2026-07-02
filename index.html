@@ -5187,6 +5187,100 @@
       color: #fff;
     }
 
+    /* ============================================================
+       Dark editorial variant — "Try It" prototype section
+       Additive: only applies under .cs-proto-section--dark so the
+       light version stays intact if this modifier is removed.
+       ============================================================ */
+    .cs-proto-section--dark {
+      background: var(--c-dark);
+      border-radius: calc(28 * var(--u));
+      padding: calc(64 * var(--u));
+      overflow: hidden;
+    }
+    .cs-proto-section--dark .cs-proto-viewer {
+      margin-top: 0;
+      align-items: flex-start;   /* heading top aligns with frame top edge */
+      gap: calc(56 * var(--u));
+    }
+    /* Phone floats directly on the dark bg — no white card wrapper */
+    .cs-proto-section--dark .cs-proto-card {
+      flex: 0 0 auto;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      align-items: flex-start;
+      gap: calc(18 * var(--u));
+    }
+    .cs-proto-section--dark .cs-proto-caption {
+      color: rgba(255,255,255,0.42);
+      align-self: center;      /* center under the phone frame */
+      text-align: center;
+      max-width: calc(320 * var(--u)); /* matches bezel width so it wraps under the frame */
+    }
+    /* Right column becomes the editorial "article" */
+    .cs-proto-section--dark .cs-proto-right {
+      flex: 1 1 auto;
+      gap: calc(32 * var(--u));
+    }
+    .cs-proto-lede {
+      display: flex;
+      flex-direction: column;
+      gap: calc(20 * var(--u));
+    }
+    .cs-proto-lede .cs-proto-tag { margin-bottom: 0; }
+    .overlay-body[data-case="settlr"] .cs-proto-title,
+    .cs-proto-title {
+      color: var(--c-light);
+      font-size: clamp(calc(34 * var(--u)), 3.6vw, calc(52 * var(--u)));
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .cs-proto-desc {
+      font-size: calc(16 * var(--u));
+      line-height: 1.7;
+      color: var(--c-light);
+      opacity: 0.55;
+      max-width: 44ch;
+      margin: 0;
+    }
+    /* Switcher card — dark elevated surface */
+    .cs-proto-section--dark .cs-proto-switcher {
+      background: rgba(255,255,255,0.04);
+      border: calc(1 * var(--u)) solid rgba(255,255,255,0.10);
+      border-radius: calc(20 * var(--u));
+    }
+    .cs-proto-section--dark .cs-proto-label { color: rgba(255,255,255,0.55); }
+    .cs-proto-section--dark .cs-proto-count { color: rgba(255,255,255,0.4); }
+    .cs-proto-section--dark .cs-proto-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(10 * var(--u));
+    }
+    .cs-proto-section--dark .cs-proto-pill {
+      background: rgba(255,255,255,0.05);
+      border: calc(1 * var(--u)) solid rgba(255,255,255,0.08);
+      color: var(--c-light);
+    }
+    .cs-proto-section--dark .cs-proto-pill::after { background: rgba(255,255,255,0.4); }
+    .cs-proto-section--dark .cs-proto-pill:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .cs-proto-section--dark .cs-proto-pill.active {
+      background: var(--c-orange);
+      border-color: var(--c-orange);
+      color: #1B1C1A;
+    }
+    .cs-proto-section--dark .cs-proto-pill.active::after { background: #1B1C1A; opacity: 0.5; }
+    /* Stats card — bordered so it separates from the section bg */
+    .cs-proto-section--dark .cs-proto-stats {
+      background: rgba(255,255,255,0.04);
+      border: calc(1 * var(--u)) solid rgba(255,255,255,0.10);
+    }
+
     /* Gallery — grouped screen grid */
     .cs-gallery-group { margin-bottom: calc(40 * var(--u)); }
     .cs-gallery-group-label {
@@ -7512,12 +7606,7 @@
           <div class="cs-divider"></div>
 
           <!-- PROTOTYPE VIEWER -->
-          <div class="cs-section">
-            <p class="cs-tag">Try It</p>
-            <h2 class="cs-section-title">The real app. Running right here.</h2>
-            <div class="cs-body">
-              <p>This isn't a Figma embed or a screenshot reel — it's the actual Settlr app, driven by the same client router that runs in production. Click through every flow without leaving the page, or jump to a specific screen with the switcher on the right.</p>
-            </div>
+          <div class="cs-section cs-proto-section--dark">
             <div class="cs-proto-viewer">
               <!-- Left: phone card -->
               <div class="cs-proto-card">
@@ -7537,10 +7626,15 @@
                     </div>
                   </div>
                 </div>
-                <p class="cs-proto-caption">Live, fully clickable. No Figma embed.</p>
+                <p class="cs-proto-caption">Tap around — this is the shipping build, not a mockup.</p>
               </div>
-              <!-- Right: switcher + stats -->
+              <!-- Right: editorial heading + switcher + stats -->
               <div class="cs-proto-right">
+                <div class="cs-proto-lede">
+                  <p class="cs-tag cs-proto-tag">Try It</p>
+                  <h2 class="cs-section-title cs-proto-title">The real app.<br>Running right here.</h2>
+                  <p class="cs-proto-desc">This isn't a Figma embed or a screenshot reel — it's the actual Settlr app, driven by the same client router that runs in production. Click through every flow without leaving the page, or jump to a specific screen below.</p>
+                </div>
                 <div class="cs-proto-switcher">
                   <div class="cs-proto-switcher-head">
                     <p class="cs-proto-label">Jump to screen</p>
@@ -7553,16 +7647,6 @@
                     <button class="cs-proto-pill" data-slug="settle-select">Settle Up</button>
                     <button class="cs-proto-pill" data-slug="settle-success">Settle Success</button>
                     <button class="cs-proto-pill" data-slug="activity">Activity</button>
-                  </div>
-                </div>
-                <div class="cs-proto-stats">
-                  <div class="cs-proto-stats-text">
-                    <p class="cs-proto-stats-num">24</p>
-                    <p class="cs-proto-stats-label">screens shipped</p>
-                  </div>
-                  <div class="cs-proto-live">
-                    <span class="cs-proto-live-dot"></span>
-                    <span class="cs-proto-live-text">LIVE</span>
                   </div>
                 </div>
               </div>
