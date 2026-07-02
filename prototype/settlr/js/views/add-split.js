@@ -100,6 +100,7 @@
       activeIds: participantIds.slice(),
       paidById: ctx.paidById || participantIds[0],
       total: ctx.totalAmount,
+      currency: ctx.currency || null,   // per-expense currency (null ⇒ global)
       splitMode: defaultSplitMode(),
       customSplits: {},
       // Multi-payer map { id: amountPaid }. Default: a single payer covered the
@@ -158,6 +159,7 @@
       root: root,
       participantIds: S.participantIds,
       total: S.total,
+      currency: S.currency,
       getInfo: getInfo,
       payers: S.payers,
       onChange: function () {
@@ -184,8 +186,8 @@
     }
 
     function r2(n) { return Math.round(n * 100) / 100; }
-    // Route through Store.formatINR so amounts honor the currency preference.
-    function fmt(n) { return Store.formatINR(n); }
+    // Route through Store.formatIn so amounts honor this expense's currency.
+    function fmt(n) { return Store.formatIn(n, S.currency); }
     function getInfo(id) {
       if (id === S.me.id) return { name: 'You', initials: S.me.initials || 'ME' };
       var c = Store.getContact(id);
@@ -316,14 +318,14 @@
         : 0;
       // customSplits is stored in INR; amount-mode inputs are entered/shown in
       // the display currency (percent/shares are unitless → no conversion).
-      if (S.splitMode === 'amount') val = Store.fromBase(val);
+      if (S.splitMode === 'amount') val = Store.fromBaseIn(val, S.currency);
       var step = S.splitMode === 'shares' ? '1' : '0.01';
       var roAttr = active ? '' : ' readonly tabindex="-1"';
       var inp = '<input class="amount-input__field" type="number" min="0" step="' + step +
                 '" data-pid="' + id + '" value="' + val + '"' + roAttr + '>';
       var inactiveCls = active ? '' : ' amount-input--inactive js-reactivate';
       var attrs = active ? '' : ' data-pid="' + id + '"';
-      if (S.splitMode === 'amount')  return '<div class="amount-input amount-input--currency' + inactiveCls + '"' + attrs + '><span class="amount-input__icon">' + Store.currencySymbol() + '</span>' + inp + '</div>';
+      if (S.splitMode === 'amount')  return '<div class="amount-input amount-input--currency' + inactiveCls + '"' + attrs + '><span class="amount-input__icon">' + Store.currencySymbolOf(S.currency) + '</span>' + inp + '</div>';
       if (S.splitMode === 'percent') return '<div class="amount-input amount-input--percent' + inactiveCls + '"' + attrs + '>' + inp + '<span class="amount-input__icon">' + iconHolder(SVG_PERCENT) + '</span></div>';
       if (S.splitMode === 'shares')  return '<div class="amount-input amount-input--shares' + inactiveCls + '"' + attrs + '>' + inp + '<span class="amount-input__icon">' + iconHolder(SVG_CHART_PIE_SLICE) + '</span></div>';
     }
@@ -402,7 +404,7 @@
             var typed = parseFloat(inp.value) || 0;
             // Amount mode is typed in the display currency → store INR; percent/
             // shares are unitless and stored as-is.
-            S.customSplits[pid] = (S.splitMode === 'amount') ? Store.toBase(typed) : typed;
+            S.customSplits[pid] = (S.splitMode === 'amount') ? Store.toBaseIn(typed, S.currency) : typed;
             // A share change shifts everyone's net (the payers are fixed), so
             // refresh every row's sublabel, not just this one.
             root.querySelectorAll('.js-share-lbl').forEach(function (lbl) {

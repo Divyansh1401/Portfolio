@@ -63,6 +63,29 @@
     } catch (e) {}
   }
 
+  // Dynamic confirm bottom-sheet (mirrors settings.js confirmSheet) — built on the
+  // fly so no static markup is needed. onConfirm runs only on the confirm action.
+  function confirmSheet(opts, onConfirm) {
+    var overlay = document.createElement('div');
+    overlay.className = 'sheet-overlay';
+    overlay.innerHTML =
+      '<div class="sheet" role="dialog" aria-modal="true">' +
+        '<div class="sheet__handle"><div class="sheet__handle-bar"></div></div>' +
+        '<div class="sheet__header"><span class="sheet__title">' + opts.title + '</span></div>' +
+        '<div class="sheet__content" style="display:flex; flex-direction:column; gap:var(--spacing-12); padding-bottom:var(--spacing-24)">' +
+          (opts.body ? '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">' + opts.body + '</p>' : '') +
+          '<button type="button" class="btn btn--lg btn--full btn--destructive" data-act="confirm"><span class="btn__content">' + (opts.confirmLabel || 'Confirm') + '</span></button>' +
+          '<button type="button" class="btn btn--lg btn--full btn--ghost" data-act="cancel"><span class="btn__content">Cancel</span></button>' +
+        '</div>' +
+      '</div>';
+    function close() { overlay.remove(); }
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay || e.target.closest('[data-act="cancel"]')) { close(); return; }
+      if (e.target.closest('[data-act="confirm"]')) { close(); onConfirm(); }
+    });
+    document.body.appendChild(overlay);
+  }
+
   function init(root, params) {
     // One-time wiring: tab switching + footer scroll detection are attached
     // once here (guarded by flags) so they survive re-shows. Data build runs
@@ -231,36 +254,43 @@
       applyFavourite(favBtn, isFav);
     }
 
-    // ── Cross-screen navigation targets (re-point each show to this contact) ──
-    function setNav(sel, slug) {
-      var el = root.querySelector(sel);
-      if (!el) return;
-      el.onclick = function (ev) {
-        if (window.SettlrRouterSPA) {
-          ev.preventDefault();
-          window.SettlrRouterSPA.navigate(slug, { id: contactId });
-        } else {
-          el.setAttribute('href', slug + '?id=' + contactId);
-        }
-      };
-      if (!window.SettlrRouterSPA) el.setAttribute('href', slug + '?id=' + contactId);
+    // ── Unlink button ── (only for LINKED real-user contacts; wire once)
+    var unlinkBtn = root.querySelector('#js-unlink-btn');
+    if (unlinkBtn) {
+      unlinkBtn._contactId = contactId;
+      unlinkBtn.hidden = !contact.userId;  // ghosts have no userId → nothing to unlink
+      if (!unlinkBtn._wiredUnlink) {
+        unlinkBtn._wiredUnlink = true;
+        unlinkBtn.addEventListener('click', function () {
+          var c = Store.getContact(unlinkBtn._contactId);
+          var nm = (c && c.name) ? c.name.split(' ')[0] : 'this contact';
+          confirmSheet({
+            title: 'Unlink ' + nm + '?',
+            body: 'This removes the connection. You each keep your own copy of the shared history, but you\u2019ll stop sharing new activity.',
+            confirmLabel: 'Unlink'
+          }, function () {
+            if (!(window.Store && Store.unlinkContact)) return;
+            Promise.resolve(Store.unlinkContact(unlinkBtn._contactId)).then(function () {
+              if (window.SettlrRouterSPA) window.SettlrRouterSPA.navigate('people');
+              else location.replace('people');
+            });
+          });
+        });
+      }
     }
-    setNav('.screen-footer a.btn--secondary', 'settle-amount');
+
+    // ── Cross-screen navigation targets (re-point each show to this contact) ──
+    // The href MUST carry the param: the router intercepts clicks in the CAPTURE
+    // phase and parses the href, which fires before any bubble-phase onclick — so
+    // a bare href would navigate with empty params and the target view would lose
+    // this contact's id. settle-amount + add-amount both read `contactId`.
+    var settleBtn = root.querySelector('.screen-footer a.btn--secondary');
+    if (settleBtn) settleBtn.setAttribute('href', 'settle-amount?contactId=' + contactId);
 
     // "Add expense" carries this contact as context so the flow pre-fills the
     // two participants and skips the people-picker step (handled in add-amount).
     var addBtn = root.querySelector('.screen-footer a.btn--primary');
-    if (addBtn) {
-      addBtn.onclick = function (ev) {
-        if (window.SettlrRouterSPA) {
-          ev.preventDefault();
-          window.SettlrRouterSPA.navigate('add-amount', { contactId: contactId });
-        } else {
-          addBtn.setAttribute('href', 'add-amount?contactId=' + contactId);
-        }
-      };
-      if (!window.SettlrRouterSPA) addBtn.setAttribute('href', 'add-amount?contactId=' + contactId);
-    }
+    if (addBtn) addBtn.setAttribute('href', 'add-amount?contactId=' + contactId);
 
     // Back button → replay the inverse of the entry transition (router-aware).
     // Falls back to people for deep-link entries.

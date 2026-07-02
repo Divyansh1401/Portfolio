@@ -12,6 +12,11 @@
    Header Chips component's `.header-chips--compact` modifier
    (css/header-chips.css; zero visual change). No longer scoped here. */
 
+/* Pin the main tab-bar height so the title aligns across Home / Activity /
+   People (matches home-dashboard / activity). The bar only sets min-height and
+   would otherwise differ per tab based on its right-side action. */
+[data-view="people"] .top-app-bar { height: var(--spacing-64); }
+
 /* ── Person List ── */
 [data-view="people"] .person-list { display: flex; flex-direction: column; }
 

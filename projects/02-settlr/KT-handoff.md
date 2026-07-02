@@ -1,6 +1,9 @@
 # KT Document — Settlr Case Study Work
-> Knowledge Transfer for new chat. Date: 2026-04-09 · Updated: 2026-05-02
+> Knowledge Transfer for new chat. Date: 2026-04-09 · Updated: 2026-07-01
 > This picks up from the session that ran out of context.
+
+> **2026-07-01 update — Settlr shipped; case study re-planned around it.**
+> Since the May sync, Settlr went from a static prototype to a **live, deployed, multi-user product**: migrated to a single-file **SPA** (`index.html` shell + 24 `js/views/*` + `router-spa.js`), got a real **Supabase** backend (auth + persistence, live 2026-06-16), and became **multi-user** (shared groups/expenses/settlements via a canonical-row model + participant RLS, ghost contacts, phone/QR/invite discovery, cross-user comments). Deployed to **settlrapp.in** (Cloudflare Pages) and in **Play Store internal testing**. Counts: **43 components · 24 SPA views** (57 primitives / 290+ tokens unchanged). The case study was re-planned **product-first** — see the rewritten `case-study-plan.md` (new §6 "From Prototype to Product" + §10 "Honest Status") and the `2026-07-01` entry in `CHANGELOG.md`. Honesty guardrails: "live web app / internal testing" not "App Store"; OTP still mocked; tracking-only; Settlr usability testing still pending.
 
 > **2026-05-02 update — Settlr prototype + docs sync.**
 > The source `/Users/divyanshrastogi/Desktop/settlr/` advanced significantly between Apr 9 and May 1 (Campaign 1 — 8 new components, ~22 screens swept, `notifications.html` deleted). The website prototype mirror (`/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/`) was fully resynced via rsync `--delete` on screens/, css/, tokens/, icons/, js/. New: `components/` markdown docs (41 files), `references/`, `design-system.md`, `conventions.md` were also copied into the prototype folder for reference. Stale stats across `index.html` and the docs in this folder were updated to reflect: **40 components · 31 screens · 57 color primitives · 290+ semantic tokens · 42 CSS files**. See `CHANGELOG.md` in this folder for the full Apr 29 → May 1 delta.

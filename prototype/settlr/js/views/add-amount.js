@@ -63,11 +63,28 @@
     'Gifts':         ['gift','birthday','anniversary','present','wedding gift','bouquet','cake']
   };
 
+  // ── Currency data ───────────────────────────────────────
+  // Each expense carries its OWN currency (stored on the draft → expense). The
+  // typed amount is converted to INR via Store.toBaseIn(amt, code); the prefix +
+  // chip reflect the chosen code. Defaults to the global Settings currency.
+  var CURRENCIES = Store.currencyOptions();
+  function currencyByCode(code) {
+    return CURRENCIES.find(function (c) { return c.code === code; }) || CURRENCIES[0];
+  }
+
   // ── Per-view mutable state ──────────────────────────────
-  // Currency is global (Settings preference) — no per-expense currency picker.
   var selectedCategory = { emoji: '📝', label: 'Other' };
+  var selectedCurrency = CURRENCIES[0];
   var userPickedManually = false;
   var viewportHandler = null;   // visualViewport handler ref (for teardown)
+
+  function applyCurrency(root, cur) {
+    selectedCurrency = cur;
+    var label = root.querySelector('#js-currency-label');
+    if (label) label.textContent = cur.symbol + ' ' + cur.code;
+    var prefix = root.querySelector('.amount-prefix');
+    if (prefix) prefix.textContent = cur.symbol;
+  }
 
   function detectCategory(text) {
     var lower = text.toLowerCase();
@@ -157,7 +174,8 @@
       var title = root.querySelector('#js-title').value.trim();
       if (!title) { alert('Add a title for this expense'); return; }
       var draft = {
-        totalAmount: Store.toBase(amt), // typed in display currency → store INR
+        totalAmount: Store.toBaseIn(amt, selectedCurrency.code), // typed in expense currency → store INR
+        currency: selectedCurrency.code,
         title: title,
         category: selectedCategory.label,
         emoji: selectedCategory.emoji,
@@ -233,6 +251,39 @@
       }
     };
 
+    // ── Currency sheet (same pattern as the category sheet) ──
+    window.openCurrencySheet = function () {
+      var list = root.querySelector('#js-currency-list');
+      list.innerHTML = CURRENCIES.map(function (c) {
+        var sel = c.code === selectedCurrency.code ? ' is-selected' : '';
+        return '<div class="detail-row detail-row--clickable' + sel + '" data-code="' + c.code + '">' +
+          '<span class="detail-row__icon">' + c.symbol + '</span>' +
+          '<div class="detail-row__text">' +
+            '<span class="detail-row__value">' + c.code + '</span>' +
+            '<span class="detail-row__label">' + c.name + '</span>' +
+          '</div>' +
+          '<div class="detail-row__right"><span class="detail-row__radio"><span class="detail-row__radio-dot"></span></span></div>' +
+        '</div>';
+      }).join('');
+      Array.prototype.forEach.call(list.querySelectorAll('.detail-row'), function (el) {
+        el.addEventListener('click', function () { window.selectCurrency(el.getAttribute('data-code')); });
+      });
+      root.querySelector('#currencySheet').style.display = 'flex';
+    };
+    window.selectCurrency = function (code) {
+      applyCurrency(root, currencyByCode(code));
+      window.closeCurrencySheet();
+    };
+    window.closeCurrencySheet = function (e) {
+      var sheet = root.querySelector('#currencySheet');
+      if (e && e.target !== sheet) return;
+      if (window.SettlrSheetDrag && window.SettlrSheetDrag.close) {
+        window.SettlrSheetDrag.close(sheet, function () { sheet.style.display = 'none'; });
+      } else {
+        sheet.style.display = 'none';
+      }
+    };
+
   }
 
   // ── Show: repopulate from draft, reset transient state, attach viewport ──
@@ -254,14 +305,23 @@
     if (params && params.groupId) root._expenseOrigin = { groupId: params.groupId };
     else if (params && params.contactId) root._expenseOrigin = { contactId: params.contactId };
 
-    // Amount symbol follows the global settings currency (amounts are typed in
-    // the chosen display currency; stored as INR via Store.toBase).
-    var prefixEl = root.querySelector('.amount-prefix');
-    if (prefixEl) prefixEl.textContent = Store.currencySymbol();
-
-    // Repopulate from any existing draft (stored INR → show in display currency)
+    // Repopulate from any existing draft (stored INR → show in expense currency)
     var draft = null;
     try { draft = JSON.parse(sessionStorage.getItem('settlr_new_expense') || 'null'); } catch (e) { draft = null; }
+
+    // Currency precedence: the draft's own currency (back-revisit) wins; else
+    // the origin group's default currency (so expenses added to a group inherit
+    // it); else the global Settings currency. Sets chip + prefix.
+    var startCode;
+    if (draft && draft.currency) {
+      startCode = draft.currency;
+    } else if (root._expenseOrigin && root._expenseOrigin.groupId) {
+      var og = Store.getGroup(root._expenseOrigin.groupId);
+      startCode = (og && og.currency) ? og.currency : Store.currencyCode();
+    } else {
+      startCode = Store.currencyCode();
+    }
+    applyCurrency(root, currencyByCode(startCode));
 
     // No draft yet = the START of a fresh add-expense flow. Mark the history
     // depth so add-review can collapse the whole wizard out of the back stack on
@@ -272,7 +332,7 @@
     }
 
     if (draft) {
-      amtInput.value = (draft.totalAmount != null) ? String(Store.fromBase(draft.totalAmount)) : '';
+      amtInput.value = (draft.totalAmount != null) ? String(Store.fromBaseIn(draft.totalAmount, startCode)) : '';
       titleInput.value = draft.title || '';
       if (draft.category) {
         var cat = CATEGORIES.find(function (c) { return c.label === draft.category; });
@@ -301,13 +361,17 @@
       var vv = window.visualViewport;
       if (!vv) return;
       var keyboardH = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      if (keyboardH > 50) {
+      var open = keyboardH > 50;
+      if (open) {
         cta.style.bottom = keyboardH + 'px';
         cta.style.paddingBottom = 'var(--spacing-12)';
       } else {
         cta.style.bottom = '0px';
         cta.style.paddingBottom = 'var(--spacing-32)';
       }
+      // Drives the keyboard-open content reflow in css/screens/add-amount.css
+      // (amount → category chip → title stacked snug under the steps).
+      root.classList.toggle('is-kbd', open);
     };
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', viewportHandler);
@@ -322,6 +386,7 @@
       window.visualViewport.removeEventListener('scroll', viewportHandler);
     }
     viewportHandler = null;
+    root.classList.remove('is-kbd');
     var catSheet = root.querySelector('#categorySheet');
     var curSheet = root.querySelector('#currencySheet');
     if (catSheet) catSheet.style.display = 'none';

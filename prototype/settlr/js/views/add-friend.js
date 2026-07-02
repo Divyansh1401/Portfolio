@@ -40,7 +40,9 @@
     }
     return 'divyansh';
   }
-  function inviteUrl() { return 'https://settlr.app/invite/' + currentHandle(); }
+  function inviteUrl() { return location.origin + '/invite/' + currentHandle(); }
+  // Display form (no scheme), e.g. "settlrapp.in/invite/divyansh".
+  function inviteDisplay() { return location.origin.replace(/^https?:\/\//, '') + '/invite/' + currentHandle(); }
 
   function state(root) {
     if (!root._addFriendState) root._addFriendState = { rows: [], copyTimer: null };
@@ -52,7 +54,7 @@
   function hydrateInvite(root) {
     var handle = currentHandle();
     var urlEl = root.querySelector('#js-af-invite-url');
-    if (urlEl) urlEl.textContent = 'settlr.app/invite/' + handle;
+    if (urlEl) urlEl.textContent = inviteDisplay();
     var idEl = root.querySelector('#js-af-qr-id');
     if (idEl) idEl.textContent = '@' + handle;
     var img = root.querySelector('#js-af-qr-img');

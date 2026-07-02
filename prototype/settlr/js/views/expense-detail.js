@@ -51,7 +51,7 @@
 
     // Hero
     root.querySelector('.expense-hero__category').textContent = exp.emoji + ' ' + (exp.category || '');
-    root.querySelector('.expense-hero__amount').textContent = Store.formatINR(exp.totalAmount);
+    root.querySelector('.expense-hero__amount').textContent = Store.formatIn(exp.totalAmount, exp.currency);
     root.querySelector('.expense-hero__desc').textContent = exp.title;
     var d = new Date(exp.date + 'T00:00:00');
     var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -69,12 +69,12 @@
     } else if (net.direction === 'lent') {
       balEl.className = 'balance-pill balance-pill--lent text-title-sm';
       balLabel.textContent = 'You get back';
-      balAmount.textContent = Store.formatINR(net.amount);
+      balAmount.textContent = Store.formatIn(net.amount, exp.currency);
       balAmount.className = 'balance-pill__amount text-amount-sm';
     } else {
       balEl.className = 'balance-pill balance-pill--owe text-title-sm';
       balLabel.textContent = 'You owe';
-      balAmount.textContent = Store.formatINR(net.amount);
+      balAmount.textContent = Store.formatIn(net.amount, exp.currency);
       balAmount.className = 'balance-pill__amount text-amount-sm';
     }
 
@@ -101,7 +101,7 @@
     }
     // Row 1: Paid by (multi-payer aware)
     rows[1].querySelector('.detail-row__value').textContent =
-      Store.getPayerSummary(exp).label + ' paid ' + Store.formatINR(exp.totalAmount);
+      Store.getPayerSummary(exp).label + ' paid ' + Store.formatIn(exp.totalAmount, exp.currency);
     // Row 2: Date
     rows[2].querySelector('.detail-row__value').textContent =
       d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -124,10 +124,10 @@
       var amtClass, amtText;
       if (net > 0.005) {
         amtClass = 'split-person__amount--lent';
-        amtText = 'gets back ' + Store.formatINR(net);
+        amtText = 'gets back ' + Store.formatIn(net, exp.currency);
       } else if (net < -0.005) {
         amtClass = 'split-person__amount--owe';
-        amtText = 'owes ' + Store.formatINR(-net);
+        amtText = 'owes ' + Store.formatIn(-net, exp.currency);
       } else {
         amtClass = 'split-person__amount--self';
         amtText = 'settled';
@@ -164,6 +164,14 @@
       return dd.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
     }
 
+    // Escape user-authored strings — comments are now CROSS-USER (a co-participant's
+    // text/name renders in my DOM), so unescaped innerHTML would be stored XSS.
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     function renderComments() {
       var comments = Store.getComments(id);
       var list = root.querySelector('#comments-list');
@@ -179,18 +187,18 @@
           ? { name: 'You', initials: user.initials }
           : (function () {
               var ct = Store.getContact(c.authorId);
-              return ct ? { name: ct.name, initials: ct.initials } : { name: c.authorId, initials: '?' };
+              return ct ? { name: ct.name, initials: ct.initials } : { name: 'Someone', initials: '?' };
             })();
         var item = document.createElement('div');
         item.className = 'comment-item';
         item.innerHTML =
-          '<div class="comment-item__avatar">' + author.initials + '</div>' +
+          '<div class="comment-item__avatar">' + esc(author.initials) + '</div>' +
           '<div class="comment-item__body">' +
             '<div class="comment-item__meta">' +
-              '<span class="comment-item__name">' + author.name + '</span>' +
-              '<span class="comment-item__time">' + _relativeTime(c.createdAt) + '</span>' +
+              '<span class="comment-item__name">' + esc(author.name) + '</span>' +
+              '<span class="comment-item__time">' + esc(_relativeTime(c.createdAt)) + '</span>' +
             '</div>' +
-            '<p class="comment-item__text">' + c.text + '</p>' +
+            '<p class="comment-item__text">' + esc(c.text) + '</p>' +
           '</div>';
         list.appendChild(item);
       });

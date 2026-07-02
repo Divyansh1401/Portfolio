@@ -65,14 +65,18 @@
       var u = Store.getCurrentUser() || {};
       if (u.handle) handle = String(u.handle).replace(/^@/, '');
     }
-    return 'https://settlr.app/invite/' + handle;
+    return location.origin + '/invite/' + handle;
+  }
+  // Display form of the invite URL (no scheme), e.g. "settlrapp.in/invite/divyansh".
+  function inviteDisplay(handle) {
+    return location.origin.replace(/^https?:\/\//, '') + '/invite/' + handle;
   }
   function hydrateInvite(root) {
     if (!(window.Store && Store.getCurrentUser)) return;
     var u = Store.getCurrentUser() || {};
     var handle = u.handle ? String(u.handle).replace(/^@/, '') : 'divyansh';
     var urlEl = root.querySelector('#js-onb-invite-url');
-    if (urlEl) urlEl.textContent = 'settlr.app/invite/' + handle;
+    if (urlEl) urlEl.textContent = inviteDisplay(handle);
     var nameEl = root.querySelector('#js-onb-qr-name');
     if (nameEl && u.name) nameEl.textContent = u.name;
     var subEl = root.querySelector('#js-onb-qr-sub');
@@ -143,27 +147,73 @@
     var b = parts.length > 1 ? parts[parts.length - 1][0] : '';
     return ((a + b).toUpperCase()) || '?';
   }
-  function pickedRow(c) {
+  // Last-10-digit canonical form — mirrors Store._normalizePhone + the server-side
+  // normalization in find_users_by_phones, so a pick maps back to its match_phone.
+  function normPhone(raw) { return String(raw == null ? '' : raw).replace(/\D/g, '').slice(-10); }
+
+  function personRow(name, sub) {
     return '<div class="person-item">' +
-      '<div class="avatar avatar--initials avatar--md">' + escapeHtml(initialsOf(c.name)) + '</div>' +
+      '<div class="avatar avatar--initials avatar--md">' + escapeHtml(initialsOf(name)) + '</div>' +
       '<div class="person-item__text">' +
-        '<p class="person-item__name text-title-sm">' + escapeHtml(c.name) + '</p>' +
-        (c.phone ? '<p class="person-item__subtext text-body-xs">' + escapeHtml(c.phone) + '</p>' : '') +
+        '<p class="person-item__name text-title-sm">' + escapeHtml(name) + '</p>' +
+        (sub ? '<p class="person-item__subtext text-body-xs">' + escapeHtml(sub) + '</p>' : '') +
       '</div>' +
     '</div>';
   }
-  // Replace the mock matched/unmatched list with the contacts the OS actually
-  // returned. On-Settlr status is unknown without the directory backend (see the
-  // Settlr ID section in TODO.md), so they're shown plainly as "Added from contacts".
-  function renderPicked(root, picked) {
+  // Render the import result split into two sections: people already on Settlr
+  // (auto-connected on Continue) and people to invite. Reads s.matched / s.unmatched.
+  function renderImport(root) {
+    var s = state(root);
     var list = root.querySelector('#js-onb-import-list');
     if (!list) return;
-    list.innerHTML =
-      '<div class="heading"><span class="heading__title text-heading-md">Added from contacts</span></div>' +
-      picked.map(pickedRow).join('') +
-      '<p class="onb-noresult text-body-sm" id="js-onb-import-empty" hidden>No contacts match your search.</p>';
+    var matched = s.matched || [], unmatched = s.unmatched || [];
+    var html = '';
+    if (matched.length) {
+      html += '<div class="heading"><span class="heading__title text-heading-md">On Settlr</span></div>';
+      html += matched.map(function (m) {
+        return personRow(m.name || m.handle, m.handle ? '@' + String(m.handle).replace(/^@/, '') : m.phone);
+      }).join('');
+    }
+    if (unmatched.length) {
+      html += '<div class="heading"><span class="heading__title text-heading-md">Invite to Settlr</span></div>';
+      html += unmatched.map(function (u) { return personRow(u.name, u.phone); }).join('');
+    }
+    if (!matched.length && !unmatched.length) {
+      html = '<p class="onb-noresult text-body-sm">No contacts selected.</p>';
+    }
+    list.innerHTML = html;
     var summary = root.querySelector('.onb-import-summary');
-    if (summary) summary.textContent = picked.length + (picked.length === 1 ? ' contact added' : ' contacts added');
+    if (summary) {
+      var parts = [];
+      if (matched.length) parts.push(matched.length + ' on Settlr');
+      if (unmatched.length) parts.push(unmatched.length + ' to invite');
+      summary.textContent = parts.join(' · ') || 'No contacts added';
+    }
+  }
+  // Partition real picked contacts into matched (registered) vs unmatched, using
+  // the batch phone-match results keyed by normalized phone.
+  function processPicks(root, mapped, results) {
+    var s = state(root);
+    var byPhone = {};
+    (results || []).forEach(function (r) { if (r.phone) byPhone[r.phone] = r; });
+    var matched = [], unmatched = [];
+    mapped.forEach(function (c) {
+      var prof = byPhone[normPhone(c.phone)];
+      if (prof && prof.id) {
+        matched.push({ id: prof.id, name: prof.name || c.name, handle: prof.handle, photo: prof.photo, phone: c.phone });
+      } else {
+        unmatched.push({ name: c.name, phone: c.phone });
+      }
+    });
+    s.isMock = false; s.matched = matched; s.unmatched = unmatched;
+    renderImport(root);
+  }
+  // Desktop / no-picker / nothing-picked fallback — show the mock matched set for
+  // visual parity (mocks have no real profile id, so they persist via addContact).
+  function loadMock(root) {
+    var s = state(root);
+    s.isMock = true; s.matched = IMPORTED.slice(); s.unmatched = []; s.picked = null;
+    renderImport(root);
   }
 
   // ── Import from Contacts → OS prompt → result → persist → home ──
@@ -177,21 +227,28 @@
   }
   function grantContacts(root) {
     closeOsPrompt(root);
-    var s = state(root);
     // Real Contact Picker only on Chrome-Android over HTTPS. When it returns real
-    // contacts we render + persist THOSE; otherwise we fall back to the mock list.
+    // contacts we phone-match them against registered users (matched → auto-connect,
+    // unmatched → invite); otherwise we fall back to the mock list.
     if (navigator.contacts && navigator.contacts.select) {
       navigator.contacts.select(['name', 'tel'], { multiple: true })
         .then(function (picked) {
           var mapped = (picked || []).map(function (c) {
             return { name: (c.name && c.name[0]) || '', phone: (c.tel && c.tel[0]) || '' };
           }).filter(function (c) { return c.name; });
-          if (mapped.length) { s.picked = mapped; renderPicked(root, mapped); }
           showPanel(root, 'import');
+          if (mapped.length && window.Store && Store.findUsersByPhones) {
+            state(root).picked = mapped;
+            Store.findUsersByPhones(mapped.map(function (c) { return c.phone; }))
+              .then(function (results) { processPicks(root, mapped, results); });
+          } else {
+            loadMock(root);
+          }
         })
-        .catch(function () { showPanel(root, 'import'); });
+        .catch(function () { showPanel(root, 'import'); loadMock(root); });
     } else {
       showPanel(root, 'import');
+      loadMock(root);
     }
   }
   function wireImport(root) {
@@ -209,15 +266,16 @@
     var cont = root.querySelector('#js-onb-import-continue');
     if (cont) cont.addEventListener('click', function () {
       var s = state(root);
-      if (!s.imported && window.Store && Store.addContact) {
-        if (s.picked && s.picked.length) {
-          // Real device contacts — on-Settlr status unverified (no directory yet).
-          s.picked.forEach(function (c) { Store.addContact({ name: c.name, phone: c.phone }); });
-        } else {
-          // No real picker result — persist the mock matched set (visual parity).
-          IMPORTED.forEach(function (f) {
+      if (!s.imported && window.Store) {
+        if (s.isMock) {
+          // Mock matches have no real profile id → persist as on-Settlr contacts.
+          if (Store.addContact) IMPORTED.forEach(function (f) {
             Store.addContact({ name: f.name, phone: f.phone, handle: f.handle, onSettlr: true });
           });
+        } else {
+          // Real matches auto-connect (open consent); the rest become plain contacts.
+          (s.matched || []).forEach(function (m) { if (m.id && Store.connect) Store.connect(m); });
+          (s.unmatched || []).forEach(function (u) { if (Store.addContact) Store.addContact({ name: u.name, phone: u.phone }); });
         }
         s.imported = true;
       }

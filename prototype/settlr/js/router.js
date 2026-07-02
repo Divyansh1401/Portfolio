@@ -72,12 +72,6 @@
     'settle-method':          { type: 'modal-step' },
     'settle-success':         { type: 'modal-step' },
     'add-friend':             { type: 'modal' },
-
-    // Sub-pickers — overlay the caller, slide up.
-    'ss-add-amount-category': { type: 'modal' },
-    'ss-add-amount-currency': { type: 'modal' },
-    'ss-add-split-payer':     { type: 'modal' },
-    'ss-edit-group-emoji':    { type: 'modal' },
     'search':                 { type: 'modal' },
 
     // Auth (fade)

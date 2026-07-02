@@ -184,6 +184,15 @@
 [data-view="edit-group"] .sheet-overlay { display: none; }
 [data-view="edit-group"] .sheet-overlay.is-open { display: flex; }
 
+/* ── Default-currency sheet rows → shared Detail Row component ──
+   Rows reuse the shared .detail-row look (css/detail-row.css); only the list
+   wrapper padding + the row's horizontal inset are screen-local. */
+[data-view="edit-group"] .currency-list { padding: var(--spacing-8) 0; }
+[data-view="edit-group"] .currency-list .detail-row {
+  padding-left: var(--spacing-16);
+  padding-right: var(--spacing-16);
+}
+
 /* ── Confirm sheet body copy (screen-unique) ──
    text style via .text-body-md in markup (14/23 regular vs original 14/22;
    +1px line-height delta — flagged). Only color + reset margin live here. */

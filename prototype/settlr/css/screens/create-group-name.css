@@ -17,10 +17,9 @@
        96px upload tile also appears on other group-creation steps).
      - .type-section / .type-section__label / .type-grid → candidate
        "field-group" + grid wrapper for the type-chip grid; .type-grid is a
-       layout shell for the existing .type-chip component. (Note: this screen's
-       current markup has no type-chips rendered — the grid wrapper rules are
-       carried over verbatim from the original inline <style> with no visual
-       change, since nothing fills them today.)
+       layout shell for the existing .type-chip component. (As of 2026-06-18 the
+       grid IS populated — group-type templates Trip/Roommates/Couple/Event/Other
+       render as .type-chip tiles, wired in js/views/create-group-name.js.)
 
    NON-TOKEN VALUES (kept exact to guarantee zero visual change; flagged)
    ---------------------------------------------------------------------
@@ -74,4 +73,15 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--spacing-8);
+}
+
+/* ── Default-currency picker ──
+   The chip hugs its content inside the flex-column .input-field; the
+   currency-list sheet rows reuse the shared .detail-row look
+   (css/detail-row.css), only the list padding + horizontal inset are local. */
+[data-view="create-group-name"] .currency-chip { align-self: flex-start; }
+[data-view="create-group-name"] .currency-list { padding: var(--spacing-8) 0; }
+[data-view="create-group-name"] .currency-list .detail-row {
+  padding-left: var(--spacing-16);
+  padding-right: var(--spacing-16);
 }

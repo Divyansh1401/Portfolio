@@ -156,8 +156,9 @@
       emoji: s.ctx.emoji || '📝',
       memberIds: memberIds
     };
-    // Carry the optional group photo picked in step 1 (create-group-name).
+    // Carry the optional group photo + default currency picked in step 1.
     if (s.ctx.photo) group.photo = s.ctx.photo;
+    if (s.ctx.currency) group.currency = s.ctx.currency;
     var newId = Store.addGroup(group);
 
     // Clear the transient group draft now that the group is persisted.

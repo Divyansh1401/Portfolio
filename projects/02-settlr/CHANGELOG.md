@@ -6,6 +6,45 @@
 
 ---
 
+## 2026-07-01 — Shipped-Product Resync (SPA + Supabase + Multi-User)
+
+### Context
+Since the May sync, Settlr stopped being a static design prototype and became a **live, deployed, multi-user product**. The source repo migrated the app architecture, added a real backend, and shipped. The portfolio docs + case study were frozen at the Campaign 1 (static-screens) state; this release re-plans the case study around the "shipped real product" arc and brings all Settlr docs current.
+
+### App changes being documented (from `settlr/` MEMORY + `references/changelog.md`)
+- **Architecture: static → SPA.** 31 standalone `screens/*.html` collapsed into a single-file SPA — `index.html` shell + **24 `js/views/*`** + `js/router-spa.js` (client router, shared view transitions, real history). Old standalone screens retired.
+- **Backend live (2026-06-16).** Supabase — auth (Google OAuth + email/password), persistence, **hydrate-then-sync** store (`js/store.js`): synchronous getters, optimistic local writes, serialized fire-and-forget remote writes.
+- **Multi-user shared ledger.** Groups, expenses, and settlements are shared across real accounts via a **canonical-row model** with participant-scoped RLS (owner-or-participant SELECT, owner/author-only writes). Cross-user **comments** (XSS-hardened).
+- **Identity & discovery.** Verified phone as identity key (OTP currently **mocked** `123456`); **ghost contacts** (add-before-join, auto-merge/rekey on signup, unlink safety net, duplicate-contact fold); contact-picker import + **QR / invite links** with auto-connect.
+- **Security posture.** Participant RLS isolation A/B/C tested; rate-limited handle/phone/ghost lookups; account-deletion Edge Function; Digital Asset Links live.
+- **Onboarding polish.** Group templates (`type-chip`), get-started checklist, empty-state icons.
+- **Deployed.** Cloudflare Pages at **settlrapp.in**; Android TWA (`in.settlrapp.twa`) in **Play Store internal testing** (not public).
+
+### Count drift corrected
+- Components: 40 → **43** component specs
+- Screens: 31 standalone screens → **24 SPA views** (+ standalone auth screens: login / signup / complete-profile)
+- Tokens: **57** color primitives / **290+** semantic — unchanged
+
+### Docs Updated
+- `case-study-plan.md` — **rewritten** around the product-first arc: new thesis, two new sections (§6 "From Prototype to Product", §10 "Honest Status"), reframed hook/stats/prototype/gallery, honesty guardrails (internal-testing not App-Store, OTP mocked, tracking-only, Settlr user-testing still pending).
+- `project-docs.md` — Act 3/4 execution chapter, corrected component/screen counts, SPA + Supabase + multi-user architecture, source-files table.
+- `KT-handoff.md` — 2026-07-01 update banner pointing here.
+- `index.html` — Settlr case study stats + new shipped/multi-user narrative + prototype/gallery copy (site).
+- portfolio `CLAUDE.md` — Settlr file-tree + pending-work refreshed (prototype viewer already built; app is SPA).
+
+### Honesty guardrails (carried into all copy)
+- "Live web app / in internal testing" — **not** "on the App Store".
+- Real SMS OTP still mocked; **v1 is tracking-only** (no money movement).
+- Research is on Splitwise; Settlr decisions are **designed-to-solve, traceable to research**, not yet user-validated.
+
+### Prototype mirror re-sync (embedded iframe)
+- `prototype/settlr/` re-synced from the **Jun-21 source build** (was frozen at Jun-17). Brings in the onboarding polish: home-dashboard **"Get started" checklist** + onboarding **group-type templates** (type-chip). Updated `js/` (views + store/render/router), `css/`, and the inlined-views `index.html`.
+- Portfolio patches re-applied: `<base>` shim, stripped PWA head block + `pwa.js`/`feedback.js` script tags + supabase/CDN preconnects, `supabase-config.js` kept neutralized (`YOUR_*` → offline seed mode), `store.js` asset paths rewritten relative (group covers webp→jpg).
+- Verified in-iframe offline: boots to home-dashboard, `SettlrAuth.configured===false`, router + view transitions work, **zero broken images**, checklist + 15 onboarding type-chips present, no console errors.
+- **13 landing-screen gallery shots regenerated** from the SPA (2× webp) via `screenshot-spa.js`. Mid-flow draft tiles and 4 retired auth tiles (login/otp/splash/welcome) left as-is.
+
+---
+
 ## 2026-05-02 — Prototype + Docs Resync
 
 ### Context

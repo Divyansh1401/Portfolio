@@ -36,6 +36,14 @@
   flex-shrink: 0;
 }
 
+/* ---- Emoji illustration (fills the illustration slot in place of the box) ---- */
+/* 24px glyph size is a documented emoji exception (no icon token drives emoji). */
+.type-chip__emoji {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 /* ---- Label ---- */
 .type-chip__name {
   font-family: var(--font-body);

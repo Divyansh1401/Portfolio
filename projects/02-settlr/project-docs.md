@@ -1,12 +1,12 @@
 # Settlr — Full Project Documentation
 > Unified record of the complete arc: Splitwise research → Settlr redesign.
 > Source of truth for case study copy. Updated with design rationale, story arc, and research-to-decision mappings.
-> Last updated: 2026-05-02 (post Campaign 1: design system grew to 40 components, prototype synced)
+> Last updated: 2026-07-01 (post June migration: static prototype → live SPA + Supabase backend + multi-user shared ledger, deployed at settlrapp.in)
 
 ---
 
 ## Project Arc (One-Line Summary)
-A college ergonomics study of Splitwise revealed real usability failures, so instead of stopping at a report, the findings were used to build Settlr: an independent redesign of the group expense splitting experience, complete with a 40-component design system and 31 built screens.
+A college ergonomics study of Splitwise revealed real usability failures, so instead of stopping at a report, the findings were used to build Settlr — an independent redesign of group expense splitting that grew from a research report into a 43-component design system and then shipped as a **live, multi-user product**: a single-file SPA on a real Supabase backend, deployed at settlrapp.in and packaged for the Play Store (internal testing).
 
 ---
 
@@ -20,9 +20,16 @@ It started with Splitwise's Add Expense flow. The split method selector was buri
 The research was complete. The findings could have lived in a report. Instead, Settlr became the answer to a bigger question: *can you build a production-quality design system and 30+ screens solo, using AI as the executor rather than the author?* The app wasn't the point. It was the test environment. Settlr was built to learn how a 3-tier token system actually works in practice, and to figure out what a disciplined Figma MCP + Claude workflow looks like when the designer stays in control.
 
 ### Act 3 — Execution (the build)
-The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values, every color, spacing, and radius tracing back through the token system. From there, the system scaled: **40 components, 31 screens, 290+ semantic tokens** across **42 component CSS files**, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research. The app itself is still in progress; user testing is planned once the build is complete.
+The workflow compressed what would have been months of solo design work into weeks. The "click moment" was the first component that came out of Claude with zero hardcoded values, every color, spacing, and radius tracing back through the token system. From there, the system scaled: **43 components, 290+ semantic tokens**, all connected. Every design decision in the app traces back to a specific failure observed in the Splitwise research.
 
 > **Campaign 1 (2026-04-29 → 2026-05-01):** Eight new components shipped in a single sweep (`hero-section`, `toggle`, `settings-row`, `detail-row`, `notes-card`, `summary-card`, `success-state`, `invite-banner`), plus avatar `--xl`, icon-btn `--overlay`, the `confetti` utility, and two new patterns (`screen-footer`, `update-item`). 22 screens were swept and ~150 custom one-off classes were consolidated back into the system. The `notifications` screen was deleted; all events now flow through the Activity screen via an "Updates" filter chip. One screen, one mental model.
+
+### Act 4 — Shipping (prototype → product)
+Then the experiment stopped being an experiment. Between mid-May and late June the app was rebuilt from a set of **31 standalone HTML screens into a single-file SPA** (`index.html` shell + **24 `js/views/*`** + a client `router-spa.js` with shared view transitions and real history) and given a **real backend**. As of 2026-06-16 Settlr runs on **Supabase** with real auth (Google OAuth + email/password) and a **hydrate-then-sync store** — synchronous getters over an in-memory cache, optimistic local writes, serialized fire-and-forget remote persistence.
+
+The defining leap was making it **multi-user**. Groups, expenses, and settlements are now shared across real accounts using a **canonical-row model** (one row per transaction, participant-scoped RLS: owner-or-participant can read, owner/author can write). This is the structural answer to the Splitwise research — the "shared balance" mental model finally has a shared data model behind it. Around it: **ghost contacts** (add someone before they join; auto-merge/rekey on signup; unlink as the safety net; duplicate-contact fold), phone/QR/**invite-link** discovery with auto-connect, and cross-user **comments**. Security was treated as a first-class concern: participant RLS isolation was A/B/C tested, handle/phone/ghost lookups are rate-limited, cross-user strings are XSS-escaped, and account deletion runs through a dedicated Edge Function.
+
+It's **deployed** — Cloudflare Pages at **settlrapp.in**, packaged as an Android TWA (`in.settlrapp.twa`) and in **Play Store internal testing**. Honest caveats remain: **v1 is tracking-only** (manual settle-up, no money movement), real **SMS OTP is still mocked** (`123456`) pending public launch, and **formal usability testing of Settlr is still pending** — the research validated Splitwise's failures; Settlr's fixes are designed-to-solve and traceable, not yet user-proven.
 
 ---
 
@@ -96,9 +103,9 @@ Weeks instead of months. A design system that a developer could actually impleme
 ---
 
 ## User Testing Status
-⚠️ **Settlr has not been tested with users yet.** The app is still in progress.
+⚠️ **Settlr has not been through formal usability testing yet.** The app is *built and deployed* (live at settlrapp.in, multi-user backend, in Play Store internal testing) — but "shipped" is not the same as "validated". Do not claim user validation of Settlr in the case study.
 
-Every design decision is grounded in the Splitwise research findings, not assumed to work, but intentionally designed to address specific, observed failures. The hypothesis is clear. User testing is planned once the build is complete.
+Every design decision is grounded in the Splitwise research findings — not assumed to work, but intentionally designed to address specific, observed failures. The hypothesis is clear and the product is live; structured user testing (and real SMS OTP) are the gates before public launch.
 
 ### What to test (planned)
 - Task 3 equivalent: Add expense with unequal split. Does the dedicated split screen reduce cognitive load vs Splitwise?
@@ -430,7 +437,8 @@ Settlr is an independent redesign of the group expense splitting experience. The
 
 ---
 
-### 27 Components Built
+### Components Built (43 as of 2026-07-01)
+> The table below is the original Sept-2023 snapshot (27 components). The system has since grown to **43** component specs (Campaign 1 added `hero-section`, `toggle`, `settings-row`, `detail-row`, `notes-card`, `summary-card`, `success-state`, `invite-banner`, `screen-footer`, `update-item`; later work added `type-chip`, `paid-by`, `payer-sheet`, `currency-chip`, `icon-holder`, `faq`, etc.). Live source of truth: `settlr/.claude/indexes/code-index.json`.
 
 | Component | CSS Class Prefix | Key Variants |
 |-----------|-----------------|--------------|
@@ -466,54 +474,16 @@ Settlr is an independent redesign of the group expense splitting experience. The
 
 ---
 
-### 34 Screens Built
+### Screens — now 24 SPA views (was 31 standalone screens)
+> **Architecture changed (June 2026).** The app is no longer a set of standalone `screens/*.html` files. It's a **single-file SPA**: `index.html` shell + **24 view modules** in `js/views/*` + a client router (`js/router-spa.js`). The three auth screens (`login`, `signup`, `complete-profile`) live *outside* the shell. The old splash/welcome/otp flow was dropped (auth is now Google/email; phone-OTP is captured on `complete-profile`, currently mocked). The dev-only `preview-*.html` pages are retired.
 
-**Auth / Onboarding**
-- splash.html
-- welcome.html
-- login.html
-- otp.html
-
-**Main App**
-- home-dashboard.html
-- people.html
-- activity.html
-- settings.html
-
-**Group Flows**
-- group-detail.html
-- create-group-name.html
-- create-group-members.html
-- create-group-done.html
-- edit-group.html
-- add-group.html
-
-**Expense Flows**
-- add-amount.html
-- add-split.html
-- add-review.html
-- expense-detail.html
-- edit-expense.html
-
-**Individual / Person**
-- individual-detail.html
-
-**Settlement Flows**
-- settle-select.html
-- settle-amount.html
-- settle-method.html
-- settle-success.html
-
-**Component Previews (dev-only)**
-- component-docs.html
-- preview-action-button-row.html
-- preview-empty-state.html
-- preview-group-detail-full.html
-- preview-remaining-components.html
-- preview-settlement-item.html
-- preview-stacked-avatars.html
-- preview-toast.html
-- preview-top-app-bar.html
+**Onboarding / Auth** (standalone, outside shell): login · signup · complete-profile · onboarding-welcome (in-shell)
+**Main App**: home-dashboard · people · activity · settings · search
+**Group Flows**: group-detail · create-group-name · create-group-members · edit-group · add-group
+**Expense Flows**: add-amount · add-split · add-review · expense-detail · edit-expense
+**Individual / Person**: individual-detail · add-friend
+**Settlement Flows**: settle-select · settle-amount · settle-method · settle-success · settlement-detail
+**Profile**: edit-profile
 
 ---
 
@@ -522,7 +492,7 @@ Settlr is an independent redesign of the group expense splitting experience. The
 tokens/colors.css → primitives (57 colors · 5 palettes)
 tokens/semantic.css → semantic + component aliases (290+)
 css/*.css → components (use semantic tokens only)
-screens/*.html → screens (use semantic tokens only)
+js/views/*.js → SPA views (render with component classes; semantic tokens only)
 ```
 
 ---
@@ -564,10 +534,15 @@ screens/*.html → screens (use semantic tokens only)
 | `/Users/divyanshrastogi/Desktop/settlr/references/changelog.md` | Change log (from 2026-03-20) |
 | `/Users/divyanshrastogi/Desktop/settlr/references/design-review-report.md` | Full design review backlog |
 | `/Users/divyanshrastogi/Desktop/settlr/tokens/` | colors.css, semantic.css, spacing.css, radius.css, typography.css, shadows.css |
-| `/Users/divyanshrastogi/Desktop/settlr/css/` | 42 CSS component files |
-| `/Users/divyanshrastogi/Desktop/settlr/components/` | 41 component spec markdown files |
-| `/Users/divyanshrastogi/Desktop/settlr/screens/` | 31 user-facing screen HTML files (+9 dev/preview pages) |
-| `/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/` | **Mirror** of source, used by the case study iframes (synced 2026-05-02) |
+| `/Users/divyanshrastogi/Desktop/settlr/css/` | component CSS files (+ `css/screens/` per-view styles) |
+| `/Users/divyanshrastogi/Desktop/settlr/components/` | 43 component spec markdown files |
+| `/Users/divyanshrastogi/Desktop/settlr/index.html` | SPA shell (built via `build-shell.py`) |
+| `/Users/divyanshrastogi/Desktop/settlr/js/views/` | 24 SPA view modules |
+| `/Users/divyanshrastogi/Desktop/settlr/js/router-spa.js` | client router (view transitions + history) |
+| `/Users/divyanshrastogi/Desktop/settlr/js/store.js` | dual-mode store (local / Supabase), hydrate-then-sync |
+| `/Users/divyanshrastogi/Desktop/settlr/supabase/schema.sql` | DB schema, RLS, RPCs (multi-user ledger, ghost merge, rate limits) |
+| `/Users/divyanshrastogi/Desktop/settlr/TODO.md` | live backlog (Play Store launch, safety checklist, roadmap) |
+| `/Users/divyanshrastogi/Desktop/website 2/prototype/settlr/` | **Mirror** of source (SPA, offline seed-data mode), used by the case study iframe |
 
 ---
 ---

@@ -227,8 +227,15 @@
         body: 'Permanently delete your account and all data. This cannot be undone.',
         confirmLabel: 'Delete', danger: true
       }, function () {
-        if (typeof Store.deleteAllData === 'function') Store.deleteAllData();
-        window.location.replace('/screens/welcome.html');
+        // Await server-side account deletion, then sign out, then leave.
+        // Navigating before the request resolves would abort it (page unload).
+        var done = function () { window.location.replace('/screens/welcome.html'); };
+        var del = (typeof Store.deleteAllData === 'function')
+          ? Store.deleteAllData() : Promise.resolve({ ok: true });
+        Promise.resolve(del).then(function () {
+          var so = (window.SettlrAuth && SettlrAuth.signOut) ? SettlrAuth.signOut() : Promise.resolve();
+          return Promise.resolve(so);
+        }).then(done, done);
       });
     });
   }

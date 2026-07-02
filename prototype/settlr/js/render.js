@@ -55,7 +55,7 @@ window.Render = (function () {
     const amtCls = dir === 'settled' ? '' : ` expense-item__amount--${dir}`;
     const amtStr = dir === 'settled'
       ? 'Settled'
-      : Store.formatINR(net.amount);
+      : Store.formatIn(net.amount, expense.currency);
     const time = Store.formatTime(expense.occurredAt);
     const subtitle = [contextLabel, time].filter(Boolean).join(' \u00b7 ');
 
@@ -85,7 +85,7 @@ window.Render = (function () {
     const mod    = dir === 'settled' ? ' txn-item--settled' : ` txn-item--${dir}`;
     const amtStr = dir === 'settled'
       ? 'Settled'
-      : Store.formatINR(net.amount);
+      : Store.formatIn(net.amount, expense.currency);
     const time = Store.formatTime(expense.occurredAt);
     const subtitle = [contextLabel, time].filter(Boolean).join(' \u00b7 ');
 
