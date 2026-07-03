@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Settlr — Component Playground</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens/index.css">
+  <link rel="stylesheet" href="../css/index.css">
+  <script src="../js/components.js"></script>
+  <script src="../js/icons.js"></script>
+  <script src="../js/icons-fill.js"></script>
+  <script src="../js/icon-upgrade.js"></script>
+  <script src="../js/bottom-nav-slider.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: var(--surface-primary);
+      color: var(--text-primary);
+    }
+
+    /* ── Shell ──────────────────────────────────────────── */
+    .pg-shell { display: grid; grid-template-columns: 248px 1fr; height: 100vh; }
+
+    /* ── Sidebar (dark, grouped — Kinko style) ──────────── */
+    .pg-sidebar {
+      background: var(--color-neutral-900);
+      color: var(--text-inverse);
+      padding: var(--spacing-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-12);
+      overflow: auto;
+    }
+    .pg-sidebar__title { margin: 0; font-family: var(--font-display); font-size: var(--font-size-18); font-weight: var(--weight-bold); }
+    .pg-sidebar__subtitle { margin: 0; font-size: var(--font-size-12); color: var(--color-neutral-400); }
+    .pg-search {
+      margin-top: var(--spacing-8);
+      width: 100%;
+      background: var(--color-neutral-800);
+      border: var(--border-small) solid var(--color-neutral-700);
+      color: var(--text-inverse);
+      border-radius: var(--radius-8);
+      padding: var(--spacing-8) var(--spacing-12);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+    }
+    .pg-search::placeholder { color: var(--color-neutral-500); }
+    .pg-nav { display: flex; flex-direction: column; gap: var(--spacing-12); margin-top: var(--spacing-4); }
+    .pg-group { display: flex; flex-direction: column; gap: 2px; }
+    .pg-group__title {
+      font-size: var(--font-size-12);
+      font-weight: var(--weight-bold);
+      color: var(--color-neutral-500);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: var(--spacing-4) var(--spacing-12) 2px;
+    }
+    .pg-nav__item {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: var(--color-neutral-300);
+      text-align: left;
+      padding: var(--spacing-8) var(--spacing-12);
+      font-family: var(--font-body);
+      font-size: var(--font-size-13);
+      font-weight: var(--weight-semibold);
+      border-radius: var(--radius-8);
+      cursor: pointer;
+      transition: var(--transition-tap, background .12s ease, color .12s ease);
+    }
+    .pg-nav__item:hover { color: var(--text-inverse); background: var(--color-neutral-800); }
+    .pg-nav__item.is-active { background: var(--color-olive-600); color: var(--text-inverse); }
+
+    /* ── Main pane ──────────────────────────────────────── */
+    .pg-main { overflow: auto; display: flex; flex-direction: column; }
+    .pg-header {
+      padding: var(--spacing-24) var(--spacing-32) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--border-subtle);
+      position: sticky; top: 0; background: var(--surface-primary); z-index: 2;
+    }
+    .pg-header__name { margin: 0; font-family: var(--font-display); font-size: var(--font-size-24); font-weight: var(--weight-bold); }
+    .pg-header__blurb { margin: var(--spacing-4) 0 0; color: var(--text-secondary); font-size: var(--font-size-14); }
+    .pg-header__tag { margin: var(--spacing-8) 0 0; font-size: var(--font-size-12); color: var(--text-tertiary); }
+    .pg-header__tag code { font-family: ui-monospace, Menlo, monospace; color: var(--text-brand); }
+
+    .pg-body { display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing-24); padding: var(--spacing-24) var(--spacing-32) var(--spacing-64); align-items: start; }
+
+    /* Left column: preview + code stacked */
+    .pg-left { display: flex; flex-direction: column; gap: var(--spacing-16); min-width: 0; }
+
+    .pg-panel {
+      background: var(--surface-card);
+      border: var(--border-small) solid var(--border-subtle);
+      border-radius: var(--radius-16);
+      overflow: hidden;
+    }
+    .pg-panel__head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--spacing-12) var(--spacing-16);
+      border-bottom: var(--border-small) solid var(--border-subtle);
+    }
+    .pg-panel__title { font-size: var(--font-size-12); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); }
+    .pg-hint { font-weight: var(--weight-medium); text-transform: none; letter-spacing: 0; color: var(--text-placeholder); }
+
+    /* Device frame — 360 × 360 viewport so components show at true size */
+    .pg-preview { padding: var(--spacing-24); display: flex; justify-content: center; background: var(--surface-input); }
+    .pg-stage {
+      width: 360px; max-width: 100%;
+      background: var(--surface-primary);
+      border-radius: var(--radius-24, 24px);
+      border: var(--border-small) solid var(--border-default);
+      box-shadow: var(--shadow-md, 0 8px 24px rgba(14,6,24,0.12));
+      overflow-y: auto;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+    /* Device mode locks to a 360 × 360 viewport */
+    .pg-preview--device .pg-stage { height: 360px; }
+    .pg-stage--center { align-items: center; justify-content: center; padding: var(--spacing-24); gap: var(--spacing-12); }
+    .pg-stage--pad { padding: var(--spacing-16); gap: var(--spacing-12); }
+    /* Edge-anchored chrome — fills width, pinned to its real screen position */
+    .pg-stage--top { align-items: stretch; justify-content: flex-start; }
+    .pg-stage--bottom { align-items: stretch; justify-content: flex-end; }
+    .pg-stage--fill { align-items: stretch; justify-content: stretch; padding: 0; }
+    .pg-stage--fill .sheet-overlay { height: 100% !important; min-height: 100% !important; align-items: flex-end !important; }
+
+    /* Neutralise fixed positioning so chrome renders inline in the stage */
+    .pg-stage settlr-status-bar,
+    .pg-stage .screen-footer,
+    .pg-stage .action-btn-row,
+    .pg-stage .sheet-overlay,
+    .pg-stage .bottom-nav-bar {
+      position: static !important;
+      transform: none !important;
+      left: auto !important; right: auto !important; bottom: auto !important;
+      top: auto !important;
+      width: 100% !important;
+    }
+    .pg-stage .sheet-overlay { min-height: 0 !important; inset: auto !important; }
+
+    /* Toggle: device vs free canvas */
+    .pg-seg { display: inline-flex; border: var(--border-small) solid var(--border-subtle); border-radius: var(--radius-8); overflow: hidden; }
+    .pg-seg button {
+      appearance: none; background: var(--surface-card); border: 0; cursor: pointer;
+      padding: var(--spacing-4) var(--spacing-12);
+      font-family: var(--font-body); font-size: var(--font-size-12); font-weight: var(--weight-semibold);
+      color: var(--text-secondary);
+    }
+    .pg-seg button.is-active { background: var(--color-neutral-900); color: var(--text-inverse); }
+
+    .pg-preview--free .pg-stage { width: 100%; border-style: dashed; box-shadow: none; }
+
+    /* States & Variants matrix */
+    .pg-states { display: flex; flex-direction: column; gap: var(--spacing-12); padding: var(--spacing-16); }
+    .pg-states__subhead { font-size: var(--font-size-12); font-weight: var(--weight-bold); color: var(--text-brand); text-transform: uppercase; letter-spacing: 0.6px; margin-top: var(--spacing-4); }
+    .pg-states__subhead:first-child { margin-top: 0; }
+    .pg-state-cell { display: flex; align-items: center; gap: var(--spacing-16); }
+    .pg-state-cell__label { width: 96px; flex-shrink: 0; font-size: var(--font-size-12); font-weight: var(--weight-semibold); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .pg-state-cell__box { flex: 1; min-width: 0; background: var(--surface-input); border-radius: var(--radius-8); padding: var(--spacing-12); display: flex; align-items: center; justify-content: flex-start; min-height: var(--spacing-48); }
+
+    /* Code view */
+    .pg-code { display: flex; flex-direction: column; }
+    .pg-source__path { margin-right: auto; margin-left: var(--spacing-8); font-family: ui-monospace, Menlo, monospace; font-size: var(--font-size-12); color: var(--text-tertiary); }
+    .pg-code pre.pg-source { max-height: 360px; }
+    .pg-code pre {
+      margin: 0; padding: var(--spacing-16);
+      background: var(--color-neutral-900);
+      color: var(--color-neutral-100);
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: var(--font-size-12);
+      line-height: var(--line-height-20, 1.6);
+      overflow: auto;
+      white-space: pre;
+    }
+    .pg-code .tok-tag { color: var(--color-olive-200); }
+    .pg-code .tok-attr { color: var(--color-neutral-400); }
+    .pg-code .tok-str { color: var(--color-olive-100); }
+    .pg-copy {
+      appearance: none; cursor: pointer;
+      background: var(--surface-card); border: var(--border-small) solid var(--border-subtle);
+      border-radius: var(--radius-full); padding: var(--spacing-4) var(--spacing-12);
+      font-family: var(--font-body); font-size: var(--font-size-12); font-weight: var(--weight-semibold);
+      color: var(--text-secondary);
+    }
+    .pg-copy:active { transform: scale(var(--press-scale, 0.97)); }
+
+    /* Right column: controls */
+    .pg-controls { position: sticky; top: 96px; }
+    .pg-controls__title { margin: 0 0 var(--spacing-12); font-size: var(--font-size-14); font-weight: var(--weight-bold); }
+    .pg-field { display: flex; flex-direction: column; gap: var(--spacing-4); margin-bottom: var(--spacing-12); }
+    .pg-field__label { font-size: var(--font-size-12); font-weight: var(--weight-semibold); color: var(--text-secondary); }
+    .pg-field select,
+    .pg-field input[type="text"] {
+      appearance: none;
+      width: 100%;
+      font-family: var(--font-body); font-size: var(--font-size-13);
+      padding: var(--spacing-8) var(--spacing-12);
+      border: var(--border-small) solid var(--border-subtle);
+      border-radius: var(--radius-8);
+      background: var(--surface-card); color: var(--text-primary);
+    }
+    .pg-field--inline { flex-direction: row; align-items: center; justify-content: space-between; }
+    .pg-segctl { display: flex; flex-wrap: wrap; gap: var(--spacing-4); border: var(--border-small) solid var(--border-subtle); border-radius: var(--radius-8); padding: 2px; }
+    .pg-segctl button {
+      flex: 1 1 auto; appearance: none; background: transparent; border: 0; cursor: pointer;
+      padding: var(--spacing-4) var(--spacing-8); border-radius: var(--radius-8);
+      font-family: var(--font-body); font-size: var(--font-size-12); font-weight: var(--weight-semibold);
+      color: var(--text-secondary); text-transform: capitalize;
+    }
+    .pg-segctl button.is-active { background: var(--color-neutral-900); color: var(--text-inverse); }
+    .pg-switch { width: 36px; height: 20px; border-radius: var(--radius-full); background: var(--surface-track); border: 0; position: relative; cursor: pointer; flex-shrink: 0; transition: background .15s ease; }
+    .pg-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: var(--radius-full); background: var(--surface-card); transition: transform .15s var(--ease-spring, ease); }
+    .pg-switch.is-on { background: var(--color-olive-500); }
+    .pg-switch.is-on::after { transform: translateX(16px); }
+    .pg-divider { height: var(--border-small); background: var(--border-subtle); border: 0; margin: var(--spacing-16) 0; }
+    .pg-spec { margin: 0; font-size: var(--font-size-12); display: grid; grid-template-columns: auto 1fr; gap: var(--spacing-4) var(--spacing-8); }
+    .pg-spec dt { color: var(--text-tertiary); font-weight: var(--weight-semibold); }
+    .pg-spec dd { margin: 0; color: var(--text-secondary); }
+
+    @media (max-width: 980px) {
+      .pg-shell { grid-template-columns: 1fr; }
+      .pg-sidebar { height: auto; flex-direction: row; flex-wrap: wrap; }
+      .pg-body { grid-template-columns: 1fr; }
+      .pg-controls { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pg-shell">
+    <aside class="pg-sidebar">
+      <h1 class="pg-sidebar__title">Settlr Playground</h1>
+      <p class="pg-sidebar__subtitle">Live design-system components</p>
+      <input class="pg-search" id="js-pg-search" type="text" placeholder="Search components…" aria-label="Search components">
+      <nav class="pg-nav" id="js-pg-nav"></nav>
+    </aside>
+
+    <main class="pg-main">
+      <div class="pg-header">
+        <h2 class="pg-header__name" id="js-pg-name"></h2>
+        <p class="pg-header__blurb" id="js-pg-blurb"></p>
+        <p class="pg-header__tag" id="js-pg-tag"></p>
+      </div>
+
+      <div class="pg-body">
+        <div class="pg-left">
+          <section class="pg-panel">
+            <div class="pg-panel__head">
+              <span class="pg-panel__title">Preview <span class="pg-hint">— click to interact</span></span>
+              <div style="display:flex; align-items:center; gap: var(--spacing-8);">
+                <button class="pg-copy" id="js-pg-reset" type="button">↺ Reset</button>
+                <div class="pg-seg" id="js-pg-mode">
+                  <button data-mode="device" class="is-active">Device</button>
+                  <button data-mode="free">Canvas</button>
+                </div>
+              </div>
+            </div>
+            <div class="pg-preview pg-preview--device" id="js-pg-preview">
+              <div class="pg-stage pg-stage--center" id="js-pg-stage"></div>
+            </div>
+          </section>
+
+          <section class="pg-panel" id="js-pg-states-panel" hidden>
+            <div class="pg-panel__head">
+              <span class="pg-panel__title">States &amp; Variants</span>
+            </div>
+            <div class="pg-states" id="js-pg-states"></div>
+          </section>
+
+          <section class="pg-panel pg-code">
+            <div class="pg-panel__head">
+              <span class="pg-panel__title">Code</span>
+              <button class="pg-copy" id="js-pg-copy" type="button">Copy</button>
+            </div>
+            <pre><code id="js-pg-codeblock"></code></pre>
+          </section>
+
+          <section class="pg-panel pg-code">
+            <div class="pg-panel__head">
+              <span class="pg-panel__title">Source CSS</span>
+              <span class="pg-source__path" id="js-pg-source-path"></span>
+              <button class="pg-copy" id="js-pg-source-copy" type="button">Copy</button>
+            </div>
+            <pre class="pg-source"><code id="js-pg-source"></code></pre>
+          </section>
+        </div>
+
+        <aside class="pg-controls">
+          <section class="pg-panel" style="padding: var(--spacing-16);">
+            <h3 class="pg-controls__title">Controls</h3>
+            <div id="js-pg-controls"></div>
+            <hr class="pg-divider">
+            <h3 class="pg-controls__title" style="font-size: var(--font-size-13);">Spec</h3>
+            <dl class="pg-spec" id="js-pg-spec"></dl>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── small helpers ─────────────────────────────────── */
+    var ICON_PLUS = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>';
+    var ICON_USER = '<svg viewBox="0 0 14 14" fill="currentColor"><path d="M7 7a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H2z"/></svg>';
+    var CHECK = '<svg class="checkbox-control__check" viewBox="0 0 12 10" fill="none"><polyline points="0,5 4,9 12,1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+
+    /* Phosphor SVG icon map (js/icons.js) — bound inside .icon-holder.
+       fill="currentColor" so they inherit color; the holder controls size. */
+    var ICON_SVG = window.SETTLR_ICONS || {};
+    var ICON_NAMES = Object.keys(ICON_SVG).sort();
+
+    /* Component id → source CSS file (from code-index.json) */
+    var CSS_PATHS = {
+      avatar: 'css/avatar.css', avatarStack: 'css/avatar-stack.css', label: 'css/labels.css',
+      iconHolder: 'css/icon-holder.css', memberPill: 'css/avatar.css', button: 'css/button.css',
+      iconButton: 'css/icon-button.css', inputField: 'css/input-field.css', searchInput: 'css/search-input.css',
+      chip: 'css/chip.css', toggle: 'css/toggle.css', checkbox: 'css/checkbox.css', radio: 'css/radio.css',
+      segment: 'css/navigation.css', typeChip: 'css/type-chip.css', otp: 'css/otp.css',
+      amountInput: 'css/amount-input.css', currencyChip: 'css/currency-chip.css',
+      personItem: 'css/list-items.css', expenseItem: 'css/list-items.css', settlementItem: 'css/settlement-item.css',
+      updateItem: 'css/update-item.css', detailRow: 'css/detail-row.css', settingsRow: 'css/settings-row.css',
+      cardGroup: 'css/cards.css', cardCreate: 'css/cards.css', notesCard: 'css/notes-card.css',
+      summaryCard: 'css/summary-card.css', heroSection: 'css/hero-section.css', inviteBanner: 'css/invite-banner.css',
+      toast: 'css/toast.css', emptyState: 'css/empty-state.css', successState: 'css/success-state.css',
+      faq: 'css/faq.css', topAppBar: 'css/top-app-bar.css', heading: 'css/heading.css',
+      bottomNav: 'css/navigation.css', headerChips: 'css/header-chips.css', actionButtonRow: 'css/action-button-row.css',
+      screenFooter: 'css/screen-footer.css', bottomSheet: 'css/bottom-sheet.css', statusBar: 'css/status-bar.css'
+    };
+    var cssCache = {};
+
+    /* ── component registry ────────────────────────────── */
+    var REGISTRY = [
+      /* ───────── Foundations ───────── */
+      {
+        id: 'avatar', group: 'Foundations', label: 'Avatar',
+        blurb: 'User representation — initials, photo, group (rounded square) or outline (icon placeholder).',
+        tag: '<code>.avatar .avatar--{size} .avatar--{initials|photo|group|outline}</code>',
+        spec: { sizes: 'xs · sm · md · lg · xl', variants: 'initials · photo · group · outline' },
+        controls: [
+          { type: 'segmented', key: 'size', label: 'size', options: ['xs','sm','md','lg','xl'], def: 'lg' },
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['initials','photo','group','outline'], def: 'initials' },
+          { type: 'text', key: 'initials', label: 'initials', def: 'DR' }
+        ],
+        render: function (s) {
+          if (s.variant === 'photo') {
+            return '<div class="' + cx('avatar','avatar--'+s.size,'avatar--photo') + '">' +
+              '<img src="https://i.pravatar.cc/120?img=12" alt=""></div>';
+          }
+          if (s.variant === 'group') {
+            return '<div class="' + cx('avatar','avatar--'+s.size,'avatar--initials','avatar--group') + '">🏖️</div>';
+          }
+          if (s.variant === 'outline') {
+            return '<div class="' + cx('avatar','avatar--'+s.size,'avatar--outline') + '">' +
+              '<span class="icon-holder icon-holder--md"><i class="ph ph-user"></i></span></div>';
+          }
+          return '<div class="' + cx('avatar','avatar--'+s.size,'avatar--initials') + '">' + s.initials + '</div>';
+        }
+      },
+      {
+        id: 'avatarStack', group: 'Foundations', label: 'Avatar Stack',
+        blurb: 'Overlapping row of avatars with an optional +N overflow badge.',
+        tag: '<code>.avatar-stack .avatar-stack--{size} .avatar-stack__item .avatar-stack__overflow</code>',
+        spec: { sizes: 'xs · sm · md · lg' },
+        controls: [
+          { type: 'segmented', key: 'size', label: 'size', options: ['xs','sm','md','lg'], def: 'md' },
+          { type: 'segmented', key: 'count', label: 'avatars', options: ['2','3','4'], def: '3' },
+          { type: 'text', key: 'overflow', label: 'overflow (+N)', def: '+5' }
+        ],
+        render: function (s) {
+          var names = ['RK','PS','AJ','NK'];
+          var items = '';
+          for (var i = 0; i < parseInt(s.count, 10); i++) items += '<div class="avatar-stack__item">' + names[i] + '</div>';
+          var ovf = s.overflow ? '<div class="avatar-stack__overflow">' + s.overflow + '</div>' : '';
+          return '<div class="' + cx('avatar-stack','avatar-stack--'+s.size) + '">' + items + ovf + '</div>';
+        }
+      },
+      {
+        id: 'label', group: 'Foundations', label: 'Label / Badge',
+        blurb: 'Small status indicator with semantic color coding.',
+        tag: '<code>.label .label--{variant} .label--{size}</code> · expense: <code>.label--expense</code>',
+        spec: { sizes: 'sm · md · lg', variants: 'success · error · default · owe · lent · settled' },
+        controls: [
+          { type: 'select', key: 'variant', label: 'variant', options: ['success','error','default','owe','lent','settled'], def: 'success' },
+          { type: 'segmented', key: 'size', label: 'size', options: ['sm','md','lg'], def: 'md' },
+          { type: 'text', key: 'text', label: 'text', def: 'Success' }
+        ],
+        render: function (s) {
+          var expense = (s.variant === 'owe' || s.variant === 'lent' || s.variant === 'settled');
+          return '<span class="' + cx('label', expense ? 'label--expense' : 'label--'+s.size, 'label--'+s.variant) + '">' + s.text + '</span>';
+        }
+      },
+      {
+        id: 'iconHolder', group: 'Foundations', label: 'Icon Holder',
+        blurb: 'Standard fixed-size wrapper for every Phosphor icon.',
+        tag: '<code>.icon-holder .icon-holder--{size} .icon-holder--bg-brand</code> wrapping an inline SVG',
+        spec: { sizes: 'xs 12 · sm 16 · md 20 · lg 24', background: 'none · brand', icons: 'inline SVG (currentColor)' },
+        controls: [
+          { type: 'segmented', key: 'size', label: 'size', options: ['xs','sm','md','lg'], def: 'md' },
+          { type: 'select', key: 'icon', label: 'icon (SVG)', options: ICON_NAMES, def: 'heart' },
+          { type: 'toggle', key: 'brand', label: 'brand background', def: false }
+        ],
+        render: function (s) {
+          var cls = cx('icon-holder', 'icon-holder--' + s.size, s.brand && 'icon-holder--bg-brand');
+          return '<span class="' + cls + '">' + (ICON_SVG[s.icon] || '') + '</span>';
+        }
+      },
+
+      {
+        id: 'memberPill', group: 'Foundations', label: 'Member Pill',
+        blurb: 'Compact pill with avatar and name, optionally removable.',
+        tag: '<code>.member-pill .member-pill__name .member-pill__remove</code>',
+        spec: { variants: 'default · removable' },
+        controls: [
+          { type: 'text', key: 'name', label: 'name', def: 'Rahul' },
+          { type: 'text', key: 'initials', label: 'initials', def: 'RA' },
+          { type: 'toggle', key: 'removable', label: 'removable', def: false }
+        ],
+        render: function (s) {
+          var rm = s.removable ? '<button class="member-pill__remove" aria-label="Remove">✕</button>' : '';
+          return '<div class="member-pill"><div class="avatar avatar--sm avatar--initials">' + s.initials + '</div>' +
+            '<span class="member-pill__name">' + s.name + '</span>' + rm + '</div>';
+        }
+      },
+
+      /* ───────── Buttons ───────── */
+      {
+        id: 'button', group: 'Buttons', label: 'Button',
+        blurb: 'Primary interactive element for actions.',
+        tag: '<code>.btn .btn--{variant} .btn--{size}</code> · <code>.btn--full .is-pressed</code>',
+        spec: { variants: 'primary · secondary · ghost · destructive', sizes: 'sm · md · lg', states: 'default · pressed · disabled' },
+        controls: [
+          { type: 'select', key: 'variant', label: 'variant', options: ['primary','secondary','ghost','destructive'], def: 'primary' },
+          { type: 'segmented', key: 'size', label: 'size', options: ['sm','md','lg'], def: 'md' },
+          { type: 'text', key: 'label', label: 'label', def: 'Add expense' },
+          { type: 'segmented', key: 'state', label: 'state', options: ['default','pressed','disabled'], def: 'default' },
+          { type: 'toggle', key: 'icon', label: 'left icon', def: true },
+          { type: 'toggle', key: 'full', label: 'full width', def: false }
+        ],
+        states: [
+          { label: 'Default', vals: { state: 'default' } },
+          { label: 'Pressed', vals: { state: 'pressed' } },
+          { label: 'Disabled', vals: { state: 'disabled' } }
+        ],
+        render: function (s) {
+          var cls = cx('btn','btn--'+s.size,'btn--'+s.variant, s.full && 'btn--full', s.state === 'pressed' && 'is-pressed');
+          var dis = s.state === 'disabled' ? ' disabled' : '';
+          var icon = s.icon ? '<span class="btn__icon">' + ICON_PLUS + '</span>' : '';
+          return '<button class="' + cls + '"' + dis + '>' +
+            '<span class="btn__content">' + icon + s.label + '</span></button>';
+        }
+      },
+      {
+        id: 'iconButton', group: 'Buttons', label: 'Icon Button',
+        blurb: 'Circular icon-only button for secondary or toolbar actions. Variants cover neutral, primary (olive), destructive (coral), ghost, surface (bordered) and overlay (on hero gradients).',
+        tag: '<code>.icon-btn .icon-btn--{variant} .icon-btn--{size}</code>',
+        spec: { variants: 'neutral · primary · destructive · ghost · surface · overlay', sizes: 'xs 32 · sm 40 · md 44 · lg 52', states: 'default · pressed · disabled' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['neutral','primary','destructive','ghost','surface','overlay'], def: 'neutral' },
+          { type: 'segmented', key: 'size', label: 'size', options: ['xs','sm','md','lg'], def: 'md' },
+          { type: 'segmented', key: 'state', label: 'state', options: ['default','pressed','disabled'], def: 'default' }
+        ],
+        states: [
+          { label: 'Neutral', vals: { variant: 'neutral', size: 'md' } },
+          { label: 'Primary', vals: { variant: 'primary', size: 'md' } },
+          { label: 'Destructive', vals: { variant: 'destructive', size: 'md' } },
+          { label: 'Ghost', vals: { variant: 'ghost', size: 'md' } },
+          { label: 'Surface', vals: { variant: 'surface', size: 'md' } },
+          { label: 'Overlay', vals: { variant: 'overlay', size: 'md' } },
+          { label: 'XS · 32', vals: { variant: 'neutral', size: 'xs' } },
+          { label: 'SM · 40', vals: { variant: 'neutral', size: 'sm' } },
+          { label: 'MD · 44', vals: { variant: 'neutral', size: 'md' } },
+          { label: 'LG · 52', vals: { variant: 'neutral', size: 'lg' } },
+          { label: 'Pressed', vals: { variant: 'primary', size: 'md', state: 'pressed' } },
+          { label: 'Disabled', vals: { variant: 'neutral', size: 'md', state: 'disabled' } }
+        ],
+        render: function (s) {
+          // overlay keeps its own fixed 44px footprint — size control doesn't apply to it
+          var sizeCls = s.variant === 'overlay' ? 'icon-btn--overlay' : 'icon-btn--' + s.size;
+          var variantCls = (s.variant && s.variant !== 'neutral' && s.variant !== 'overlay') ? 'icon-btn--' + s.variant : '';
+          var stateCls = s.state === 'pressed' ? 'is-pressed' : '';
+          var dis = s.state === 'disabled' ? ' disabled' : '';
+          var cls = cx('icon-btn', variantCls, sizeCls, stateCls);
+          return '<button class="' + cls + '"' + dis + ' aria-label="Action">' +
+            '<svg class="icon-btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg></button>';
+        }
+      },
+
+      /* ───────── Form ───────── */
+      {
+        id: 'inputField', group: 'Form', label: 'Input Field',
+        blurb: 'Text input with label, helper text, and state styling.',
+        tag: '<code>.input-field .input-field--{state} (--multiline) .input-field__box .input-field__helper</code>',
+        spec: { states: 'empty · active · filled · error · disabled', variants: 'single-line input · multiline textarea' },
+        controls: [
+          { type: 'segmented', key: 'state', label: 'state', options: ['empty','active','filled','error','disabled'], def: 'empty' },
+          { type: 'toggle', key: 'multiline', label: 'multiline', def: false },
+          { type: 'text', key: 'label', label: 'label', def: 'Display name' },
+          { type: 'text', key: 'placeholder', label: 'placeholder', def: 'Enter name' },
+          { type: 'toggle', key: 'helper', label: 'helper text', def: true }
+        ],
+        states: [
+          { label: 'Empty', vals: { state: 'empty' } },
+          { label: 'Active', vals: { state: 'active' } },
+          { label: 'Filled', vals: { state: 'filled' } },
+          { label: 'Error', vals: { state: 'error' } },
+          { label: 'Disabled', vals: { state: 'disabled' } },
+          { label: 'Multiline', vals: { state: 'empty', multiline: true, label: 'Description (optional)', placeholder: 'Add a short note...' } }
+        ],
+        render: function (s) {
+          var mod = (s.state === 'active' || s.state === 'filled') ? 'input-field--' + s.state
+                  : (s.state === 'error') ? 'input-field--error'
+                  : (s.state === 'disabled') ? 'input-field--disabled' : '';
+          var dis = s.state === 'disabled' ? ' disabled' : '';
+          var ph = ' placeholder="' + s.placeholder + '"';
+          var helperText = s.state === 'error' ? 'This field is required' : 'Shown to your friends';
+          var helper = s.helper ? '<span class="' + cx('input-field__helper', s.state === 'error' && 'input-field__helper--error') + '">' + helperText + '</span>' : '';
+          var control = s.multiline
+            ? '<textarea class="text-body-md" rows="3"' + ph + dis + '>' + ((s.state === 'filled' || s.state === 'active') ? 'Weekend trip to Goa with the crew' : '') + '</textarea>'
+            : '<input type="text"' + ph + ((s.state === 'filled' || s.state === 'active') ? ' value="Divya Rastogi"' : '') + dis + '>';
+          return '<div class="' + cx('input-field', s.multiline && 'input-field--multiline', mod) + '" style="width:100%">' +
+            '<label class="input-field__label">' + s.label + '</label>' +
+            '<div class="input-field__box">' + control + '</div>' +
+            helper + '</div>';
+        }
+      },
+      {
+        id: 'searchInput', group: 'Form', label: 'Search Input',
+        blurb: 'Full-width pill search field with a magnifying-glass icon.',
+        tag: '<code>.search-input .search-input__icon</code>',
+        spec: { shape: 'pill (radius-full)' },
+        controls: [
+          { type: 'text', key: 'placeholder', label: 'placeholder', def: 'Search people' }
+        ],
+        render: function (s) {
+          return '<div class="search-input" style="width:100%">' +
+            '<span class="search-input__icon"><i class="ph ph-magnifying-glass"></i></span>' +
+            '<input type="text" placeholder="' + s.placeholder + '"></div>';
+        }
+      },
+      {
+        id: 'chip', group: 'Form', label: 'Chip',
+        blurb: 'Toggleable pill for filters or categories.',
+        tag: '<code>.chip .chip--{size} .is-active</code>',
+        spec: { sizes: 'sm · md · lg', states: 'off · on' },
+        controls: [
+          { type: 'segmented', key: 'size', label: 'size', options: ['sm','md','lg'], def: 'sm' },
+          { type: 'text', key: 'label', label: 'label', def: 'Individual' },
+          { type: 'toggle', key: 'active', label: 'active', def: true },
+          { type: 'toggle', key: 'icon', label: 'left icon', def: false }
+        ],
+        states: [
+          { label: 'Off', vals: { active: false } },
+          { label: 'On', vals: { active: true } }
+        ],
+        render: function (s) {
+          var icon = s.icon ? '<span class="chip__icon">' + ICON_USER + '</span>' : '';
+          return '<span class="' + cx('chip','chip--'+s.size, s.active && 'is-active') + '">' + icon + s.label + '</span>';
+        }
+      },
+      {
+        id: 'toggle', group: 'Form', label: 'Toggle',
+        blurb: 'Switch control for boolean settings. 44×26 with sliding thumb.',
+        tag: '<code>.toggle-control .toggle-control__track .toggle-control__thumb</code>',
+        spec: { states: 'off · on · disabled' },
+        controls: [
+          { type: 'toggle', key: 'on', label: 'on', def: true },
+          { type: 'toggle', key: 'disabled', label: 'disabled', def: false }
+        ],
+        states: [
+          { label: 'Off', vals: { on: false, disabled: false } },
+          { label: 'On', vals: { on: true, disabled: false } },
+          { label: 'Disabled', vals: { on: false, disabled: true } }
+        ],
+        render: function (s) {
+          var cls = cx('toggle-control', s.on && 'is-on', s.disabled && 'is-disabled');
+          return '<label class="' + cls + '" role="switch" aria-checked="' + (s.on ? 'true' : 'false') + '" aria-label="Setting">' +
+            '<span class="toggle-control__track"></span>' +
+            '<span class="toggle-control__thumb"></span></label>';
+        }
+      },
+      {
+        id: 'checkbox', group: 'Form', label: 'Checkbox',
+        blurb: 'Multi-select checkbox control, optionally with a label row.',
+        tag: '<code>.checkbox-control .checkbox-item .is-selected .is-disabled</code>',
+        spec: { states: 'default · selected · disabled' },
+        controls: [
+          { type: 'toggle', key: 'selected', label: 'selected', def: true },
+          { type: 'toggle', key: 'disabled', label: 'disabled', def: false },
+          { type: 'toggle', key: 'withLabel', label: 'with label', def: true },
+          { type: 'text', key: 'label', label: 'label', def: 'Include in split' }
+        ],
+        states: [
+          { label: 'Default', vals: { selected: false, disabled: false } },
+          { label: 'Selected', vals: { selected: true, disabled: false } },
+          { label: 'Disabled', vals: { selected: false, disabled: true } },
+          { label: 'Disabled sel.', vals: { selected: true, disabled: true } }
+        ],
+        render: function (s) {
+          var ctrl = '<div class="' + cx('checkbox-control', s.selected && 'is-selected', s.disabled && 'is-disabled') + '">' + CHECK + '</div>';
+          if (!s.withLabel) return ctrl;
+          return '<div class="' + cx('checkbox-item', s.selected && 'is-selected', s.disabled && 'is-disabled') + '">' +
+            ctrl + '<span class="checkbox-item__label">' + s.label + '</span></div>';
+        }
+      },
+      {
+        id: 'radio', group: 'Form', label: 'Radio',
+        blurb: 'Single-select radio control, optionally with a label row.',
+        tag: '<code>.radio-control .radio-item .is-selected .radio-control--disabled</code>',
+        spec: { states: 'default · selected · disabled' },
+        controls: [
+          { type: 'toggle', key: 'selected', label: 'selected', def: true },
+          { type: 'toggle', key: 'disabled', label: 'disabled', def: false },
+          { type: 'toggle', key: 'withLabel', label: 'with label', def: true },
+          { type: 'text', key: 'label', label: 'label', def: 'Split equally' }
+        ],
+        states: [
+          { label: 'Default', vals: { selected: false, disabled: false } },
+          { label: 'Selected', vals: { selected: true, disabled: false } },
+          { label: 'Disabled', vals: { selected: false, disabled: true } },
+          { label: 'Disabled sel.', vals: { selected: true, disabled: true } }
+        ],
+        render: function (s) {
+          var ctrlCls = cx('radio-control',
+            s.disabled && s.selected ? 'radio-control--disabled-selected' : '',
+            s.disabled && !s.selected ? 'radio-control--disabled' : '',
+            !s.disabled && s.selected ? 'is-selected' : '');
+          var ctrl = '<div class="' + ctrlCls + '"><div class="radio-control__dot"></div></div>';
+          if (!s.withLabel) return ctrl;
+          return '<label class="' + cx('radio-item', s.disabled && 'radio-item--disabled') + '">' +
+            ctrl + '<span class="radio-item__label">' + s.label + '</span></label>';
+        }
+      },
+      {
+        id: 'segment', group: 'Form', label: 'Segment Control',
+        blurb: 'Tab-like control for switching between views within a screen.',
+        tag: '<code>.segment-control .segment-item .is-active</code>',
+        spec: { states: 'default · active' },
+        controls: [
+          { type: 'segmented', key: 'active', label: 'active tab', options: ['0','1','2'], def: '0' }
+        ],
+        render: function (s) {
+          var tabs = ['Transactions','Balances','Totals'];
+          var idx = parseInt(s.active, 10);
+          var html = '';
+          for (var i = 0; i < tabs.length; i++) {
+            html += '<button class="' + cx('segment-item', i === idx && 'is-active') + '">' + tabs[i] + '</button>';
+          }
+          return '<div class="segment-control" style="width:100%">' + html + '</div>';
+        }
+      },
+
+      {
+        id: 'typeChip', group: 'Form', label: 'Type Chip',
+        blurb: 'Vertical tile for selecting a group or expense type.',
+        tag: '<code>.type-chip .is-selected .type-chip__emoji .type-chip__name</code>',
+        spec: { states: 'off · selected' },
+        controls: [
+          { type: 'text', key: 'emoji', label: 'emoji', def: '✈️' },
+          { type: 'text', key: 'name', label: 'name', def: 'Trip' },
+          { type: 'toggle', key: 'selected', label: 'selected', def: true }
+        ],
+        render: function (s) {
+          return '<div class="' + cx('type-chip', s.selected && 'is-selected') + '">' +
+            '<span class="type-chip__emoji">' + s.emoji + '</span>' +
+            '<span class="type-chip__name">' + s.name + '</span></div>';
+        }
+      },
+      {
+        id: 'otp', group: 'Form', label: 'OTP Input',
+        blurb: 'Individual digit inputs for one-time-password entry.',
+        tag: '<code>.otp-group .otp-digit .otp-digit--filled .otp-digit--error</code>',
+        spec: { states: 'empty · filled · error · disabled' },
+        controls: [
+          { type: 'segmented', key: 'filled', label: 'filled digits', options: ['0','1','2','3','4','5','6'], def: '3' },
+          { type: 'toggle', key: 'error', label: 'error', def: false }
+        ],
+        states: [
+          { label: 'Empty', vals: { filled: '0', error: false } },
+          { label: 'Filled', vals: { filled: '6', error: false } },
+          { label: 'Error', vals: { filled: '3', error: true } }
+        ],
+        render: function (s) {
+          var vals = ['4','2','0','7','1','9'];
+          var filled = parseInt(s.filled, 10);
+          var digits = '';
+          for (var i = 0; i < 6; i++) {
+            var f = i < filled;
+            digits += '<input class="' + cx('otp-digit', f && 'otp-digit--filled', s.error && 'otp-digit--error') + '" maxlength="1" ' +
+              (f ? 'value="' + vals[i] + '"' : 'placeholder="0"') + '>';
+          }
+          return '<div class="' + cx('otp-group', s.error && 'otp-group--error') + '">' +
+            '<div class="otp-group__digits" style="display:flex; gap:var(--spacing-8)">' + digits + '</div></div>';
+        }
+      },
+      {
+        id: 'amountInput', group: 'Form', label: 'Amount Input',
+        blurb: 'Numeric input with a mode indicator for split amounts.',
+        tag: '<code>.amount-input .amount-input--{mode} .amount-input__icon .amount-input__field</code>',
+        spec: { variants: 'currency · percent · shares · stepper' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'mode', options: ['currency','percent','shares','stepper'], def: 'currency' },
+          { type: 'text', key: 'value', label: 'value', def: '400' }
+        ],
+        render: function (s) {
+          var field = '<input class="amount-input__field" type="text" value="' + s.value + '">';
+          var inner;
+          if (s.variant === 'currency') inner = '<span class="amount-input__icon">₹</span>' + field;
+          else if (s.variant === 'percent') inner = field + '<span class="amount-input__icon">%</span>';
+          else if (s.variant === 'shares') inner = field + '<span class="amount-input__icon">sh</span>';
+          else inner = '<span class="amount-input__icon" role="button">−</span>' + field + '<span class="amount-input__icon" role="button">+</span>';
+          return '<div class="amount-input amount-input--' + s.variant + '" style="width:200px">' + inner + '</div>';
+        }
+      },
+      {
+        id: 'currencyChip', group: 'Form', label: 'Currency Chip',
+        blurb: 'Pill button for selecting currency with a dropdown caret.',
+        tag: '<code>.currency-chip .currency-chip__caret</code>',
+        spec: {},
+        controls: [
+          { type: 'text', key: 'text', label: 'text', def: '₹ INR' }
+        ],
+        render: function (s) {
+          return '<button class="currency-chip">' + s.text +
+            ' <i class="ph ph-caret-down currency-chip__caret"></i></button>';
+        }
+      },
+
+      /* ───────── Lists & rows ───────── */
+      {
+        id: 'personItem', group: 'Lists & rows', label: 'Person Item', stage: 'pad',
+        blurb: 'List row showing a contact with avatar, name, and an action slot.',
+        tag: '<code>.person-item .person-item--{lent|owe|settled|input}</code>',
+        spec: { variants: 'none · lent · owe · settled · input' },
+        controls: [
+          { type: 'select', key: 'variant', label: 'variant', options: ['none','lent','owe','settled','input'], def: 'lent' },
+          { type: 'text', key: 'name', label: 'name', def: 'Rahul Kumar' },
+          { type: 'text', key: 'initials', label: 'initials', def: 'RK' }
+        ],
+        render: function (s) {
+          var right = '';
+          if (s.variant === 'lent' || s.variant === 'owe' || s.variant === 'settled') {
+            var label = s.variant === 'lent' ? 'You Lent' : s.variant === 'owe' ? 'You Owe' : 'Settled';
+            var amt = s.variant === 'settled' ? '₹0' : '₹1,200';
+            right = '<div class="person-item__balance"><span class="person-item__balance-label">' + label + '</span>' +
+              '<span class="person-item__balance-amount">' + amt + '</span></div>';
+          } else if (s.variant === 'input') {
+            right = '<div class="person-item__input-box"><span>₹400</span></div>';
+          }
+          var mod = (s.variant === 'none') ? '' : 'person-item--' + s.variant;
+          return '<a class="' + cx('person-item', mod) + '">' +
+            '<div class="avatar avatar--md avatar--initials">' + s.initials + '</div>' +
+            '<div class="person-item__text"><span class="person-item__name text-title-sm">' + s.name + '</span>' +
+            '<span class="person-item__subtext text-body-xs">+91 98765 43210</span></div>' + right + '</a>';
+        }
+      },
+      {
+        id: 'expenseItem', group: 'Lists & rows', label: 'Expense Item', stage: 'pad',
+        blurb: 'List row showing an expense with illustration, amount, and balance.',
+        tag: '<code>.expense-item .expense-item--{lent|owe} .expense-item__amount--{dir}</code>',
+        spec: { variants: 'lent · owe' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['lent','owe'], def: 'lent' },
+          { type: 'text', key: 'title', label: 'title', def: 'Dinner at Thalassa' },
+          { type: 'text', key: 'emoji', label: 'emoji', def: '🍽️' }
+        ],
+        render: function (s) {
+          var amt = s.variant === 'lent' ? '₹1,222' : '₹450';
+          return '<a class="expense-item expense-item--' + s.variant + '">' +
+            '<div class="expense-item__illustration">' + s.emoji + '</div>' +
+            '<div class="expense-item__text"><span class="expense-item__title text-title-sm">' + s.title + '</span>' +
+            '<span class="expense-item__subtitle text-body-xs">Rahul paid · Nov 14</span></div>' +
+            '<div class="expense-item__right">' +
+            '<span class="expense-item__label expense-item__label--' + s.variant + ' text-label-xs">you ' + s.variant + '</span>' +
+            '<span class="expense-item__amount expense-item__amount--' + s.variant + '">' + amt + '</span></div></a>';
+        }
+      },
+      {
+        id: 'settlementItem', group: 'Lists & rows', label: 'Settlement Item', stage: 'pad',
+        blurb: 'List row showing a person with balance and a settle/remind action.',
+        tag: '<code>.settlement-item .settlement-item__amount--{lent|owe}</code>',
+        spec: { variants: 'lent (remind) · owe (settle)' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['lent','owe'], def: 'lent' },
+          { type: 'text', key: 'name', label: 'name', def: 'Johnnie Walker' },
+          { type: 'text', key: 'initials', label: 'initials', def: 'JW' }
+        ],
+        render: function (s) {
+          var amtText = s.variant === 'lent' ? 'Owes you ₹1,200' : 'You Owe ₹1,200';
+          var btn = s.variant === 'lent'
+            ? '<button class="btn btn--sm btn--secondary"><span class="btn__content">Remind</span></button>'
+            : '<button class="btn btn--sm btn--primary"><span class="btn__content">Settle Up</span></button>';
+          return '<div class="settlement-item"><div class="avatar avatar--md avatar--initials">' + s.initials + '</div>' +
+            '<div class="settlement-item__info"><span class="settlement-item__name">' + s.name + '</span>' +
+            '<span class="settlement-item__amount settlement-item__amount--' + s.variant + '">' + amtText + '</span></div>' + btn + '</div>';
+        }
+      },
+      {
+        id: 'updateItem', group: 'Lists & rows', label: 'Update Item', stage: 'pad',
+        blurb: 'Activity-feed row for expense, settlement, group, reminder, and system events.',
+        tag: '<code>.update-item .update-item--unread .update-item__icon--{type}</code>',
+        spec: { variants: 'expense · settlement · group · reminder · system', states: 'read · unread' },
+        controls: [
+          { type: 'select', key: 'type', label: 'type', options: ['expense','settlement','group','reminder','system'], def: 'settlement' },
+          { type: 'toggle', key: 'unread', label: 'unread', def: true },
+          { type: 'text', key: 'text', label: 'text', def: 'Rahul settled ₹800 with you' }
+        ],
+        states: [
+          { label: 'Read', vals: { unread: false } },
+          { label: 'Unread', vals: { unread: true } }
+        ],
+        render: function (s) {
+          var icons = { expense: 'ph-receipt', settlement: 'ph-handshake', group: 'ph-users-three', reminder: 'ph-clock-countdown', system: 'ph-user-plus' };
+          var dot = s.unread ? '<div class="update-item__dot"></div>' : '';
+          return '<div class="' + cx('update-item', s.unread && 'update-item--unread') + '">' +
+            '<div class="update-item__icon update-item__icon--' + s.type + '"><i class="ph-bold ' + icons[s.type] + '"></i></div>' +
+            '<div class="update-item__body"><p class="update-item__text">' + s.text + '</p>' +
+            '<div class="update-item__meta"><span class="update-item__time">1 hr ago</span></div></div>' + dot + '</div>';
+        }
+      },
+      {
+        id: 'detailRow', group: 'Lists & rows', label: 'Detail Row', stage: 'pad',
+        blurb: 'Read-only or selectable row with icon, label, value, and optional chevron or radio.',
+        tag: '<code>.detail-row .detail-row--{clickable|selectable} .is-selected</code>',
+        spec: { variants: 'default · clickable · selectable' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['default','clickable','selectable'], def: 'selectable' },
+          { type: 'toggle', key: 'selected', label: 'selected', def: true }
+        ],
+        render: function (s) {
+          var right = '';
+          if (s.variant === 'clickable') right = '<i class="ph ph-caret-right detail-row__chevron"></i>';
+          else if (s.variant === 'selectable') right = '<div class="detail-row__radio"><div class="detail-row__radio-dot"></div></div>';
+          var mod = s.variant === 'default' ? '' : 'detail-row--' + s.variant;
+          var sel = (s.variant === 'selectable' && s.selected) ? 'is-selected' : '';
+          return '<div class="' + cx('detail-row', mod, sel) + '">' +
+            '<div class="detail-row__icon">💳</div>' +
+            '<div class="detail-row__text"><span class="detail-row__label">UPI</span>' +
+            '<span class="detail-row__value">Pay via UPI apps</span></div>' + right + '</div>';
+        }
+      },
+      {
+        id: 'settingsRow', group: 'Lists & rows', label: 'Settings Row', stage: 'pad',
+        blurb: 'Settings row with icon-wrap variants and chevron or toggle right-slots.',
+        tag: '<code>.settings-row .settings-row__icon-wrap--{color} .settings-row--{destructive|logout}</code>',
+        spec: { 'icon-wrap': 'default · coral · green · neutral · brand', modifiers: 'destructive · logout' },
+        controls: [
+          { type: 'select', key: 'iconWrap', label: 'icon wrap', options: ['default','coral','green','neutral','brand'], def: 'brand' },
+          { type: 'segmented', key: 'right', label: 'right slot', options: ['chevron','toggle'], def: 'toggle' },
+          { type: 'select', key: 'mod', label: 'modifier', options: ['default','destructive','logout'], def: 'default' }
+        ],
+        render: function (s) {
+          var iw = s.iconWrap === 'default' ? '' : 'settings-row__icon-wrap--' + s.iconWrap;
+          var mod = s.mod === 'default' ? '' : 'settings-row--' + s.mod;
+          var right = s.right === 'chevron'
+            ? '<span class="settings-row__chevron"><i class="ph ph-caret-right"></i></span>'
+            : '<label class="toggle-control is-on" role="switch" aria-checked="true"><span class="toggle-control__track"></span><span class="toggle-control__thumb"></span></label>';
+          return '<div class="settings-card" style="width:100%"><div class="' + cx('settings-row', mod) + '">' +
+            '<div class="' + cx('settings-row__icon-wrap', iw) + '"><i class="ph ph-bell"></i></div>' +
+            '<div class="settings-row__text"><span class="settings-row__label">Push Notifications</span>' +
+            '<span class="settings-row__value">Expenses, settlements</span></div>' +
+            '<div class="settings-row__right">' + right + '</div></div></div>';
+        }
+      },
+      {
+        id: 'txnItem', group: 'Lists & rows', label: 'Transaction Item', stage: 'pad',
+        blurb: 'Transaction list row (group/individual detail Transactions tab) — Render.txnItem.',
+        tag: '<code>.txn-item .txn-item--{lent|owe|settled}</code>',
+        spec: { variants: 'lent · owe · settled' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['lent','owe','settled'], def: 'lent' },
+          { type: 'text', key: 'title', label: 'title', def: 'Beach dinner at Baga' },
+          { type: 'text', key: 'emoji', label: 'emoji', def: '🍽️' }
+        ],
+        render: function (s) {
+          var amt = s.variant === 'lent' ? '₹3,667' : (s.variant === 'owe' ? '₹585' : '₹0');
+          var badge = s.variant === 'lent' ? 'you lent' : (s.variant === 'owe' ? 'you owe' : 'settled');
+          return '<a class="txn-item txn-item--' + s.variant + '">' +
+            '<div class="txn-item__illus">' + s.emoji + '</div>' +
+            '<div class="txn-item__text"><span class="txn-item__name text-title-sm">' + s.title + '</span>' +
+            '<span class="txn-item__subtitle text-body-xs">You paid · ₹4,890 total</span></div>' +
+            '<div class="txn-item__right"><span class="txn-item__badge text-label-xs">' + badge + '</span>' +
+            '<span class="txn-item__amount">' + amt + '</span></div></a>';
+        }
+      },
+      {
+        id: 'balanceRow', group: 'Lists & rows', label: 'Balance Row', stage: 'pad',
+        blurb: 'Member balance row (group detail Balances tab) — Render.balanceRow.',
+        tag: '<code>.balance-row .balance-row__amount--{lent|owe}</code>',
+        spec: { variants: 'lent · owe' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['lent','owe'], def: 'lent' },
+          { type: 'text', key: 'name', label: 'name', def: 'Rahul Arora' },
+          { type: 'text', key: 'initials', label: 'initials', def: 'RA' }
+        ],
+        render: function (s) {
+          var amt = s.variant === 'lent' ? '₹1,200' : '₹800';
+          var txt = s.variant === 'lent' ? '<strong>' + s.name + '</strong> owes you' : 'You owe <strong>' + s.name + '</strong>';
+          return '<div class="balance-row"><div class="balance-row__avatar">' + s.initials + '</div>' +
+            '<div class="balance-row__text text-body-md">' + txt + '</div>' +
+            '<div class="balance-row__amount balance-row__amount--' + s.variant + '">' + amt + '</div></div>';
+        }
+      },
+      {
+        id: 'groupRow', group: 'Lists & rows', label: 'Group Row', stage: 'pad',
+        blurb: "Shared-group row (individual detail Common Groups tab) — Render.groupRow.",
+        tag: '<code>.group-row .group-row__amount--{lent|owe}</code>',
+        spec: { variants: 'lent · owe' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['lent','owe'], def: 'lent' },
+          { type: 'text', key: 'name', label: 'name', def: 'Goa Trip' },
+          { type: 'text', key: 'emoji', label: 'emoji', def: '🏖️' }
+        ],
+        render: function (s) {
+          var amt = s.variant === 'lent' ? '₹2,517' : '₹640';
+          return '<a class="group-row"><div class="group-row__icon">' + s.emoji + '</div>' +
+            '<div class="group-row__text"><span class="group-row__name text-title-sm">' + s.name + '</span></div>' +
+            '<span class="group-row__amount group-row__amount--' + s.variant + '">' + amt + '</span>' +
+            '<span class="group-row__chevron"><i class="ph ph-caret-right"></i></span></a>';
+        }
+      },
+
+      /* ───────── Cards & containers ───────── */
+      {
+        id: 'cardGroup', group: 'Cards & containers', label: 'Group Card',
+        blurb: 'Card showing a group with image, name, and balance.',
+        tag: '<code>.card-group .card-group--{lent|owe} .card-group__amount--{dir}</code>',
+        spec: { variants: 'settled · lent · owe' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['settled','lent','owe'], def: 'lent' },
+          { type: 'text', key: 'name', label: 'name', def: 'Goa Trip' },
+          { type: 'text', key: 'emoji', label: 'emoji', def: '🏖️' }
+        ],
+        render: function (s) {
+          var lent = s.variant === 'lent', owe = s.variant === 'owe';
+          var subtitle = lent ? 'Overall you lent' : owe ? 'Overall you owe' : 'All settled';
+          var amount = lent ? '₹1,220' : owe ? '₹800' : 'Settled';
+          var v = s.variant !== 'settled' ? '--' + s.variant : '';
+          return '<a class="' + cx('card-group', v && 'card-group' + v) + '">' +
+            '<div class="card-group__image">' + s.emoji + '</div>' +
+            '<div class="' + cx('card-group__info', v && 'card-group__info' + v) + '">' +
+            '<span class="card-group__name text-title-sm">' + s.name + '</span>' +
+            '<div class="card-group__balance"><span class="card-group__subtitle text-caption-sm">' + subtitle + '</span>' +
+            '<span class="' + cx('card-group__amount', v && 'card-group__amount' + v) + ' text-amount-xs">' + amount + '</span></div></div></a>';
+        }
+      },
+      {
+        id: 'cardCreate', group: 'Cards & containers', label: 'Create Group Card',
+        blurb: 'Dashed card prompting the user to create a new group.',
+        tag: '<code>.card-create .card-create__icon .card-create__text</code>',
+        spec: {},
+        controls: [],
+        render: function () {
+          return '<a class="card-create"><div class="card-create__icon"><i class="ph-bold ph-plus"></i></div>' +
+            '<span class="card-create__text text-title-sm">Create new group</span></a>';
+        }
+      },
+      {
+        id: 'photoUpload', group: 'Cards & containers', label: 'Photo Upload', stage: 'pad',
+        blurb: 'Dashed image-picker tile used in group creation.',
+        tag: '<code>.photo-area .photo-upload .photo-upload__icon .photo-upload__text</code>',
+        spec: {},
+        controls: [],
+        render: function () {
+          return '<div class="photo-area"><div class="photo-upload">' +
+            '<span class="icon-holder photo-upload__icon" aria-hidden="true"><i class="ph ph-image"></i></span>' +
+            '<span class="photo-upload__text">Photo</span></div></div>';
+        }
+      },
+      {
+        id: 'notesCard', group: 'Cards & containers', label: 'Notes Card', stage: 'pad',
+        blurb: 'Notes block, readonly (display) or editable (textarea + counter).',
+        tag: '<code>.notes-card .notes-card--editable .notes-card__textarea .notes-card__counter</code>',
+        spec: { variants: 'readonly · editable' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['readonly','editable'], def: 'readonly' }
+        ],
+        render: function (s) {
+          if (s.variant === 'editable') {
+            return '<div class="notes-card notes-card--editable" style="width:100%">' +
+              '<label class="notes-card__label">Notes (optional)</label>' +
+              '<textarea class="notes-card__textarea" rows="2" maxlength="280" placeholder="Add a note…"></textarea>' +
+              '<span class="notes-card__counter">0/280</span></div>';
+          }
+          return '<div class="notes-card" style="width:100%"><span class="notes-card__label">Notes</span>' +
+            '<p class="notes-card__text">Beach shack at Baga — drinks and dessert for the group.</p></div>';
+        }
+      },
+      {
+        id: 'summaryCard', group: 'Cards & containers', label: 'Summary Card',
+        blurb: 'Centered settlement preview with avatar, name, amount, and meta.',
+        tag: '<code>.summary-card .summary-card--success .summary-card__amount--{dir}</code>',
+        spec: { variants: 'default · success' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['default','success'], def: 'default' },
+          { type: 'segmented', key: 'dir', label: 'direction', options: ['owe','lent'], def: 'owe' },
+          { type: 'text', key: 'name', label: 'name', def: 'Johnnie Walker' }
+        ],
+        render: function (s) {
+          if (s.variant === 'success') {
+            return '<div class="summary-card summary-card--success"><div class="summary-card__avatar">JW</div>' +
+              '<p class="summary-card__meta">You paid <strong>' + s.name + '</strong></p>' +
+              '<p class="summary-card__amount summary-card__amount--' + s.dir + '">₹1,220</p>' +
+              '<span class="summary-card__meta">💳 via UPI</span></div>';
+          }
+          return '<div class="summary-card"><div class="summary-card__avatar">JW</div>' +
+            '<div class="summary-card__name">' + s.name + '</div>' +
+            '<div class="summary-card__amount summary-card__amount--' + s.dir + '">₹1,220</div>' +
+            '<div class="summary-card__meta">Settlement amount</div></div>';
+        }
+      },
+      {
+        id: 'heroSection', group: 'Cards & containers', label: 'Hero Section', stage: 'pad',
+        blurb: 'Full-width feature band with gradient, overlay actions, and avatar wrap.',
+        tag: '<code>.hero-section .hero-section--{tall|short} .hero-section__avatar-wrap</code>',
+        spec: { sizes: 'default 240 · tall 300 · short 200' },
+        controls: [
+          { type: 'segmented', key: 'size', label: 'size', options: ['default','tall','short'], def: 'default' },
+          { type: 'text', key: 'emoji', label: 'emoji', def: '🏖️' }
+        ],
+        render: function (s) {
+          var sz = s.size === 'default' ? '' : 'hero-section--' + s.size;
+          return '<div class="' + cx('hero-section', sz) + '" style="width:100%">' +
+            '<span class="hero-section__emoji">' + s.emoji + '</span>' +
+            '<div class="hero-section__actions">' +
+            '<a class="icon-btn icon-btn--surface icon-btn--md" aria-label="Back"><i class="ph-bold ph-caret-left icon-btn__icon"></i></a>' +
+            '<a class="icon-btn icon-btn--surface icon-btn--md" aria-label="Edit"><i class="ph ph-gear icon-btn__icon"></i></a></div></div>' +
+            '<div class="hero-section__avatar-wrap"><div class="avatar avatar--xl avatar--initials">GT</div></div>';
+        }
+      },
+      {
+        id: 'inviteBanner', group: 'Cards & containers', label: 'Invite Banner', stage: 'pad',
+        blurb: 'Dashed-border promo banner with icon, title, subtitle, and optional action.',
+        tag: '<code>.invite-banner .invite-banner__icon .invite-banner__text .invite-banner__action</code>',
+        spec: {},
+        controls: [
+          { type: 'text', key: 'title', label: 'title', def: 'Invite via link' },
+          { type: 'toggle', key: 'action', label: 'action button', def: false }
+        ],
+        render: function (s) {
+          var action = s.action ? '<div class="invite-banner__action"><button class="btn btn--secondary btn--sm"><span class="btn__content">Copy</span></button></div>' : '';
+          return '<div class="invite-banner" style="width:100%"><div class="invite-banner__icon"><i class="ph ph-link"></i></div>' +
+            '<div class="invite-banner__text"><div class="invite-banner__title">' + s.title + '</div>' +
+            '<div class="invite-banner__subtitle">Share a join link with friends</div></div>' + action + '</div>';
+        }
+      },
+      {
+        id: 'inviteCard', group: 'Cards & containers', label: 'Invite Card', stage: 'pad',
+        blurb: 'Invite-via-link card: copyable link field with an inline copy icon + a Share CTA (native share sheet).',
+        tag: '<code>.invite-card .invite-card__row .invite-link-box (.invite-link-box__url, __copy)</code>',
+        spec: {},
+        controls: [],
+        render: function (s) {
+          return '<div class="invite-card" style="width:100%">' +
+            '<p class="invite-card__title text-title-sm">Invite via link</p>' +
+            '<p class="invite-card__subtitle text-body-xs">Share your personal invite link and start splitting instantly</p>' +
+            '<div class="invite-card__row">' +
+              '<div class="invite-link-box">' +
+                '<span class="invite-link-box__url text-body-xs">settlrapp.in/invite/divyansh</span>' +
+                '<button class="invite-link-box__copy" type="button" aria-label="Copy invite link"><span class="icon-holder icon-holder--sm"><i class="ph ph-copy"></i></span></button>' +
+              '</div>' +
+              '<button class="btn btn--secondary btn--sm text-title-xs" type="button">' +
+                '<span class="btn__content"><span class="btn__icon"><i class="ph ph-share-network"></i></span><span class="btn__label">Share</span></span>' +
+              '</button>' +
+            '</div></div>';
+        }
+      },
+      {
+        id: 'qrSection', group: 'Cards & containers', label: 'QR Section', stage: 'pad',
+        blurb: 'Tappable QR-code share card with placeholder, text, and a view (eye) action that opens the QR overlay (add-friend). The .qr-placeholder--lg modifier enlarges the tile for the overlay preview.',
+        tag: '<code>.qr-section .qr-placeholder (.qr-placeholder--lg) .qr-text</code>',
+        spec: {},
+        controls: [],
+        render: function (s) {
+          return '<div class="qr-section" style="width:100%">' +
+            '<div class="qr-placeholder"><i class="ph ph-qr-code"></i></div>' +
+            '<div class="qr-text"><p class="qr-text__title text-title-sm">Your QR Code</p>' +
+            '<p class="qr-text__sub text-body-xs">Friends can scan to add you directly</p></div>' +
+            '<button class="btn btn--secondary btn--sm text-title-xs" style="flex-shrink:0"><span class="btn__content"><span class="btn__icon"><i class="ph ph-eye"></i></span><span class="btn__label">View</span></span></button></div>';
+        }
+      },
+
+      /* ───────── Feedback ───────── */
+      {
+        id: 'toast', group: 'Feedback', label: 'Toast',
+        blurb: 'Floating notification with optional icon and body text.',
+        tag: '<code>.toast .toast--{variant} .toast__text .toast__title .toast__body</code>',
+        spec: { variants: 'neutral · brand · success · error' },
+        controls: [
+          { type: 'select', key: 'variant', label: 'variant', options: ['neutral','brand','success','error'], def: 'success' },
+          { type: 'text', key: 'title', label: 'title', def: 'Success' },
+          { type: 'text', key: 'body', label: 'body', def: 'Expense added and split' }
+        ],
+        render: function (s) {
+          return '<div class="' + cx('toast','toast--'+s.variant) + '">' +
+            '<div class="toast__text"><p class="toast__title">' + s.title + '</p>' +
+            '<p class="toast__body">' + s.body + '</p></div></div>';
+        }
+      },
+
+      {
+        id: 'emptyState', group: 'Feedback', label: 'Empty State', stage: 'pad',
+        blurb: 'Centered placeholder with illustration, title, body, and optional CTA.',
+        tag: '<code>.empty-state .empty-state__illustration .empty-state__text</code>',
+        spec: {},
+        controls: [
+          { type: 'text', key: 'title', label: 'title', def: 'No groups yet' },
+          { type: 'text', key: 'body', label: 'body', def: 'Create a group to start splitting expenses' },
+          { type: 'toggle', key: 'cta', label: 'CTA button', def: true }
+        ],
+        render: function (s) {
+          var cta = s.cta ? '<button class="btn btn--md btn--primary"><span class="btn__content">Create a group</span></button>' : '';
+          return '<div class="empty-state" style="width:100%">' +
+            '<div class="empty-state__illustration"><svg viewBox="0 0 48 48" fill="none">' +
+            '<rect x="8" y="14" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/>' +
+            '<path d="M24 26v-4M22 24h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>' +
+            '<div class="empty-state__text"><p class="empty-state__title">' + s.title + '</p>' +
+            '<p class="empty-state__body">' + s.body + '</p></div>' + cta + '</div>';
+        }
+      },
+      {
+        id: 'successState', group: 'Feedback', label: 'Success State', stage: 'pad',
+        blurb: 'Full-screen success layout with large icon, heading, and action area.',
+        tag: '<code>.success-state .success-state--{celebration|confirmation}</code>',
+        spec: { variants: 'celebration · confirmation' },
+        controls: [
+          { type: 'segmented', key: 'variant', label: 'variant', options: ['celebration','confirmation'], def: 'celebration' },
+          { type: 'text', key: 'heading', label: 'heading', def: 'Group Created!' }
+        ],
+        render: function (s) {
+          var icon = s.variant === 'celebration'
+            ? '<span class="success-state__icon-emoji">🎉</span>'
+            : '<i class="ph-bold ph-check success-state__icon-glyph"></i>';
+          return '<div class="success-state success-state--' + s.variant + '" style="width:100%">' +
+            '<div class="success-state__icon">' + icon + '</div>' +
+            '<h1 class="success-state__heading">' + s.heading + '</h1>' +
+            '<div class="success-state__info-card"><p class="success-state__name">Goa Trip</p>' +
+            '<span class="success-state__meta">🏖️ Travel</span></div></div>' +
+            '<div class="success-state__actions"><a class="btn btn--primary btn--lg btn--full"><span class="btn__content">View Group</span></a></div>';
+        }
+      },
+      {
+        id: 'faq', group: 'Feedback', label: 'FAQ / Accordion', stage: 'pad',
+        blurb: 'Expandable question-answer item with a toggle icon.',
+        tag: '<code>.faq-item .faq-item__trigger .faq-item__answer</code>',
+        spec: { states: 'collapsed · expanded' },
+        controls: [
+          { type: 'text', key: 'question', label: 'question', def: 'What is Settlr?' },
+          { type: 'toggle', key: 'expanded', label: 'expanded', def: true }
+        ],
+        states: [
+          { label: 'Collapsed', vals: { expanded: false } },
+          { label: 'Expanded', vals: { expanded: true } }
+        ],
+        render: function (s) {
+          var answer = s.expanded ? '<p class="faq-item__answer">Settlr helps you track shared expenses and settle up with friends.</p>' : '';
+          return '<div class="faq-item" style="width:100%"><div class="faq-item__trigger">' +
+            '<span class="faq-item__question">' + s.question + '</span>' +
+            '<span class="faq-item__icon">' + (s.expanded ? '−' : '+') + '</span></div>' + answer + '</div>';
+        }
+      },
+
+      /* ───────── Navigation / Chrome (Web Components) ───────── */
+      {
+        id: 'topAppBar', group: 'Navigation', label: 'Top App Bar',
+        blurb: 'Screen header with back button, title, and optional right action.',
+        tag: '<code>&lt;settlr-top-app-bar title back bordered brand&gt;</code>',
+        spec: { variants: '--nav (back) · --bordered · brand title' },
+        controls: [
+          { type: 'text', key: 'title', label: 'title', def: 'Add Expense' },
+          { type: 'toggle', key: 'back', label: 'back button', def: true },
+          { type: 'toggle', key: 'bordered', label: 'bordered', def: false },
+          { type: 'toggle', key: 'brand', label: 'brand color', def: false }
+        ],
+        stage: 'top',
+        render: function (s) {
+          return '<settlr-top-app-bar title="' + s.title + '"' +
+            (s.back ? ' back="home-dashboard"' : '') +
+            (s.bordered ? ' bordered' : '') +
+            (s.brand ? ' brand' : '') + '></settlr-top-app-bar>';
+        }
+      },
+      {
+        id: 'heading', group: 'Navigation', label: 'Heading',
+        blurb: 'Section heading row with title and an optional right-side action.',
+        tag: '<code>.heading .heading__text .heading__action</code>',
+        spec: {},
+        controls: [
+          { type: 'text', key: 'title', label: 'title', def: 'Recent groups' },
+          { type: 'toggle', key: 'action', label: 'right action', def: true }
+        ],
+        render: function (s) {
+          var action = s.action ? '<a class="heading__action">See all</a>' : '';
+          return '<div class="heading" style="width:100%"><span class="heading__text">' + s.title + '</span>' + action + '</div>';
+        }
+      },
+      {
+        id: 'bottomNav', group: 'Navigation', label: 'Bottom Nav',
+        blurb: 'Floating pill navigation with Home / People / Activity tabs.',
+        tag: '<code>&lt;settlr-bottom-nav active="home|people|activity"&gt;</code>',
+        spec: { tabs: 'home · people · activity' },
+        stage: 'bottom',
+        controls: [
+          { type: 'segmented', key: 'active', label: 'active', options: ['home','people','activity'], def: 'home' }
+        ],
+        render: function (s) {
+          return '<settlr-bottom-nav active="' + s.active + '"></settlr-bottom-nav>';
+        }
+      },
+      {
+        id: 'headerChips', group: 'Navigation', label: 'Header Chips', stage: 'top',
+        blurb: 'Horizontally scrollable chip strip for filters. --compact is the tighter variant used directly below a search field (people, activity).',
+        tag: '<code>.header-chips .header-chips--compact</code> wrapping <code>.chip.chip--sm</code>',
+        spec: { modifiers: 'compact' },
+        controls: [
+          { type: 'segmented', key: 'active', label: 'active', options: ['0','1','2','3'], def: '0' },
+          { type: 'toggle', key: 'compact', label: 'compact', def: false }
+        ],
+        render: function (s) {
+          var labels = ['All','Food','Transport','Stay'];
+          var idx = parseInt(s.active, 10);
+          var chips = '';
+          for (var i = 0; i < labels.length; i++) {
+            chips += '<button class="' + cx('chip','chip--sm', i === idx && 'is-active') + '">' + labels[i] + '</button>';
+          }
+          return '<div class="' + cx('header-chips', s.compact && 'header-chips--compact') + '" style="width:100%">' + chips + '</div>';
+        }
+      },
+      {
+        id: 'stepProgress', group: 'Navigation', label: 'Step Progress', stage: 'top',
+        blurb: 'Stepped progress dots for multi-step flows (create-group, add-expense, settle).',
+        tag: '<code>.step-progress .step-progress__step .step-progress__step--active</code>',
+        spec: {},
+        controls: [
+          { type: 'segmented', key: 'total', label: 'steps', options: ['2','3','4'], def: '3' },
+          { type: 'segmented', key: 'active', label: 'active', options: ['0','1','2','3'], def: '0' }
+        ],
+        render: function (s) {
+          var total = parseInt(s.total, 10), idx = parseInt(s.active, 10), steps = '';
+          for (var i = 0; i < total; i++) {
+            steps += '<div class="' + cx('step-progress__step', i === idx && 'step-progress__step--active') + '"></div>';
+          }
+          return '<div class="step-progress" style="width:100%">' + steps + '</div>';
+        }
+      },
+      {
+        id: 'actionButtonRow', group: 'Navigation', label: 'Action Button Row', stage: 'bottom',
+        blurb: 'Fixed bottom row with one or two full-width action buttons (legacy — prefer screen footer).',
+        tag: '<code>.action-btn-row</code> wrapping <code>.btn.btn--lg</code>',
+        spec: {},
+        controls: [
+          { type: 'segmented', key: 'buttons', label: 'buttons', options: ['one','two'], def: 'two' }
+        ],
+        render: function (s) {
+          var primary = '<button class="btn btn--lg btn--primary"><span class="btn__content">Settle Up</span></button>';
+          if (s.buttons === 'one') return '<div class="action-btn-row">' + primary + '</div>';
+          return '<div class="action-btn-row"><button class="btn btn--lg btn--secondary"><span class="btn__content">Add Expense</span></button>' + primary + '</div>';
+        }
+      },
+      {
+        id: 'screenFooter', group: 'Navigation', label: 'Screen Footer', stage: 'bottom',
+        blurb: 'Sticky footer with one or two action buttons; top border appears on scroll.',
+        tag: '<code>.screen-footer .is-scrolled</code> wrapping <code>.btn.btn--lg</code>',
+        spec: { modifiers: 'is-scrolled' },
+        controls: [
+          { type: 'segmented', key: 'buttons', label: 'buttons', options: ['one','two'], def: 'one' },
+          { type: 'toggle', key: 'scrolled', label: 'is-scrolled', def: false }
+        ],
+        render: function (s) {
+          var cls = cx('screen-footer', s.scrolled && 'is-scrolled');
+          var primary = '<button class="btn btn--lg btn--primary btn--full"><span class="btn__content">Next <i class="btn__icon ph-bold ph-arrow-right"></i></span></button>';
+          if (s.buttons === 'one') return '<div class="' + cls + '">' + primary + '</div>';
+          return '<div class="' + cls + '"><a class="btn btn--lg btn--secondary"><span class="btn__content">Settle up</span></a>' +
+            '<a class="btn btn--lg btn--primary"><span class="btn__content">Add expense</span></a></div>';
+        }
+      },
+
+      /* ───────── Overlays ───────── */
+      {
+        id: 'bottomSheet', group: 'Overlays', label: 'Bottom Sheet', stage: 'fill',
+        blurb: 'Modal panel sliding up from the bottom with overlay and drag handle.',
+        tag: '<code>.sheet-overlay .sheet .sheet__handle .sheet__header .sheet__content</code>',
+        spec: {},
+        controls: [
+          { type: 'text', key: 'title', label: 'title', def: 'Select category' }
+        ],
+        render: function (s) {
+          return '<div class="sheet-overlay"><div class="sheet">' +
+            '<div class="sheet__handle"><div class="sheet__handle-bar"></div></div>' +
+            '<div class="sheet__header"><span class="sheet__title">' + s.title + '</span>' +
+            '<button class="icon-btn icon-btn--sm" aria-label="Close"><span class="icon-holder icon-btn__icon"><i class="ph ph-x"></i></span></button></div>' +
+            '<div class="sheet__content"><p style="padding:var(--spacing-16); color:var(--text-secondary)">Sheet content goes here.</p></div></div></div>';
+        }
+      },
+      {
+        id: 'statusBar', group: 'Chrome', label: 'Status Bar',
+        blurb: 'iOS-style status bar showing time and system icons.',
+        tag: '<code>&lt;settlr-status-bar time="9:41"&gt;</code>',
+        spec: {},
+        stage: 'top',
+        controls: [
+          { type: 'text', key: 'time', label: 'time', def: '9:41' }
+        ],
+        render: function (s) {
+          return '<settlr-status-bar time="' + s.time + '"></settlr-status-bar>';
+        }
+      }
+    ];
+
+    /* ── state ─────────────────────────────────────────── */
+    var current = null;     // active component def
+    var values = {};        // control values for active component
+    var mode = 'device';    // device | free
+
+    /* ── build sidebar ─────────────────────────────────── */
+    var navEl = document.getElementById('js-pg-nav');
+    function buildNav(filter) {
+      filter = (filter || '').toLowerCase();
+      navEl.innerHTML = '';
+      var groups = {};
+      var order = [];
+      REGISTRY.forEach(function (c) {
+        if (filter && c.label.toLowerCase().indexOf(filter) === -1 && c.group.toLowerCase().indexOf(filter) === -1) return;
+        if (!groups[c.group]) { groups[c.group] = []; order.push(c.group); }
+        groups[c.group].push(c);
+      });
+      order.forEach(function (g) {
+        var wrap = document.createElement('div');
+        wrap.className = 'pg-group';
+        wrap.innerHTML = '<div class="pg-group__title">' + g + '</div>';
+        groups[g].forEach(function (c) {
+          var btn = document.createElement('button');
+          btn.className = 'pg-nav__item' + (current && current.id === c.id ? ' is-active' : '');
+          btn.textContent = c.label;
+          btn.setAttribute('data-id', c.id);
+          btn.addEventListener('click', function () { select(c.id); });
+          wrap.appendChild(btn);
+        });
+        navEl.appendChild(wrap);
+      });
+    }
+
+    /* ── render controls ───────────────────────────────── */
+    function buildControls() {
+      var host = document.getElementById('js-pg-controls');
+      host.innerHTML = '';
+      if (!current.controls.length) {
+        host.innerHTML = '<p class="pg-field__label">No props — static component.</p>';
+      }
+      current.controls.forEach(function (ctl) {
+        var field = document.createElement('div');
+        field.className = 'pg-field' + (ctl.type === 'toggle' ? ' pg-field--inline' : '');
+        var label = document.createElement('span');
+        label.className = 'pg-field__label';
+        label.textContent = ctl.label;
+
+        var input;
+        if (ctl.type === 'select') {
+          input = document.createElement('select');
+          ctl.options.forEach(function (o) {
+            var opt = document.createElement('option');
+            opt.value = o; opt.textContent = o;
+            if (values[ctl.key] === o) opt.selected = true;
+            input.appendChild(opt);
+          });
+          input.addEventListener('change', function () { values[ctl.key] = input.value; update(); });
+          field.appendChild(label); field.appendChild(input);
+        } else if (ctl.type === 'text') {
+          input = document.createElement('input');
+          input.type = 'text'; input.value = values[ctl.key];
+          input.addEventListener('input', function () { values[ctl.key] = input.value; update(); });
+          field.appendChild(label); field.appendChild(input);
+        } else if (ctl.type === 'segmented') {
+          input = document.createElement('div');
+          input.className = 'pg-segctl';
+          ctl.options.forEach(function (o) {
+            var b = document.createElement('button');
+            b.textContent = o;
+            b.className = (values[ctl.key] === o ? 'is-active' : '');
+            b.addEventListener('click', function () { values[ctl.key] = o; buildControls(); update(); });
+            input.appendChild(b);
+          });
+          field.appendChild(label); field.appendChild(input);
+        } else if (ctl.type === 'toggle') {
+          input = document.createElement('button');
+          input.type = 'button';
+          input.className = 'pg-switch' + (values[ctl.key] ? ' is-on' : '');
+          input.setAttribute('aria-pressed', values[ctl.key] ? 'true' : 'false');
+          input.addEventListener('click', function () { values[ctl.key] = !values[ctl.key]; buildControls(); update(); });
+          field.appendChild(label); field.appendChild(input);
+        }
+        host.appendChild(field);
+      });
+
+      // spec
+      var specEl = document.getElementById('js-pg-spec');
+      specEl.innerHTML = '';
+      var spec = current.spec || {};
+      Object.keys(spec).forEach(function (k) {
+        specEl.innerHTML += '<dt>' + k + '</dt><dd>' + spec[k] + '</dd>';
+      });
+    }
+
+    /* ── pretty-print + escape code ────────────────────── */
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function formatHtml(html) {
+      // Insert newlines between adjacent tags, then indent by depth.
+      var withBreaks = html.replace(/>\s*</g, '>\n<');
+      var lines = withBreaks.split('\n');
+      var depth = 0, out = [];
+      lines.forEach(function (raw) {
+        var line = raw.trim();
+        if (!line) return;
+        var isClose = /^<\//.test(line);
+        var isSelfContained = /^<[^>]+>[^<]*<\/[^>]+>$/.test(line); // <tag>text</tag>
+        var opensAndCloses = isSelfContained;
+        if (isClose) depth = Math.max(0, depth - 1);
+        out.push(new Array(depth + 1).join('  ') + line);
+        var isVoid = /\/>$/.test(line) || /^<(input|img|br|hr|polyline|path|line|circle|rect)\b/.test(line);
+        var isOpen = /^<[^/!][^>]*[^/]>$/.test(line);
+        if (isOpen && !opensAndCloses && !isVoid) depth++;
+      });
+      return out.join('\n');
+    }
+    function highlight(esc) {
+      // Attribute names first (before tag spans exist), then tag names.
+      // Order matters: highlighting the tags first would let the attr pass
+      // re-match the class="" inside the injected <span> and corrupt output.
+      return esc
+        .replace(/([\w-]+)="/g, '<span class="tok-attr">$1</span>="')
+        .replace(/(&lt;\/?)([a-z][\w-]*)/g, '$1<span class="tok-tag">$2</span>');
+    }
+
+    /* ── update preview + code ─────────────────────────── */
+    var stageEl = document.getElementById('js-pg-stage');
+    var previewEl = document.getElementById('js-pg-preview');
+    var codeEl = document.getElementById('js-pg-codeblock');
+    var lastCode = '';
+
+    function update() {
+      var html = current.render(values);
+      lastCode = formatHtml(html);
+      stageEl.innerHTML = html;
+      codeEl.innerHTML = highlight(escapeHtml(lastCode));
+      buildStates();
+      if (window.upgradeIcons) window.upgradeIcons();
+      if (window.SettlrBottomNavSlider) window.SettlrBottomNavSlider.initAll();
+    }
+
+    /* Load the component's source CSS file into the Source panel */
+    var sourceEl = document.getElementById('js-pg-source');
+    var sourcePathEl = document.getElementById('js-pg-source-path');
+    function loadSource(id) {
+      var path = CSS_PATHS[id];
+      if (!path) { sourcePathEl.textContent = ''; sourceEl.textContent = '/* No dedicated CSS file for this component */'; return; }
+      sourcePathEl.textContent = path;
+      if (cssCache[path] != null) { sourceEl.textContent = cssCache[path]; return; }
+      sourceEl.textContent = 'Loading…';
+      fetch('../' + path)
+        .then(function (r) { return r.text(); })
+        .then(function (t) { cssCache[path] = t; if (sourcePathEl.textContent === path) sourceEl.textContent = t; })
+        .catch(function () { sourceEl.textContent = '/* Failed to load ' + path + ' */'; });
+    }
+
+    /* Build the state matrix — reuses render() with each state's overrides
+       merged onto the live control values, so it tracks other props too. */
+    var statesPanel = document.getElementById('js-pg-states-panel');
+    var statesHost = document.getElementById('js-pg-states');
+    function matrixCell(label, vals) {
+      var cell = document.createElement('div');
+      cell.className = 'pg-state-cell';
+      cell.innerHTML = '<span class="pg-state-cell__label">' + label + '</span>' +
+        '<div class="pg-state-cell__box">' + current.render(vals) + '</div>';
+      return cell;
+    }
+    function matrixSubhead(text) {
+      var h = document.createElement('div');
+      h.className = 'pg-states__subhead';
+      h.textContent = text;
+      return h;
+    }
+    function buildStates() {
+      // Variant axis = the variant/type/mode control (when it has >1 option)
+      var variantCtl = current.controls.filter(function (c) {
+        return c.key === 'variant' || c.key === 'type' || c.key === 'mode';
+      })[0];
+      var hasVariants = variantCtl && variantCtl.options && variantCtl.options.length > 1;
+      var hasStates = current.states && current.states.length;
+      if (!hasVariants && !hasStates) { statesPanel.hidden = true; statesHost.innerHTML = ''; return; }
+      statesPanel.hidden = false;
+      statesHost.innerHTML = '';
+      if (hasVariants) {
+        statesHost.appendChild(matrixSubhead('Variants'));
+        variantCtl.options.forEach(function (opt) {
+          var vals = Object.assign({}, values);
+          vals[variantCtl.key] = opt;
+          statesHost.appendChild(matrixCell(opt, vals));
+        });
+      }
+      if (hasStates) {
+        statesHost.appendChild(matrixSubhead('States'));
+        current.states.forEach(function (st) {
+          statesHost.appendChild(matrixCell(st.label, Object.assign({}, values, st.vals)));
+        });
+      }
+    }
+
+    function applyStageClass() {
+      var place = current.stage || 'center';
+      stageEl.className = 'pg-stage pg-stage--' + place;
+      previewEl.className = 'pg-preview ' + (mode === 'device' ? 'pg-preview--device' : 'pg-preview--free');
+    }
+
+    /* ── select a component ────────────────────────────── */
+    function select(id) {
+      current = REGISTRY.filter(function (c) { return c.id === id; })[0];
+      values = {};
+      current.controls.forEach(function (ctl) { values[ctl.key] = ctl.def; });
+      document.getElementById('js-pg-name').textContent = current.label;
+      document.getElementById('js-pg-blurb').textContent = current.blurb;
+      document.getElementById('js-pg-tag').innerHTML = current.tag || '';
+      applyStageClass();
+      buildControls();
+      update();
+      loadSource(current.id);
+      // refresh active nav state
+      Array.prototype.forEach.call(navEl.querySelectorAll('.pg-nav__item'), function (b) {
+        b.classList.toggle('is-active', b.getAttribute('data-id') === id);
+      });
+      // sync url hash
+      history.replaceState(null, '', '#' + id);
+    }
+
+    /* ── wire up chrome controls ───────────────────────── */
+    document.getElementById('js-pg-mode').addEventListener('click', function (e) {
+      var btn = e.target.closest('button'); if (!btn) return;
+      mode = btn.getAttribute('data-mode');
+      Array.prototype.forEach.call(this.querySelectorAll('button'), function (b) {
+        b.classList.toggle('is-active', b === btn);
+      });
+      applyStageClass();
+    });
+
+    document.getElementById('js-pg-copy').addEventListener('click', function () {
+      var self = this;
+      navigator.clipboard.writeText(lastCode).then(function () {
+        self.textContent = 'Copied!';
+        setTimeout(function () { self.textContent = 'Copy'; }, 1200);
+      });
+    });
+
+    document.getElementById('js-pg-source-copy').addEventListener('click', function () {
+      var self = this;
+      navigator.clipboard.writeText(sourceEl.textContent).then(function () {
+        self.textContent = 'Copied!';
+        setTimeout(function () { self.textContent = 'Copy'; }, 1200);
+      });
+    });
+
+    document.getElementById('js-pg-search').addEventListener('input', function () {
+      buildNav(this.value);
+    });
+
+    /* The matrix is a static reference — just swallow navigation. */
+    document.getElementById('js-pg-states').addEventListener('click', function (e) {
+      if (e.target.closest('a, button')) e.preventDefault();
+    });
+
+    /* The preview is LIVE: swallow navigation, then run the component's
+       interaction (mutating the existing DOM in place so the real CSS
+       animation plays), and sync the controls / code / matrix to match. */
+    document.getElementById('js-pg-preview').addEventListener('click', function (e) {
+      if (e.target.closest('a, button, label, .toggle-control, .checkbox-control, .radio-control, .segment-item, .faq-item__trigger, .detail-row')) {
+        e.preventDefault();
+      }
+      if (interactPreview(e)) {
+        buildControls();
+        lastCode = formatHtml(current.render(values));
+        codeEl.innerHTML = highlight(escapeHtml(lastCode));
+        buildStates();
+      }
+    });
+
+    /* In-place interaction per component → keeps the element alive so its
+       transition/keyframe animation runs, and updates `values` so code,
+       controls and the matrix stay in sync. Returns true if state changed. */
+    function interactPreview(e) {
+      var root = stageEl.firstElementChild;
+      if (!root) return false;
+      if (values.disabled) return false; // disabled components don't react
+      var id = current.id;
+
+      if (id === 'toggle') {
+        values.on = !values.on;
+        root.classList.toggle('is-on', values.on);
+        root.setAttribute('aria-checked', values.on ? 'true' : 'false');
+        return true;
+      }
+      if (id === 'checkbox') {
+        var cb = root.classList.contains('checkbox-control') ? root : root.querySelector('.checkbox-control');
+        values.selected = !values.selected;
+        if (cb) cb.classList.toggle('is-selected', values.selected);
+        if (root.classList.contains('checkbox-item')) root.classList.toggle('is-selected', values.selected);
+        return true;
+      }
+      if (id === 'radio') {
+        if (values.selected) return false;
+        var rc = root.classList.contains('radio-control') ? root : root.querySelector('.radio-control');
+        values.selected = true;
+        if (rc) rc.classList.add('is-selected');
+        return true;
+      }
+      if (id === 'chip') {
+        values.active = !values.active;
+        root.classList.toggle('is-active', values.active);
+        return true;
+      }
+      if (id === 'segment') {
+        var seg = e.target.closest('.segment-item'); if (!seg) return false;
+        var segs = [].slice.call(root.querySelectorAll('.segment-item'));
+        var si = segs.indexOf(seg); if (si < 0) return false;
+        segs.forEach(function (b, i) { b.classList.toggle('is-active', i === si); });
+        values.active = String(si);
+        return true;
+      }
+      if (id === 'bottomNav') {
+        var tab = e.target.closest('.bottom-nav__tab'); if (!tab) return false;
+        var tabs = [].slice.call(root.querySelectorAll('.bottom-nav__tab'));
+        var keys = ['home', 'people', 'activity'];
+        var tabIcons = ['house', 'user', 'clock'];
+        var ti = tabs.indexOf(tab); if (ti < 0) return false;
+        var fill = window.SETTLR_ICONS_FILL || {}, reg = window.SETTLR_ICONS || {};
+        tabs.forEach(function (t, i) {
+          t.classList.toggle('is-active', i === ti);
+          // Swap the upgraded SVG holder to fill (active) / regular (inactive)
+          var holder = t.querySelector('.bottom-nav__tab-icon .icon-holder');
+          var ic = tabIcons[i];
+          if (holder && ic) holder.innerHTML = (i === ti ? fill[ic] : reg[ic]) || holder.innerHTML;
+        });
+        values.active = keys[ti];
+        return true;
+      }
+      if (id === 'faq') {
+        if (!e.target.closest('.faq-item__trigger')) return false;
+        values.expanded = !values.expanded;
+        var icon = root.querySelector('.faq-item__icon');
+        if (icon) icon.textContent = values.expanded ? '−' : '+';
+        var ans = root.querySelector('.faq-item__answer');
+        if (values.expanded && !ans) {
+          root.insertAdjacentHTML('beforeend', '<p class="faq-item__answer">Settlr helps you track shared expenses and settle up with friends.</p>');
+        } else if (!values.expanded && ans) {
+          ans.remove();
+        }
+        return true;
+      }
+      if (id === 'detailRow' && values.variant === 'selectable') {
+        values.selected = !values.selected;
+        root.classList.toggle('is-selected', values.selected);
+        return true;
+      }
+      return false;
+    }
+
+    /* Reset → restore the component's default control values. */
+    document.getElementById('js-pg-reset').addEventListener('click', function () {
+      current.controls.forEach(function (ctl) { values[ctl.key] = ctl.def; });
+      buildControls();
+      update();
+    });
+
+    /* ── boot ──────────────────────────────────────────── */
+    var initial = (location.hash || '').replace('#', '');
+    var first = REGISTRY.filter(function (c) { return c.id === initial; })[0] || REGISTRY[0];
+    current = first;
+    buildNav('');
+    select(first.id);
+  })();
+  </script>
+</body>
+</html>

@@ -2197,6 +2197,67 @@
       margin: calc(56 * var(--u)) 0;
     }
 
+    /* ============================================================
+       Component Library — embedded Settlr playground (light, wide)
+       ============================================================ */
+    .cs-lib-head { max-width: 62ch; margin-bottom: calc(32 * var(--u)); }
+    .cs-lib-title {
+      font-family: var(--f-heading);
+      font-size: clamp(calc(22 * var(--u)), 2.5vw, calc(32 * var(--u)));
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--c-dark);
+      margin-bottom: calc(14 * var(--u));
+    }
+    .cs-lib-desc {
+      font-size: calc(15 * var(--u));
+      line-height: 1.75;
+      color: var(--c-dark);
+      opacity: 0.72;
+    }
+    .cs-lib-frame {
+      position: relative;
+      border-radius: calc(14 * var(--u));
+      overflow: hidden;
+      border: calc(1 * var(--u)) solid rgba(27,28,26,0.1);
+      box-shadow: 0 calc(20 * var(--u)) calc(50 * var(--u)) rgba(0,0,0,0.08);
+    }
+    .cs-lib-chrome {
+      display: flex;
+      align-items: center;
+      gap: calc(8 * var(--u));
+      padding: calc(12 * var(--u)) calc(16 * var(--u));
+      background: rgba(27,28,26,0.03);
+      border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+    }
+    .cs-lib-dot { width: calc(11 * var(--u)); height: calc(11 * var(--u)); border-radius: 50%; }
+    .cs-lib-url {
+      margin-left: calc(8 * var(--u));
+      font-size: calc(12 * var(--u));
+      color: rgba(27,28,26,0.4);
+      font-family: var(--f-body);
+      letter-spacing: 0.02em;
+    }
+    .cs-lib-frame iframe {
+      display: block;
+      width: 100%;
+      height: calc(760 * var(--u));
+      border: 0;
+      background: #fff;
+    }
+    .cs-lib-open {
+      display: inline-flex;
+      align-items: center;
+      gap: calc(6 * var(--u));
+      margin-top: calc(20 * var(--u));
+      color: var(--c-orange);
+      font-size: calc(13 * var(--u));
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .cs-lib-open:hover { text-decoration: underline; }
+
     /* Closing line — matches Figma "Thanks for reading. Let's build something together." */
     .cs-closing-line {
       font-family: var(--f-heading);
@@ -7805,6 +7866,27 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="cs-divider"></div>
+
+          <!-- COMPONENT LIBRARY -->
+          <div class="cs-section cs-lib-section">
+            <div class="cs-lib-head">
+              <p class="cs-tag">Component Library</p>
+              <h2 class="cs-lib-title">The whole system, live.</h2>
+              <p class="cs-lib-desc">Behind every screen is a design system — tokens, buttons, chips, inputs, nav bars, the lot. This is the actual component playground I built for Settlr: searchable, grouped by category, every element rendered from the same CSS the app ships with. Explore it right here.</p>
+            </div>
+            <div class="cs-lib-frame">
+              <div class="cs-lib-chrome" aria-hidden="true">
+                <span class="cs-lib-dot" style="background:#ff5f57"></span>
+                <span class="cs-lib-dot" style="background:#febc2e"></span>
+                <span class="cs-lib-dot" style="background:#28c840"></span>
+                <span class="cs-lib-url">settlr / component playground</span>
+              </div>
+              <iframe id="settlrPlayground" src="prototype/settlr/screens/playground.html" title="Settlr component playground" loading="lazy"></iframe>
+            </div>
+            <a class="cs-lib-open" href="prototype/settlr/screens/playground.html" target="_blank" rel="noopener">Open full playground in a new tab →</a>
           </div>
 
           <div class="cs-divider"></div>
