@@ -75,6 +75,7 @@
       --text: #0C0C0B;
       --orange: #E06B2D;
       --grey: #808080;
+      --radius-pill: 100px;
       /* Brand palette tokens (per design-system.md) — these were referenced
          site-wide but never defined; CSS was falling back to transparent
          which is why action-button fills weren't rendering. */
@@ -4133,7 +4134,7 @@
     }
     .cs-phone-tile--live iframe {
       position: absolute;
-      top: -calc(39 * var(--u)); /* crop calc(48 * var(--u)) status bar at scale 0.8085 */
+      top: calc(-39 * var(--u)); /* crop calc(48 * var(--u)) status bar at scale 0.8085 */
       left: 0;
       width: calc(393 * var(--u));
       height: calc(852 * var(--u));
@@ -5076,7 +5077,7 @@
       height: calc(115 * var(--u));
       background: #FEF9EE;
       border-radius: calc(10 * var(--u)) calc(10 * var(--u)) 0 0;
-      box-shadow: 0 -calc(4 * var(--u)) calc(16 * var(--u)) rgba(14,6,24,0.12);
+      box-shadow: 0 calc(-4 * var(--u)) calc(16 * var(--u)) rgba(14,6,24,0.12);
       padding: calc(10 * var(--u));
       display: flex;
       flex-direction: column;
@@ -6030,7 +6031,7 @@
     }
     .cs-gallery-tile--live iframe {
       position: absolute;
-      top: -calc(39 * var(--u)); /* crop calc(48 * var(--u)) status bar at scale 0.8085 */
+      top: calc(-39 * var(--u)); /* crop calc(48 * var(--u)) status bar at scale 0.8085 */
       left: 0;
       width: calc(393 * var(--u));
       height: calc(852 * var(--u));
@@ -7872,7 +7873,7 @@
             <div class="exp-card film-theme">
               <div class="exp-card-inner">
                 <div class="parallax-wrap">
-                  <img src="https://img.youtube.com/vi/XMWdlqM76bk/hqdefault.jpg" class="exp-card-img" alt="Talaab">
+                  <img src="https://img.youtube.com/vi/XMWdlqM76bk/maxresdefault.jpg" class="exp-card-img" alt="Talaab">
                 </div>
                 <div class="glass-play-btn">
                   <div class="play-triangle"></div>
@@ -7896,7 +7897,7 @@
             <div class="exp-card film-theme">
               <div class="exp-card-inner">
                 <div class="parallax-wrap">
-                  <img src="https://img.youtube.com/vi/1jXkEcAHBug/hqdefault.jpg" class="exp-card-img" alt="Paithani">
+                  <img src="https://img.youtube.com/vi/1jXkEcAHBug/maxresdefault.jpg" class="exp-card-img" alt="Paithani">
                 </div>
                 <div class="glass-play-btn">
                   <div class="play-triangle"></div>
@@ -7920,7 +7921,7 @@
             <div class="exp-card film-theme">
               <div class="exp-card-inner">
                 <div class="parallax-wrap">
-                  <img src="https://img.youtube.com/vi/4DbHJ2F3q3E/hqdefault.jpg" class="exp-card-img" alt="Chor">
+                  <img src="https://img.youtube.com/vi/4DbHJ2F3q3E/maxresdefault.jpg" class="exp-card-img" alt="Chor">
                 </div>
                 <div class="glass-play-btn">
                   <div class="play-triangle"></div>
@@ -9229,6 +9230,13 @@
       window.addEventListener('resize', () => {
         if (!revealed) sizeFoil();
       });
+      // The dark footer's foil lives inside display:none #alter-ego-content
+      // at init, so sizeFoil() bails at width 0 (and the flip's synthetic
+      // resize fires before the content is shown). Redraw when the canvas
+      // actually gets a size.
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(() => { if (!revealed) sizeFoil(); }).observe(foil);
+      }
 
       function stamp() { closer.classList.add('stamped'); }
       function armFoil() {
