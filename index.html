@@ -9,6 +9,8 @@
   <meta name="theme-color" content="#F5F3EE">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preload" href="fonts/Unbounded/Unbounded-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://www.divyanshrastogi.in/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Divyansh Rastogi">
@@ -44,30 +46,26 @@
 
     @font-face {
       font-family: 'Unbounded';
-      src: url('./fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
+      src: url('./fonts/Unbounded/Unbounded-VariableFont_wght.woff2') format('woff2-variations'),
+           url('./fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
       font-weight: 200 900;
       font-style: normal;
       font-display: swap;
     }
     @font-face {
       font-family: 'Plus Jakarta Sans';
-      src: url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
+      src: url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2') format('woff2-variations'),
+           url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
       font-weight: 200 800;
       font-style: normal;
       font-display: swap;
     }
     @font-face {
       font-family: 'Plus Jakarta Sans';
-      src: url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf') format('truetype-variations');
+      src: url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.woff2') format('woff2-variations'),
+           url('./fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf') format('truetype-variations');
       font-weight: 200 800;
       font-style: italic;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Unbounded';
-      src: url('./fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
-      font-weight: 200 900;
-      font-style: normal;
       font-display: swap;
     }
     :root {
