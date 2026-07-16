@@ -25,6 +25,19 @@ index2.html
 # Unused font folders
 Plus_Jakarta_Sans,Unbounded/
 PP Telegraf - Free for Personal Use/
+Nohemi/
+
+# Retired pages (kept locally for reference)
+alter-ego.html
+
+# Internal docs & process notes — never ship to the public repo
+projects/
+.claude/
+kinko-design-system-report.md
+DESIGN-BRIEF.md
+explorations/
+reference/
+replace_fonts.py
 
 # Unused asset experiments
 assets2/
