@@ -8657,7 +8657,7 @@
       const navResumeTrigger = document.getElementById('navResumeTrigger');
       if (navResumeTrigger) {
         navResumeTrigger.addEventListener('click', () => {
-          if (window.openResume) window.openResume();
+          location.hash = 'resume';   // hash router opens the overlay
         });
       }
     })();
@@ -8729,10 +8729,10 @@
     if (resumeTrigger) resumeTrigger.addEventListener('click', openResume);
     const heroResumeTrigger = document.getElementById('heroResumeTrigger');
     if (heroResumeTrigger) heroResumeTrigger.addEventListener('click', openResume);
-    resumeClose.addEventListener('click', closeResume);
-    resumeBackdrop.addEventListener('click', closeResume);
+    resumeClose.addEventListener('click', () => uiCloseResume());
+    resumeBackdrop.addEventListener('click', () => uiCloseResume());
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && resumeOverlay.classList.contains('is-open')) closeResume();
+      if (e.key === 'Escape') uiCloseResume();
     });
 
     // ── P3 FG parallax ─────────────────────────────────
@@ -11051,7 +11051,6 @@
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      history.pushState(null, '', '#' + slug);
       // For Settlr: paint the prototype iframe body cream once it loads
       if (slug === 'settlr') {
         const iframe = overlayBody.querySelector('#settlrProto');
@@ -11082,7 +11081,6 @@
       setTimeout(() => { document.body.classList.remove('overlay-is-open'); }, 650);
       overlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      history.pushState(null, '', location.pathname);
       overlayBody.innerHTML = '';
       delete overlayBody.dataset.case;
       overlayTop.classList.remove('show');
@@ -11091,10 +11089,10 @@
     // Link clicks
     document.querySelectorAll('.case-link').forEach(link => {
       link.addEventListener('click', e => {
-        // Don't hijack inner CTAs (e.g. NDA "Lets Connect" button)
+        // Don't hijack inner CTAs (e.g. NDA "Let's Connect" button)
         if (e.target.closest('[data-stop="true"]')) return;
         e.preventDefault();
-        openOverlay(link.dataset.project);
+        setHash(link.dataset.project);
       });
     });
 
@@ -11108,15 +11106,85 @@
     });
 
     // Close triggers
-    overlayClose.addEventListener('click', closeOverlay);
-    backdrop.addEventListener('click', closeOverlay);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay(); });
+    overlayClose.addEventListener('click', uiCloseCase);
+    backdrop.addEventListener('click', uiCloseCase);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') uiCloseCase(); });
 
-    // Hash on load (for direct/shared links). Kinko gated until docs are written.
-    if (location.hash) {
-      const slug = location.hash.slice(1);
-      if (caseStudies[slug] && slug !== 'kinko') openOverlay(slug);
+    /* ── Hash router: deep links for overlays & worlds ──────────────
+       The hash is the source of truth. UI triggers set the hash; this
+       router reacts (also to Back/Forward via hashchange). Supported:
+       #settlr #refer-earn (case overlays) · #resume · #hobbies (dark
+       world) · #photo-N (dark world + lightbox) · #kinko (scroll to
+       the locked card). Initial call sits at the end of this script,
+       after every init it depends on has run. */
+    function setHash(h) {
+      if (location.hash === '#' + h) return;
+      location.hash = h;                       // fires hashchange → routeHash
     }
+    function stripOverlayHash() {
+      // Called on UI-close; pushState doesn't fire hashchange, so the
+      // overlay close below runs exactly once. Back re-opens (correct).
+      history.pushState(null, '', alterEgoMode ? '#hobbies' : location.pathname + location.search);
+    }
+    function uiCloseCase() {
+      if (!overlay.classList.contains('is-open')) return;
+      if (/^#(settlr|refer-earn|kinko)$/.test(location.hash)) stripOverlayHash();
+      closeOverlay();
+    }
+    function uiCloseResume() {
+      if (!resumeOverlay.classList.contains('is-open')) return;
+      if (location.hash === '#resume') stripOverlayHash();
+      closeResume();
+    }
+    function enterAlterEgo(instant) {
+      if (alterEgoMode) return;
+      if (instant) {
+        if (window.syncPolaroidFlip) window.syncPolaroidFlip(true);
+        setAlterEgoMode(true);
+      } else {
+        playEgoTransition(true, () => { if (window.syncPolaroidFlip) window.syncPolaroidFlip(true); });
+      }
+    }
+    function routeHash(isLoad) {
+      const raw = location.hash.replace(/^#/, '');
+      const caseOpen = overlay.classList.contains('is-open');
+      const resumeOpen = resumeOverlay.classList.contains('is-open');
+      const photoMatch = raw.match(/^photo-(\d+)$/);
+
+      if (Object.prototype.hasOwnProperty.call(caseStudies, raw) && raw !== 'kinko') {
+        if (resumeOpen) closeResume();
+        if (!(caseOpen && overlayBody.dataset.case === raw)) openOverlay(raw);
+        return;
+      }
+      if (raw === 'resume') {
+        if (caseOpen) closeOverlay();
+        if (!resumeOpen) openResume();
+        return;
+      }
+      if (raw === 'hobbies' || photoMatch) {
+        if (caseOpen) closeOverlay();
+        if (resumeOpen) closeResume();
+        enterAlterEgo(isLoad === true);
+        if (photoMatch && window.openPhotoLightbox) window.openPhotoLightbox(parseInt(photoMatch[1], 10) - 1);
+        return;
+      }
+      if (raw === 'kinko') {
+        if (caseOpen) closeOverlay();
+        if (resumeOpen) closeResume();
+        if (alterEgoMode) {                    // Kinko card lives in the light world
+          if (window.syncPolaroidFlip) window.syncPolaroidFlip(false);
+          setAlterEgoMode(false);
+        }
+        const kinkoCard = document.getElementById('cs2-kinko-title');
+        if (kinkoCard) setTimeout(() => kinkoCard.scrollIntoView({ behavior: isLoad ? 'auto' : 'smooth', block: 'center' }), isLoad ? 300 : 0);
+        return;
+      }
+      // Empty hash or a plain scroll anchor (e.g. #connect): overlays close,
+      // the browser's native anchor behavior is left alone.
+      if (caseOpen) closeOverlay();
+      if (resumeOpen) closeResume();
+    }
+    window.addEventListener('hashchange', () => routeHash(false));
 
     // ── Settlr overlay interactions (proto switcher + chip toggle) ──
     overlayBody.addEventListener('click', e => {
@@ -11331,6 +11399,8 @@
 
       function triggerFlip() {
         const nextMode = !alterEgoMode;
+        // Keep the URL shareable without polluting Back-button history.
+        history.replaceState(null, '', nextMode ? '#hobbies' : location.pathname + location.search);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => {
           playEgoTransition(nextMode, () => {
@@ -11903,18 +11973,27 @@
       function updateImage(index) {
         lbImg.src = images[index].src;
         currentIndex = index;
+        // Shareable preview link; replaceState keeps Back-history clean.
+        if (lightbox.classList.contains('active')) history.replaceState(null, '', '#photo-' + (index + 1));
       }
 
       function openLightbox(index) {
         updateImage(index);
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
+        history.replaceState(null, '', '#photo-' + (index + 1));
       }
 
       function closeLightbox() {
         lightbox.classList.remove('active');
         document.body.style.overflow = '';
+        if (/^#photo-/.test(location.hash)) history.replaceState(null, '', '#hobbies');
       }
+
+      // Deep-link entry point (#photo-N), clamped to the gallery bounds.
+      window.openPhotoLightbox = function (i) {
+        openLightbox(Math.max(0, Math.min(images.length - 1, i)));
+      };
 
       function nextImage() {
         let newIndex = currentIndex + 1;
@@ -12133,6 +12212,9 @@
       // Initial sync and start
       requestAnimationFrame(updateTicker);
     })();
+
+    // ── Hash router: initial route (after every init above has run) ──
+    routeHash(true);
   </script>
 
 

@@ -808,7 +808,7 @@
       </div>
     </div>
     <p class="lede"><span class="lede-light">Shaping <b>digital products</b> and design systems with clarity and <span class="accent">character.</span></span><span class="lede-dark">Shaping <span class="accent lede-upright">myself</span> through films, photography, art and experiences.</span></p>
-    <div class="hero-actions">
+    <div class="hero-actions" id="resume">
       <a class="btn-hero btn-solid" href="https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/view" target="_blank" rel="noopener">
         <span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1389,9 +1389,13 @@
   // ── theme switch (manual, persisted) ──
   // First visit always opens on the work feed: dark mode swaps CONTENT here
   // (html.dark hides .world-light), so honoring prefers-color-scheme would
-  // hide every project from dark-mode phones. Only a saved choice applies.
+  // hide every project from dark-mode phones. Only a saved choice applies —
+  // except for after-hours deep links (#hobbies / #photo-N, forwarded from
+  // the desktop router), which show the dark feed for this visit without
+  // persisting the choice.
   const saved = themeStore ? themeStore.getItem('feed-theme') : null;
-  if (saved === 'dark') root.classList.add('dark');
+  const wantsAfterHours = /^#(hobbies|photo-\d+)$/.test(location.hash);
+  if (saved === 'dark' || wantsAfterHours) root.classList.add('dark');
   function toggleTheme() {
     const dark = root.classList.toggle('dark');
     if (themeStore) themeStore.setItem('feed-theme', dark ? 'dark' : 'light');
