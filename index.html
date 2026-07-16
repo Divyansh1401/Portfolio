@@ -7411,6 +7411,13 @@
       outline: 2px solid var(--orange, #E06B2D);
       outline-offset: 3px;
     }
+
+    /* Reduced motion: restore the native cursor (the custom one never
+       initializes) and hide its now-static decorations. */
+    @media (prefers-reduced-motion: reduce) {
+      body, a, button, [tabindex], .small-card, .project-row { cursor: auto !important; }
+      #custom-cursor, #cursor-ring, #cursor-glass { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -7960,48 +7967,48 @@
         </svg>
 
         <div class="rotor-3d" id="rotor3d">
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_3675.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_3801.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_4635.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_4642.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5406.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5422.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5433.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5435.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5456.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5475.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5528.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5597.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5751.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_5758.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6079.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6103.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6104.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6120.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6131.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6225.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6239.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_2442.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_3657.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_3876.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/Snapseed-1.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/Snapseed.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6195.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6288.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_6311.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_3181.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_2164.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_2352.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/DSC_7485.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20211004_184448-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220315_210826-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220317_172224-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_140742-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_175835-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220318_180016-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220319_142835-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/IMG_20220319_160729-01.webp" /></a>
-          <a class="card-3d"><img alt="" src="assets/images/photography/moon fin.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_3675.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_3801.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_4635.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_4642.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5406.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5422.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5433.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5435.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5456.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5475.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5528.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5597.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5751.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_5758.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6079.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6103.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6104.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6120.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6131.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6225.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6239.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_2442.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_3657.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_3876.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/Snapseed-1.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/Snapseed.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6195.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6288.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_6311.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_3181.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_2164.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_2352.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/DSC_7485.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20211004_184448-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220315_210826-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220317_172224-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220318_140742-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220318_175835-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220318_180016-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220319_142835-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/IMG_20220319_160729-01.webp" /></a>
+          <a class="card-3d"><img alt="" loading="lazy" decoding="async" src="assets/images/photography/moon fin.webp" /></a>
         </div>
       </div>
 
@@ -8217,8 +8224,13 @@
   </div>
 
   <script>
+    // Honored across every animation system below (cursor, stacks, rotor,
+    // polaroid, blob wipe). Media-query object so late changes apply too.
+    const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     // ── Custom Cursor ──────────────────────────────────────
     (function initCursor() {
+      if (PREFERS_REDUCED_MOTION.matches) return; // CSS restores the native cursor
       const dot   = document.getElementById('custom-cursor');
       const ring  = document.getElementById('cursor-ring');
       const glass = document.getElementById('cursor-glass');
@@ -8264,11 +8276,14 @@
 
       // rAF loop: lerp ring + glass disc behind cursor
       (function tick() {
-        rX += (mX - rX) * 0.14;
-        rY += (mY - rY) * 0.14;
-        ring.style.left = rX + 'px';
-        ring.style.top  = rY + 'px';
-        if (glass) {
+        // Skip style writes once the followers have settled on the pointer.
+        if (Math.abs(mX - rX) > 0.15 || Math.abs(mY - rY) > 0.15) {
+          rX += (mX - rX) * 0.14;
+          rY += (mY - rY) * 0.14;
+          ring.style.left = rX + 'px';
+          ring.style.top  = rY + 'px';
+        }
+        if (glass && (Math.abs(mX - gX) > 0.15 || Math.abs(mY - gY) > 0.15)) {
           gX += (mX - gX) * 0.22;
           gY += (mY - gY) * 0.22;
           glass.style.left = gX + 'px';
@@ -11089,7 +11104,9 @@
       window._isOverlayOpen = true;
       caseReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
-      overlayBody.innerHTML = study.html;
+      // Inject with lazy/async images — templates hold 30+ imgs per case
+      // study and would otherwise all fetch the moment the overlay opens.
+      overlayBody.innerHTML = study.html.replace(/<img (?![^>]*\bloading=)/g, '<img loading="lazy" decoding="async" ');
       overlayBody.dataset.case = slug;
       overlayBody.scrollTop = 0;
       overlay.classList.add('is-open');
@@ -11383,6 +11400,13 @@
       const overlay = document.getElementById('ego-transition-overlay');
       if (!overlay || egoTransitionInFlight || alterEgoMode === nextMode) return;
 
+      // Reduced motion: switch worlds without the blob wipe.
+      if (PREFERS_REDUCED_MOTION.matches) {
+        onStartFlip();
+        setAlterEgoMode(nextMode);
+        return;
+      }
+
       egoTransitionInFlight = true;
       onStartFlip();
 
@@ -11455,6 +11479,7 @@
       });
 
       polaroid.addEventListener('mousemove', e => {
+        if (PREFERS_REDUCED_MOTION.matches) return; // no 3D tilt
         const r  = polaroid.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) return; // Prevent Math NaN collapse
         
@@ -11498,14 +11523,27 @@
       const flipBtns = document.querySelectorAll('.flip-trigger-btn');
       flipBtns.forEach(btn => btn.addEventListener('click', triggerFlip));
 
+      let firstWriteDone = false; // markup ships rotateY(180) inline; tick #1 must correct it
       (function tick() {
-        cRX    += (tRX    - cRX)    * 0.20; // Framer-style snappy spring
-        cRY    += (tRY    - cRY)    * 0.20;
-        cZ     += (tZ     - cZ)     * 0.20;
-        cScale += (tScale - cScale) * 0.20;
-        cGX    += (tGX    - cGX)    * 0.15;
-        cGY    += (tGY    - cGY)    * 0.15;
-        cFlip  += (targetFlipAngle - cFlip) * 0.12;
+        // Reduced motion: snap instead of spring (flip still works, instantly).
+        const k = PREFERS_REDUCED_MOTION.matches ? 1 : 0.20;
+        const kf = PREFERS_REDUCED_MOTION.matches ? 1 : 0.12;
+        // Skip the style write once every spring has settled.
+        const settled =
+          Math.abs(tRX - cRX) < 0.01 && Math.abs(tRY - cRY) < 0.01 &&
+          Math.abs(tZ - cZ) < 0.01 && Math.abs(tScale - cScale) < 0.0005 &&
+          Math.abs(targetFlipAngle - cFlip) < 0.01 &&
+          Math.abs(tGX - cGX) < 0.05 && Math.abs(tGY - cGY) < 0.05;
+        if (settled && firstWriteDone) { requestAnimationFrame(tick); return; }
+        firstWriteDone = true;
+
+        cRX    += (tRX    - cRX)    * k; // Framer-style snappy spring
+        cRY    += (tRY    - cRY)    * k;
+        cZ     += (tZ     - cZ)     * k;
+        cScale += (tScale - cScale) * k;
+        cGX    += (tGX    - cGX)    * (PREFERS_REDUCED_MOTION.matches ? 1 : 0.15);
+        cGY    += (tGY    - cGY)    * (PREFERS_REDUCED_MOTION.matches ? 1 : 0.15);
+        cFlip  += (targetFlipAngle - cFlip) * kf;
 
         if (inner) {
           inner.style.transform = `translateY(${cZ.toFixed(2)}px) scale(${cScale.toFixed(4)}) rotateX(${cRX.toFixed(3)}deg) rotateY(${(cRY + cFlip).toFixed(3)}deg)`;
@@ -11963,7 +12001,16 @@
 
       // Render Loop
       let prevOff = 0;
+      let idleFrames = 0;
       function render() {
+        // The rotor lives inside display:none #alter-ego-content — without
+        // this gate, 42 cards of transform/opacity writes run at 60fps from
+        // page load while invisible.
+        if (!alterEgoMode) { idleFrames = 0; requestAnimationFrame(render); return; }
+        // Idle once the spring has settled (writes resume on any input).
+        if (!isDragging && Math.abs(targetOffset - scrollOffset) < 0.0008) {
+          if (++idleFrames > 3) { requestAnimationFrame(render); return; }
+        } else idleFrames = 0;
         // Friction / Lerp spring
         const prevOffCurrent = scrollOffset;
         scrollOffset += (targetOffset - scrollOffset) * 0.12;
@@ -11977,7 +12024,8 @@
         const effectT = Math.min(1, Math.max(0, (scrollVelocity - THRESH) / (MAX_VEL - THRESH)));
 
         // jellyForce still gives direction/sign; effectT gates the magnitude
-        const jellyForce = (targetOffset - scrollOffset);
+        // (both zeroed under reduced motion: no shear, no RGB split)
+        const jellyForce = PREFERS_REDUCED_MOTION.matches ? 0 : (targetOffset - scrollOffset);
         const jellySkew = jellyForce * 8 * effectT; // Shearing — only at speed
 
         // Chromatic Aberration RGB split — only at speed
