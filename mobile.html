@@ -9,11 +9,16 @@
 <meta name="theme-color" content="#F5F3EE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="canonical" href="https://www.divyanshrastogi.in/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Divyansh Rastogi · Pocket Feed">
-<meta property="og:description" content="The pocket feed — product design, prototypes, and after hours work.">
-<!-- TODO: replace with a proper 1200×630 share image -->
-<meta property="og:image" content="assets/images/hero/portrait-light.webp">
+<meta property="og:site_name" content="Divyansh Rastogi">
+<meta property="og:url" content="https://www.divyanshrastogi.in/">
+<meta property="og:title" content="Divyansh Rastogi · Product Designer">
+<meta property="og:description" content="Product designer — case studies, prototypes, design systems.">
+<meta property="og:image" content="https://www.divyanshrastogi.in/assets/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Divyansh Rastogi — product designer. Shaping digital products and design systems with clarity and character.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
 <style>
@@ -773,6 +778,12 @@
     .reveal { transition: none; opacity: 1; transform: none; }
     .theme-btn svg { transition: none; }
     .hp-inner { transition-duration: 0.01s; }
+  }
+
+  /* Keyboard focus affordance (touch/mouse users are unaffected) */
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--orange, #E06B2D);
+    outline-offset: 3px;
   }
 </style>
 </head>

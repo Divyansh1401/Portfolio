@@ -9,12 +9,36 @@
   <meta name="theme-color" content="#F5F3EE">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="canonical" href="https://www.divyanshrastogi.in/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Divyansh Rastogi">
+  <meta property="og:url" content="https://www.divyanshrastogi.in/">
   <meta property="og:title" content="Divyansh Rastogi · Product Designer">
   <meta property="og:description" content="Product designer — case studies, prototypes, design systems.">
-  <!-- TODO: replace with a proper 1200×630 share image -->
-  <meta property="og:image" content="assets/images/hero/portrait-light.webp">
+  <meta property="og:image" content="https://www.divyanshrastogi.in/assets/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Divyansh Rastogi — product designer. Shaping digital products and design systems with clarity and character.">
   <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Divyansh Rastogi",
+    "jobTitle": "Product Designer",
+    "url": "https://www.divyanshrastogi.in/",
+    "image": "https://www.divyanshrastogi.in/assets/images/og-image.png",
+    "sameAs": [
+      "https://linkedin.com/in/divyanshriitb",
+      "https://www.behance.net/divyansh_rastogi"
+    ],
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "IDC School of Design, IIT Bombay" },
+      { "@type": "CollegeOrUniversity", "name": "Monash University" }
+    ],
+    "worksFor": { "@type": "Organization", "name": "Head Digital Works" }
+  }
+  </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
   <style>
 
@@ -7381,6 +7405,11 @@
     @media (min-width: 2200px) {
       .section-header h2 { font-size: clamp(3rem, 4.5vw, 5.5rem); }
     }
+    /* Keyboard focus affordance (mouse users are unaffected) */
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--orange, #E06B2D);
+      outline-offset: 3px;
+    }
   </style>
 </head>
 <body>
@@ -7458,7 +7487,7 @@
     <!-- Photo Area -->
     <section class="hero-right-area">
       <div class="hero-right">
-        <div class="hero-photo-wrap polaroid-container" id="heroPolaroid">
+        <div class="hero-photo-wrap polaroid-container" id="heroPolaroid" role="button" tabindex="0" aria-label="Flip the polaroid to see my hobbies">
           <div class="hero-photo-inner" style="transform-style: preserve-3d; transform: translateY(0px) scale(1) rotateX(0deg) rotateY(180deg);">
 
             <!-- Front Face (White Polaroid) -->
@@ -7534,7 +7563,7 @@
               <span class="cs2-tag">Accessibility</span>
               <span class="cs2-tag">Claude workflow</span>
             </div>
-            <span class="cs2-cta">View case study <span class="cs2-arr">→</span></span>
+            <a class="cs2-cta cs2-cta--link" href="#settlr">View case study <span class="cs2-arr">→</span></a>
           </div>
           <div class="cs2-media">
             <div class="cs2-media-frame cs2-theatre" aria-label="Settlr showcase — cycles through three views">
@@ -7593,7 +7622,7 @@
               <span class="cs2-tag">A23 Poker</span>
               <span class="cs2-tag">Adda52</span>
             </div>
-            <span class="cs2-cta">View case study <span class="cs2-arr">→</span></span>
+            <a class="cs2-cta cs2-cta--link" href="#refer-earn">View case study <span class="cs2-arr">→</span></a>
           </div>
           <div class="cs2-media">
             <div class="cs2-media-frame">
@@ -8709,13 +8738,16 @@
     const resumeTrigger  = document.getElementById('resumeTrigger');
     const RESUME_EMBED   = 'https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/preview';
 
+    let resumeReturnFocus = null;
     function openResume() {
       window._isOverlayOpen = true;
+      resumeReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
       resumeFrame.src = RESUME_EMBED;
       resumeOverlay.classList.add('is-open');
       resumeOverlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      resumeClose.focus({ preventScroll: true });
     }
     function closeResume() {
       window._isOverlayOpen = false;
@@ -8724,6 +8756,8 @@
       document.body.style.overflow = '';
       setTimeout(() => { resumeFrame.src = ''; }, 420);
       setTimeout(() => { document.body.classList.remove('overlay-is-open'); }, 650);
+      if (resumeReturnFocus && document.contains(resumeReturnFocus)) resumeReturnFocus.focus({ preventScroll: true });
+      resumeReturnFocus = null;
     }
 
     if (resumeTrigger) resumeTrigger.addEventListener('click', openResume);
@@ -11040,10 +11074,12 @@
       }
     };
 
+    let caseReturnFocus = null;
     function openOverlay(slug) {
       const study = caseStudies[slug];
       if (!study) return;
       window._isOverlayOpen = true;
+      caseReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
       overlayBody.innerHTML = study.html;
       overlayBody.dataset.case = slug;
@@ -11051,6 +11087,20 @@
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      overlayClose.focus({ preventScroll: true });
+      // Same-origin iframes (prototype, playground) swallow keydown once
+      // focused — forward Escape so the overlay stays closable.
+      overlayBody.querySelectorAll('iframe').forEach(f => {
+        const hookEscape = () => {
+          try {
+            f.contentDocument.addEventListener('keydown', e => {
+              if (e.key === 'Escape') uiCloseCase();
+            });
+          } catch (err) { /* cross-origin — nothing we can do */ }
+        };
+        f.addEventListener('load', hookEscape);
+        if (f.contentDocument && f.contentDocument.readyState !== 'loading') hookEscape();
+      });
       // For Settlr: paint the prototype iframe body cream once it loads
       if (slug === 'settlr') {
         const iframe = overlayBody.querySelector('#settlrProto');
@@ -11084,6 +11134,8 @@
       overlayBody.innerHTML = '';
       delete overlayBody.dataset.case;
       overlayTop.classList.remove('show');
+      if (caseReturnFocus && document.contains(caseReturnFocus)) caseReturnFocus.focus({ preventScroll: true });
+      caseReturnFocus = null;
     }
 
     // Link clicks
@@ -11186,6 +11238,22 @@
     }
     window.addEventListener('hashchange', () => routeHash(false));
 
+    // ── Dialog focus trap: Tab stays inside whichever overlay is open ──
+    function trapTab(container, e) {
+      const focusables = [...container.querySelectorAll('a[href], button, iframe, [tabindex]:not([tabindex="-1"])')]
+        .filter(el => el.getClientRects().length > 0);
+      if (!focusables.length) return;
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (!container.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Tab') return;
+      if (overlay.classList.contains('is-open')) trapTab(overlay, e);
+      else if (resumeOverlay.classList.contains('is-open')) trapTab(resumeOverlay, e);
+    });
+
     // ── Settlr overlay interactions (proto switcher + chip toggle) ──
     overlayBody.addEventListener('click', e => {
       // Prototype screen switcher
@@ -11255,6 +11323,11 @@
       // Toolbar label: dark mode reads "My Hobbies" instead of "My Toolbar".
       const toolbarLabel = document.querySelector('.toolbar-label');
       if (toolbarLabel) toolbarLabel.textContent = enabled ? 'My Hobbies' : 'My Toolbar';
+
+      const polaroidEl = document.getElementById('heroPolaroid');
+      if (polaroidEl) polaroidEl.setAttribute('aria-label', enabled
+        ? 'Flip the polaroid back to the design work'
+        : 'Flip the polaroid to see my hobbies');
 
       // Hero lede: dark mode speaks to the person, not the product.
       const heroLede = document.querySelector('.hero-lede');
@@ -11410,7 +11483,10 @@
       }
 
       polaroid.addEventListener('click', triggerFlip);
-      
+      polaroid.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerFlip(); }
+      });
+
       const flipBtns = document.querySelectorAll('.flip-trigger-btn');
       flipBtns.forEach(btn => btn.addEventListener('click', triggerFlip));
 

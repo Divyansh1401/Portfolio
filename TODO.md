@@ -59,7 +59,7 @@
 - [ ] **Curate the big mobile carousels**: Cars (17) and More (17) have busy 17-dot rows and long swipes — trim to a tight best-of (~8) or split into sub-themes.
 - [x] **Resume button = always preview (never download)**: DONE — mobile buttons now open the Drive `/view` in a new tab (download URL removed); desktop already opens the overlay panel. _(2026-07-13, Antigravity + verified)_
 - [ ] **Tablet (768–1023px) polish for `mobile.html`**: it renders as a 520px centred column on tablets; decide whether it needs a wider tablet layout.
-- [x] **Share/meta tags**: DONE — description, theme-color, apple-web-app, OG, Twitter card + inline-SVG favicon added to both `index.html` and `mobile.html`. _(2026-07-13, Antigravity + verified)_ · TODO: swap the placeholder `og:image` for a real 1200×630 share image.
+- [x] **Share/meta tags**: DONE — description, theme-color, apple-web-app, OG, Twitter card + inline-SVG favicon added to both `index.html` and `mobile.html`. _(2026-07-13, Antigravity + verified)_ · og:image DONE _(2026-07-16)_: real 1200×630 card at `assets/images/og-image.png`, absolute URLs, og:url + canonical + JSON-LD Person added to both pages.
 - [ ] **Deploy**: publish to Netlify once the above land (single `index.html` + `mobile.html` + assets, drag-and-drop).
 
 ---
