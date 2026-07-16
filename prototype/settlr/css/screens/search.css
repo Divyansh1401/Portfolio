@@ -184,13 +184,6 @@
   flex-shrink: 0;
   text-align: right;
 }
-[data-view="search"] .result-amount {
-  font-family: var(--font-display);
-  font-size: var(--font-size-13);
-  font-weight: var(--weight-semibold);
-}
-[data-view="search"] .result-amount--owe { color: var(--expense-owe-fg); }
-[data-view="search"] .result-amount--lent { color: var(--expense-lent-fg); }
 [data-view="search"] .result-chevron { color: var(--border-default); }
 [data-view="search"] .result-chevron .icon-holder { font-size: var(--icon-sm); }
 
@@ -205,9 +198,7 @@
 [data-view="search"] mark {
   background: var(--card-create-bg);
   color: var(--text-brand);
-  /* NON-TOKEN: 2px radius — no radius token for 2px; kept exact (matches
-     original) to avoid a visual change. */
-  border-radius: 2px;
+  border-radius: var(--radius-2);
   /* NON-TOKEN: 0 1px padding — no spacing token for 1px; kept exact. */
   padding: 0 1px;
 }

@@ -54,8 +54,10 @@
     var modeLabel = { equal: 'Equal split', amount: 'Custom amount', percent: 'By percentage', shares: 'By shares' }[splitMode] || 'Equal split';
 
     function amountFor(id) {
-      if (ctx.splitAmounts && ctx.splitAmounts[id] != null) return ctx.splitAmounts[id];
-      return pp;
+      // Review fix: use the store's paise-exact share (splitAmounts-aware) so the
+      // confirm screen matches the ledger it creates — the flat perPerson diverged
+      // by ₹0.01 on non-divisible equal splits (Track E made _shareOf paise-exact).
+      return Store.shareOf(ctx, id);
     }
     // Multi-payer: what `id` paid, and their net (paid − share).
     function paidByFor(id) {
@@ -94,6 +96,7 @@
     var d = new Date(ctx.date + 'T00:00:00');
     var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     root.querySelector('#js-date').textContent = dateStr;
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
     // Balance pill — use CSS classes instead of inline styles
     var bal = root.querySelector('#js-balance');
@@ -114,12 +117,12 @@
     var detailsHtml = '';
     if (ctx.groupId) {
       var g = Store.getGroup(ctx.groupId);
-      detailsHtml += '<div class="detail-row"><div class="detail-row__icon">👥</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Group</span><span class="detail-row__value text-title-sm">' + (g ? g.name : ctx.groupId) + '</span></div></div>';
+      detailsHtml += '<div class="detail-row"><div class="detail-row__icon">👥</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Group</span><span class="detail-row__value text-title-sm">' + esc(g ? g.name : ctx.groupId) + '</span></div></div>';
     }
     var payerLabel = Store.getPayerSummary ? Store.getPayerSummary(ctx).label : nameFor(paidById);
-    detailsHtml += '<div class="detail-row"><div class="detail-row__icon">💳</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Paid by</span><span class="detail-row__value text-title-sm">' + payerLabel + ' paid ' + fmt(total) + '</span></div></div>';
+    detailsHtml += '<div class="detail-row"><div class="detail-row__icon">💳</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Paid by</span><span class="detail-row__value text-title-sm">' + esc(payerLabel) + ' paid ' + fmt(total) + '</span></div></div>';
     detailsHtml += '<div class="detail-row"><div class="detail-row__icon">📅</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Date</span><span class="detail-row__value text-title-sm">' + dateStr + '</span></div></div>';
-    detailsHtml += '<div class="detail-row"><div class="detail-row__icon">🔄</div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Split method</span><span class="detail-row__value text-title-sm">' + modeLabel + '</span></div></div>';
+    detailsHtml += '<div class="detail-row"><div class="detail-row__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM128,80a16,16,0,1,0-16-16A16,16,0,0,0,128,80Zm0,96a16,16,0,1,0,16,16A16,16,0,0,0,128,176Z"/></svg></span></div><div class="detail-row__text"><span class="detail-row__label text-body-xs">Split method</span><span class="detail-row__value text-title-sm">' + modeLabel + '</span></div></div>';
     root.querySelector('#js-details').innerHTML = detailsHtml;
 
     // ── Split breakdown (rebuilt fresh each show) ──
@@ -140,8 +143,8 @@
         amtText = 'settled';
       }
       return '<div class="split-person">' +
-        '<div class="split-person__avatar text-title-xs">' + initialsFor(id) + '</div>' +
-        '<span class="split-person__name text-title-sm">' + fullNameFor(id) + '</span>' +
+        '<div class="split-person__avatar text-title-xs">' + esc(initialsFor(id)) + '</div>' +
+        '<span class="split-person__name text-title-sm">' + esc(fullNameFor(id)) + '</span>' +
         '<span class="split-person__amount ' + amtCls + ' text-title-sm">' + amtText + '</span>' +
       '</div>';
     }).join('');

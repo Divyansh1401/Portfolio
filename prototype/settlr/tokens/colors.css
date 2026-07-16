@@ -9,7 +9,7 @@
   --color-neutral-200: #EFE4C4;
   --color-neutral-300: #E0D0B0;
   --color-neutral-400: #BEB48A;
-  --color-neutral-500: #9A9070;
+  --color-neutral-500: #787057; /* darkened from #9A9070 for WCAG AA — 4.70:1 on neutral-50, 4.94:1 on white (UX-25) */
   --color-neutral-600: #756C55;
   --color-neutral-700: #524C3B;
   --color-neutral-800: #332F25;

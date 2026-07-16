@@ -27,7 +27,6 @@
     var avatarInput = root.querySelector('#js-avatar-input');
     var avatar = root.querySelector('#js-avatar');
     var copyBtn = root.querySelector('#js-copy-id');
-    var saveBtn = root.querySelector('#js-save-btn-profile');
     var saveCta = root.querySelector('#js-save-cta');
 
     function onFieldChange() { state.dirty = true; }
@@ -65,9 +64,9 @@
     }
 
     function saveProfile() {
-      if (!state.dirty) return;
-      // Persist the editable fields to the Store before leaving.
-      if (typeof Store.updateProfile === 'function') {
+      // Persist only when there are edits; either way show feedback + navigate
+      // back so a clean tap doesn't look like a dead button (review fix).
+      if (state.dirty && typeof Store.updateProfile === 'function') {
         var fields = {};
         if (nameInput) fields.name = nameInput.value.trim();
         if (upiInput) fields.upi = upiInput.value.trim();
@@ -76,9 +75,10 @@
         if (state.photoDataUrl) fields.photo = state.photoDataUrl;
         Store.updateProfile(fields);
       }
-      if (saveBtn) {
-        saveBtn.textContent = 'Saved!';
-        saveBtn.disabled = true;
+      if (saveCta) {
+        var ctaLabel = saveCta.querySelector('.btn__content');
+        if (ctaLabel) ctaLabel.textContent = 'Saved!';
+        saveCta.disabled = true;
       }
       setTimeout(function () {
         if (window.SettlrRouterSPA) {
@@ -98,7 +98,6 @@
     }
     if (avatarInput) avatarInput.addEventListener('change', previewAvatar);
     if (copyBtn) copyBtn.addEventListener('click', copyId);
-    if (saveBtn) saveBtn.addEventListener('click', saveProfile);
     if (saveCta) saveCta.addEventListener('click', saveProfile);
   }
 
@@ -116,6 +115,9 @@
         if (el && val != null) el.value = val;
       };
       setVal('#input-name', u.name);
+      // Phone is read-only ("can't be changed") but must still reflect the real
+      // user — hydrate it so prod users don't see the static seed number.
+      setVal('#input-phone', Store.formatPhone ? Store.formatPhone(u.phone) : u.phone);
       setVal('#input-upi', u.upi);
       setVal('#input-bank-name', u.bank);
       setVal('#input-bio', u.bio);
@@ -137,10 +139,11 @@
       }
     }
 
-    var saveBtn = root.querySelector('#js-save-btn-profile');
-    if (saveBtn) {
-      saveBtn.textContent = 'Save';
-      saveBtn.disabled = false;
+    var saveCta = root.querySelector('#js-save-cta');
+    if (saveCta) {
+      var ctaLabel = saveCta.querySelector('.btn__content');
+      if (ctaLabel) ctaLabel.textContent = 'Save Changes';
+      saveCta.disabled = false;
     }
     // Warn before leaving with unsaved changes (standalone document only).
     state.beforeUnload = function (e) {

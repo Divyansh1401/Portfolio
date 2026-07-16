@@ -4,8 +4,8 @@
    before home-dashboard. The flow is assembled from existing global components
    (.btn, .invite-card, .qr-section, .person-item, .search-input, .sheet,
    .avatar, .empty-state, web-component chrome); only a few screen-local
-   onboarding bits (welcome block, action CTAs, user-ID page, import result, the
-   mock OS-permission alert) are defined here. All rules scoped under
+   onboarding bits (welcome block, action CTAs, user-ID page, import result)
+   are defined here. All rules scoped under
    [data-view="onboarding-welcome"] so nothing leaks.
 
    Design source: the standalone review harness screens/prototype.html. The
@@ -224,52 +224,3 @@
 [data-view="onboarding-welcome"] .onb-qr__name { color: var(--text-primary); }
 [data-view="onboarding-welcome"] .onb-qr__phone { color: var(--text-secondary); }
 [data-view="onboarding-welcome"] .onb-qr__hint { color: var(--text-tertiary); text-align: center; }
-
-/* ── OS contacts-permission prompt (mock native alert) ──
-   Pinned over the view, dimmed backdrop, centred alert card —
-   mirrors the iOS system permission dialog. */
-[data-view="onboarding-welcome"] .onb-os-prompt {
-  position: absolute;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-32);
-  background: var(--overlay-50);
-}
-[data-view="onboarding-welcome"] .onb-os-prompt[hidden] { display: none; }
-[data-view="onboarding-welcome"] .onb-os-prompt__card {
-  width: 100%;
-  max-width: 270px;
-  background: var(--surface-card);
-  border-radius: var(--radius-16);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-}
-[data-view="onboarding-welcome"] .onb-os-prompt__body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-8);
-  padding: var(--spacing-20) var(--spacing-16);
-  text-align: center;
-}
-[data-view="onboarding-welcome"] .onb-os-prompt__title { color: var(--text-primary); }
-[data-view="onboarding-welcome"] .onb-os-prompt__text { color: var(--text-secondary); }
-[data-view="onboarding-welcome"] .onb-os-prompt__actions {
-  display: flex;
-  border-top: var(--border-small) solid var(--border-subtle);
-}
-[data-view="onboarding-welcome"] .onb-os-prompt__btn {
-  flex: 1;
-  padding: var(--spacing-12);
-  background: transparent;
-  border: none;
-  color: var(--text-brand);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-[data-view="onboarding-welcome"] .onb-os-prompt__btn + .onb-os-prompt__btn {
-  border-left: var(--border-small) solid var(--border-subtle);
-}

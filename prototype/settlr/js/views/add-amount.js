@@ -128,6 +128,26 @@
     amtInput.style.width = Math.max(1, amtInput.value.length || 1) + 'ch';
   }
 
+  // UX-23: live en-IN (Indian) digit grouping for the amount field — the same
+  // grouping Store.formatIn/formatINR apply to every displayed amount.
+  function groupAmt(raw) {
+    // Drop any exponent form on paste (the keypad can't type 'e'; '1e5' must not
+    // become '15') and cap the integer length so grouping never loses precision.
+    var src = String(raw == null ? '' : raw).split(/[eE]/)[0];
+    var clean = src.replace(/[^0-9.]/g, '');
+    if (!clean) return '';
+    var dot = clean.indexOf('.');
+    var intPart = (dot === -1 ? clean : clean.slice(0, dot)).slice(0, 12);
+    var decPart = dot === -1 ? '' : '.' + clean.slice(dot + 1).replace(/\./g, '').slice(0, 2);
+    if (intPart === '') return decPart ? '0' + decPart : '';
+    return Number(intPart).toLocaleString('en-IN') + decPart;
+  }
+  // UX-23: parse a grouped amount back to a Number — the field carries grouping
+  // commas, so a plain parseFloat('4,000') would silently read 4.
+  function parseAmt(raw) {
+    return parseFloat(String(raw == null ? '' : raw).replace(/,/g, ''));
+  }
+
   // ── Init: one-time wiring, scoped to root, sheets exposed on window ──
   function init(root, params) {
     // Title → auto-category
@@ -142,8 +162,19 @@
 
     // Amount auto-resize + tab-to-title
     var amtInput = root.querySelector('#js-amount');
-    amtInput.addEventListener('input', function () { resizeAmt(amtInput); });
+    amtInput.addEventListener('input', function () {
+      // UX-23: reformat with Indian grouping as the user types. Assigning
+      // .value parks the caret at the end — fine for append-style typing.
+      var g = groupAmt(amtInput.value);
+      if (g !== amtInput.value) amtInput.value = g;
+      resizeAmt(amtInput);
+    });
     resizeAmt(amtInput);
+
+    // UX-15: tapping anywhere on the ₹-prefix row focuses the amount field.
+    var amtRow = root.querySelector('.amount-row');
+    if (amtRow) amtRow.addEventListener('click', function () { amtInput.focus(); });
+
     amtInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
@@ -164,7 +195,7 @@
     root.querySelector('#js-next').addEventListener('click', function () {
       var amtEl = root.querySelector('#js-amount');
       var amountError = root.querySelector('#amount-error');
-      var amt = parseFloat(amtEl.value);
+      var amt = parseAmt(amtEl.value); // UX-23: field carries grouping commas
       if (!amt || amt <= 0) {
         amountError.style.display = 'block';
         amtEl.focus();
@@ -332,7 +363,7 @@
     }
 
     if (draft) {
-      amtInput.value = (draft.totalAmount != null) ? String(Store.fromBaseIn(draft.totalAmount, startCode)) : '';
+      amtInput.value = (draft.totalAmount != null) ? groupAmt(String(Store.fromBaseIn(draft.totalAmount, startCode))) : '';
       titleInput.value = draft.title || '';
       if (draft.category) {
         var cat = CATEGORIES.find(function (c) { return c.label === draft.category; });
@@ -353,6 +384,13 @@
       resetCategoryChip(root);
     }
     resizeAmt(amtInput);
+
+    // UX-15: on a fresh flow (no draft) focus the amount so the caret shows and
+    // the keypad raises where programmatic focus is honored. Delayed past the
+    // view transition; focusing a hidden view is a no-op. Skipped on back-revisit.
+    if (!draft) {
+      setTimeout(function () { amtInput.focus({ preventScroll: true }); }, 250);
+    }
 
     // ── Keyboard-aware CTA via visualViewport (registered here, torn down in
     //    onHide so it never leaks across views) ──
@@ -387,6 +425,11 @@
     }
     viewportHandler = null;
     root.classList.remove('is-kbd');
+    // Reset the keyboard-adjusted CTA inline styles so they don't leak to the next
+    // view (UX-15 autofocus now opens the keypad on every fresh flow, making this
+    // the default path).
+    var ctaEl = root.querySelector('#js-cta');
+    if (ctaEl) { ctaEl.style.bottom = ''; ctaEl.style.paddingBottom = ''; }
     var catSheet = root.querySelector('#categorySheet');
     var curSheet = root.querySelector('#currencySheet');
     if (catSheet) catSheet.style.display = 'none';

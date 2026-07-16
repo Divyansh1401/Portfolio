@@ -13,11 +13,10 @@
    flex column with a 100px bottom pad so the keyboard-aware fixed
    .screen-footer overlaps the tail exactly as before. This is a flow screen
    with a footer (not the bottom-nav dock), so override the shell's default
-   dock clearance with the original 100px clearance.
-   NOTE: 100px is not a spacing token — kept exact to preserve the original
-   footer clearance; flagged in NON-TOKEN VALUES. */
+   dock clearance to clear the ~93px footer. Tokenized (was a hardcoded 100px);
+   the iOS home-indicator inset is already reserved by .app-shell's env padding. */
 [data-view="add-amount"] .view__content {
-  --app-shell-content-pad: 100px;
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-4));
   display: flex;
   flex-direction: column;
 }
@@ -37,6 +36,14 @@
   display: flex;
   align-items: baseline;
   justify-content: center;
+  /* UX-15: visible input affordance — hairline underline that brightens on
+     focus, mirroring the .title-input pattern below. */
+  padding-bottom: var(--spacing-4);
+  border-bottom: var(--border-medium) solid var(--border-default);
+  transition: border-color 0.15s;
+}
+[data-view="add-amount"] .amount-row:focus-within {
+  border-bottom-color: var(--input-border-focused);
 }
 
 /* Per-expense currency chip — sits above the amount. In centered mode the
@@ -194,7 +201,7 @@
   border-color: var(--input-border-focused);
 }
 /* 24px emoji glyph — not a spacing/type token; kept exact (flagged) */
-[data-view="add-amount"] .cat-item__emoji { font-size: 24px; line-height: 1; }
+[data-view="add-amount"] .cat-item__emoji { font-size: var(--font-size-24); line-height: 1; }
 /* cat label — markup carries .text-caption-sm, but this one-off scale
    (12px / medium / line-height-16) has NO matching text-* token (caption-sm
    is regular / line-height-17). Kept scoped to preserve zero visual change;

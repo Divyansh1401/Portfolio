@@ -27,20 +27,27 @@
     return '<div class="section-header"><span class="section-header__label">' + esc(label) + '</span></div>';
   }
 
-  // {amount, direction} → coloured amount, or a chevron when settled.
-  function amountHtml(bal) {
+  // {amount, direction} → label + coloured amount — the same visual language as
+  // the People screen rows (UX-01: no +/- signs). isGroup switches the label to
+  // the group wording. Settled still renders the chevron.
+  function amountHtml(bal, isGroup) {
     if (!bal || bal.direction === 'settled') return CHEVRON_SVG;
-    var cls = bal.direction === 'lent' ? 'result-amount--lent' : 'result-amount--owe';
-    var sign = bal.direction === 'lent' ? '+' : '-';
-    return '<p class="result-amount ' + cls + '">' + sign + Store.formatINR(bal.amount) + '</p>';
+    var dir   = bal.direction;
+    var label = isGroup
+      ? (dir === 'lent' ? 'Overall lent' : 'Overall owe')
+      : (dir === 'lent' ? 'You lent' : 'You owe');
+    return '<div class="expense-item__right">' +
+      '<span class="expense-item__label expense-item__label--' + dir + '">' + label + '</span>' +
+      '<span class="expense-item__amount expense-item__amount--' + dir + '">' + Store.formatINR(bal.amount) + '</span>' +
+    '</div>';
   }
 
   function personRow(c) {
-    return '<a href="individual-detail?id=' + c.id + '" class="result-row">' +
+    return '<a href="individual-detail?id=' + encodeURIComponent(c.id) + '" class="result-row">' +
       '<div class="result-avatar">' + esc(c.initials) + '</div>' +
       '<div class="result-text">' +
         '<p class="result-text__name text-title-sm">' + esc(c.name) + '</p>' +
-        '<p class="result-text__meta">' + esc(c.phone || 'Contact') + '</p>' +
+        '<p class="result-text__meta">' + esc(Store.formatPhone(c.phone) || 'Contact') + '</p>' +
       '</div>' +
       '<div class="result-right">' + amountHtml(Store.getContactBalance(c.id)) + '</div>' +
     '</a>';
@@ -49,19 +56,19 @@
   function groupRow(g) {
     var members = g.memberCount != null ? g.memberCount : (g.memberIds ? g.memberIds.length : 0);
     var icon = g.emoji ? esc(g.emoji) : GROUP_SVG;
-    return '<a href="group-detail?id=' + g.id + '" class="result-row">' +
+    return '<a href="group-detail?id=' + encodeURIComponent(g.id) + '" class="result-row">' +
       '<div class="result-avatar result-avatar--group">' + icon + '</div>' +
       '<div class="result-text">' +
         '<p class="result-text__name text-title-sm">' + esc(g.name) + '</p>' +
         '<p class="result-text__meta">' + members + ' members</p>' +
       '</div>' +
-      '<div class="result-right">' + amountHtml(Store.getGroupBalance(g.id)) + '</div>' +
+      '<div class="result-right">' + amountHtml(Store.getGroupBalance(g.id), true) + '</div>' +
     '</a>';
   }
 
   function expenseRow(e) {
     var icon = e.emoji ? esc(e.emoji) : EXPENSE_SVG;
-    return '<a href="expense-detail?id=' + e.id + '" class="result-row">' +
+    return '<a href="expense-detail?id=' + encodeURIComponent(e.id) + '" class="result-row">' +
       '<div class="result-avatar result-avatar--expense">' + icon + '</div>' +
       '<div class="result-text">' +
         '<p class="result-text__name text-title-sm">' + esc(e.title) + '</p>' +

@@ -21,36 +21,41 @@
   }
 
   function onShow(root, params) {
-    var allFeed = Store.getActivityFeed();
-    var meId = Store.getCurrentUser().id;
-    // Real settlements involving the user, shaped for the dated feed + filters.
-    var settleItems = (Store.getAllSettlements ? Store.getAllSettlements() : []).map(function (s) {
-      var youPaid = s.fromId === meId;
-      var otherId = youPaid ? s.toId : s.fromId;
-      var other = Store.getContact(otherId);
-      return Object.assign({}, s, {
-        _settlement: true,
-        _youPaid: youPaid,
-        _name: other ? other.name.split(' ')[0] : otherId,
-        _type: s.groupId ? 'group' : 'individual',
-        _dir: youPaid ? 'owe' : 'lent'
-      });
-    });
-    // { individual: bool, group: bool, lend: bool, owe: bool }
-    var activeFilters = {};
-    var searchQuery = '';
-
     var expenseList = root.querySelector('#js-expense-list');
     var emptyState  = root.querySelector('#empty-activity');
 
     // ── Filter + search ────────────────────────────────────
+    // Reads LIVE state on every call — the fresh Store feed, chip on/off from the
+    // DOM, and the current search value — so the once-wired listeners can never
+    // operate on a stale earlier-show closure (fixes a re-visit filtering bug).
     function applyFilters() {
+      var meId = Store.getCurrentUser().id;
+      var allFeed = Store.getActivityFeed();
+      // Real settlements involving the user, shaped for the dated feed + filters.
+      var settleItems = (Store.getAllSettlements ? Store.getAllSettlements() : []).map(function (s) {
+        var youPaid = s.fromId === meId;
+        var otherId = youPaid ? s.toId : s.fromId;
+        var other = Store.getContact(otherId);
+        return Object.assign({}, s, {
+          _settlement: true,
+          _youPaid: youPaid,
+          _name: other ? other.name.split(' ')[0] : otherId,
+          _type: s.groupId ? 'group' : 'individual',
+          _dir: youPaid ? 'owe' : 'lent'
+        });
+      });
+      // Filter state read straight from the DOM (chip.--on) + the live search box.
+      var chipsOn = {};
+      root.querySelectorAll('.chip[data-filter]').forEach(function (c) { chipsOn[c.dataset.filter] = c.classList.contains('chip--on'); });
+      var searchEl = root.querySelector('.search-input input');
+      var searchQuery = searchEl ? searchEl.value.trim() : '';
+
       // Reset the feed container before rebuilding to avoid duplicate rows
       // when the view is re-shown (router keeps the DOM in place).
       expenseList.innerHTML = '';
 
-      var typeActive = activeFilters.individual || activeFilters.group;
-      var dirActive  = activeFilters.lend || activeFilters.owe;
+      var typeActive = chipsOn.individual || chipsOn.group;
+      var dirActive  = chipsOn.lend || chipsOn.owe;
 
       // Unified predicate over expenses + settlements (settlements expose
       // parallel _type/_dir/_name fields).
@@ -59,13 +64,13 @@
         var type = isSet ? it._type : (it.groupId ? 'group' : 'individual');
         var dir  = isSet ? it._dir  : it.net.direction;
         if (typeActive) {
-          var passType = (activeFilters.individual && type === 'individual') ||
-                         (activeFilters.group      && type === 'group');
+          var passType = (chipsOn.individual && type === 'individual') ||
+                         (chipsOn.group      && type === 'group');
           if (!passType) return false;
         }
         if (dirActive) {
-          var passDir = (activeFilters.lend && dir === 'lent') ||
-                        (activeFilters.owe  && dir === 'owe');
+          var passDir = (chipsOn.lend && dir === 'lent') ||
+                        (chipsOn.owe  && dir === 'owe');
           if (!passDir) return false;
         }
         if (searchQuery) {
@@ -114,12 +119,12 @@
     root.querySelectorAll('.chip[data-filter]').forEach(function (chip) {
       // Reset state on (re-)show, then attach a single click listener.
       chip.classList.remove('chip--on');
+      chip.setAttribute('aria-pressed', 'false');
       if (!chip._wired) {
         chip._wired = true;
         chip.addEventListener('click', function () {
-          var f = chip.dataset.filter;
-          activeFilters[f] = !activeFilters[f];
-          chip.classList.toggle('chip--on', !!activeFilters[f]);
+          var on = chip.classList.toggle('chip--on');
+          chip.setAttribute('aria-pressed', on ? 'true' : 'false');
           applyFilters();
         });
       }
@@ -131,10 +136,7 @@
       searchInput.value = '';
       if (!searchInput._wired) {
         searchInput._wired = true;
-        searchInput.addEventListener('input', function () {
-          searchQuery = this.value.trim();
-          applyFilters();
-        });
+        searchInput.addEventListener('input', function () { applyFilters(); });
       }
     }
 
@@ -144,8 +146,8 @@
     if (urlFilter) {
       var urlChip = root.querySelector('.chip[data-filter="' + urlFilter + '"]');
       if (urlChip) {
-        activeFilters[urlFilter] = true;
         urlChip.classList.add('chip--on');
+        urlChip.setAttribute('aria-pressed', 'true');
         urlChip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
       }
     }

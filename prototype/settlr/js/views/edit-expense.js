@@ -52,7 +52,6 @@
     if (!exp) { navigateAway(); return; }
 
     var user  = Store.getCurrentUser();
-    var share = Math.round(exp.totalAmount / exp.splitAmong.length * 100) / 100;
 
     function nameOf(cid) {
       if (cid === user.id) return 'You';
@@ -64,6 +63,7 @@
       var c = Store.getContact(cid);
       return c ? c.initials : cid.slice(0, 2).toUpperCase();
     }
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
     // ── Amount ──────────────────────────────────────────────
     // Stored INR → shown/edited in the display currency.
@@ -113,7 +113,7 @@
       var ids = Object.keys(payers);
       var av = root.querySelector('#js-ee-paid-avatars');
       if (av) av.innerHTML = ids.map(function (cid) {
-        return '<div class="avatar avatar--initials avatar--md">' + initialsOf(cid) + '</div>';
+        return '<div class="avatar avatar--initials avatar--md">' + esc(initialsOf(cid)) + '</div>';
       }).join('');
       var nm = root.querySelector('#js-ee-paid-name');
       if (nm) {
@@ -148,8 +148,11 @@
     }
 
     // ── Split summary ───────────────────────────────────────
+    // Summary is the per-person average (flat total/n) — a label, not a ledger
+    // value; the per-row amounts below use Store.shareOf (paise-exact).
     var summaryAmount = root.querySelector('.split-section__summary-amount');
-    if (summaryAmount) summaryAmount.textContent = Store.formatIn(share, exp.currency);
+    var perPerson = Math.round(exp.totalAmount / exp.splitAmong.length * 100) / 100;
+    if (summaryAmount) summaryAmount.textContent = Store.formatIn(perPerson, exp.currency);
 
     // ── Split rows ──────────────────────────────────────────
     // Rebuild the per-person rows from the expense each show. Remove any
@@ -161,19 +164,20 @@
       var checkSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>';
       exp.splitAmong.forEach(function (cid) {
         var isPayer = cid === exp.paidById;
+        var cShare = Store.shareOf(exp, cid); // paise-exact + splitAmounts-aware (review fix)
         var shareText = isPayer
           ? 'Paid ' + Store.formatIn(exp.totalAmount, exp.currency)
-          : 'Owes ' + Store.formatIn(share, exp.currency);
+          : 'Owes ' + Store.formatIn(cShare, exp.currency);
         var row = document.createElement('div');
         row.className = 'split-section__row';
         row.innerHTML =
           '<span class="split-section__check"><span class="icon-holder" aria-hidden="true">' + checkSVG + '</span></span>' +
-          '<div class="avatar avatar--initials avatar--md">' + initialsOf(cid) + '</div>' +
+          '<div class="avatar avatar--initials avatar--md">' + esc(initialsOf(cid)) + '</div>' +
           '<div class="split-section__text">' +
-            '<span class="split-section__name text-title-sm">' + nameOf(cid) + '</span>' +
+            '<span class="split-section__name text-title-sm">' + esc(nameOf(cid)) + '</span>' +
             '<span class="split-section__share text-body-xs">' + shareText + '</span>' +
           '</div>' +
-          '<span class="split-section__amount-pill text-amount-xs">' + Store.formatIn(share, exp.currency) + '</span>';
+          '<span class="split-section__amount-pill text-amount-xs">' + Store.formatIn(cShare, exp.currency) + '</span>';
         if (total) list.insertBefore(row, total);
         else list.appendChild(row);
       });

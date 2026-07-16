@@ -23,6 +23,8 @@
 (function () {
   'use strict';
 
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
   /* Inline icon SVGs that were formerly emitted by JS / lived in markup, kept
      here as constants so no font-icon machinery is needed. (Currently the
      rebuilt member rows reuse the X glyph for the remove button.) */
@@ -242,7 +244,7 @@
         if (!btn || !emojiGrid.contains(btn)) return;
         var emoji = btn.dataset.emoji;
         var avatarEl = root.querySelector('#js-group-avatar');
-        if (avatarEl) avatarEl.innerHTML = '<span>' + emoji + '</span>';
+        if (avatarEl) avatarEl.innerHTML = '<span>' + esc(emoji) + '</span>';
         emojiGrid.querySelectorAll('.emoji-btn').forEach(function (b) { b.classList.remove('is-selected'); });
         btn.classList.add('is-selected');
         setTimeout(closeEmojiSheet, 150);
@@ -337,7 +339,7 @@
     if (nameInput) nameInput.value = group.name;
 
     var avatarEl = root.querySelector('#js-group-avatar');
-    if (avatarEl) avatarEl.innerHTML = '<span>' + group.emoji + '</span>';
+    if (avatarEl) avatarEl.innerHTML = '<span>' + esc(group.emoji) + '</span>';
 
     // Reflect the group's default currency on the chip (falls back to global).
     applyCurrency(root, currencyByCode(group.currency || Store.currencyCode()));

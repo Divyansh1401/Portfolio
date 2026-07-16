@@ -29,7 +29,6 @@
     if (!exp) { navigateAway(); return; }
 
     var user  = Store.getCurrentUser();
-    var share = Math.round(exp.totalAmount / exp.splitAmong.length * 100) / 100;
     var net   = Store._computeUserNet(exp);
 
     function navigateAway() {
@@ -56,8 +55,6 @@
     var d = new Date(exp.date + 'T00:00:00');
     var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     var timeStr = Store.formatTime(exp.occurredAt);
-    root.querySelector('.expense-hero__date').textContent =
-      timeStr ? dateStr + ' \u00b7 ' + timeStr : dateStr;
 
     var balEl = root.querySelector('.balance-pill');
     var balLabel = balEl.querySelector('.balance-pill__label');
@@ -87,6 +84,8 @@
       rows[0].querySelector('.detail-row__label').textContent = 'Group';
       rows[0].querySelector('.detail-row__value').textContent = g ? g.name : exp.groupId;
       rows[0].style.cursor = 'pointer';
+      var gchev = rows[0].querySelector('.detail-row__chevron');
+      if (gchev) gchev.style.display = '';
       rows[0].onclick = function () {
         if (window.SettlrRouterSPA) window.SettlrRouterSPA.navigate('group-detail', { id: exp.groupId });
         else location.href = 'group-detail?id=' + exp.groupId;
@@ -96,29 +95,34 @@
       rows[0].querySelector('.detail-row__icon').textContent = '👤';
       rows[0].querySelector('.detail-row__label').textContent = 'With';
       rows[0].querySelector('.detail-row__value').textContent = co ? co.name : exp.contactId;
+      // Clear the group branch's click/cursor and HIDE the chevron (toggle, not
+      // remove — the node must survive so a later group expense can restore it).
+      rows[0].onclick = null;
+      rows[0].style.cursor = '';
       var chev = rows[0].querySelector('.detail-row__chevron');
-      if (chev) chev.remove();
+      if (chev) chev.style.display = 'none';
     }
     // Row 1: Paid by (multi-payer aware)
     rows[1].querySelector('.detail-row__value').textContent =
       Store.getPayerSummary(exp).label + ' paid ' + Store.formatIn(exp.totalAmount, exp.currency);
-    // Row 2: Date
+    // Row 2: Date (+ time — the hero's duplicate date line was removed, UX-11)
     rows[2].querySelector('.detail-row__value').textContent =
-      d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    // Row 3: Split
-    rows[3].querySelector('.detail-row__value').textContent =
-      'Equal — ' + exp.splitAmong.length + ' people';
+      timeStr ? dateStr + ' · ' + timeStr : dateStr;
+    // Row 3: Split — label from the ACTUAL method (review fix: was hardcoded
+    // 'Equal split', wrong for amount/percent/shares expenses). Same map as add-review.
+    var methodLabel = { equal: 'Equal split', amount: 'Custom amount', percent: 'By percentage', shares: 'By shares' }[exp.splitMethod] || 'Equal split';
+    rows[3].querySelector('.detail-row__value').textContent = methodLabel;
 
     // Split breakdown
     root.querySelector('.split-section__method').textContent =
-      exp.splitAmong.length + ' people · Equal';
+      exp.splitAmong.length + ' ' + (exp.splitAmong.length === 1 ? 'person' : 'people') + ' · ' + methodLabel;
     var container = root.querySelector('.split-section');
     // Remove existing person rows (reset before re-appending)
     container.querySelectorAll('.split-person').forEach(function (el) { el.remove(); });
     exp.splitAmong.forEach(function (cid) {
       // Net = what they paid − their share. >0 gets back, <0 owes, 0 settled.
       var paid = exp.payers ? (parseFloat(exp.payers[cid]) || 0) : (exp.paidById === cid ? exp.totalAmount : 0);
-      var net = Math.round((paid - share) * 100) / 100;
+      var net = Math.round((paid - Store.shareOf(exp, cid)) * 100) / 100;
       var div = document.createElement('div');
       div.className = 'split-person';
       var amtClass, amtText;

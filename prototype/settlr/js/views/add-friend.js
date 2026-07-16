@@ -146,6 +146,27 @@
     });
   }
 
+  // ── Exclude suggestions that duplicate an existing contact (UX-13) ──
+  // The static "On Settlr" / "Invite from Contacts" rows are suggestions;
+  // offering "Add" for someone already in the address book (possibly with a
+  // live balance) reads as a state bug. Rows matching an existing contact by
+  // name are flagged here (a JS property, not a CSS class — §10) and kept
+  // hidden by applyFilter.
+  function isExistingContact(name) {
+    if (!(window.Store && Store.getContacts)) return false;
+    var q = (name || '').trim().toLowerCase();
+    if (!q) return false;
+    return (Store.getContacts() || []).some(function (c) {
+      return c && c.name && c.name.trim().toLowerCase() === q;
+    });
+  }
+  function pruneSuggestions(root) {
+    (state(root).rows || []).forEach(function (row) {
+      var nameEl = row.querySelector('.person-item__name');
+      row._afExcluded = isExistingContact(nameEl ? nameEl.textContent : '');
+    });
+  }
+
   // ── Search filter over the rendered contact/invite rows ────
   function applyFilter(root, q) {
     var query = (q || '').trim().toLowerCase();
@@ -155,18 +176,24 @@
       var subEl  = row.querySelector('.person-item__subtext');
       var hay = ((nameEl ? nameEl.textContent : '') + ' ' +
                  (subEl ? subEl.textContent : '')).toLowerCase();
-      var show = (!query || hay.indexOf(query) !== -1);
+      var show = !row._afExcluded && (!query || hay.indexOf(query) !== -1);
       row.style.display = show ? '' : 'none';
       if (show) visible++;
     });
     // Hide the section headings when their list is fully filtered out, and show
     // a single no-results message when nothing matches.
     root.querySelectorAll('.heading').forEach(function (h) {
-      var any = false, el = h.nextElementSibling;
+      // The async handle-search box manages its own heading (shown when results
+      // land, 300ms after this synchronous pass) — don't let the filter hide it.
+      if (h.closest('#js-af-search-results')) return;
+      var any = false, hasRows = false, el = h.nextElementSibling;
       if (el && !el.classList.contains('heading')) {
+        hasRows = !!el.querySelector('.person-item');
         any = !!el.querySelector('.person-item:not([style*="display: none"])');
       }
-      h.style.display = (!query || any) ? '' : 'none';
+      // Hide a section whose rows are all filtered OR all excluded (UX-13),
+      // even with an empty query; non-list headings keep the old behavior.
+      h.style.display = (!any && (query || hasRows)) ? 'none' : '';
     });
     var empty = root.querySelector('#js-af-no-results');
     if (empty) empty.hidden = !(query && visible === 0);
@@ -217,14 +244,21 @@
     if (box) box.hidden = true;
   }
 
-  function runHandleSearch(root, q) {
+  // Look up a registered user by email OR @handle. An '@' left after stripping a
+  // leading '@' means it's an email (handles have none); otherwise it's a handle.
+  function runSearch(root, q) {
     var box = root.querySelector('#js-af-search-results');
     var list = root.querySelector('#js-af-search-list');
     if (!box || !list) return;
-    var handle = (q || '').trim().replace(/^@/, '');
-    if (!handle || !(window.Store && Store.findUserByHandle)) { clearResults(root); return; }
+    var raw = (q || '').trim();
+    var stripped = raw.replace(/^@/, '');
+    if (!stripped || !window.Store) { clearResults(root); return; }
+    var isEmail = stripped.indexOf('@') !== -1;
+    var lookup = isEmail
+      ? (Store.findUserByEmail ? Store.findUserByEmail(raw) : Promise.resolve(null))
+      : (Store.findUserByHandle ? Store.findUserByHandle(stripped) : Promise.resolve(null));
     var token = (state(root).searchToken = (state(root).searchToken || 0) + 1);
-    Store.findUserByHandle(handle).then(function (profile) {
+    lookup.then(function (profile) {
       // Ignore out-of-order responses from a stale keystroke.
       if (state(root).searchToken !== token) return;
       list.innerHTML = '';
@@ -251,14 +285,13 @@
       applyFilter(root, input.value);
       var s = state(root);
       if (s.searchTimer) clearTimeout(s.searchTimer);
-      s.searchTimer = setTimeout(function () { runHandleSearch(root, input.value); }, 300);
+      s.searchTimer = setTimeout(function () { runSearch(root, input.value); }, 300);
     });
   }
 
   // ── New-contact inline form ────────────────────────────────
   function wireNewContact(root) {
     var nameEl  = root.querySelector('#js-nc-name');
-    var phoneEl = root.querySelector('#js-nc-phone');
     var errEl   = root.querySelector('#js-nc-error');
     var saveEl  = root.querySelector('#js-nc-save');
     if (!saveEl || saveEl._wired) return;
@@ -267,13 +300,10 @@
       var name = (nameEl && nameEl.value || '').trim();
       if (!name) { if (errEl) errEl.hidden = false; if (nameEl) nameEl.focus(); return; }
       if (errEl) errEl.hidden = true;
-      var digits = (phoneEl && phoneEl.value || '').replace(/\D/g, '');
-      var contact = { name: name };
-      if (digits) contact.phone = '+91 ' + digits;
-      if (window.Store && Store.addContact) Store.addContact(contact);
-      // Feedback: clear the fields + briefly flip the button label.
+      // Name-only ghost (Phone removed in Phase 0; email arrives in a later phase).
+      if (window.Store && Store.addContact) Store.addContact({ name: name });
+      // Feedback: clear the field + briefly flip the button label.
       if (nameEl) nameEl.value = '';
-      if (phoneEl) phoneEl.value = '';
       var lbl = saveEl.querySelector('.btn__label');
       if (lbl) {
         var orig = lbl.textContent;
@@ -286,10 +316,8 @@
   }
   function resetNewContact(root) {
     var nameEl  = root.querySelector('#js-nc-name');
-    var phoneEl = root.querySelector('#js-nc-phone');
     var errEl   = root.querySelector('#js-nc-error');
     if (nameEl) nameEl.value = '';
-    if (phoneEl) phoneEl.value = '';
     if (errEl) errEl.hidden = true;
   }
 
@@ -320,9 +348,11 @@
       if (btn) setAdd(btn, false);
     });
 
-    // Reset the search field + re-apply an empty filter (full list).
+    // Reset the search field, drop suggestions that duplicate existing
+    // contacts (UX-13), then re-apply an empty filter (full list).
     var input = root.querySelector('.search-input input');
     if (input) input.value = '';
+    pruneSuggestions(root);
     applyFilter(root, '');
     if (s.searchTimer) { clearTimeout(s.searchTimer); s.searchTimer = null; }
     clearResults(root);

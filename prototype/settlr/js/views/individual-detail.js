@@ -63,18 +63,25 @@
     } catch (e) {}
   }
 
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
   // Dynamic confirm bottom-sheet (mirrors settings.js confirmSheet) — built on the
   // fly so no static markup is needed. onConfirm runs only on the confirm action.
+  // opts.title/body/confirmLabel are ESCAPED: the unlink title carries a cross-user
+  // contact name (from get_connection_profiles) — a stored-XSS sink otherwise.
   function confirmSheet(opts, onConfirm) {
     var overlay = document.createElement('div');
     overlay.className = 'sheet-overlay';
     overlay.innerHTML =
-      '<div class="sheet" role="dialog" aria-modal="true">' +
+      '<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="js-idv-confirm-title">' +
         '<div class="sheet__handle"><div class="sheet__handle-bar"></div></div>' +
-        '<div class="sheet__header"><span class="sheet__title">' + opts.title + '</span></div>' +
+        '<div class="sheet__header"><span class="sheet__title" id="js-idv-confirm-title">' + esc(opts.title) + '</span></div>' +
         '<div class="sheet__content" style="display:flex; flex-direction:column; gap:var(--spacing-12); padding-bottom:var(--spacing-24)">' +
-          (opts.body ? '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">' + opts.body + '</p>' : '') +
-          '<button type="button" class="btn btn--lg btn--full btn--destructive" data-act="confirm"><span class="btn__content">' + (opts.confirmLabel || 'Confirm') + '</span></button>' +
+          (opts.body ? '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">' + esc(opts.body) + '</p>' : '') +
+          '<button type="button" class="btn btn--lg btn--full btn--destructive" data-act="confirm"><span class="btn__content">' + esc(opts.confirmLabel || 'Confirm') + '</span></button>' +
           '<button type="button" class="btn btn--lg btn--full btn--ghost" data-act="cancel"><span class="btn__content">Cancel</span></button>' +
         '</div>' +
       '</div>';
@@ -84,6 +91,40 @@
       if (e.target.closest('[data-act="confirm"]')) { close(); onConfirm(); }
     });
     document.body.appendChild(overlay);
+    var cancelBtn = overlay.querySelector('[data-act="cancel"]');
+    if (cancelBtn) cancelBtn.focus();
+  }
+
+  // Invite bottom-sheet for a ghost contact: shows the freshly-minted /i/<token>
+  // link with Share (native → clipboard fallback) + Done. `url` and `name` are
+  // ESCAPED (name is user-entered). Reuses .sheet + .invite-link-box components.
+  function inviteSheet(url, name) {
+    var overlay = document.createElement('div');
+    overlay.className = 'sheet-overlay';
+    overlay.innerHTML =
+      '<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="js-idv-invite-title">' +
+        '<div class="sheet__handle"><div class="sheet__handle-bar"></div></div>' +
+        '<div class="sheet__header"><span class="sheet__title" id="js-idv-invite-title">Invite ' + esc(name) + '</span></div>' +
+        '<div class="sheet__content" style="display:flex; flex-direction:column; gap:var(--spacing-12); padding-bottom:var(--spacing-24)">' +
+          '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">Share this link. When they join through it they’ll connect with you and inherit what you’ve already split.</p>' +
+          '<div class="invite-link-box"><span class="invite-link-box__url text-body-xs">' + esc(url) + '</span></div>' +
+          '<button type="button" class="btn btn--lg btn--full btn--primary" data-act="share"><span class="btn__content"><span class="btn__label">Share link</span></span></button>' +
+          '<button type="button" class="btn btn--lg btn--full btn--ghost" data-act="done"><span class="btn__content">Done</span></button>' +
+        '</div>' +
+      '</div>';
+    function close() { overlay.remove(); }
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay || e.target.closest('[data-act="done"]')) { close(); return; }
+      if (e.target.closest('[data-act="share"]')) {
+        var data = { title: 'Settlr', text: 'Split expenses with me on Settlr', url: url };
+        if (navigator.share) navigator.share(data).catch(function () {});
+        else if (navigator.clipboard) navigator.clipboard.writeText(url).catch(function () {});
+        close();
+      }
+    });
+    document.body.appendChild(overlay);
+    var shareBtn = overlay.querySelector('[data-act="share"]');
+    if (shareBtn) shareBtn.focus();
   }
 
   function init(root, params) {
@@ -258,7 +299,10 @@
     var unlinkBtn = root.querySelector('#js-unlink-btn');
     if (unlinkBtn) {
       unlinkBtn._contactId = contactId;
+      // `.icon-btn { display:flex }` overrides the [hidden] attribute, so toggle
+      // inline display too (inline beats the class rule). Linked users only.
       unlinkBtn.hidden = !contact.userId;  // ghosts have no userId → nothing to unlink
+      unlinkBtn.style.display = contact.userId ? '' : 'none';
       if (!unlinkBtn._wiredUnlink) {
         unlinkBtn._wiredUnlink = true;
         unlinkBtn.addEventListener('click', function () {
@@ -274,6 +318,31 @@
               if (window.SettlrRouterSPA) window.SettlrRouterSPA.navigate('people');
               else location.replace('people');
             });
+          });
+        });
+      }
+    }
+
+    // ── Invite button ── (only for GHOSTS — no userId; wire once). Mints a
+    // single-use 30-day ghost-bound token, then shows the share sheet. When the
+    // ghost joins through the link they connect + inherit this shared history.
+    var inviteBtn = root.querySelector('#js-invite-btn');
+    if (inviteBtn) {
+      inviteBtn._contactId = contactId;
+      // Ghosts only (linked users use Unlink). Inline display overrides the
+      // `.icon-btn { display:flex }` rule that ignores the [hidden] attribute.
+      inviteBtn.hidden = !!contact.userId;  // linked real users use Unlink instead
+      inviteBtn.style.display = contact.userId ? 'none' : '';
+      if (!inviteBtn._wiredInvite) {
+        inviteBtn._wiredInvite = true;
+        inviteBtn.addEventListener('click', function () {
+          if (!(window.Store && Store.createInvite)) return;
+          var cid = inviteBtn._contactId;
+          var c = Store.getContact(cid);
+          inviteBtn.disabled = true;
+          Promise.resolve(Store.createInvite({ ghost: cid, singleUse: true, ttlDays: 30 })).then(function (res) {
+            inviteBtn.disabled = false;
+            if (res && res.url) inviteSheet(res.url, c ? c.name : 'them');
           });
         });
       }

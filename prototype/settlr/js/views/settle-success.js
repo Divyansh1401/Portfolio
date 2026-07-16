@@ -19,6 +19,8 @@
 (function () {
   'use strict';
 
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
   var METHOD_ICONS = { 'UPI': '💳', 'Cash': '💵', 'Bank Transfer': '🏦', 'Other': '📝' };
 
   // Resolve the settle context: router params first, then sessionStorage
@@ -111,7 +113,7 @@
 
     if (summaryEl && state.contactName) {
       var verb = state.direction === 'lent' ? 'received from' : 'paid';
-      summaryEl.innerHTML = 'You ' + verb + ' <strong>' + state.contactName + '</strong>';
+      summaryEl.innerHTML = 'You ' + verb + ' <strong>' + esc(state.contactName) + '</strong>';
     }
 
     if (amountEl && state.amount) {

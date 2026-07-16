@@ -20,8 +20,8 @@ window.Store = (function () {
       name: 'Divyansh Rastogi',
       initials: 'DR',
       handle: 'divyansh',
-      phone: '99887-76655',
-      upi: 'divyansh@upi',
+      phone: '+91 99887 76655',
+      upi: 'divyansh@okaxis',
       bank: 'HDFC Bank •••• 4291',
       bio: ''
     },
@@ -30,23 +30,23 @@ window.Store = (function () {
       { id: 'rahul-arora',    name: 'Rahul Arora',    initials: 'RA', phone: '98765-43210', onSettlr: true,  photo: 'assets/people/Ashwin Santiago.webp' },
       { id: 'priya-sharma',   name: 'Priya Sharma',   initials: 'PS', phone: '97654-32109', onSettlr: true,  photo: 'assets/people/Priya Shepard.webp' },
       { id: 'arjun-kumar',    name: 'Arjun Kumar',    initials: 'AK', phone: '96543-21098', onSettlr: true,  photo: 'assets/people/Ali Mahdi.webp' },
-      { id: 'johnnie-walker', name: 'Johnnie Walker', initials: 'JW', phone: '829338-192',  onSettlr: true,  photo: 'assets/people/Frank Whitaker.webp' },
-      { id: 'manish-kumar',   name: 'Manish Kumar',   initials: 'MK', phone: '829338-001',  onSettlr: true,  photo: 'assets/people/Hasan Johns.webp' },
-      { id: 'beau-geste',     name: 'Beau Geste',     initials: 'BG', phone: '837291-203',  onSettlr: true,  photo: 'assets/people/Benedict Doherty.webp' },
-      { id: 'kendra-cole',    name: 'Kendra Cole',    initials: 'KC', phone: '849205-314',  onSettlr: false },
-      { id: 'sophie-miller',  name: 'Sophie Miller',  initials: 'SM', phone: '865432-404',  onSettlr: false },
-      { id: 'liam-anderson',  name: 'Liam Anderson',  initials: 'LA', phone: '872450-150',  onSettlr: true,  photo: 'assets/people/Liam Hood.webp' },
-      { id: 'avery-rivers',   name: 'Avery Rivers',   initials: 'AR', phone: '711209-567',  onSettlr: false, photo: 'assets/people/Ava Wright.webp' },
-      { id: 'tessa-moore',    name: 'Tessa Moore',    initials: 'TM', phone: '703918-678',  onSettlr: false },
-      { id: 'gavin-hayes',    name: 'Gavin Hayes',    initials: 'GH', phone: '921563-778',  onSettlr: true  },
-      { id: 'clara-fields',   name: 'Clara Fields',   initials: 'CF', phone: '849203-887',  onSettlr: true,  photo: 'assets/people/Florence Shaw.webp' },
-      { id: 'zoe-martin',     name: 'Zoe Martin',     initials: 'ZM', phone: '890231-998',  onSettlr: true,  photo: 'assets/people/Zara Bush.webp' },
-      { id: 'dylan-reed',     name: 'Dylan Reed',     initials: 'DR', phone: '811054-119',  onSettlr: true,  photo: 'assets/people/Drew Cano.webp' },
-      { id: 'kylie-porter',   name: 'Kylie Porter',   initials: 'KP', phone: '832950-230',  onSettlr: true  },
-      { id: 'henry-nash',     name: 'Henry Nash',     initials: 'HN', phone: '760112-341',  onSettlr: true  },
-      { id: 'ella-brooks',    name: 'Ella Brooks',    initials: 'EB', phone: '812345-456',  onSettlr: true,  photo: 'assets/people/Elsie Roy.webp' },
-      { id: 'neha-mehra',     name: 'Neha Mehra',     initials: 'NM', phone: '899012-567',  onSettlr: true,  photo: 'assets/people/Nala Goins.webp' },
-      { id: 'vikram-kapoor',  name: 'Vikram Kapoor',  initials: 'VK', phone: '877654-678',  onSettlr: true,  photo: 'assets/people/Marvin Robbins.webp' }
+      { id: 'johnnie-walker', name: 'Johnnie Walker', initials: 'JW', phone: '82933-80192',  onSettlr: true,  photo: 'assets/people/Frank Whitaker.webp' },
+      { id: 'manish-kumar',   name: 'Manish Kumar',   initials: 'MK', phone: '82933-80014',  onSettlr: true,  photo: 'assets/people/Hasan Johns.webp' },
+      { id: 'beau-geste',     name: 'Beau Geste',     initials: 'BG', phone: '83729-12034',  onSettlr: true,  photo: 'assets/people/Benedict Doherty.webp' },
+      { id: 'kendra-cole',    name: 'Kendra Cole',    initials: 'KC', phone: '84920-53141',  onSettlr: false },
+      { id: 'sophie-miller',  name: 'Sophie Miller',  initials: 'SM', phone: '86543-24042',  onSettlr: false },
+      { id: 'liam-anderson',  name: 'Liam Anderson',  initials: 'LA', phone: '87245-01503',  onSettlr: true,  photo: 'assets/people/Liam Hood.webp' },
+      { id: 'avery-rivers',   name: 'Avery Rivers',   initials: 'AR', phone: '71120-95674',  onSettlr: false, photo: 'assets/people/Ava Wright.webp' },
+      { id: 'tessa-moore',    name: 'Tessa Moore',    initials: 'TM', phone: '70391-86785',  onSettlr: false },
+      { id: 'gavin-hayes',    name: 'Gavin Hayes',    initials: 'GH', phone: '92156-37786',  onSettlr: true  },
+      { id: 'clara-fields',   name: 'Clara Fields',   initials: 'CF', phone: '84920-38872',  onSettlr: true,  photo: 'assets/people/Florence Shaw.webp' },
+      { id: 'zoe-martin',     name: 'Zoe Martin',     initials: 'ZM', phone: '89023-19983',  onSettlr: true,  photo: 'assets/people/Zara Bush.webp' },
+      { id: 'dylan-reed',     name: 'Dylan Reed',     initials: 'DR', phone: '81105-41194',  onSettlr: true,  photo: 'assets/people/Drew Cano.webp' },
+      { id: 'kylie-porter',   name: 'Kylie Porter',   initials: 'KP', phone: '83295-02305',  onSettlr: true  },
+      { id: 'henry-nash',     name: 'Henry Nash',     initials: 'HN', phone: '76011-23416',  onSettlr: true  },
+      { id: 'ella-brooks',    name: 'Ella Brooks',    initials: 'EB', phone: '81234-54567',  onSettlr: true,  photo: 'assets/people/Elsie Roy.webp' },
+      { id: 'neha-mehra',     name: 'Neha Mehra',     initials: 'NM', phone: '89901-25678',  onSettlr: true,  photo: 'assets/people/Nala Goins.webp' },
+      { id: 'vikram-kapoor',  name: 'Vikram Kapoor',  initials: 'VK', phone: '87765-46789',  onSettlr: true,  photo: 'assets/people/Marvin Robbins.webp' }
     ],
 
     groups: [
@@ -602,7 +602,15 @@ window.Store = (function () {
     if (expense.splitAmounts && expense.splitAmounts[id] != null) {
       return _round2(expense.splitAmounts[id]);
     }
-    return _round2(expense.totalAmount / expense.splitAmong.length);
+    // Equal split: split in integer paise so shares sum EXACTLY to the total
+    // (no per-read rounding drift, so the books always net to zero). The first
+    // `rem` participants — by stable order in splitAmong — absorb +1 paisa each.
+    var n = expense.splitAmong.length;
+    var totalPaise = Math.round(expense.totalAmount * 100);
+    var base = Math.floor(totalPaise / n);
+    var rem = totalPaise - base * n;
+    var idx = expense.splitAmong.indexOf(id);
+    return (base + (idx < rem ? 1 : 0)) / 100;
   }
   /** What `id` paid for an expense (multi-payer map, else the single payer). */
   function _paidBy(expense, id) {
@@ -779,6 +787,46 @@ window.Store = (function () {
     }).catch(function (e) { console.error('[Store] handle lookup error:', e); return null; });
   }
 
+  /** Look up a real registered user by their exact (confirmed) email via the
+   *  anti-enumeration RPC. Resolves to { id, name, handle, photo } or null.
+   *  Only confirmed emails match; the caller is excluded; rate-limited server-side.
+   *  supabase mode only. */
+  function findUserByEmail(email) {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(null);
+    var e = String(email || '').trim().toLowerCase();
+    if (!e || e.indexOf('@') === -1) return Promise.resolve(null);
+    return _sb.rpc('find_user_by_email', { p_email: e }).then(function (res) {
+      if (res && res.error) { console.error('[Store] email lookup error:', res.error); return null; }
+      var row = (res && res.data && res.data[0]) || null;
+      return row ? { id: row.id, name: row.name, handle: row.handle, photo: row.photo || undefined } : null;
+    }).catch(function (err) { console.error('[Store] email lookup error:', err); return null; });
+  }
+
+  /** Check whether a handle is available + valid (format 3-20 [a-z0-9_], not
+   *  reserved, not taken by someone else). Resolves to true/false. Own handle
+   *  reads as available. supabase mode only (true in local so the UI doesn't block). */
+  function checkHandle(handle) {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(true);
+    var h = String(handle || '').trim().replace(/^@/, '');
+    return _sb.rpc('check_handle', { p_handle: h }).then(function (res) {
+      if (res && res.error) { console.error('[Store] check_handle error:', res.error); return false; }
+      return res && res.data === true;
+    }).catch(function (e) { console.error('[Store] check_handle error:', e); return false; });
+  }
+
+  /** Claim a new handle for the current user (validated + unique server-side).
+   *  Resolves to true on success, false if invalid/taken. Updates the local
+   *  cache on success. supabase mode only. */
+  function setHandle(handle) {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(false);
+    var h = String(handle || '').trim().replace(/^@/, '');
+    return _sb.rpc('set_handle', { p_handle: h }).then(function (res) {
+      if (res && res.error) { console.error('[Store] set_handle error:', res.error); return false; }
+      if (res && res.data === true) { data.currentUser.handle = h.toLowerCase(); _persist(); return true; }
+      return false;
+    }).catch(function (e) { console.error('[Store] set_handle error:', e); return false; });
+  }
+
   /** Connect to a real user (open consent — instant shared balance). Creates a
    *  linked contact whose id IS the friend's profile id (so the balance engine
    *  resolves them), plus a symmetric `connections` row. Idempotent. Resolves
@@ -797,24 +845,35 @@ window.Store = (function () {
       };
       data.contacts.push(rec);
       _persist();
-      _remote(function () { return _sb.from('contacts').insert(_contactToDb(rec, true)); });
+      // Idempotent insert: contacts.id is a GLOBAL PK, so another owner may already
+      // hold a row for this person. on-conflict-do-nothing turns the duplicate into
+      // an explicit no-op instead of a swallowed PK violation. (Plan §2.0 Tier 1.)
+      _remote(function () { return _sb.from('contacts').upsert(_contactToDb(rec, true), { onConflict: 'id', ignoreDuplicates: true }); });
     }
-    // Await the connection insert (chained), THEN fold any leftover ghost I had for
-    // this person (by phone) into the new linked contact, then re-hydrate if it merged.
+    // Insert the symmetric connection (idempotent — a duplicate is caught below).
     return _remote(function () { return _sb.from('connections').insert({ user_a: a, user_b: b, created_by: me }); })
-      .then(function () { return _sb.rpc('fold_ghost_into', { p_user: them }); })
-      .then(function (res) {
-        if (res && res.error) { console.error('[Store] fold error:', res.error); return; }
-        if (res && res.data > 0) return _loadFromSupabase();
-      })
       .then(function () { return true; })
-      .catch(function (e) { console.error('[Store] connect/fold error:', e); return true; });
+      .catch(function (e) { console.error('[Store] connect error:', e); return true; });
   }
 
   /** Canonicalize a phone to its last 10 digits (strip everything non-numeric),
    *  matching the server-side normalization in find_users_by_phones. '' if none. */
   function _normalizePhone(raw) {
     return String(raw == null ? '' : raw).replace(/\D/g, '').slice(-10);
+  }
+
+  /** UX-02 — Canonical phone DISPLAY format (the display twin of _normalizePhone).
+   *  Any value that reduces to a 10-digit Indian mobile (optionally prefixed with
+   *  a domestic 0 or country code 91) renders as "+91 98765 43210". Anything we
+   *  can't confidently parse is returned exactly as stored — never corrupted. */
+  function formatPhone(raw) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return '';
+    var digits = s.replace(/\D/g, '');
+    if (digits.length === 11 && digits.charAt(0) === '0') digits = digits.slice(1);
+    if (digits.length === 12 && digits.slice(0, 2) === '91') digits = digits.slice(2);
+    if (digits.length !== 10) return s;
+    return '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5);
   }
 
   /** Batch-match a list of phone numbers against registered Settlr users via the
@@ -860,6 +919,50 @@ window.Store = (function () {
       if (!profile || !profile.id || profile.id === CURRENT_USER_ID) return null;
       return connect(profile).then(function () { return profile; });
     });
+  }
+
+  /** Mint an invite token bundling an intent — optionally a ghost to fold
+   *  (opts.ghost = ghost contact id) and/or a group to join (opts.group = group id),
+   *  optional single-use + ttl. Resolves to { token, url } (the shareable /i/<token>
+   *  link) or null. supabase mode only. */
+  function createInvite(opts) {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(null);
+    opts = opts || {};
+    var params = {
+      p_ghost: opts.ghost || null,
+      p_group: opts.group || null,
+      p_email: opts.email || null,
+      p_single_use: opts.singleUse === true,
+      p_ttl_days: (opts.ttlDays != null ? opts.ttlDays : null)
+    };
+    return _sb.rpc('create_invite', params).then(function (res) {
+      if (res && res.error) { console.error('[Store] create_invite error:', res.error); return null; }
+      var token = res && res.data;
+      return token ? { token: token, url: location.origin + '/i/' + token } : null;
+    }).catch(function (e) { console.error('[Store] create_invite error:', e); return null; });
+  }
+
+  /** Redeem a pending invite TOKEN captured at boot (localStorage
+   *  `settlr_pending_token`). One-shot: the key is cleared immediately. Connects to
+   *  the inviter and folds/joins per the token bundle, then re-hydrates the cache if
+   *  anything changed so home paints the inherited data. Resolves to a result
+   *  { reason, folded, joinedGroup, connectedTo } or null. supabase mode only. */
+  function redeemPendingToken() {
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(null);
+    var token;
+    try { token = localStorage.getItem('settlr_pending_token'); localStorage.removeItem('settlr_pending_token'); }
+    catch (e) { token = null; }
+    token = String(token || '').trim();
+    if (!token) return Promise.resolve(null);
+    return _sb.rpc('redeem_invite', { p_token: token }).then(function (res) {
+      if (res && res.error) { console.error('[Store] redeem_invite error:', res.error); return null; }
+      var row = (res && res.data && res.data[0]) || null; // table return → array
+      if (!row || row.reason === 'invalid' || row.reason === 'self') return row;
+      // A connection/fold/join happened → re-hydrate so home reflects it.
+      return _loadFromSupabase().then(function () {
+        return { reason: row.reason, folded: row.folded, joinedGroup: row.joined_group, connectedTo: row.connected_to };
+      });
+    }).catch(function (e) { console.error('[Store] redeem_invite error:', e); return null; });
   }
 
   /** Claim every other owner's GHOST contact whose phone matches my own verified
@@ -996,10 +1099,14 @@ window.Store = (function () {
    *  admin API to delete the auth.users row — every owned table row then
    *  cascade-deletes (FK `on delete cascade`). Returns a Promise the caller
    *  MUST await before signing out + navigating, so the request isn't aborted
-   *  by page unload. Always clears the localStorage cache too. */
+   *  by page unload. The localStorage cache is cleared ONLY once the server
+   *  delete is confirmed — otherwise a failed delete would wipe the device
+   *  while the account still lives on the server. */
   function deleteAllData() {
-    localStorage.removeItem(LS_KEY);
-    if (MODE !== 'supabase' || !_sb) return Promise.resolve({ ok: true });
+    if (MODE !== 'supabase' || !_sb) {
+      localStorage.removeItem(LS_KEY);
+      return Promise.resolve({ ok: true });
+    }
     // supabase-js injects the caller's access token as the Authorization
     // header; the function derives the uid from that verified JWT.
     return _sb.functions.invoke('delete-account', { body: {} })
@@ -1008,6 +1115,7 @@ window.Store = (function () {
           console.error('[Store] delete-account failed:', res.error.message || res.error);
           return { ok: false, error: res.error };
         }
+        localStorage.removeItem(LS_KEY);
         return { ok: true };
       })
       .catch(function (e) {
@@ -1487,58 +1595,10 @@ window.Store = (function () {
     return { id: uid, name: r.name || '', initials: r.initials || _initialsFromName(r.name) || '', handle: r.handle || '', phone: r.phone || '', upi: r.upi || '', bank: r.bank || '', bio: r.bio || '', photo: r.photo || undefined };
   }
 
-  // ── Auto-generated Settlr ID (handle) ──────────────────────
-  // Derive a base handle from the email local-part: lowercase, strip to
-  // [a-z0-9]. Empty/garbage input falls back to 'user'.
-  function _sanitizeHandle(email) {
-    var local = String(email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-    return local || 'user';
-  }
-
-  // Atomically claim a unique handle for the current user via the existing
-  // `profiles.handle` unique constraint. We never read other users' handles
-  // (anti-enumeration): we just attempt the update and let Postgres reject
-  // collisions (error code 23505), then retry with a numeric suffix. Self-heals
-  // existing NULL-handle rows on next boot. supabase mode only.
-  function _ensureHandle(email) {
-    if (MODE !== 'supabase' || !_sb) return Promise.resolve();
-    if (data.currentUser.handle) return Promise.resolve();
-    var uid = CURRENT_USER_ID;
-    var base = _sanitizeHandle(email);
-
-    function isUnique(err) {
-      if (!err) return false;
-      if (err.code === '23505') return true;
-      var msg = (err.message || '').toLowerCase();
-      return msg.indexOf('duplicate') !== -1 || msg.indexOf('unique') !== -1;
-    }
-
-    function attempt(n) {
-      var candidate = n === 0 ? base : base + n;
-      return _sb.from('profiles').update({ handle: candidate }).eq('id', uid).select()
-        .then(function (res) {
-          if (res && res.error) {
-            if (isUnique(res.error) && n < 50) return attempt(n + 1);
-            if (isUnique(res.error)) {
-              // Past the linear cap → append 4 random digits and try once more.
-              var rand = base + String(Math.floor(1000 + Math.random() * 9000));
-              return _sb.from('profiles').update({ handle: rand }).eq('id', uid).select()
-                .then(function (r2) {
-                  if (r2 && !r2.error) { data.currentUser.handle = rand; _persist(); }
-                  else console.error('[Store] handle claim failed:', r2 && r2.error);
-                });
-            }
-            console.error('[Store] handle claim failed:', res.error);
-            return;
-          }
-          data.currentUser.handle = candidate;
-          _persist();
-        })
-        .catch(function (e) { console.error('[Store] handle claim error:', e); });
-    }
-
-    return attempt(0);
-  }
+  // Handle auto-claim now lives in the `handle_new_user` DB trigger (Phase 1):
+  // every profile has a unique handle from row-creation, so the old client-side
+  // _ensureHandle / _sanitizeHandle path was removed. Customization goes through
+  // the check_handle / set_handle RPCs.
 
   // Hydrate the whole in-memory cache from Supabase for the current user.
   function _loadFromSupabase() {
@@ -1642,9 +1702,7 @@ window.Store = (function () {
         MODE = 'supabase';
         _sb = window.SettlrAuth.client();
         CURRENT_USER_ID = user.id;
-        var email = user.email || '';
         return _loadFromSupabase()
-          .then(function () { if (!data.currentUser.handle) return _ensureHandle(email); })
           .then(function () { return { mode: 'supabase' }; });
       });
     }).catch(function (e) {
@@ -1745,9 +1803,14 @@ window.Store = (function () {
     updateContact,
     deleteContact,
     findUserByHandle,
+    findUserByEmail,
     findUsersByPhones,
+    checkHandle,
+    setHandle,
     connect,
     redeemPendingInvite,
+    createInvite,
+    redeemPendingToken,
     mergeGhostsForMe,
     unlinkContact,
     getGroups,
@@ -1766,6 +1829,7 @@ window.Store = (function () {
     hasContactTransactions,
     getLastTransactionDate,
     getNetBalance,
+    shareOf: _shareOf,
     getGroupBalance,
     getContactBalance,
     getMemberBalancesForGroup,
@@ -1774,6 +1838,7 @@ window.Store = (function () {
     groupExpensesByDate,
     formatINR,
     formatTime,
+    formatPhone,
     fromBase,
     toBase,
     fromBaseIn,

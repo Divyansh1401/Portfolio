@@ -26,7 +26,9 @@
 }
 
 /* ---- On (selected) ---- */
-.chip.is-active,
+/* Canonical selected modifier is .chip--on (the legacy .is-active alias was
+   dropped so People + Activity share one class; selected chips also set
+   aria-pressed in JS for a color-independent cue). */
 .chip--on {
   background-color: var(--chip-bg-on);
   border-color: var(--chip-border-on);

@@ -64,7 +64,7 @@
   --text-primary:     var(--color-neutral-900);  /* headings, active labels, primary body */
   --text-secondary:   var(--color-neutral-600);  /* subtext, helper, tab default */
   --text-tertiary:    var(--color-neutral-500);  /* captions, empty-state body */
-  --text-placeholder: var(--color-neutral-400);  /* input placeholder, settled text */
+  --text-placeholder: var(--color-neutral-500);  /* input placeholder, settled text — was neutral-400 (1.85:1, fails AA); neutral-500 → 4.38:1 on input bg (UX-25) */
   --text-strong:      var(--color-neutral-800);  /* chip/control labels, faq text */
   --text-label:       var(--color-neutral-700);  /* form labels, contact icons */
   --text-faint:       var(--color-neutral-300);  /* very dim text, disabled tab labels */

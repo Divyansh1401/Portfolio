@@ -18,12 +18,13 @@
        group-detail flagged is, here, the analogous .group-row* family).
    ============================================ */
 
-/* Scrollable content region. The old standalone `.detail-content` had
-   `padding-bottom: 100px` to clear the fixed .screen-footer. This screen has a
-   footer, NOT a bottom-nav dock, so override the shell's dock clearance and
-   keep the original 100px exactly. (100px has no spacing token — flagged.) */
+/* Scrollable content region. This screen has a fixed .screen-footer (Settle up /
+   Add expense), NOT a bottom-nav dock, so override the shell's dock clearance to
+   clear the ~93px footer. The iOS home-indicator inset is already reserved by
+   `.app-shell { padding-bottom: env(safe-area-inset-bottom) }`, so no env() term
+   here (that would double-count). Tokenized (was a hardcoded 100px). */
 [data-view="individual-detail"] .view__content {
-  --app-shell-content-pad: 100px;
+  --app-shell-content-pad: calc(var(--spacing-96) + var(--spacing-8));
   background: transparent;
 }
 

@@ -43,7 +43,6 @@
   <link rel="stylesheet" href="css/screens/settle-success.css">
   <link rel="stylesheet" href="css/screens/settlement-detail.css">
   <link rel="stylesheet" href="css/screens/onboarding-welcome.css">
-  <meta name="theme-color" content="#31401A">
   <!-- Component definitions must exist before the parser hits the shell chrome -->
   <script src="js/components.js"></script>
 </head>
@@ -88,6 +87,17 @@
         </a>
       </div>
     </section>
+
+    <!-- Get-started checklist (hidden once all steps done or dismissed) -->
+    <div id="js-checklist" hidden>
+      <div class="heading">
+        <span class="heading__title text-heading-md">Get started</span>
+        <button type="button" class="btn btn--ghost btn--sm text-title-xs" id="js-checklist-dismiss">
+          <span class="btn__content"><span class="btn__label">Dismiss</span></span>
+        </button>
+      </div>
+      <div class="settings-card" id="js-checklist-card"></div>
+    </div>
 
     <!-- Recent Groups -->
     <div class="heading">
@@ -153,7 +163,7 @@
       <span class="search-input__icon">
         <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
       </span>
-      <input type="text" id="js-people-search" placeholder="Search people">
+      <input type="text" id="js-people-search" placeholder="Filter your people">
     </div>
   </div>
 
@@ -375,7 +385,7 @@
       <span class="search-input__icon">
         <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
       </span>
-      <input type="text" placeholder="Search activity">
+      <input type="text" placeholder="Filter activity">
     </div>
   </div>
 
@@ -525,9 +535,12 @@
       <button class="icon-btn icon-btn--surface icon-btn--md" id="js-fav-btn" aria-label="Add to favourites" aria-pressed="false">
         <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z"/></svg></span>
       </button>
-      <!-- Unlink (only shown for LINKED real-user contacts; wired in JS) -->
-      <button class="icon-btn icon-btn--surface icon-btn--md" id="js-unlink-btn" aria-label="Unlink contact" hidden>
-        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></svg></span>
+      <!-- Overflow → Unlink (only shown for LINKED real-user contacts; wired in JS — opens the labeled confirm sheet) -->
+      <button class="icon-btn icon-btn--surface icon-btn--md" id="js-unlink-btn" aria-label="More options" hidden>
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128Zm-76-12a12,12,0,1,0,12,12A12,12,0,0,0,64,116Zm128,0a12,12,0,1,0,12,12A12,12,0,0,0,192,116Z"/></svg></span>
+      </button>
+      <button class="icon-btn icon-btn--surface icon-btn--md" id="js-invite-btn" aria-label="Invite to Settlr" hidden>
+        <span class="icon-holder icon-btn__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.32,28.68a16,16,0,0,0-15.66-4.08l-.15,0L19.57,82.84a16,16,0,0,0-2.42,29.84l85.62,40.55,40.55,85.62A15.86,15.86,0,0,0,157.74,248q.69,0,1.38-.06a15.88,15.88,0,0,0,14-11.51l58.2-191.94c0-.05,0-.1,0-.15A16,16,0,0,0,227.32,28.68ZM157.83,231.85l-.05.14L118.42,148.9l47.24-47.25a8,8,0,0,0-11.31-11.31L107.1,137.58,24,98.22l.14,0L216,40Z"/></svg></span>
       </button>
     </div>
   </div>
@@ -635,7 +648,7 @@
         </div>
       </a>
       <span class="profile-hero__name text-heading-md" id="js-settings-name">Divyansh Rastogi</span>
-      <span class="profile-hero__phone text-body-sm" id="js-settings-phone">+91 98765 43210</span>
+      <span class="profile-hero__phone text-body-sm" id="js-settings-phone">+91 99887 76655</span>
     </div>
 
     <!-- Section: Account -->
@@ -649,7 +662,7 @@
           </div>
           <div class="settings-row__text">
             <span class="settings-row__label">Display Name</span>
-            <span class="settings-row__value">Divyansh Rastogi</span>
+            <span class="settings-row__value" id="js-settings-row-name">Divyansh Rastogi</span>
           </div>
           <div class="settings-row__right">
             <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
@@ -662,7 +675,7 @@
           </div>
           <div class="settings-row__text">
             <span class="settings-row__label">Phone Number</span>
-            <span class="settings-row__value">+91 98765 43210</span>
+            <span class="settings-row__value" id="js-settings-row-phone">+91 99887 76655</span>
           </div>
           <div class="settings-row__right">
             <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
@@ -675,7 +688,7 @@
           </div>
           <div class="settings-row__text">
             <span class="settings-row__label">UPI ID</span>
-            <span class="settings-row__value">divyansh@okaxis</span>
+            <span class="settings-row__value" id="js-settings-row-upi">divyansh@okaxis</span>
           </div>
           <div class="settings-row__right">
             <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
@@ -835,7 +848,27 @@
           </div>
         </div>
 
-        <div class="settings-row">
+      </div>
+    </div>
+
+    <!-- Section: About & Legal -->
+    <div class="settings-section">
+      <span class="settings-section__label">About &amp; Legal</span>
+      <div class="settings-card">
+
+        <a href="/terms" class="settings-row">
+          <div class="settings-row__icon-wrap">
+            <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"/></svg></span>
+          </div>
+          <div class="settings-row__text">
+            <span class="settings-row__label">Terms of Service</span>
+          </div>
+          <div class="settings-row__right">
+            <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
+          </div>
+        </a>
+
+        <a href="/privacy" class="settings-row">
           <div class="settings-row__icon-wrap">
             <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></svg></span>
           </div>
@@ -845,7 +878,7 @@
           <div class="settings-row__right">
             <span class="settings-row__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span></span>
           </div>
-        </div>
+        </a>
 
       </div>
     </div>
@@ -936,9 +969,7 @@
   <settlr-status-bar></settlr-status-bar>
 
   <!-- ── Top App Bar ── -->
-  <settlr-top-app-bar title="Edit Profile" back="settings">
-    <button class="top-app-bar__done" id="js-save-btn-profile">Save</button>
-  </settlr-top-app-bar>
+  <settlr-top-app-bar title="Edit Profile" back="settings"></settlr-top-app-bar>
 
   <!-- ── Content ── -->
   <main class="view__content">
@@ -996,7 +1027,7 @@
           <input
             id="input-phone"
             type="tel"
-            value="+91 98765 43210"
+            value="+91 99887 76655"
             disabled
           >
         </div>
@@ -1067,7 +1098,7 @@
   <div class="search-wrap">
     <div class="search-input">
       <span class="search-input__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
-      <input type="text" placeholder="Search name, phone or @settlrid" autofocus>
+      <input type="text" placeholder="Search name, email or @handle" autofocus>
     </div>
   </div>
 
@@ -1087,13 +1118,6 @@
         <label class="input-field__label" for="js-nc-name">Name</label>
         <div class="input-field__box">
           <input id="js-nc-name" type="text" placeholder="e.g. Riya Sharma" autocomplete="name">
-        </div>
-      </div>
-      <div class="input-field">
-        <label class="input-field__label" for="js-nc-phone">Phone (optional)</label>
-        <div class="input-field__box">
-          <span class="input-field__prefix text-body-sm">+91</span>
-          <input id="js-nc-phone" type="tel" inputmode="numeric" maxlength="10" placeholder="98765 43210" autocomplete="tel">
         </div>
       </div>
       <p class="add-contact__error text-body-xs" id="js-nc-error" hidden>Enter a name to add a contact.</p>
@@ -1221,51 +1245,6 @@
 
     </div>
 
-    <!-- From Contacts (not yet on Settlr) -->
-    <div class="heading"><span class="heading__title text-heading-md">Invite from Contacts</span></div>
-    <div>
-
-      <div class="person-item">
-        <div class="avatar avatar--md avatar--outline">
-          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-        </div>
-        <div class="person-item__text">
-          <p class="person-item__name text-title-sm">Rohit Mehta</p>
-          <p class="person-item__subtext text-body-xs">+91 98765 11111</p>
-        </div>
-        <div class="person-item__action">
-          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
-        </div>
-      </div>
-
-      <div class="person-item">
-        <div class="avatar avatar--md avatar--outline">
-          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-        </div>
-        <div class="person-item__text">
-          <p class="person-item__name text-title-sm">Sunita Rao</p>
-          <p class="person-item__subtext text-body-xs">+91 87654 22222</p>
-        </div>
-        <div class="person-item__action">
-          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
-        </div>
-      </div>
-
-      <div class="person-item">
-        <div class="avatar avatar--md avatar--outline">
-          <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-        </div>
-        <div class="person-item__text">
-          <p class="person-item__name text-title-sm">Manish Tiwari</p>
-          <p class="person-item__subtext text-body-xs">+91 76543 33333</p>
-        </div>
-        <div class="person-item__action">
-          <button class="btn btn--primary btn--sm text-title-xs">Invite</button>
-        </div>
-      </div>
-
-    </div>
-
     <p class="af-noresult text-body-sm" id="js-af-no-results" hidden>No contacts match your search.</p>
 
   </main>
@@ -1285,7 +1264,7 @@
       <input
         type="text"
         id="js-search-input"
-        placeholder="Search people, groups, expenses..."
+        placeholder="Search expenses, people & groups"
         autofocus
       >
       <button class="search-bar__clear" id="js-clear-btn" aria-label="Clear">
@@ -1339,7 +1318,10 @@
           <p class="result-text__meta">@priyasharma</p>
         </div>
         <div class="result-right">
-          <p class="result-amount result-amount--lent">+₹2,400</p>
+          <div class="expense-item__right">
+            <span class="expense-item__label expense-item__label--lent">You lent</span>
+            <span class="expense-item__amount expense-item__amount--lent">₹2,400</span>
+          </div>
         </div>
       </a>
 
@@ -1369,7 +1351,10 @@
           <p class="result-text__meta">6 members · Active</p>
         </div>
         <div class="result-right">
-          <p class="result-amount result-amount--owe">-₹3,200</p>
+          <div class="expense-item__right">
+            <span class="expense-item__label expense-item__label--owe">Overall owe</span>
+            <span class="expense-item__amount expense-item__amount--owe">₹3,200</span>
+          </div>
         </div>
       </a>
     </div>
@@ -1475,7 +1460,7 @@
 
   <!-- ── Bottom CTA ── -->
   <div class="screen-footer">
-    <button id="js-next-cgn" class="btn btn--primary btn--lg btn--full">Next → Add Members</button>
+    <button id="js-next-cgn" class="btn btn--primary btn--lg btn--full">Next</button>
   </div>
 
   <!-- Currency Selection Sheet -->
@@ -2076,7 +2061,6 @@
       <span class="expense-hero__category text-label-xs">🍽️ Food</span>
       <div class="expense-hero__amount text-display-lg">₹4,890</div>
       <div class="expense-hero__desc text-title-lg">Beach dinner at Baga</div>
-      <div class="expense-hero__date text-body-sm">27 Feb 2025 · 9:15 PM</div>
       <div class="balance-pill balance-pill--lent text-title-sm">
         <span class="balance-pill__label">You get back</span>
         <span class="balance-pill__amount text-amount-sm">₹3,667.50</span>
@@ -2104,11 +2088,11 @@
         <div class="detail-row__icon">📅</div>
         <div class="detail-row__text">
           <span class="detail-row__label text-body-xs">Date</span>
-          <span class="detail-row__value text-title-sm">27 Feb 2025</span>
+          <span class="detail-row__value text-title-sm">27 Feb 2025 · 9:15 PM</span>
         </div>
       </div>
       <div class="detail-row">
-        <div class="detail-row__icon">🔄</div>
+        <div class="detail-row__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM128,80a16,16,0,1,0-16-16A16,16,0,0,0,128,80Zm0,96a16,16,0,1,0,16,16A16,16,0,0,0,128,176Z"/></svg></span></div>
         <div class="detail-row__text">
           <span class="detail-row__label text-body-xs">Split method</span>
           <span class="detail-row__value text-title-sm">Equal split</span>
@@ -2145,7 +2129,7 @@
     <div class="split-section">
       <div class="split-section__header">
         <span class="split-section__label text-overline-md">Split Breakdown</span>
-        <span class="split-section__method text-label-xs">4 people · Equal</span>
+        <span class="split-section__method text-label-xs">4 people · Equal split</span>
       </div>
 
       <div class="split-person">
@@ -2595,8 +2579,8 @@
 
 <section class="view" id="view-onboarding-welcome" data-view="onboarding-welcome" hidden>
 <!-- ═══ PANEL: Welcome (first-run entry) ═══
-       A clean single page: import contacts is the primary path; a secondary
-       "Show more ways" toggle reveals add-by-ID, invite link, and QR inline. -->
+       A clean single page: add friends by their Settlr ID, share an invite link,
+       or show a QR. (Phone-contact import is deferred to a later release.) -->
   <section class="onb-screen" data-screen="welcome">
     <settlr-top-app-bar title="Settlr" brand>
       <span class="avatar avatar--initials avatar--lg text-title-lg" aria-hidden="true">DR</span>
@@ -2610,30 +2594,13 @@
         <span class="onb-firstrun__sub text-body-md">Add the people you split with. Pick any way to get started.</span>
       </section>
 
-      <!-- Two clean choices: the primary import path + a secondary toggle that
-           expands the other methods inline (no separate page). -->
-      <div class="onb-actions">
-        <button type="button" class="btn btn--primary btn--lg btn--full text-title-md js-onb-import" id="js-onb-import-home">
-          <span class="btn__content">
-            <span class="btn__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M83.19,174.4a8,8,0,0,0,11.21-1.6,52,52,0,0,1,83.2,0,8,8,0,1,0,12.8-9.6A67.88,67.88,0,0,0,163,141.51a40,40,0,1,0-53.94,0A67.88,67.88,0,0,0,81.6,163.2,8,8,0,0,0,83.19,174.4ZM112,112a24,24,0,1,1,24,24A24,24,0,0,1,112,112Zm96-88H64A16,16,0,0,0,48,40V64H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v40H32a8,8,0,0,0,0,16H48v24a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V40A16,16,0,0,0,208,24Zm0,192H64V40H208Z"/></svg></span></span>
-            <span class="btn__label">Import Contacts</span>
-          </span>
-        </button>
-        <button type="button" class="btn btn--secondary btn--lg btn--full text-title-md onb-more-btn" id="js-onb-more" aria-expanded="false" aria-controls="js-onb-more-panel">
-          <span class="btn__content">
-            <span class="btn__label">Show more ways</span>
-            <span class="btn__icon onb-more-btn__chevron"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span></span>
-          </span>
-        </button>
-      </div>
-
-      <!-- Other methods, revealed inline when "Show more ways" is tapped. -->
-      <div class="onb-more-panel" id="js-onb-more-panel" hidden>
+      <!-- Ways to add people: by Settlr ID, invite link, or QR. -->
+      <div class="onb-more-panel" id="js-onb-more-panel">
           <button type="button" class="onb-cta onb-cta--feature" data-go="userid">
             <span class="onb-cta__icon"><span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M200,112a8,8,0,0,1-8,8H152a8,8,0,0,1,0-16h40A8,8,0,0,1,200,112Zm-8,24H152a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm40-88V208a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V48A16,16,0,0,1,40,32H216A16,16,0,0,1,232,48ZM216,208V48H40V208H216Zm-80.26-34a8,8,0,0,1-15.5,4c-2.63-10.26-13.06-18-24.25-18s-21.61,7.74-24.25,18a8,8,0,0,1-15.5-4,40.66,40.66,0,0,1,18.62-24.88,32,32,0,1,1,42.25,0A40.62,40.62,0,0,1,135.74,174ZM96,136a16,16,0,1,0-16-16A16,16,0,0,0,96,136Z"/></svg></span></span>
             <span class="onb-cta__text">
-              <span class="onb-cta__label text-title-md">Add by user ID</span>
-              <span class="onb-cta__sub text-body-xs">Search a friend's Settlr ID</span>
+              <span class="onb-cta__label text-title-md">Add by email or ID</span>
+              <span class="onb-cta__sub text-body-xs">Search their email or Settlr ID</span>
             </span>
           </button>
 
@@ -2683,8 +2650,8 @@
           </div>
       </div>
 
-      <!-- Quiet escape: contacts is an accelerant, not a gate. Skipping lands on
-           the real home, which keeps "Add people" one tap away. -->
+      <!-- Quiet escape: adding people is an accelerant, not a gate. Skipping lands
+           on the real home, which keeps "Add people" one tap away. -->
       <button type="button" class="onb-textlink text-title-xs" id="js-onb-skip">I'll do this later</button>
 
     </main>
@@ -2692,143 +2659,19 @@
 
   <!-- ═══ PANEL: Add by user ID ═══ -->
   <section class="onb-screen" data-screen="userid" hidden>
-    <settlr-top-app-bar title="Add by user ID" back="#" data-back="welcome"></settlr-top-app-bar>
+    <settlr-top-app-bar title="Add a friend" back="#" data-back="welcome"></settlr-top-app-bar>
 
     <main class="onb-screen__content">
       <div class="search-wrap">
         <div class="search-input">
           <span class="search-input__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
-          <input type="text" id="js-onb-userid-search" placeholder="Search by user ID" autocomplete="off" autocapitalize="none" spellcheck="false">
+          <input type="text" id="js-onb-userid-search" placeholder="Email or @user ID" autocomplete="off" autocapitalize="none" spellcheck="false">
         </div>
       </div>
 
-      <p class="onb-userid-hint text-body-xs">Every Settlr user has a unique ID. Ask a friend for theirs, then add them instantly.</p>
+      <p class="onb-userid-hint text-body-xs">Find a friend by their email or unique Settlr ID, then add them instantly.</p>
 
       <div class="onb-userid-result" id="js-onb-userid-result"></div>
-    </main>
-  </section>
-
-  <!-- ═══ PANEL: Contact-import result (sub-flow from Import) ═══ -->
-  <section class="onb-screen" data-screen="import" hidden>
-    <settlr-top-app-bar title="From Contacts" back="#" data-back="welcome"></settlr-top-app-bar>
-
-    <main class="onb-screen__content">
-      <div class="search-wrap">
-        <div class="search-input">
-          <span class="search-input__icon"><span class="icon-holder icon-holder--sm" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span></span>
-          <input type="text" id="js-onb-import-search" placeholder="Search contacts" autocomplete="off">
-        </div>
-      </div>
-
-      <p class="onb-import-summary text-body-xs">9 contacts · 5 added automatically</p>
-
-      <div class="onb-import-list" id="js-onb-import-list">
-        <!-- Matched: already on Settlr → auto-connected on import -->
-        <div class="heading"><span class="heading__title text-heading-md">Added from contacts</span></div>
-
-        <div class="person-item">
-          <div class="avatar avatar--initials avatar--md">RS</div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Riya Sharma</p>
-            <p class="person-item__subtext text-body-xs">+91 98765 43210</p>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--initials avatar--md">AM</div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Aarav Mehta</p>
-            <p class="person-item__subtext text-body-xs">+91 99201 55678</p>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--initials avatar--md">PP</div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Priya Patel</p>
-            <p class="person-item__subtext text-body-xs">+91 98330 11223</p>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--initials avatar--md">KS</div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Karan Singh</p>
-            <p class="person-item__subtext text-body-xs">+91 97411 88990</p>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--initials avatar--md">SR</div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Sneha Reddy</p>
-            <p class="person-item__subtext text-body-xs">+91 90080 44556</p>
-          </div>
-        </div>
-
-        <!-- Unmatched: not on Settlr → Invite -->
-        <div class="heading"><span class="heading__title text-heading-md">Not on Settlr yet</span></div>
-
-        <div class="person-item">
-          <div class="avatar avatar--md avatar--outline">
-            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-          </div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Vikram Nair</p>
-            <p class="person-item__subtext text-body-xs">+91 87654 22222</p>
-          </div>
-          <div class="person-item__action">
-            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--md avatar--outline">
-            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-          </div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Ananya Iyer</p>
-            <p class="person-item__subtext text-body-xs">+91 88123 77665</p>
-          </div>
-          <div class="person-item__action">
-            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--md avatar--outline">
-            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-          </div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Rohan Gupta</p>
-            <p class="person-item__subtext text-body-xs">+91 96540 33221</p>
-          </div>
-          <div class="person-item__action">
-            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
-          </div>
-        </div>
-
-        <div class="person-item">
-          <div class="avatar avatar--md avatar--outline">
-            <span class="icon-holder icon-holder--md" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg></span>
-          </div>
-          <div class="person-item__text">
-            <p class="person-item__name text-title-sm">Meera Joshi</p>
-            <p class="person-item__subtext text-body-xs">+91 94220 66778</p>
-          </div>
-          <div class="person-item__action">
-            <button type="button" class="btn btn--secondary btn--sm text-title-xs js-onb-invite-row">Invite</button>
-          </div>
-        </div>
-
-        <p class="onb-noresult text-body-sm" id="js-onb-import-empty" hidden>No contacts match your search.</p>
-      </div>
-
-      <div class="onb-import-footer">
-        <button type="button" class="btn btn--primary btn--md btn--full text-title-sm" id="js-onb-import-continue">
-          <span class="btn__content"><span class="btn__label">Continue to Settlr</span></span>
-        </button>
-      </div>
     </main>
   </section>
 
@@ -2849,7 +2692,7 @@
           </div>
           <div class="onb-qr__caption">
             <span class="onb-qr__name text-title-md" id="js-onb-qr-name">Divyansh Rastogi</span>
-            <span class="onb-qr__phone text-body-sm" id="js-onb-qr-sub">@divyansh · +91 88812 34567</span>
+            <span class="onb-qr__phone text-body-sm" id="js-onb-qr-sub">@divyansh</span>
           </div>
           <p class="onb-qr__hint text-body-xs">Friends scan this to add you instantly</p>
         </div>
@@ -2860,22 +2703,6 @@
             <span class="btn__label">Share invite link</span>
           </span>
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ OS contacts-permission prompt (mock) ═══
-       Mimics the native iOS permission alert. Tapping "Import Contacts" opens
-       this; "Allow" → import result, "Don't Allow" / backdrop → dismiss. -->
-  <div class="onb-os-prompt" id="js-onb-os-prompt" role="dialog" aria-modal="true" aria-labelledby="js-onb-os-title" hidden>
-    <div class="onb-os-prompt__card">
-      <div class="onb-os-prompt__body">
-        <p class="onb-os-prompt__title text-title-sm" id="js-onb-os-title">“Settlr” Would Like to Access Your Contacts</p>
-        <p class="onb-os-prompt__text text-body-xs">Settlr checks which of your contacts are already on Settlr so you can split expenses with them.</p>
-      </div>
-      <div class="onb-os-prompt__actions">
-        <button type="button" class="onb-os-prompt__btn text-title-sm" id="js-onb-os-deny">Don’t Allow</button>
-        <button type="button" class="onb-os-prompt__btn onb-os-prompt__btn--primary text-title-md" id="js-onb-os-allow">Allow</button>
       </div>
     </div>
   </div>
@@ -2939,31 +2766,35 @@
       // turns it into a real connection.
       function captureInvite() {
         try {
+          // Personal handle link: /invite/<handle> (or ?invite=<handle>).
           var m = location.pathname.match(/^\/invite\/([\w.-]+)/);
           var h = m ? m[1] : ((location.search.match(/[?&]invite=([\w.-]+)/) || [])[1] || '');
-          if (h) {
-            localStorage.setItem('settlr_pending_invite', h.replace(/^@/, ''));
-            history.replaceState({}, '', '/');
-          }
+          if (h) localStorage.setItem('settlr_pending_invite', h.replace(/^@/, ''));
+          // Bundled invite token: /i/<token> (or ?i=<token>) — connect + optional
+          // ghost-fold / group-join. Survives the login + OAuth round-trip (same origin).
+          var mt = location.pathname.match(/^\/i\/([A-Za-z0-9_-]+)/);
+          var t = mt ? mt[1] : ((location.search.match(/[?&]i=([A-Za-z0-9_-]+)/) || [])[1] || '');
+          if (t) localStorage.setItem('settlr_pending_token', t);
+          if (h || t) history.replaceState({}, '', '/');
         } catch (e) {}
       }
       function boot() {
         captureInvite();
         // Local/demo mode (no Supabase configured): keep working on localStorage.
         if (!(window.SettlrAuth && window.SettlrAuth.configured)) { start(); return; }
-        // Supabase mode: require a session, hydrate the Store, then force the
-        // one-time profile step (phone) before entering the app.
+        // Supabase mode: require a session, hydrate the Store, then enter the app.
+        // No phone step — identity is email/handle-based (Phase 0: de-phone). The
+        // handle_new_user trigger guarantees a profile row on signup.
         window.SettlrAuth.requireAuth('/screens/login.html').then(function (authed) {
           if (!authed) return; // requireAuth already redirected to login
           return window.Store.init().then(function () {
-            var u = window.Store.getCurrentUser();
-            if (!u || !u.phone) { window.location.replace('/screens/complete-profile.html'); return; }
-            // Redeem any pending invite into a connection (fire-and-forget, idempotent).
+            // Personal handle invite → connection (fire-and-forget, idempotent).
             if (window.Store.redeemPendingInvite) window.Store.redeemPendingInvite();
-            // Claim any ghosts that match my phone (inherit shared history), THEN enter
-            // so home paints the merged data. Idempotent + cheap (phone-indexed no-op).
-            var merge = window.Store.mergeGhostsForMe ? window.Store.mergeGhostsForMe() : Promise.resolve(0);
-            return merge.then(start, start);
+            // Bundled token invite → connect + optional fold/join. AWAIT it so home
+            // paints any inherited (folded) balances, then start regardless.
+            var tok = window.Store.redeemPendingToken ? window.Store.redeemPendingToken() : null;
+            if (tok && tok.then) return tok.then(start, start);
+            start();
           });
         }).catch(function (e) { console.error('[boot]', e); start(); });
       }

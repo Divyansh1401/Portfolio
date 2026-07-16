@@ -120,7 +120,11 @@
       labelEl.textContent  = 'Overall you owe';
       amountEl.textContent = Store.formatINR(net.amount);
     } else {
-      labelEl.textContent  = 'All settled up';
+      // UX-20: a brand-new account has settled nothing \u2014 only claim "All settled
+      // up" when there is actual history (expenses or settlements).
+      var hasHistory = (Store.getActivityFeed() || []).length > 0 ||
+                       (Store.getAllSettlements() || []).length > 0;
+      labelEl.textContent  = hasHistory ? 'All settled up' : 'Nothing to settle yet';
       amountEl.textContent = '\u20B90';
     }
   }

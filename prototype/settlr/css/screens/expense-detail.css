@@ -49,10 +49,6 @@
 [data-view="expense-detail"] .expense-hero__desc {
   color: var(--text-primary);
 }
-/* date — text style via .text-body-sm in markup */
-[data-view="expense-detail"] .expense-hero__date {
-  color: var(--contact-settled-fg);
-}
 
 /* ── Balance Pill (structural base — color comes from .balance-pill--*
    variants in css/labels.css, which only define the color modifiers). ── */
@@ -268,5 +264,5 @@
   -webkit-tap-highlight-color: transparent;
 }
 [data-view="expense-detail"] .btn-edit:active { background: var(--btn-primary-bg-pressed); }
-[data-view="expense-detail"] .btn-edit i { font-size: var(--font-size-20); }
+[data-view="expense-detail"] .btn-edit .icon-holder { font-size: var(--font-size-20); }
 /* Delete is the shared Icon Button (.icon-btn.icon-btn--destructive.icon-btn--lg). */

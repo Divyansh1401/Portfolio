@@ -139,7 +139,14 @@
     var nameEl = root.querySelector('#js-settings-name');
     if (nameEl && u.name) nameEl.textContent = u.name;
     var phoneEl = root.querySelector('#js-settings-phone');
-    if (phoneEl && u.phone) phoneEl.textContent = u.phone;
+    if (phoneEl && u.phone) phoneEl.textContent = Store.formatPhone ? Store.formatPhone(u.phone) : u.phone;
+    // Account-card rows (were static seed values — real users must see their own).
+    var rowName = root.querySelector('#js-settings-row-name');
+    if (rowName && u.name) rowName.textContent = u.name;
+    var rowPhone = root.querySelector('#js-settings-row-phone');
+    if (rowPhone && u.phone) rowPhone.textContent = Store.formatPhone ? Store.formatPhone(u.phone) : u.phone;
+    var rowUpi = root.querySelector('#js-settings-row-upi');
+    if (rowUpi && u.upi) rowUpi.textContent = u.upi;
   }
 
   // ── Lifecycle ────────────────────────────────────────────
@@ -229,13 +236,29 @@
       }, function () {
         // Await server-side account deletion, then sign out, then leave.
         // Navigating before the request resolves would abort it (page unload).
+        // Only proceed if the server confirmed the delete — otherwise surface
+        // the failure so the user isn't told "deleted" while data survives.
         var done = function () { window.location.replace('/screens/welcome.html'); };
         var del = (typeof Store.deleteAllData === 'function')
           ? Store.deleteAllData() : Promise.resolve({ ok: true });
-        Promise.resolve(del).then(function () {
+        Promise.resolve(del).then(function (res) {
+          if (res && res.ok === false) {
+            confirmSheet({
+              title: 'Couldn’t delete account',
+              body: 'Something went wrong deleting your account. Please check your connection and try again, or email support.',
+              confirmLabel: 'OK'
+            }, function () {});
+            return;
+          }
           var so = (window.SettlrAuth && SettlrAuth.signOut) ? SettlrAuth.signOut() : Promise.resolve();
-          return Promise.resolve(so);
-        }).then(done, done);
+          Promise.resolve(so).then(done, done);
+        }, function () {
+          confirmSheet({
+            title: 'Couldn’t delete account',
+            body: 'Something went wrong deleting your account. Please check your connection and try again, or email support.',
+            confirmLabel: 'OK'
+          }, function () {});
+        });
       });
     });
   }
@@ -243,16 +266,21 @@
   /* In-app confirmation sheet — reuses the .sheet / .btn components so it works
      in standalone PWA mode where native window.confirm() is unreliable. Pure DOM:
      no native dialog. Tapping the overlay or Cancel dismisses; Confirm runs cb. */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
   function confirmSheet(opts, onConfirm) {
     var overlay = document.createElement('div');
     overlay.className = 'sheet-overlay';
     overlay.innerHTML =
-      '<div class="sheet" role="dialog" aria-modal="true">' +
+      '<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="js-settings-confirm-title">' +
         '<div class="sheet__handle"><div class="sheet__handle-bar"></div></div>' +
-        '<div class="sheet__header"><span class="sheet__title">' + opts.title + '</span></div>' +
+        '<div class="sheet__header"><span class="sheet__title" id="js-settings-confirm-title">' + esc(opts.title) + '</span></div>' +
         '<div class="sheet__content" style="display:flex; flex-direction:column; gap:var(--spacing-12); padding-bottom:var(--spacing-24)">' +
-          (opts.body ? '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">' + opts.body + '</p>' : '') +
-          '<button type="button" class="btn btn--lg btn--full ' + (opts.danger ? 'btn--destructive' : 'btn--primary') + '" data-act="confirm"><span class="btn__content">' + (opts.confirmLabel || 'Confirm') + '</span></button>' +
+          (opts.body ? '<p class="text-body-sm" style="color:var(--text-secondary); margin:0">' + esc(opts.body) + '</p>' : '') +
+          '<button type="button" class="btn btn--lg btn--full ' + (opts.danger ? 'btn--destructive' : 'btn--primary') + '" data-act="confirm"><span class="btn__content">' + esc(opts.confirmLabel || 'Confirm') + '</span></button>' +
           '<button type="button" class="btn btn--lg btn--full btn--ghost" data-act="cancel"><span class="btn__content">Cancel</span></button>' +
         '</div>' +
       '</div>';
@@ -262,6 +290,8 @@
       if (e.target.closest('[data-act="confirm"]')) { close(); onConfirm(); }
     });
     document.body.appendChild(overlay);
+    var cancelBtn = overlay.querySelector('[data-act="cancel"]');
+    if (cancelBtn) cancelBtn.focus();
   }
 
   function onShow(root) {

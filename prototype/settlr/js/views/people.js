@@ -72,7 +72,7 @@
     var chips = root.querySelectorAll('.chip');
     var active = {};
     chips.forEach(function (c) {
-      active[c.dataset.filter] = c.classList.contains('is-active');
+      active[c.dataset.filter] = c.classList.contains('chip--on');
     });
 
     var noTypeFilter = !active.individual && !active.group;
@@ -175,8 +175,10 @@
   function init(root, params) {
     // One-time chip wiring — re-renders on toggle using the latest items.
     root.querySelectorAll('.chip').forEach(function (chip) {
+      chip.setAttribute('aria-pressed', chip.classList.contains('chip--on') ? 'true' : 'false');
       chip.addEventListener('click', function () {
-        chip.classList.toggle('is-active');
+        var on = chip.classList.toggle('chip--on');
+        chip.setAttribute('aria-pressed', on ? 'true' : 'false');
         renderList(root);
       });
     });
@@ -203,11 +205,13 @@
       new URLSearchParams(location.search).get('filter');
     if (filter) {
       root.querySelectorAll('.chip').forEach(function (c) {
-        c.classList.remove('is-active');
+        c.classList.remove('chip--on');
+        c.setAttribute('aria-pressed', 'false');
       });
       var match = root.querySelector('.chip[data-filter="' + filter + '"]');
       if (match) {
-        match.classList.add('is-active');
+        match.classList.add('chip--on');
+        match.setAttribute('aria-pressed', 'true');
         match.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
       }
     }

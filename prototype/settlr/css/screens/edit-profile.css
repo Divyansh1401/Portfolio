@@ -106,3 +106,12 @@
   background: var(--border-subtle);
   margin: var(--spacing-8) 0;
 }
+
+/* ── Bio field label (UX-08) — normalize casing to match .input-field__label
+   (the notes-card uppercase overline stays intact on other screens). ── */
+[data-view="edit-profile"] .notes-card__label {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: var(--weight-medium);
+  color: var(--input-label);
+}

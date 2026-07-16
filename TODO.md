@@ -5,10 +5,10 @@
 
 ## 2. Glitch Fixes & Functional Refinement
 - [ ] **Glitches**:
-    - [ ] Fix "Featured Projects" title behavior/visibility after theme switch.
-    - [ ] Fix Scratch Card functionality and implement a full redesign of the card.
-    - [ ] Fix Resume button: Ensure it's not solid black when the "hole" (SVG mask) is over it.
-- [ ] **Cursor Interaction**: Disable "Hold to Peel" as soon as a side sheet or any modal opens (prevents cursor sticking/interference).
+    - [x] Fix "Featured Projects" title behavior/visibility after theme switch. — OBSOLETE 2026-07-16: the light world is fully hidden in dark mode since the rework; flips verified clean both ways.
+    - [x] Fix Scratch Card functionality — DONE 2026-07-16 (receipt foil works in both worlds; dark-footer init bug fixed). Full redesign = open design call if still wanted.
+    - [x] Fix Resume button SVG-mask issue — OBSOLETE 2026-07-16: no SVG mask/hole system exists in the current build.
+- [x] **Cursor Interaction**: "Hold to Peel" — OBSOLETE 2026-07-16: feature no longer exists (zero references in the code).
 
 ## 3. Section Redesigns
 - [ ] **Connect Section**: Complete redesign of the contact/social section.
@@ -21,17 +21,17 @@
 - [ ] **Settlr Title**: Add a specific title/header section for the Settlr case study.
 
 ## 5. UI Consistency & CTAs
-- [ ] **Button Consistency**: Ensure all "View Project" buttons use the same system-wide styling.
-- [ ] **Navigation Icons**: Add redirection icons to the "More Work" thumbnails.
+- [x] **Button Consistency**: DONE 2026-07-16 — both featured CTAs are now identical real links (a.cs2-cta); dead button systems purged.
+- [x] **Navigation Icons**: DONE — More-work card titles carry Redirect.svg icons.
 - [ ] **Settlr Case Study**:
-    - [ ] Update "View on Behance" CTA to "View Research on Behance".
+    - [x] Update "View on Behance" CTA — already reads "View Research on Behance" (verified 2026-07-16).
     - [ ] Refresh the Settlr prototype embed and design a better container/section for it.
 - [ ] **Thumbnail Upgrades**: Use actual project thumbnails across the board.
 
 ## 6. Project Content Updates
 - [ ] **Kinko Insurance**:
     - [ ] Populate with initial project data.
-    - [ ] Explicitly mention "Coming Soon".
+    - [x] Explicitly mention "Coming Soon" — DONE (mobile Kinko veil says Coming Soon; desktop card is the Under-NDA lock).
 - [ ] **Settlr / Splitwise**:
     - [ ] Add images for the Splitwise research section.
     - [ ] Refine the "What Splitwise taught us" section and sharpen the copy.
@@ -48,19 +48,19 @@
 - [x] **"More Work" cards — responsive + mobile links**: DONE. Desktop — moved the 80px stagger off inline styles onto `.small-grid .small-card:nth-child(2/4)` and reset it at ≤1280px, so the 3-col/2-col grids align cleanly (stagger only in the 4-col layout). Mobile — replaced the generic "More in the archive" post with a tappable 2×2 `.mw-grid` (Prosper / Angel One / Whack A Math / Creative Burnout), each an `<a>` to its Behance gallery + "View all on Behance". _(2026-07-13)_
 - [x] **Mobile footer redesign**: DONE — the receipt look was already ported; added the **scratch-to-settle interaction** to `mobile.html`'s receipt (`.rt-scratch-*` + `initScratch()`): a silver "SCRATCH" foil canvas you scratch with a finger (pointer events, touch-friendly), revealing "one coffee ☕ — on me / REDEEM →" at >45% cleared, marking the receipt `settled` (cue struck through) with a confetti burst. Verified both states + reveal in dark mode, no console errors. _(2026-07-13)_
 - [x] **Stacked-card interaction (desktop Featured + Film)**: DONE — reworked to the ScrollStack behavior (progressive scale to baseScale 0.85, 30px stagger peek, no brightness/dim), fixed the last-card-not-pinning bug with a trailing spacer. Same properties for both stacks. _(2026-07-13)_
-- [ ] **Update Settlr prototype folder** (`prototype/settlr/`): re-sync from the latest source app, regenerate screenshots, and update the case-study documentation to match the newer app work. (See re-sync recipe in MEMORY.)
+- [x] **Update Settlr prototype folder**: DONE 2026-07-16 — mirror re-synced from the Jul-16 source build (new: settle-amount/method/success + settlement-detail + onboarding-welcome views, renamed unsplash group covers converted to jpg), all 13 gallery screenshots regenerated, embed verified 0 404s. NOTE for owner: review whether the case-study TEXT should mention the newer app work.
 
 ### Deferred (agreed to revisit)
 - [ ] **Single-URL merge**: optionally fold `mobile.html` into `index.html` as one responsive document so phones keep the clean root URL (instead of `/mobile.html`). Deferred from the 2026-07-13 merge.
 
 ### Claude's suggested additions (for review)
-- [ ] **Fix embedded-prototype 404s**: on load, the Settlr SPA embed requests `prototype/css/screens/*` and `prototype/js/*` (missing the `settlr/` path segment) → ~60 404s; the phone/playground may be rendering incompletely. Likely resolved by the folder re-sync above, but verify the iframe's asset base path.
+- [x] **Fix embedded-prototype 404s**: DONE 2026-07-16 — root cause was serve's clean-URL redirect racing the <base> shim; fixed with serve.json (cleanUrls:false + root rewrite) + phosphor imports removed from the mirror. 0 errors verified.
 - [x] **Audit mobile art/photo categorization**: CHECKED 2026-07-16 — not mislabels. Hydrone's five images are all the octocopter concept renders; Cyanotype's lead is a genuine cyanotype print of car photos. No changes needed.
 - [x] **Curate the big mobile carousels**: REVIEWED 2026-07-16 — owner saw a full keep/cut proposal (17→8 each + rotor 42→34 + motion curation) and chose to keep everything as is. Decision recorded in CLAUDE.md; don't re-propose.
 - [x] **Resume button = always preview (never download)**: DONE — mobile buttons now open the Drive `/view` in a new tab (download URL removed); desktop already opens the overlay panel. _(2026-07-13, Antigravity + verified)_
 - [ ] **Tablet (768–1023px) polish for `mobile.html`**: it renders as a 520px centred column on tablets; decide whether it needs a wider tablet layout.
 - [x] **Share/meta tags**: DONE — description, theme-color, apple-web-app, OG, Twitter card + inline-SVG favicon added to both `index.html` and `mobile.html`. _(2026-07-13, Antigravity + verified)_ · og:image DONE _(2026-07-16)_: real 1200×630 card at `assets/images/og-image.png`, absolute URLs, og:url + canonical + JSON-LD Person added to both pages.
-- [ ] **Deploy**: publish to Netlify once the above land (single `index.html` + `mobile.html` + assets, drag-and-drop).
+- [ ] **Deploy**: live site is GitHub Pages (Divyansh1401/Portfolio), NOT Netlify. Held until thumbnails land; first push must be `git push --force-with-lease origin main` (history rewritten 2026-07-16).
 
 ---
 *Section 7 added 2026-07-13. Sections 1–6 generated by Antigravity 2026-04-21.*

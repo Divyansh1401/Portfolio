@@ -186,6 +186,7 @@
     }
 
     function r2(n) { return Math.round(n * 100) / 100; }
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     // Route through Store.formatIn so amounts honor this expense's currency.
     function fmt(n) { return Store.formatIn(n, S.currency); }
     function getInfo(id) {
@@ -362,9 +363,9 @@
         var checkMod = active ? ' is-selected' : '';
         return '<div class="participant-item' + rowMod + '" data-pid="' + id + '">' +
           '<div class="checkbox-control js-toggle-participant' + checkMod + '" data-pid="' + id + '">' + iconHolder(SVG_CHECK, 'checkbox-control__check') + '</div>' +
-          '<div class="avatar avatar--initials avatar--md">' + p.initials + '</div>' +
+          '<div class="avatar avatar--initials avatar--md">' + esc(p.initials) + '</div>' +
           '<div class="participant-item__text">' +
-            '<span class="participant-item__name text-title-sm">' + p.name + '</span>' +
+            '<span class="participant-item__name text-title-sm">' + esc(p.name) + '</span>' +
             '<span class="participant-item__share text-body-xs js-share-lbl" data-pid="' + id + '">' + shareLabel + '</span>' +
           '</div>' +
           amtCol +
@@ -422,7 +423,7 @@
     function renderPayerBar(r) {
       var ids = Object.keys(S.payers);
       r.querySelector('#js-paid-avatars').innerHTML = ids.map(function (id) {
-        return '<div class="avatar avatar--initials avatar--md">' + getInfo(id).initials + '</div>';
+        return '<div class="avatar avatar--initials avatar--md">' + esc(getInfo(id).initials) + '</div>';
       }).join('');
       var nameEl = r.querySelector('#js-paid-name');
       if (ids.length <= 1) {
