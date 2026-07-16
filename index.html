@@ -72,7 +72,7 @@
       --bg: #F5F3EE;
       --text: #0C0C0B;
       --orange: #E06B2D;
-      --grey: #808080;
+      --grey: #6E6B63;   /* was #808080 — darkened to pass AA (4.8:1 on --bg) */
       --radius-pill: 100px;
       /* Brand palette tokens (per design-system.md) — these were referenced
          site-wide but never defined; CSS was falling back to transparent
@@ -81,9 +81,9 @@
       --c-dark2:   #2E2F2D;
       --c-dark3:   #444541;
       --c-light:   #F2F0F0;
-      --c-mid:     #888886;
+      --c-mid:     #6F6D68;   /* was #888886 — darkened to pass AA (4.66:1 on --c-light) */
       --c-surface: #E6E4E4;
-      --c-orange:  #EA7623;
+      --c-orange:  #E06B2D;   /* consolidated with --orange (was EA7623) — one brand orange */
       --f-body: 'Plus Jakarta Sans', sans-serif;
       --f-heading: 'Unbounded', sans-serif;
       --f-name: 'Unbounded', sans-serif;
@@ -142,7 +142,7 @@
       position: fixed;
       width: 6px;
       height: 6px;
-      background: #EA7623;
+      background: var(--c-orange);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
@@ -435,6 +435,18 @@
     .hero-lede .lede-strong { font-weight: 500; }   /* Medium */
     .hero-lede .lede-accent { color: var(--c-orange); font-style: italic; }
     .hero-lede .lede-accent-plain { color: var(--c-orange); }   /* orange, upright */
+    /* Credential line under the lede — light world only (the dark lede
+       string in setAlterEgoMode simply doesn't include it). */
+    .hero-cred {
+      display: block; margin-top: 22px;
+      font-family: var(--f-body);
+      font-size: clamp(12px, 0.95vw, 15px);
+      font-weight: 600; letter-spacing: 0.02em; font-style: normal;
+      color: var(--grey);
+    }
+    .hero-cred .cred-dot { color: var(--orange); margin: 0 8px; }
+    .hero-cred a { color: var(--orange); text-decoration: none; border-bottom: 1.5px solid var(--orange); padding-bottom: 1px; }
+    .hero-cred a:hover { color: var(--text); border-color: var(--text); }
     .para-line {
       display: block;
       white-space: normal;
@@ -1116,7 +1128,7 @@
       text-align: center;
     }
     .unified-footer h2 .text-orange {
-      color: #EA7623;
+      color: var(--c-orange);
     }
     .unified-footer p {
       font-size: 15px;
@@ -1181,9 +1193,9 @@
     }
     .unified-footer .btn-solid,
     .rcpt-links .btn-solid {
-      background: #EA7623;
+      background: var(--c-orange);
       color: #fff;
-      border: 1px solid #EA7623;
+      border: 1px solid var(--c-orange);
       padding: 0 20px;
       text-transform: none;
       letter-spacing: 0;
@@ -2190,6 +2202,14 @@
       margin-top: calc(56 * var(--u));
       max-width: calc(720 * var(--u));
     }
+    .cs-end-cta { display: flex; align-items: center; gap: 14px; margin-top: calc(36 * var(--u)); flex-wrap: wrap; }
+    .cs-end-cta .cs-next-case {
+      margin-left: auto; font-family: var(--f-heading); font-weight: 700; font-size: 14px;
+      color: var(--c-dark); text-decoration: none;
+      border-bottom: 2px solid var(--c-orange); padding-bottom: 3px;
+      transition: color 0.2s ease;
+    }
+    .cs-end-cta .cs-next-case:hover { color: var(--c-orange); }
     .cs-footer {
       display: flex;
       align-items: center;
@@ -3830,7 +3850,7 @@
       font-size: calc(12 * var(--u));
       font-weight: 700;
       letter-spacing: calc(1.1 * var(--u));
-      color: #EA7623;
+      color: var(--c-orange);
       opacity: 1;
       padding: 0;
       margin: 0;
@@ -6694,6 +6714,7 @@
         Shaping <span class="lede-strong">digital products,</span><br>
         applications and design systems with<br>
         clarity and <span class="lede-accent">character.</span>
+        <span class="hero-cred">IDC IIT Bombay · AIR 5<span class="cred-dot">•</span>Product Designer II at Head Digital Works<span class="cred-dot">•</span><a href="#connect">open to full-time roles</a></span>
       </p>
     </section>
 
@@ -9580,6 +9601,11 @@
 
           <!-- Closing line — matches Figma -->
           <p class="cs-closing-line">Thanks for reading. Let's build something together.</p>
+          <div class="cs-end-cta">
+            <a class="btn-hero btn-solid" href="mailto:divyanshr.iitb@gmail.com"><span>Get in touch</span></a>
+            <a class="btn-hero btn-outline" href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener"><span>LinkedIn</span></a>
+            <a class="cs-next-case" href="#refer-earn">Next case study — Refer &amp; Earn →</a>
+          </div>
         `
       },
 
@@ -9979,6 +10005,11 @@
           <div class="cs-divider"></div>
 
           <p class="cs-closing-line">Thanks for reading. Let's build something together.</p>
+          <div class="cs-end-cta">
+            <a class="btn-hero btn-solid" href="mailto:divyanshr.iitb@gmail.com"><span>Get in touch</span></a>
+            <a class="btn-hero btn-outline" href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener"><span>LinkedIn</span></a>
+            <a class="cs-next-case" href="#settlr">Next case study — Settlr →</a>
+          </div>
         `
       }
     };
@@ -10236,7 +10267,7 @@
       if (heroLede) {
         heroLede.innerHTML = enabled
           ? 'Shaping <span class="lede-accent-plain">myself</span><br>\n        through films, photography, art<br>\n        and experiences.'
-          : 'Shaping <span class="lede-strong">digital products,</span><br>\n        applications and design systems with<br>\n        clarity and <span class="lede-accent">character.</span>';
+          : 'Shaping <span class="lede-strong">digital products,</span><br>\n        applications and design systems with<br>\n        clarity and <span class="lede-accent">character.</span>\n        <span class="hero-cred">IDC IIT Bombay · AIR 5<span class="cred-dot">•</span>Product Designer II at Head Digital Works<span class="cred-dot">•</span><a href="#connect">open to full-time roles</a></span>';
       }
 
       // Toolbar icons: dark mode swaps design tools for hobbies.
