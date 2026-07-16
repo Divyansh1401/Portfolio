@@ -327,50 +327,6 @@
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
   }
-  .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .media-grid img { aspect-ratio: 3/4; object-fit: cover; }
-  .photo-scroll-frame {
-    overflow: hidden;
-  }
-  .photo-scroll-frame::before,
-  .photo-scroll-frame::after {
-    content: "";
-    position: absolute; top: 9px; bottom: 9px; z-index: 2;
-    width: 30px; pointer-events: none;
-  }
-  .photo-scroll-frame::before {
-    left: 9px;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--surface) 72%, transparent), transparent);
-  }
-  .photo-scroll-frame::after {
-    right: 9px;
-    background: linear-gradient(270deg, color-mix(in srgb, var(--surface) 72%, transparent), transparent);
-  }
-  .photo-side-scroll {
-    display: flex; gap: 8px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 2px;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    cursor: grab;
-  }
-  .photo-side-scroll::-webkit-scrollbar { display: none; }
-  .photo-side-scroll.is-dragging {
-    cursor: grabbing;
-    scroll-snap-type: none;
-  }
-  .photo-side-scroll img {
-    flex: 0 0 46%;
-    min-width: 0;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    object-position: center;
-    scroll-snap-align: center;
-    pointer-events: none;
-    user-select: none;
-  }
   .nda-veil {
     position: absolute; inset: 9px; border-radius: 3px;
     display: grid; place-items: center;
@@ -449,10 +405,6 @@
   }
   .pa-link-cta svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
   .pa-link-cta:active svg { transform: translateX(3px); }
-  .pa-note {
-    margin-left: auto;
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
-  }
 
   /* text-only post */
   .post-quote {
@@ -580,15 +532,15 @@
     background-position: 0 0, 6px 0;
   }
 
-  .rt-head { text-align: center; margin-bottom: 18px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; }
+  .rt-head { text-align: center; margin-bottom: 18px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
   .rt-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
   .rt-role { font-size: 11px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
   .rt-cred { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
   
   .rt-rule { border: none; border-top: 1px dashed rgba(12,12,11,0.2); margin: 14px 0; }
-  .rt-meta { display: flex; justify-content: space-between; font-family: "JetBrains Mono", Menlo, Consolas, monospace; font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+  .rt-meta { display: flex; justify-content: space-between; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
   
-  .rt-line { display: flex; align-items: flex-end; gap: 8px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; font-size: 11px; margin-bottom: 10px; }
+  .rt-line { display: flex; align-items: flex-end; gap: 8px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; margin-bottom: 10px; }
   .rt-line.muted { color: var(--muted); }
   .rt-li-dots { flex: 1; border-bottom: 1px dotted rgba(12,12,11,0.3); margin-bottom: 4px; opacity: 0.5; }
   .rt-li-name { background: #fff; padding-right: 4px; }
@@ -597,7 +549,7 @@
 
   /* ── scratch-to-settle (touch) — reveals a coffee reward ── */
   .rt-scratch-cue {
-    font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
     color: rgba(12,12,11,0.55); text-align: center; margin: 2px 0 8px;
     transition: opacity 0.3s ease;
@@ -781,8 +733,12 @@
 
   @media (prefers-reduced-motion: reduce) {
     .reveal { transition: none; opacity: 1; transform: none; }
-    .theme-btn svg { transition: none; }
     .hp-inner { transition-duration: 0.01s; }
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
 
   /* Keyboard focus affordance (touch/mouse users are unaffected) */
@@ -793,6 +749,7 @@
 </style>
 </head>
 <body>
+<h1 class="sr-only">Divyansh Rastogi — Product Designer</h1>
 <div class="col">
 
   <!-- ── Top bar ── -->
@@ -836,7 +793,7 @@
     <p class="hero-note">Project documentation is desktop-only. <b>Kindly open on a desktop to view the project details.</b></p>
   </section>
 
-  <div class="feed-start"><span class="fs fs-light on">Recent work</span><span class="fs fs-dark">After hours</span></div>
+  <div class="feed-start"><span class="fs-light">Recent work</span><span class="fs-dark">After hours</span></div>
 
   <!-- ════ LIGHT WORLD — the day job ════ -->
   <div class="world world-light">
@@ -1418,8 +1375,6 @@
     setTimeout(observeReveals, 60);   // the newly shown world's posts still need their reveal
   }
   
-  const themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
   // ── topbar visibility on hero scroll ──
   const heroEl = document.querySelector('.hero');
@@ -1453,48 +1408,6 @@
     document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
   }
   observeReveals();
-
-  // ── photography side-scroll: compact version of the desktop gallery motion ──
-  document.querySelectorAll('.photo-side-scroll').forEach(scroller => {
-    let dragging = false;
-    let startX = 0;
-    let startScroll = 0;
-    let pointerId = null;
-
-    scroller.addEventListener('pointerdown', e => {
-      if (e.pointerType === 'touch') return;
-      dragging = true;
-      pointerId = e.pointerId;
-      startX = e.clientX;
-      startScroll = scroller.scrollLeft;
-      scroller.classList.add('is-dragging');
-      scroller.setPointerCapture(pointerId);
-    });
-
-    scroller.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      e.preventDefault();
-      scroller.scrollLeft = startScroll - (e.clientX - startX);
-    });
-
-    function endDrag() {
-      if (!dragging) return;
-      dragging = false;
-      scroller.classList.remove('is-dragging');
-      if (pointerId !== null && scroller.hasPointerCapture(pointerId)) scroller.releasePointerCapture(pointerId);
-      pointerId = null;
-    }
-
-    scroller.addEventListener('pointerup', endDrag);
-    scroller.addEventListener('pointercancel', endDrag);
-    scroller.addEventListener('pointerleave', endDrag);
-    scroller.addEventListener('wheel', e => {
-      const sideDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
-      if (!sideDelta) return;
-      e.preventDefault();
-      scroller.scrollLeft += sideDelta;
-    }, { passive: false });
-  });
 
   // ── redirection cards: scroll to top, then flip the polaroid + world ──
   document.querySelectorAll('.redirect-card').forEach(card => {
