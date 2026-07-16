@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>(function(){function go(){if(matchMedia('(min-width: 1024px)').matches)location.replace('index.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Feed · Divyansh Rastogi</title>
+<meta name="description" content="Divyansh Rastogi — product designer (IDC IIT Bombay, AIR 5). The pocket feed.">
+<meta name="theme-color" content="#F5F3EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Divyansh Rastogi · Pocket Feed">
+<meta property="og:description" content="The pocket feed — product design, prototypes, and after hours work.">
+<!-- TODO: replace with a proper 1200×630 share image -->
+<meta property="og:image" content="assets/images/hero/portrait-light.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+<style>
+  /* ── Fonts (local, same as index.html) ─────────────── */
+  @font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url('fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
+    font-weight: 200 800; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url('fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.ttf') format('truetype');
+    font-weight: 200 800; font-style: italic; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Unbounded';
+    src: url('fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
+    font-weight: 200 900; font-style: normal; font-display: swap;
+  }
+
+  /* ── Tokens ────────────────────────────────────────── */
+  :root {
+    --bg: #F5F3EE;
+    --surface: #FBFAF7;
+    --text: #0C0C0B;
+    --muted: #808080;
+    --orange: #E06B2D;
+    --line: rgba(12,12,11,0.12);
+    --line-soft: rgba(12,12,11,0.07);
+    --shadow: 4px 4px 0 rgba(12,12,11,0.11);
+    --f-name: 'Unbounded', sans-serif;
+    --f-body: 'Plus Jakarta Sans', sans-serif;
+  }
+  html.dark {
+    --bg: #0D0E0C;
+    --surface: #141512;
+    --text: #EDECEA;
+    --muted: rgba(237,236,234,0.5);
+    --line: rgba(237,236,234,0.14);
+    --line-soft: rgba(237,236,234,0.08);
+    --shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.45s ease, color 0.45s ease;
+    overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+
+  /* grain */
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 60;
+    opacity: 0.05; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  }
+  html.dark body::after { mix-blend-mode: screen; opacity: 0.06; }
+
+  /* ── Feed column ───────────────────────────────────── */
+  .col {
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    border-left: 1px solid var(--line-soft);
+    border-right: 1px solid var(--line-soft);
+    background: var(--bg);
+    transition: background 0.45s ease, border-color 0.45s ease;
+  }
+  @media (max-width: 560px) { .col { border: none; } }
+
+  /* ── Sticky top bar ────────────────────────────────── */
+  .topbar-wrapper {
+    position: sticky; top: 0; z-index: 50;
+    height: 0; width: 100%; overflow: visible;
+  }
+  .topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 12px;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 18px 12px;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line-soft);
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: background 0.45s ease, border-color 0.45s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
+  }
+  .topbar.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .topbar .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    object-fit: cover; object-position: center top;
+    border: 1.5px solid var(--line);
+    background: #24365c;
+  }
+  .topbar .who { flex: 1; min-width: 0; }
+  .topbar .who .nm {
+    font-family: var(--f-name); font-weight: 700; font-size: 12.5px;
+    letter-spacing: 0.01em; line-height: 1.2;
+  }
+  .topbar .who .rl {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ── Hero ──────────────────────────────────────────── */
+  .hero { padding: 40px 18px 32px; }
+  .hero .kicker {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  }
+  .hero .kicker::before { content: ""; width: 22px; height: 1px; background: var(--orange); flex-shrink: 0; }
+  .hero .lede {
+    margin-top: 18px;
+    font-size: 19px; line-height: 1.5; max-width: 30ch;
+  }
+  .hero .lede b { font-weight: 560; }
+  .hero .lede .accent { color: var(--orange); font-style: italic; }
+  /* hero statement swaps with the world (day job ⇄ after hours) */
+  .hero .lede .lede-upright { font-style: normal; }   /* orange, upright — matches desktop "myself" */
+  .hero .lede .lede-dark { display: none; }
+  html.dark .hero .lede .lede-light { display: none; }
+  html.dark .hero .lede .lede-dark { display: inline; }
+  .hero-note {
+    margin-top: 20px;
+    padding-left: 12px;
+    border-left: 2px solid var(--orange);
+    font-size: 12.5px; line-height: 1.55; color: var(--muted);
+    max-width: 34ch;
+  }
+  .hero-note b { color: var(--text); font-weight: 600; transition: color 0.45s ease; }
+  /* hero polaroid — tap flips it (and the theme) like the desktop hero */
+  .hero-polaroid {
+    display: flex; justify-content: center;
+    padding: 44px 0 12px;
+    perspective: 1000px;
+  }
+  .hp-card {
+    width: min(76vw, 300px);
+    transform: rotate(1.8deg);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .hp-inner {
+    position: relative; width: 100%; aspect-ratio: 232 / 282;
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(0.4, 1.6, 0.4, 1);
+  }
+  html.dark .hp-inner { transform: rotateY(180deg); }
+  .hp-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    background: #fff; border-radius: 4px; padding: 9px 9px 46px;
+    box-shadow: 6px 6px 0 rgba(12,12,11,0.11);
+  }
+  .hp-face img.photo {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    border-radius: 2px; display: block; pointer-events: none; user-select: none;
+  }
+  .hp-back { transform: rotateY(180deg); background: #1B1C1A;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.6); }
+  .hp-back img.photo { object-position: center; }
+  .hp-face .hint { position: absolute; bottom: 7px; right: 9px; width: 76px; pointer-events: none; }
+
+  .hero-actions { display: flex; gap: 10px; margin-top: 28px; }
+
+  .feed-start {
+    display: flex; align-items: center; gap: 12px;
+    padding: 26px 18px 6px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  }
+  .feed-start::before, .feed-start::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* ── Posts ─────────────────────────────────────────── */
+  .post {
+    padding: 26px 18px 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ph-tag {
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--orange); font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--orange) 45%, transparent);
+    border-radius: 100px; padding: 4px 10px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* image treatment — polaroid-ish frame */
+  .post-media {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 9px 9px 9px;
+    box-shadow: var(--shadow);
+    transition: background 0.45s ease, border-color 0.45s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .post-media img { border-radius: 3px; width: 100%; aspect-ratio: 1/1; object-fit: cover; object-position: left center; }
+  .post-media.tilt-l { transform: rotate(-0.8deg); }
+  .post-media.tilt-r { transform: rotate(0.8deg); }
+  .featured-card {
+    aspect-ratio: 1 / 1;
+  }
+  .featured-card > img {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  /* Art carousel slide: fixed ratio per section, small mat, whole image */
+  .featured-card.fit {
+    aspect-ratio: var(--card-ar, 1 / 1);   /* per-section ratio; default square */
+    padding: 6px;                          /* small consistent mat (not zero, not huge) */
+    background: var(--surface);
+  }
+  .featured-card.fit > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;        /* uniform sections: frame == image → whole image, no crop */
+    object-position: center;
+    border-radius: 2px;
+    padding: 0;
+  }
+  /* Cyanotype (mixed orientation): show whole image inside the mat (letterbox) */
+  .cards-scroller.matted .featured-card.fit > img {
+    object-fit: contain;
+  }
+
+  /* Carousel of Cards */
+  .scroller-wrap {
+    position: relative;
+    padding-bottom: 18px;
+  }
+  .cards-scroller {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    gap: 16px;
+    padding: 0 8px 16px 8px;
+    margin: 0 -8px;
+  }
+  .cards-scroller::-webkit-scrollbar { display: none; }
+  .cards-scroller > .post-media {
+    flex: 0 0 100%; scroll-snap-align: center;
+  }
+  
+  .carousel-dots {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 5px; align-items: center;
+  }
+  .carousel-dots .dot {
+    width: 4px; height: 4px; border-radius: 4px;
+    background: var(--muted);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .carousel-dots .dot.active { width: 14px; background: var(--text); }
+  .video-card {
+    display: block;
+    aspect-ratio: 16 / 9;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .video-card img {
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-position: center;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+  }
+  .video-card:hover img,
+  .video-card:focus-visible img { transform: scale(1.025); filter: brightness(1.08); }
+  .video-card:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+  .video-play {
+    position: absolute; inset: 9px; z-index: 2;
+    display: grid; place-items: center;
+    border-radius: 3px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.28));
+    pointer-events: none;
+  }
+  .video-play::before {
+    content: "";
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(13,14,12,0.58);
+    border: 1px solid rgba(255,255,255,0.42);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.32);
+  }
+  .video-play::after {
+    content: "";
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-38%, -50%);
+    border-left: 15px solid #fff;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+  }
+  .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .media-grid img { aspect-ratio: 3/4; object-fit: cover; }
+  .photo-scroll-frame {
+    overflow: hidden;
+  }
+  .photo-scroll-frame::before,
+  .photo-scroll-frame::after {
+    content: "";
+    position: absolute; top: 9px; bottom: 9px; z-index: 2;
+    width: 30px; pointer-events: none;
+  }
+  .photo-scroll-frame::before {
+    left: 9px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--surface) 72%, transparent), transparent);
+  }
+  .photo-scroll-frame::after {
+    right: 9px;
+    background: linear-gradient(270deg, color-mix(in srgb, var(--surface) 72%, transparent), transparent);
+  }
+  .photo-side-scroll {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 2px;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    cursor: grab;
+  }
+  .photo-side-scroll::-webkit-scrollbar { display: none; }
+  .photo-side-scroll.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+  .photo-side-scroll img {
+    flex: 0 0 46%;
+    min-width: 0;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: center;
+    scroll-snap-align: center;
+    pointer-events: none;
+    user-select: none;
+  }
+  .nda-veil {
+    position: absolute; inset: 9px; border-radius: 3px;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  }
+  .nda-veil span {
+    font-family: var(--f-name); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    border: 1.5px solid var(--text); border-radius: 100px;
+    padding: 9px 18px;
+  }
+
+  .post-body { margin-top: 16px; }
+  .post-body .title-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 7px;
+  }
+  .post-body h3 {
+    font-family: var(--f-name); font-weight: 700; font-size: 17px;
+    letter-spacing: 0.005em; line-height: 1.3;
+  }
+  .post-body h3 .num { color: var(--orange); font-weight: 300; font-size: 12px; margin-right: 8px; }
+  .post-body p { font-size: 13.5px; line-height: 1.65; color: var(--muted); max-width: 46ch; }
+  .post-body p b { color: var(--text); font-weight: 560; transition: color 0.45s ease; }
+
+  /* ── Stats & Tags ── */
+  .post-stats {
+    display: flex; flex-wrap: wrap; gap: 14px 22px;
+    margin: 18px 0; padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .post-stat { display: flex; flex-direction: column; gap: 2px; }
+  .post-stat i {
+    font-style: normal; font-family: var(--f-name);
+    font-weight: 700; font-size: 17px;
+    letter-spacing: -0.01em; color: var(--text);
+  }
+  .post-stat sup { font-size: 0.6em; vertical-align: top; color: var(--orange); }
+  .post-stat em {
+    font-style: normal; font-size: 8.5px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .post-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 11px; border-radius: 14px;
+    border: 1px solid var(--line);
+    font-size: 10.5px; font-weight: 500;
+    color: var(--text); transition: border-color 0.45s ease;
+  }
+  .post-tag svg { opacity: 0.7; }
+  .post-tag--lock { color: var(--muted); }
+
+  .post-actions {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 15px;
+  }
+  .pa-link {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 520; letter-spacing: 0.03em;
+    color: var(--orange);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pa-link.is-muted { color: var(--muted); }
+  .pa-link svg { width: 13px; height: 13px; }
+  
+  .pa-link-cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--f-name); font-size: 13px; font-weight: 700;
+    color: var(--orange); text-decoration: none;
+    border-bottom: 1px solid var(--orange); padding-bottom: 1px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pa-link-cta svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
+  .pa-link-cta:active svg { transform: translateX(3px); }
+  .pa-note {
+    margin-left: auto;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* text-only post */
+  .post-quote {
+    font-size: 17px; line-height: 1.6; max-width: 34ch;
+  }
+  .post-quote .sep { color: var(--orange); padding: 0 7px; font-style: normal; }
+
+  /* ── More-work: tappable project cards ── */
+  .mw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2px; }
+  .mw-card {
+    position: relative; display: block; border-radius: 8px; overflow: hidden;
+    aspect-ratio: 9 / 16; text-decoration: none; background: var(--surface);
+    box-shadow: var(--shadow);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease;
+  }
+  .mw-card:active { transform: scale(0.98); }
+  .mw-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mw-card .mw-label {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 26px 11px 11px;
+    background: linear-gradient(to top, rgba(12,12,11,0.85), transparent);
+    color: #fff;
+  }
+  .mw-card .mw-label b {
+    font-family: var(--f-name); font-weight: 600; font-size: 12px;
+    display: block; letter-spacing: 0.005em;
+  }
+  .mw-card .mw-label > span { display: block; margin-top: 2px; font-size: 10px; opacity: 0.75; }
+
+  /* ── world swap: light feed ⇄ alter-ego feed ───────── */
+  .world-dark { display: none; }
+  html.dark .world-dark { display: block; }
+  html.dark .world-light { display: none; }
+  .feed-start .fs-dark { display: none; }
+  html.dark .feed-start .fs-light { display: none; }
+  html.dark .feed-start .fs-dark { display: inline; }
+
+  /* ── redirection card (always the opposite world's color) ── */
+  .redirect-card {
+    display: block; width: calc(100% - 36px);
+    margin: 28px 18px;
+    background: #0D0E0C; color: #EDECEA;
+    border: none; border-radius: 14px;
+    padding: 24px 20px 22px;
+    text-align: left; cursor: pointer;
+    font-family: var(--f-body);
+    box-shadow: 6px 6px 0 rgba(12,12,11,0.11);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease;
+  }
+  .redirect-card:active { transform: scale(0.985); }
+  html.dark .redirect-card {
+    background: #F5F3EE; color: #0C0C0B;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.6);
+  }
+  .redirect-card .rc-tag {
+    font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--orange); font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .redirect-card .rc-tag::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.18; }
+  .redirect-card .rc-title {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-top: 14px;
+    font-family: var(--f-name); font-weight: 700; font-size: 21px;
+    line-height: 1.2;
+  }
+  .redirect-card .rc-title svg { flex-shrink: 0; width: 22px; height: 22px; color: var(--orange);
+    transition: transform 0.3s ease; }
+  .redirect-card:active .rc-title svg { transform: translateX(4px); }
+  .redirect-card .rc-sub {
+    margin-top: 8px;
+    font-size: 13px; line-height: 1.6; opacity: 0.6; max-width: 40ch;
+  }
+  .redirect-card .rc-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    margin-top: 16px;
+  }
+  .redirect-card .rc-strip img {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px;
+    pointer-events: none;
+  }
+  .redirect-card .rc-strip--sq img { aspect-ratio: 1 / 1; }   /* square featured-project thumbs */
+  .redirect-card .rc-cta {
+    margin-top: 14px;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--orange); font-weight: 600;
+  }
+
+  /* ── Mobile Receipt Footer ── */
+  .receipt-footer { padding: 40px 18px calc(env(safe-area-inset-bottom, 0px) + 30px); margin-top: 20px; border-top: 1px solid var(--line-soft); }
+  .receipt-header { margin-bottom: 24px; text-align: left; }
+  .rcpt-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 12px;
+  }
+  .receipt-header h2 { font-family: var(--f-name); font-size: 28px; font-weight: 700; line-height: 1.15; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .receipt-header .text-orange { color: var(--orange); }
+  .receipt-header p { font-size: 13.5px; color: var(--muted); line-height: 1.6; max-width: 40ch; }
+  
+  .receipt-ticket {
+    background: #fff;
+    color: #111;
+    /* the receipt is always white paper — pin muted text to a dark gray so it
+       stays readable in dark mode (otherwise --muted flips to light-on-white) */
+    --muted: rgba(12,12,11,0.5);
+    padding: 24px 20px;
+    margin-bottom: 32px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(12,12,11,0.05), 0 1px 3px rgba(12,12,11,0.02);
+  }
+  .receipt-ticket::before, .receipt-ticket::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 6px;
+    background-size: 12px 100%;
+  }
+  .receipt-ticket::before {
+    top: -6px;
+    background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(-135deg, transparent 50%, #fff 50%);
+    background-position: 0 0, 6px 0;
+  }
+  .receipt-ticket::after {
+    bottom: -6px;
+    background-image: linear-gradient(45deg, #fff 50%, transparent 50%), linear-gradient(-45deg, #fff 50%, transparent 50%);
+    background-position: 0 0, 6px 0;
+  }
+
+  .rt-head { text-align: center; margin-bottom: 18px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; }
+  .rt-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .rt-role { font-size: 11px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rt-cred { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  
+  .rt-rule { border: none; border-top: 1px dashed rgba(12,12,11,0.2); margin: 14px 0; }
+  .rt-meta { display: flex; justify-content: space-between; font-family: "JetBrains Mono", Menlo, Consolas, monospace; font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+  
+  .rt-line { display: flex; align-items: flex-end; gap: 8px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; font-size: 11px; margin-bottom: 10px; }
+  .rt-line.muted { color: var(--muted); }
+  .rt-li-dots { flex: 1; border-bottom: 1px dotted rgba(12,12,11,0.3); margin-bottom: 4px; opacity: 0.5; }
+  .rt-li-name { background: #fff; padding-right: 4px; }
+  .rt-li-price { background: #fff; padding-left: 4px; font-weight: 600; }
+  .rt-line.subtotal { font-size: 13px; margin-top: 18px; font-weight: 700; color: #111; margin-bottom: 0; }
+
+  /* ── scratch-to-settle (touch) — reveals a coffee reward ── */
+  .rt-scratch-cue {
+    font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(12,12,11,0.55); text-align: center; margin: 2px 0 8px;
+    transition: opacity 0.3s ease;
+  }
+  .receipt-ticket.settled .rt-scratch-cue { text-decoration: line-through; opacity: 0.4; }
+  .rt-scratch-zone {
+    position: relative; height: 62px;
+    border: 1.5px dashed rgba(12,12,11,0.35); border-radius: 5px; padding: 3px;
+  }
+  .rt-scratch-under {
+    position: absolute; inset: 3px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    border-radius: 3px; text-decoration: none; color: #191713;
+    background: radial-gradient(120% 160% at 50% 0%, rgba(224,107,45,0.08), transparent 60%);
+  }
+  .rt-scratch-answer { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; white-space: nowrap; }
+  .rt-scratch-answer em { font-style: normal; font-weight: 400; color: rgba(12,12,11,0.55); }
+  .rt-scratch-redeem {
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange);
+    opacity: 0; transform: translateY(-2px);
+    transition: opacity 0.3s ease 0.3s, transform 0.3s ease 0.3s;
+  }
+  .rt-scratch-zone.revealed .rt-scratch-redeem { opacity: 1; transform: translateY(0); }
+  .rt-scratch-zone.revealed .rt-scratch-answer {
+    animation: rt-total-pulse 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s 1;
+  }
+  @keyframes rt-total-pulse { 0%{transform:scale(1);} 38%{transform:scale(1.08);color:var(--orange);} 100%{transform:scale(1);} }
+  .rt-scratch-foil {
+    position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+    border-radius: 3px; touch-action: none; cursor: pointer;
+    transition: opacity 0.5s ease;
+  }
+  .rt-scratch-foil.cleared { opacity: 0; pointer-events: none; }
+  .rt-confetti {
+    position: fixed; z-index: 90; pointer-events: none; will-change: transform, opacity;
+    animation: rt-confetti-fly 1.2s cubic-bezier(0.15,0.7,0.3,1) forwards;
+  }
+  @keyframes rt-confetti-fly {
+    0%   { transform: translate(0,0) rotate(0); opacity: 1; }
+    100% { transform: translate(var(--dx), calc(var(--dy) + 120px)) rotate(var(--rot)); opacity: 0; }
+  }
+
+  .receipt-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .receipt-actions .btn-solid { grid-column: 1 / -1; }
+
+  /* ── Design-system buttons (ported 1:1 from index.html) ── */
+  .btn-hero {
+    flex: 1; min-width: 0;
+    height: 46px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-body);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-outline {
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border: 1px solid var(--text);
+    color: var(--text);
+    border-radius: 0;
+    isolation: isolate;
+    z-index: 1;
+    transform: translateZ(0);
+    --btn-reveal-target: 60%;
+    --btn-secondary-fill: var(--text);
+    --btn-secondary-text-hover: var(--bg);
+    transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+  }
+  .btn-outline::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 240%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--btn-secondary-fill);
+    transform: translate(-50%, -50%);
+    clip-path: circle(0px at 50% 50%);
+    transition: clip-path 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: -1;
+    will-change: clip-path;
+  }
+  .btn-outline:hover,
+  .btn-outline:active { color: var(--btn-secondary-text-hover); }
+  .btn-outline:hover::before,
+  .btn-outline:active::before { clip-path: circle(var(--btn-reveal-target) at 50% 50%); }
+  .btn-solid {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--orange);
+    border: none;
+    border-radius: 0;
+    color: #fff;
+    transition:
+      color 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.2s ease;
+  }
+  .btn-solid::before,
+  .btn-solid::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    z-index: 1;
+    transition:
+      transform 0.72s cubic-bezier(0.19, 1, 0.22, 1),
+      border-radius 0.72s cubic-bezier(0.19, 1, 0.22, 1),
+      width 0.72s cubic-bezier(0.19, 1, 0.22, 1),
+      height 0.72s cubic-bezier(0.19, 1, 0.22, 1),
+      inset 0.72s cubic-bezier(0.19, 1, 0.22, 1),
+      clip-path 0.72s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  .btn-solid::before {
+    top: 6px; left: 6px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    transform-origin: top left;
+  }
+  .btn-solid::after {
+    right: 6px; bottom: 6px;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    transform-origin: bottom right;
+  }
+  .btn-solid > span {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-solid:hover::before,
+  .btn-solid:active::before,
+  .btn-solid:focus-visible::before {
+    clip-path: inset(0 round 999px);
+    top: 4px; left: 4px;
+    width: calc(65% - 4px);
+    height: calc(100% - 8px);
+    border-radius: 999px 0 0 999px;
+  }
+  .btn-solid:hover::after,
+  .btn-solid:active::after,
+  .btn-solid:focus-visible::after {
+    clip-path: inset(0 round 999px);
+    right: 4px; bottom: 4px;
+    width: calc(65% - 4px);
+    height: calc(100% - 8px);
+    border-radius: 0 999px 999px 0;
+  }
+  .btn-solid:hover, .btn-solid:active, .btn-solid:focus-visible,
+  .btn-solid:hover > span, .btn-solid:active > span, .btn-solid:focus-visible > span {
+    color: #0C0C0B;
+  }
+
+
+  /* ── Reveal ────────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 30px;
+    transform: translate(-50%, 20px); z-index: 70;
+    background: var(--text); color: var(--bg);
+    font-size: 12.5px; font-weight: 500;
+    padding: 10px 18px; border-radius: 100px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.45s ease, color 0.45s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .theme-btn svg { transition: none; }
+    .hp-inner { transition-duration: 0.01s; }
+  }
+</style>
+</head>
+<body>
+<div class="col">
+
+  <!-- ── Top bar ── -->
+  <div class="topbar-wrapper">
+    <header class="topbar" id="topbar">
+      <img class="avatar" src="assets/images/hero/portrait-light.webp" alt="Divyansh Rastogi">
+      <div class="who">
+        <div class="nm">Divyansh Rastogi</div>
+        <div class="rl">Product Designer · IDC IIT Bombay · AIR 5</div>
+      </div>
+    </header>
+  </div>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="kicker">The pocket feed</div>
+    <div class="hero-polaroid">
+      <div class="hp-card" id="heroPolaroid" role="button" tabindex="0" aria-label="Flip the polaroid — switches light and dark mode">
+        <div class="hp-inner">
+          <div class="hp-face">
+            <img class="photo" src="assets/images/hero/portrait-light.webp" alt="Divyansh Rastogi" draggable="false">
+            <img class="hint" src="assets/images/hero/click-to-flip-dark.webp" alt="" draggable="false">
+          </div>
+          <div class="hp-face hp-back">
+            <img class="photo" src="assets/images/hero/Alter%20ego%20image.webp" alt="Alter ego portrait" draggable="false">
+            <img class="hint" src="assets/images/hero/click-to-flip-light.webp" alt="" draggable="false">
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="lede"><span class="lede-light">Shaping <b>digital products</b> and design systems with clarity and <span class="accent">character.</span></span><span class="lede-dark">Shaping <span class="accent lede-upright">myself</span> through films, photography, art and experiences.</span></p>
+    <div class="hero-actions">
+      <a class="btn-hero btn-solid" href="https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/view" target="_blank" rel="noopener">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Resume
+        </span>
+      </a>
+      <a class="btn-hero btn-outline" href="mailto:divyanshr.iitb@gmail.com">Contact me</a>
+    </div>
+    <p class="hero-note">Project documentation is desktop-only. <b>Kindly open on a desktop to view the project details.</b></p>
+  </section>
+
+  <div class="feed-start"><span class="fs fs-light on">Recent work</span><span class="fs fs-dark">After hours</span></div>
+
+  <!-- ════ LIGHT WORLD — the day job ════ -->
+  <div class="world world-light">
+
+  <!-- ── Post 01 · Settlr ── -->
+  <article class="post reveal" id="settlr">
+    <div class="scroller-wrap">
+      <div class="cards-scroller">
+        <div class="post-media featured-card tilt-l"><img src="assets/images/settlr/thumbnail.webp" alt="Settlr 1" loading="lazy"></div>
+        <div class="post-media featured-card tilt-r"><img src="assets/images/settlr/thumbnail.webp" alt="Settlr 2" loading="lazy"></div>
+        <div class="post-media featured-card tilt-l"><img src="assets/images/settlr/thumbnail.webp" alt="Settlr 3" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">01</span>Settlr</h3>
+        <span class="ph-tag">Founder</span>
+      </div>
+      <p>A college Splitwise study that grew into a <b>full redesign</b> — and a <b>43-component design system</b>, built end-to-end with a Figma MCP × Claude workflow.</p>
+      <div class="post-stats">
+        <div class="post-stat"><i>43</i><em>Components</em></div>
+        <div class="post-stat"><i>290<sup>+</sup></i><em>Design tokens</em></div>
+        <div class="post-stat"><i>24</i><em>Screens</em></div>
+        <div class="post-stat"><i>AA</i><em>WCAG contrast</em></div>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">UX Research</span>
+        <span class="post-tag">Design System</span>
+        <span class="post-tag">Accessibility</span>
+        <span class="post-tag">Claude workflow</span>
+      </div>
+    </div>
+    <div class="post-actions" style="margin-top:0;">
+      <a href="index.html#settlr" class="pa-link-cta">View case study <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+  </article>
+
+  <!-- ── Post 02 · Refer & Earn ── -->
+  <article class="post reveal" id="refer-earn">
+    <div class="scroller-wrap">
+      <div class="cards-scroller">
+        <div class="post-media featured-card tilt-r"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 1" loading="lazy"></div>
+        <div class="post-media featured-card tilt-l"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 2" loading="lazy"></div>
+        <div class="post-media featured-card tilt-r"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 3" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">02</span>Refer &amp; Earn</h3>
+        <span class="ph-tag">Shipped</span>
+      </div>
+      <p>A referral feature rebuilt for <b>clarity</b> and sharper <b>hierarchy</b> — then rolled out across <b>three live gaming brands</b>.</p>
+      <div class="post-stats">
+        <div class="post-stat"><i>03</i><em>Brands shipped</em></div>
+        <div class="post-stat"><i>♦ ♣ ♠</i><em>Game brands</em></div>
+        <div class="post-stat"><i>A23</i><em>Head Digital</em></div>
+        <div class="post-stat"><i>Live</i><em>In production</em></div>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag">Product Design</span>
+        <span class="post-tag">A23 Rummy</span>
+        <span class="post-tag">A23 Poker</span>
+        <span class="post-tag">Adda52</span>
+      </div>
+    </div>
+    <div class="post-actions" style="margin-top:0;">
+      <a href="index.html#refer-earn" class="pa-link-cta">View case study <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+  </article>
+
+  <!-- ── Post 03 · Kinko (NDA) ── -->
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller">
+        <div class="post-media featured-card tilt-l">
+          <img src="assets/images/kinko/thumbnail.webp" alt="Kinko Insurance 1" loading="lazy">
+          <div class="nda-veil"><span>Coming soon</span></div>
+        </div>
+        <div class="post-media featured-card tilt-r">
+          <img src="assets/images/kinko/thumbnail.webp" alt="Kinko Insurance 2" loading="lazy">
+          <div class="nda-veil"><span>Coming soon</span></div>
+        </div>
+        <div class="post-media featured-card tilt-l">
+          <img src="assets/images/kinko/thumbnail.webp" alt="Kinko Insurance 3" loading="lazy">
+          <div class="nda-veil"><span>Coming soon</span></div>
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">03</span>Kinko Insurance</h3>
+        <span class="ph-tag">NDA</span>
+      </div>
+      <p>A <b>45+ component</b>, 300+ variant design system powering a <b>React &amp; React Native</b> codebase — details on a call.</p>
+      <div class="post-stats">
+        <div class="post-stat"><i>45<sup>+</sup></i><em>Components</em></div>
+        <div class="post-stat"><i>300<sup>+</sup></i><em>Variants</em></div>
+        <div class="post-stat"><i>×2</i><em>React &amp; RN</em></div>
+        <div class="post-stat"><i>NDA</i><em>On request</em></div>
+      </div>
+      <div class="post-tags">
+        <span class="post-tag post-tag--lock">
+          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+          Under NDA
+        </span>
+        <span class="post-tag">Design System</span>
+        <span class="post-tag">React / RN</span>
+      </div>
+    </div>
+    <div class="post-actions" style="margin-top:0;">
+      <a href="mailto:divyanshr.iitb@gmail.com" class="pa-link-cta">Let's connect <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+  </article>
+
+  <!-- ── Text post · capabilities ── -->
+  <article class="post reveal">
+    <p class="post-quote">I do <b>product thinking</b><span class="sep">/</span><b>UX research</b><span class="sep">/</span><b>design systems</b><span class="sep">/</span><b>prototyping</b><span class="sep">/</span><b>visual design</b></p>
+  </article>
+
+  <!-- ── Post · More work (tappable project cards) ── -->
+  <article class="post reveal">
+    <div class="post-body" style="margin-top:0;">
+      <h3 style="margin-bottom:7px;">More work</h3>
+      <p>Older projects — game design, mutual funds, IxD research, editorial. Tap any card to open it on Behance.</p>
+    </div>
+    <div class="mw-grid">
+      <a class="mw-card" href="https://www.behance.net/gallery/189640719/Prosper-Game-Design" target="_blank" rel="noopener">
+        <img src="assets/images/small-cards/prosper.webp" alt="Prosper" loading="lazy">
+        <span class="mw-label"><b>Prosper ↗</b><span>Board game · Game theory</span></span>
+      </a>
+      <a class="mw-card" href="https://www.behance.net/gallery/213230177/Mutual-Funds-for-Next-Billion-Users" target="_blank" rel="noopener">
+        <img src="assets/images/small-cards/angel-one.webp" alt="Angel One" loading="lazy">
+        <span class="mw-label"><b>Angel One ↗</b><span>UX Intern · Mutual funds</span></span>
+      </a>
+      <a class="mw-card" href="https://www.behance.net/gallery/181706515/IxD-Research-and-Methods-A-Math-Gamestation" target="_blank" rel="noopener">
+        <img src="assets/images/small-cards/whack-a-math.webp" alt="Whack A Math" loading="lazy">
+        <span class="mw-label"><b>Whack A Math ↗</b><span>IxD Research · Game design</span></span>
+      </a>
+      <a class="mw-card" href="https://www.behance.net/gallery/235938071/Creative-Burnout-in-Design-Students-System-Design" target="_blank" rel="noopener">
+        <img src="assets/images/small-cards/Creative-burnout.webp" alt="Creative Burnout" loading="lazy">
+        <span class="mw-label"><b>Creative Burnout ↗</b><span>Research · Editorial</span></span>
+      </a>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener">
+        View all on Behance
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── Redirection · meet the alter ego ── -->
+  <button class="redirect-card reveal" type="button" data-flip-to="dark">
+    <span class="rc-tag">Alter ego</span>
+    <span class="rc-title">The other me
+      <svg viewBox="0 0 32 24" fill="currentColor"><path d="M18 4l10 8-10 8v-5H2v-6h16V4z"/></svg>
+    </span>
+    <span class="rc-sub">Films, photography, cyanotype prints. Tap — the polaroid flips and the feed goes dark.</span>
+    <span class="rc-strip">
+      <img src="assets/images/photography/DSC_2164.webp" alt="" loading="lazy">
+      <img src="assets/images/photography/DSC_3675.webp" alt="" loading="lazy">
+      <img src="assets/images/photography/DSC_5406.webp" alt="" loading="lazy">
+    </span>
+    <span class="rc-cta">Tap to flip →</span>
+  </button>
+
+  </div><!-- /world-light -->
+
+  <!-- ════ DARK WORLD — after hours ════ -->
+  <div class="world world-dark">
+
+  <!-- ── Film · Talaab ── -->
+  <article class="post reveal">
+    <a class="post-media video-card tilt-l" href="https://www.youtube.com/watch?v=XMWdlqM76bk" target="_blank" rel="noopener" aria-label="Watch Talaab on YouTube">
+      <img src="https://img.youtube.com/vi/XMWdlqM76bk/maxresdefault.jpg" alt="Talaab" loading="lazy">
+      <span class="video-play" aria-hidden="true"></span>
+    </a>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">01</span>Talaab</h3>
+        <span class="ph-tag">Short film</span>
+      </div>
+      <p>Direction &amp; cinematography.</p>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.youtube.com/watch?v=XMWdlqM76bk" target="_blank" rel="noopener">
+        Watch on YouTube
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── Film · Paithani ── -->
+  <article class="post reveal">
+    <a class="post-media video-card tilt-r" href="https://www.youtube.com/watch?v=1jXkEcAHBug" target="_blank" rel="noopener" aria-label="Watch Paithani on YouTube">
+      <img src="https://img.youtube.com/vi/1jXkEcAHBug/maxresdefault.jpg" alt="Paithani" loading="lazy">
+      <span class="video-play" aria-hidden="true"></span>
+    </a>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">02</span>Paithani</h3>
+        <span class="ph-tag">Short film</span>
+      </div>
+      <p>Direction &amp; cinematography.</p>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.youtube.com/watch?v=1jXkEcAHBug" target="_blank" rel="noopener">
+        Watch on YouTube
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── Film · Chor ── -->
+  <article class="post reveal">
+    <a class="post-media video-card tilt-l" href="https://www.youtube.com/watch?v=4DbHJ2F3q3E" target="_blank" rel="noopener" aria-label="Watch Chor on YouTube">
+      <img src="https://img.youtube.com/vi/4DbHJ2F3q3E/maxresdefault.jpg" alt="Chor" loading="lazy">
+      <span class="video-play" aria-hidden="true"></span>
+    </a>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">03</span>Chor</h3>
+        <span class="ph-tag">Winner</span>
+      </div>
+      <p><b>Inter IIT film winner</b> — direction.</p>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.youtube.com/watch?v=4DbHJ2F3q3E" target="_blank" rel="noopener">
+        Watch on YouTube
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── Photography (categorized) ── -->
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_20211004_184448-01.webp" alt="Astrophotography" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_3181.webp" alt="Astrophotography" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_3657.webp" alt="Astrophotography" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/Snapseed.webp" alt="Astrophotography" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/moon%20fin.webp" alt="Astrophotography" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3>Astrophotography</h3>
+        <span class="ph-tag">5 shots</span>
+      </div>
+      <p>Chasing the night — the moon, eclipses and the Milky Way.</p>
+    </div>
+  </article>
+
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5406.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5422.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5433.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5435.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5456.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5475.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5597.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5751.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5758.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6079.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6103.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6104.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6120.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6131.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6195.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6225.webp" alt="Cars" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6239.webp" alt="Cars" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3>Cars</h3>
+        <span class="ph-tag">17 shots</span>
+      </div>
+      <p>Classics, muscle and modern metal — shot at meets and museums.</p>
+    </div>
+  </article>
+
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_2164.webp" alt="Animals" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6288.webp" alt="Animals" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6311.webp" alt="Animals" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3>Animals</h3>
+        <span class="ph-tag">3 shots</span>
+      </div>
+      <p>Wildlife and companions, caught mid-moment.</p>
+    </div>
+  </article>
+
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_2352.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_3675.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_3801.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_4635.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_4642.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5528.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_7485.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_20220315_210826-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_20220317_172224-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_20220318_140742-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_20220318_175835-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_20220318_180016-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_20220319_142835-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_20220319_160729-01.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_2442.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_3876.webp" alt="More" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/Snapseed-1.webp" alt="More" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3>More</h3>
+        <span class="ph-tag">17 shots</span>
+      </div>
+      <p>Travel, landscapes, light — and everything else.</p>
+    </div>
+  </article>
+
+  <!-- ── Cyanotype ── -->
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller matted" style="--card-ar: 4 / 3">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/Group-26088911.webp" alt="Cyanotype" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/Cyanotype/Group-26088913.webp" alt="Cyanotype" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/Group-26088914.webp" alt="Cyanotype" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/Cyanotype/IMG_6661-1.webp" alt="Cyanotype" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/IMG_6662-1.webp" alt="Cyanotype" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/Cyanotype/IMG_6840-1.webp" alt="Cyanotype" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">01</span>Cyanotype</h3>
+        <span class="ph-tag">Cyanotype</span>
+      </div>
+      <p>Sun-printed cyanotypes — camera-less photographs made by hand on treated paper.</p>
+    </div>
+    <div class="post-actions">
+      <span class="pa-link is-muted">Prints — shot on treated paper</span>
+    </div>
+  </article>
+
+  <!-- ── Hydrone ── -->
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller" style="--card-ar: 16 / 9">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/1.webp" alt="Hydrone" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/hydrone/2.webp" alt="Hydrone" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/3.webp" alt="Hydrone" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/hydrone/5.webp" alt="Hydrone" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/6.webp" alt="Hydrone" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">02</span>Hydrone</h3>
+        <span class="ph-tag">Concept</span>
+      </div>
+      <p>Hydrone — a manned octocopter concept. Industrial design, rendered end to end.</p>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.behance.net/gallery/192408961/Hydrone-A-Manned-Octocopter" target="_blank" rel="noopener">
+        View on Behance
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── 3D Watch ── -->
+  <article class="post reveal">
+    <div class="scroller-wrap">
+      <div class="cards-scroller" style="--card-ar: 1 / 1">
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/1.webp" alt="3D Watch" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/watch/2.webp" alt="3D Watch" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/3.webp" alt="3D Watch" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-r"><img src="assets/images/watch/4.webp" alt="3D Watch" loading="lazy"></div>
+        <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/5.webp" alt="3D Watch" loading="lazy"></div>
+      </div>
+      <div class="carousel-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="post-body">
+      <div class="title-row">
+        <h3><span class="num">03</span>Visible</h3>
+        <span class="ph-tag">3D Design</span>
+      </div>
+      <p>Visible — a see-through mechanical watch, modeled and rendered in 3D.</p>
+    </div>
+    <div class="post-actions">
+      <a class="pa-link" href="https://www.behance.net/gallery/193583573/Visible-Watch-Design" target="_blank" rel="noopener">
+        View on Behance
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <!-- ── Redirection · back to the day job ── -->
+  <button class="redirect-card reveal" type="button" data-flip-to="light">
+    <span class="rc-tag">Day job</span>
+    <span class="rc-title">Back to the work
+      <svg viewBox="0 0 32 24" fill="currentColor"><path d="M18 4l10 8-10 8v-5H2v-6h16V4z"/></svg>
+    </span>
+    <span class="rc-sub">Product design — Settlr, Refer &amp; Earn, Kinko. Tap to flip the polaroid back.</span>
+    <span class="rc-strip rc-strip--sq">
+      <img src="assets/images/settlr/thumbnail.webp" alt="Settlr" loading="lazy">
+      <img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn" loading="lazy">
+      <img src="assets/images/kinko/thumbnail.webp" alt="Kinko" loading="lazy">
+    </span>
+    <span class="rc-cta">Tap to flip →</span>
+  </button>
+
+  </div><!-- /world-dark -->
+
+  <!-- ── Footer ── -->
+  <footer class="receipt-footer">
+    <div class="receipt-header reveal">
+      <span class="rcpt-eyebrow">The bill, please</span>
+      <h2>Want to work together<span class="text-orange">?</span></h2>
+      <p>Open to full-time product design &amp; design systems roles. The receipt below is itemized — everything's included.</p>
+    </div>
+    
+    <div class="receipt-ticket reveal">
+      <div class="rt-head">
+        <div class="rt-name">DIVYANSH&nbsp;RASTOGI</div>
+        <div class="rt-role">Product Designer</div>
+        <div class="rt-cred">IDC IIT Bombay &middot; AIR 5</div>
+      </div>
+      <hr class="rt-rule">
+      <div class="rt-meta"><span>ORDER #001</span><span>OPEN ROLE</span></div>
+      <hr class="rt-rule">
+      <div class="rt-line"><span class="rt-li-name">1&times; Product Designer</span><span class="rt-li-dots"></span><span class="rt-li-price">hired?</span></div>
+      <div class="rt-line muted"><span class="rt-li-name">Design systems</span><span class="rt-li-dots"></span><span class="rt-li-price">incl.</span></div>
+      <div class="rt-line muted"><span class="rt-li-name">UX research</span><span class="rt-li-dots"></span><span class="rt-li-price">incl.</span></div>
+      <div class="rt-line muted"><span class="rt-li-name">Motion &amp; prototyping</span><span class="rt-li-dots"></span><span class="rt-li-price">incl.</span></div>
+      <div class="rt-line muted"><span class="rt-li-name">Filmmaking after hours</span><span class="rt-li-dots"></span><span class="rt-li-price">free</span></div>
+      <hr class="rt-rule">
+      <div class="rt-line subtotal"><span class="rt-li-name">SUBTOTAL</span><span class="rt-li-dots"></span><span class="rt-li-price">priceless</span></div>
+      <hr class="rt-rule">
+      <div class="rt-scratch-cue">scratch to settle the bill</div>
+      <div class="rt-scratch-zone" id="rtScratchZone">
+        <a class="rt-scratch-under" href="mailto:divyanshr.iitb@gmail.com?subject=Coffee%20%E2%80%94%20let%27s%20talk">
+          <span class="rt-scratch-answer">one coffee ☕ <em>— on me</em></span>
+          <span class="rt-scratch-redeem">redeem →</span>
+        </a>
+        <canvas class="rt-scratch-foil" id="rtScratchCanvas" aria-hidden="true"></canvas>
+      </div>
+    </div>
+    
+    <div class="receipt-actions reveal">
+      <button type="button" class="btn-hero btn-solid" id="copyEmail">
+        <span><svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> divyanshr.iitb@gmail.com</span>
+      </button>
+      <a href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener" class="btn-hero btn-outline">
+        <span>LinkedIn</span>
+      </a>
+      <a href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener" class="btn-hero btn-outline">
+        <span>Behance</span>
+      </a>
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Email copied</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  let themeStore = null;
+  try { themeStore = window.localStorage; } catch {}
+
+  // ── theme switch (manual, persisted) ──
+  // First visit always opens on the work feed: dark mode swaps CONTENT here
+  // (html.dark hides .world-light), so honoring prefers-color-scheme would
+  // hide every project from dark-mode phones. Only a saved choice applies.
+  const saved = themeStore ? themeStore.getItem('feed-theme') : null;
+  if (saved === 'dark') root.classList.add('dark');
+  function toggleTheme() {
+    const dark = root.classList.toggle('dark');
+    if (themeStore) themeStore.setItem('feed-theme', dark ? 'dark' : 'light');
+    setTimeout(observeReveals, 60);   // the newly shown world's posts still need their reveal
+  }
+  
+  const themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+  // ── topbar visibility on hero scroll ──
+  const heroEl = document.querySelector('.hero');
+  const topbarEl = document.getElementById('topbar');
+  if (heroEl && topbarEl) {
+    const handleScroll = () => {
+      if (window.scrollY > (heroEl.offsetTop + heroEl.offsetHeight * 0.8)) {
+        topbarEl.classList.add('show');
+      } else {
+        topbarEl.classList.remove('show');
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+  }
+
+  // the hero polaroid IS the switch too — flip = world change, like the desktop hero
+  const heroPolaroid = document.getElementById('heroPolaroid');
+  heroPolaroid.addEventListener('click', toggleTheme);
+  heroPolaroid.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); }
+  });
+
+  // ── scroll reveals ──
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  function observeReveals() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
+  }
+  observeReveals();
+
+  // ── photography side-scroll: compact version of the desktop gallery motion ──
+  document.querySelectorAll('.photo-side-scroll').forEach(scroller => {
+    let dragging = false;
+    let startX = 0;
+    let startScroll = 0;
+    let pointerId = null;
+
+    scroller.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'touch') return;
+      dragging = true;
+      pointerId = e.pointerId;
+      startX = e.clientX;
+      startScroll = scroller.scrollLeft;
+      scroller.classList.add('is-dragging');
+      scroller.setPointerCapture(pointerId);
+    });
+
+    scroller.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      scroller.scrollLeft = startScroll - (e.clientX - startX);
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      scroller.classList.remove('is-dragging');
+      if (pointerId !== null && scroller.hasPointerCapture(pointerId)) scroller.releasePointerCapture(pointerId);
+      pointerId = null;
+    }
+
+    scroller.addEventListener('pointerup', endDrag);
+    scroller.addEventListener('pointercancel', endDrag);
+    scroller.addEventListener('pointerleave', endDrag);
+    scroller.addEventListener('wheel', e => {
+      const sideDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+      if (!sideDelta) return;
+      e.preventDefault();
+      scroller.scrollLeft += sideDelta;
+    }, { passive: false });
+  });
+
+  // ── redirection cards: scroll to top, then flip the polaroid + world ──
+  document.querySelectorAll('.redirect-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const wantDark = card.dataset.flipTo === 'dark';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (root.classList.contains('dark') === wantDark) return;
+      const t0 = Date.now();
+      const iv = setInterval(() => {
+        if (window.scrollY < 8 || Date.now() - t0 > 1400) {
+          clearInterval(iv);
+          toggleTheme();
+        }
+      }, 90);
+    });
+  });
+
+  // ── copy email ──
+  const toast = document.getElementById('toast');
+  document.getElementById('copyEmail').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('divyanshr.iitb@gmail.com');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    } catch {
+      location.href = 'mailto:divyanshr.iitb@gmail.com';
+    }
+  });
+
+  // ── carousel pagination dots ──
+  document.querySelectorAll('.scroller-wrap').forEach(wrap => {
+    const track = wrap.querySelector('.cards-scroller');
+    const dots = wrap.querySelectorAll('.carousel-dots .dot');
+    if (!track || dots.length === 0) return;
+    track.addEventListener('scroll', () => {
+      const index = Math.round(track.scrollLeft / track.clientWidth);
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }, { passive: true });
+  });
+
+  // ── receipt: scratch-to-settle (touch-friendly foil canvas) ──
+  (function initScratch(){
+    const zone    = document.getElementById('rtScratchZone');
+    const foil    = document.getElementById('rtScratchCanvas');
+    const receipt = document.querySelector('.receipt-ticket');
+    if (!zone || !foil || !receipt) return;
+    const ctx = foil.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let scratching = false, revealed = false;
+
+    function drawFoil(w, h){
+      const g = ctx.createLinearGradient(0, 0, w, h);
+      g.addColorStop(0,'#C9C9C6'); g.addColorStop(0.28,'#DEDEDA'); g.addColorStop(0.5,'#ADADA9');
+      g.addColorStop(0.72,'#D6D6D2'); g.addColorStop(1,'#B8B8B4');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1600; i++){ ctx.fillStyle = 'rgba(0,0,0,' + (Math.random()*0.08) + ')'; ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1); }
+      const sheen = ctx.createLinearGradient(0, 0, w, h);
+      sheen.addColorStop(0.36,'rgba(255,255,255,0)'); sheen.addColorStop(0.5,'rgba(255,255,255,0.4)'); sheen.addColorStop(0.64,'rgba(255,255,255,0)');
+      ctx.fillStyle = sheen; ctx.fillRect(0, 0, w, h);
+      ctx.save(); ctx.translate(w/2, h/2); ctx.rotate(-0.14);
+      ctx.font = '700 7px ui-monospace, Menlo, monospace'; ctx.textAlign = 'center';
+      for (let row = -3; row <= 3; row++) for (let col = -5; col <= 5; col++){
+        ctx.fillStyle = (row+col)%2===0 ? 'rgba(90,90,86,0.34)' : 'rgba(255,255,255,0.38)';
+        ctx.fillText('SCRATCH', col*58, row*13+2);
+      }
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.strokeRect(0.5, 0.5, w-1, h-1);
+      ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.strokeRect(1.5, 1.5, w-3, h-3);
+    }
+    function sizeFoil(){
+      const r = foil.getBoundingClientRect();
+      if (r.width === 0 || revealed) return;
+      foil.width = Math.round(r.width * 2); foil.height = Math.round(r.height * 2);
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
+      drawFoil(r.width, r.height);
+    }
+    function pos(e){ const r = foil.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+    function scratch(p){
+      ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = '#000';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI*2); ctx.fill();
+      for (let j = 0; j < 5; j++){
+        const ox = (Math.random()-0.5)*22, oy = (Math.random()-0.5)*22, rr = 3 + Math.random()*6;
+        ctx.beginPath(); ctx.arc(p.x+ox, p.y+oy, rr, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    function checkReveal(){
+      if (revealed) return;
+      const d = ctx.getImageData(0, 0, foil.width, foil.height).data;
+      let cleared = 0, total = 0;
+      for (let i = 3; i < d.length; i += 16){ total++; if (d[i] === 0) cleared++; }
+      if (total && cleared/total > 0.45) reveal(true);
+    }
+    function reveal(withConfetti){
+      if (revealed) return; revealed = true;
+      receipt.classList.add('settled'); zone.classList.add('revealed'); foil.classList.add('cleared');
+      if (withConfetti && !reduced) confetti();
+    }
+    function confetti(){
+      const r = zone.getBoundingClientRect(); const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const colors = ['#E06B2D','#FFD700','#FF6B35','#FFA726','#C0392B','#F5F3EE']; const N = 16;
+      for (let i = 0; i < N; i++){
+        const p = document.createElement('div'); p.className = 'rt-confetti';
+        const a = Math.PI*2*i/N + (Math.random()-0.5)*0.5, dist = 40 + Math.random()*70;
+        p.style.left = cx + 'px'; p.style.top = cy + 'px';
+        p.style.setProperty('--dx', (Math.cos(a)*dist) + 'px');
+        p.style.setProperty('--dy', (Math.sin(a)*dist - 40) + 'px');
+        p.style.setProperty('--rot', ((Math.random()-0.5)*340) + 'deg');
+        p.style.background = colors[i % colors.length];
+        const s = 4 + Math.random()*6; p.style.width = s + 'px'; p.style.height = s + 'px';
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        document.body.appendChild(p); setTimeout(() => p.remove(), 1300);
+      }
+    }
+    foil.addEventListener('pointerdown', e => { if (revealed) return; scratching = true; try { foil.setPointerCapture(e.pointerId); } catch(err){} scratch(pos(e)); e.preventDefault(); });
+    foil.addEventListener('pointermove', e => { if (!scratching || revealed) return; scratch(pos(e)); e.preventDefault(); });
+    function end(){ if (!scratching) return; scratching = false; checkReveal(); }
+    foil.addEventListener('pointerup', end);
+    foil.addEventListener('pointercancel', end);
+    window.addEventListener('resize', sizeFoil, { passive: true });
+
+    if (reduced) { reveal(false); return; }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeFoil); else sizeFoil();
+    setTimeout(sizeFoil, 120);   // ensure the canvas is sized after layout settles
+  })();
+})();
+</script>
+</body>
+</html>

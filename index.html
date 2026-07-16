@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script>(function(){function go(){if(matchMedia('(max-width: 1023.98px)').matches)location.replace('mobile.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Divyansh Rastogi · Product Designer</title>
+  <meta name="description" content="Divyansh Rastogi — product designer (IDC IIT Bombay, AIR 5). Case studies, prototypes, and design systems.">
+  <meta name="theme-color" content="#F5F3EE">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Divyansh Rastogi · Product Designer">
+  <meta property="og:description" content="Product designer — case studies, prototypes, design systems.">
+  <!-- TODO: replace with a proper 1200×630 share image -->
+  <meta property="og:image" content="assets/images/hero/portrait-light.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
   <style>
-    @font-face {
-      font-family: 'Nohemi';
-      src: url('./Nohemi/Variable-TT/Nohemi-VF.ttf') format('truetype');
-      font-weight: 100 900;
-      font-style: normal;
-      font-display: swap;
-    }
+
     @font-face {
       font-family: 'Unbounded';
       src: url('./fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
@@ -56,10 +61,10 @@
       --c-mid:     #888886;
       --c-surface: #E6E4E4;
       --c-orange:  #EA7623;
-      --f-body: 'Nohemi', sans-serif;
+      --f-body: 'Plus Jakarta Sans', sans-serif;
       --f-heading: 'Unbounded', sans-serif;
       --f-name: 'Unbounded', sans-serif;
-      --f-hand: 'Nohemi', sans-serif;
+      --f-hand: 'Plus Jakarta Sans', sans-serif;
       /* Fluid layout tokens (1024px – 2560px desktop range) */
       --pad-page:    clamp(24px, 4.2vw, 96px);
       --pad-section: clamp(48px, 6vw, 120px);
@@ -76,7 +81,14 @@
          matching the Figma authoring width 1:1. */
       --cs-gutter:   80px;                              /* L/R margin from viewport edge */
       --cs-icon-pad: 40px;                              /* top/bottom padding for icon column */
-      --cs-peek:     120px;                             /* fixed homepage-peek strip on the left */
+      /* Left homepage-peek. As the viewport narrows, the sheet holds its
+         reference size and the PEEK collapses first (120px → 40px); only once
+         the peek bottoms out at 40px does the sheet itself start shrinking.
+         1320px = ref card (1160) + both 80px gutters, so:
+           ≥1440px : peek 120, card grows (100vw − 280)         [unchanged]
+           1360–1440: peek 120→40, card stays 1160 (reference)  [sheet holds]
+           ≤1360px : peek 40,  card shrinks (100vw − 200) */
+      --cs-peek:     clamp(40px, calc(100vw - 1320px), 120px);
       --cs-card-w:   calc(100vw - var(--cs-gutter) * 2 - var(--cs-peek));
       /* Reference design width (px). At vw=1440 the card is 1160 wide →
          minus 2×60 side padding = 1040 inner = Figma authoring width.
@@ -1455,6 +1467,10 @@
       gap: var(--gap-grid);
       overflow: visible;
     }
+    /* staggered drop on the 2nd & 4th card — only in the 4-col layout;
+       reset to a clean grid at the 3-col / 2-col breakpoints below */
+    .small-grid > .small-card:nth-child(2),
+    .small-grid > .small-card:nth-child(4) { margin-top: 80px; }
 
     .small-card {
       border-radius: 10px;
@@ -1601,7 +1617,9 @@
       z-index: 20;
     }
     .unified-footer .btn-outline,
-    .unified-footer .btn-solid {
+    .unified-footer .btn-solid,
+    .rcpt-links .btn-outline,
+    .rcpt-links .btn-solid {
       font-size: 12px;
       font-weight: 600;
       height: 46px;
@@ -1616,27 +1634,34 @@
       flex-shrink: 0;
     }
     .unified-footer .btn-outline > span,
-    .unified-footer .btn-solid > span:not(.copy-toast) {
+    .unified-footer .btn-solid > span:not(.copy-toast),
+    .rcpt-links .btn-outline > span,
+    .rcpt-links .btn-solid > span:not(.copy-toast) {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       transition: opacity 0.12s ease;
     }
-    .unified-footer .btn-solid > span:not(.copy-toast).fading {
+    .unified-footer .btn-solid > span:not(.copy-toast).fading,
+    .rcpt-links .btn-solid > span:not(.copy-toast).fading {
       opacity: 0;
     }
-    .unified-footer .btn-outline {
+    .unified-footer .btn-outline,
+    .rcpt-links .btn-outline {
       border: 1px solid rgba(237,236,234,0.4);
       color: #EDECEA;
       --btn-secondary-fill: #EDECEA;
       --btn-secondary-text-hover: #0D0E0C;
     }
     .unified-footer .btn-outline.is-hovered,
-    .unified-footer .btn-outline:hover {
+    .unified-footer .btn-outline:hover,
+    .rcpt-links .btn-outline.is-hovered,
+    .rcpt-links .btn-outline:hover {
       color: #0D0E0C;
     }
-    .unified-footer .btn-solid {
+    .unified-footer .btn-solid,
+    .rcpt-links .btn-solid {
       background: #EA7623;
       color: #fff;
       border: 1px solid #EA7623;
@@ -1646,7 +1671,9 @@
       min-width: 280px;
     }
     .unified-footer .btn-outline svg,
-    .unified-footer .btn-solid svg {
+    .unified-footer .btn-solid svg,
+    .rcpt-links .btn-outline svg,
+    .rcpt-links .btn-solid svg {
       width: 14px;
       height: 14px;
       flex-shrink: 0;
@@ -1818,6 +1845,512 @@
     @keyframes confettiFall {
       0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
       100% { opacity: 0; transform: translateY(120px) rotate(720deg) scale(0.3); }
+    }
+
+    /* ══════════ Receipt footer (light-mode #connect) ══════════
+       Approved design: explorations/footer-c-receipt-scratch.html.
+       Everything below is namespaced `.rcpt-*` so it never touches
+       `.unified-footer*` / `.scratch-*` (still used by the dark
+       footer at #alter-connect) or any other section. */
+    .rcpt-closer {
+      --rcpt-ink:         #0D0E0C;
+      --rcpt-thermal:     #FBF9F2;
+      --rcpt-thermal-ink: #2A2722;
+      --rcpt-stamp-red:   #C0392B;
+      --rcpt-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Courier New', monospace;
+      position: relative;
+      background: var(--rcpt-ink);
+      border-radius: 14px;
+      overflow: hidden;
+      color: #F5F3EE;
+    }
+    .rcpt-closer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(245,243,238,0.055) 1px, transparent 1.4px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+    .rcpt-main {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: stretch;
+      gap: clamp(32px, 4vw, 72px);
+      padding: clamp(56px, 6vw, 96px) clamp(24px, 4vw, 64px) clamp(56px, 6vw, 88px);
+    }
+
+    /* Left: message + actions */
+    .rcpt-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 560px;
+    }
+    .rcpt-eyebrow {
+      font-family: var(--rcpt-mono);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .rcpt-eyebrow::after {
+      content: '';
+      width: 56px; height: 1px;
+      background: rgba(224,107,45,0.5);
+    }
+    .rcpt-closer h2 {
+      font-family: var(--f-heading);
+      font-weight: 800;
+      font-size: clamp(32px, 4.2vw, 60px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #F5F3EE;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .rcpt-closer h2 .text-orange { color: var(--orange); }
+    .rcpt-sub {
+      font-family: var(--f-body);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: rgba(245,243,238,0.62);
+      max-width: 42ch;
+      margin-bottom: 36px;
+    }
+    .rcpt-links { display: flex; flex-wrap: wrap; gap: 12px; max-width: 320px; position: relative; z-index: 20; }
+    /* Email on top (full width of the group); LinkedIn + Behance share the row beneath it. */
+    .rcpt-links .btn-solid  { order: -1; flex: 1 1 100%; min-width: 0; }
+    .rcpt-links .btn-outline { flex: 1 1 calc(50% - 6px); min-width: 0; }
+    .rcpt-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      height: 48px;
+      padding: 0 26px;
+      border-radius: 100px;
+      font-family: var(--f-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      border: 1px solid rgba(245,243,238,0.28);
+      color: #F5F3EE;
+      background: transparent;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+    .rcpt-pill:hover {
+      background: #F5F3EE;
+      color: var(--rcpt-ink);
+      border-color: #F5F3EE;
+      transform: translateY(-2px);
+    }
+    .rcpt-pill svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .rcpt-pill--solid {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+    }
+    .rcpt-pill--solid:hover {
+      background: #ef7c3a;
+      border-color: #ef7c3a;
+      color: #fff;
+    }
+    .rcpt-pill--solid span { display: inline-flex; align-items: center; gap: 9px; }
+
+    /* Right: printer slot + receipt */
+    .rcpt-printer-col {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rcpt-printer-col::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 560px;
+      height: 340px;
+      background: radial-gradient(closest-side, rgba(224,107,45,0.22), rgba(224,107,45,0.06) 55%, transparent 75%);
+      filter: blur(6px);
+      pointer-events: none;
+    }
+    .rcpt-printer-slot {
+      position: relative;
+      z-index: 6;
+      width: 400px;
+      max-width: 100%;
+    }
+    .rcpt-slot-face {
+      position: relative;
+      height: 28px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, #1E1F1C 0%, #131412 55%, #0A0B09 100%);
+      border: 1px solid rgba(245,243,238,0.09);
+      box-shadow:
+        0 1px 0 rgba(245,243,238,0.06) inset,
+        0 -6px 14px rgba(0,0,0,0.5) inset,
+        0 10px 26px rgba(0,0,0,0.45);
+    }
+    .rcpt-slot-face::after {
+      content: '';
+      position: absolute;
+      left: 18px; right: 18px;
+      top: 50%;
+      height: 7px;
+      transform: translateY(-50%);
+      border-radius: 4px;
+      background: #050505;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.9) inset,
+        0 1px 0 rgba(245,243,238,0.05);
+    }
+    .rcpt-slot-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 9px;
+      font-family: var(--rcpt-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(245,243,238,0.34);
+      padding: 0 4px;
+    }
+    .rcpt-slot-label .rcpt-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 8px rgba(224,107,45,0.8);
+      animation: rcpt-slot-blink 2.4s ease-in-out infinite;
+    }
+    @keyframes rcpt-slot-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .rcpt-viewport {
+      position: relative;
+      z-index: 4;
+      width: 420px;
+      max-width: 100%;
+      margin-top: -14px;
+      padding: 15px 46px 50px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
+    .rcpt-tilt {
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-origin: 50% 12%;
+    }
+    .rcpt-closer.printed .rcpt-tilt:hover {
+      transform: rotate(1.8deg) translateY(-6px);
+    }
+    .rcpt-closer.printed .rcpt-tilt.hold-still:hover {
+      transform: none;
+    }
+
+    .rcpt-receipt {
+      position: relative;
+      width: 330px;
+      background:
+        repeating-linear-gradient(0deg, rgba(42,39,34,0.016) 0 2px, transparent 2px 5px),
+        linear-gradient(105deg, rgba(0,0,0,0.02) 0%, transparent 22%, transparent 78%, rgba(0,0,0,0.03) 100%),
+        var(--rcpt-thermal);
+      color: var(--rcpt-thermal-ink);
+      font-family: var(--rcpt-mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      padding: 28px 24px 42px;
+      -webkit-mask:
+        linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 11px) no-repeat,
+        conic-gradient(from 135deg at 50% 0, transparent, #000 1deg 89deg, transparent 90deg) bottom / 18px 11px repeat-x;
+      mask:
+        linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 11px) no-repeat,
+        conic-gradient(from 135deg at 50% 0, transparent, #000 1deg 89deg, transparent 90deg) bottom / 18px 11px repeat-x;
+      filter:
+        drop-shadow(0 18px 22px rgba(0,0,0,0.45))
+        drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+      transform: translateY(-102%);
+    }
+    .rcpt-closer.printed .rcpt-receipt {
+      animation: rcpt-print-out 1.35s cubic-bezier(0.3, 0.9, 0.32, 1) forwards;
+    }
+    @keyframes rcpt-print-out {
+      0%   { transform: translateY(-102%); }
+      18%  { transform: translateY(-72%); }
+      26%  { transform: translateY(-70%); }
+      48%  { transform: translateY(-34%); }
+      56%  { transform: translateY(-32%); }
+      82%  { transform: translateY(1.4%) rotate(0.5deg); }
+      91%  { transform: translateY(-0.6%) rotate(-0.35deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    .rcpt-closer.stamped .rcpt-receipt {
+      animation: rcpt-print-out 1.35s cubic-bezier(0.3, 0.9, 0.32, 1) forwards,
+                 rcpt-stamp-jolt 0.3s ease-out 1;
+    }
+    @keyframes rcpt-stamp-jolt {
+      0%   { transform: translateY(0); }
+      35%  { transform: translateY(3px) rotate(0.3deg); }
+      100% { transform: translateY(0); }
+    }
+
+    .rcpt-head { text-align: center; margin-bottom: 15px; }
+    .rcpt-name {
+      font-family: var(--f-heading);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: #191713;
+    }
+    .rcpt-role {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-top: 5px;
+      color: rgba(42,39,34,0.85);
+    }
+    .rcpt-cred {
+      font-size: 11px;
+      margin-top: 3px;
+      color: rgba(42,39,34,0.6);
+    }
+    .rcpt-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: rgba(42,39,34,0.55);
+      margin-bottom: 4px;
+    }
+    .rcpt-rule {
+      border: none;
+      border-top: 1.5px dashed rgba(42,39,34,0.4);
+      margin: 12px 0;
+    }
+    .rcpt-line {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 2.5px 0;
+    }
+    .rcpt-line .rcpt-li-name { white-space: nowrap; }
+    .rcpt-line .rcpt-li-dots {
+      flex: 1;
+      border-bottom: 2px dotted rgba(42,39,34,0.4);
+      transform: translateY(-3px);
+      min-width: 12px;
+    }
+    .rcpt-line .rcpt-li-price { white-space: nowrap; }
+    .rcpt-line--muted .rcpt-li-price { color: rgba(42,39,34,0.62); }
+    .rcpt-subtotal { font-size: 12px; }
+
+    .rcpt-total-row {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 7px 0 5px;
+      font-weight: 700;
+      font-size: 14.5px;
+      color: #191713;
+    }
+    .rcpt-total-row .rcpt-li-dots {
+      flex: 1;
+      border-bottom: 2px dotted rgba(42,39,34,0.5);
+      transform: translateY(-3px);
+    }
+    .rcpt-scratch-cue {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(42,39,34,0.6);
+      white-space: nowrap;
+      transition: opacity 0.4s ease;
+    }
+    .rcpt-receipt.settled .rcpt-scratch-cue {
+      text-decoration: line-through;
+      opacity: 0.4;
+    }
+
+    .rcpt-scratch-zone {
+      position: relative;
+      height: 70px;
+      margin: 3px 0 2px;
+      border: 1.5px dashed rgba(42,39,34,0.38);
+      border-radius: 5px;
+      padding: 3px;
+    }
+    .rcpt-scratch-under {
+      position: absolute;
+      inset: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border-radius: 3px;
+      text-decoration: none;
+      color: #191713;
+      background: radial-gradient(120% 160% at 50% 0%, rgba(224,107,45,0.07), transparent 60%), transparent;
+      transition: background 0.25s ease;
+    }
+    .rcpt-scratch-answer {
+      font-weight: 700;
+      font-size: 15.5px;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    .rcpt-scratch-answer em {
+      font-style: normal;
+      font-weight: 400;
+      color: rgba(42,39,34,0.6);
+    }
+    .rcpt-scratch-redeem {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--orange);
+      opacity: 0;
+      transform: translateY(-2px);
+      transition: opacity 0.3s ease 0.35s, transform 0.3s ease 0.35s;
+    }
+    .rcpt-scratch-zone.revealed .rcpt-scratch-redeem { opacity: 1; transform: translateY(0); }
+    .rcpt-scratch-zone.revealed .rcpt-scratch-under:hover {
+      background: radial-gradient(120% 160% at 50% 0%, rgba(224,107,45,0.07), transparent 60%), rgba(224,107,45,0.12);
+    }
+    .rcpt-scratch-zone.revealed .rcpt-scratch-under:hover .rcpt-scratch-answer { color: var(--orange); }
+    .rcpt-scratch-zone.revealed .rcpt-scratch-answer {
+      animation: rcpt-total-pulse 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s 1;
+    }
+    @keyframes rcpt-total-pulse {
+      0%   { transform: scale(1); }
+      38%  { transform: scale(1.09); color: var(--orange); }
+      100% { transform: scale(1); }
+    }
+
+    .rcpt-scratch-foil {
+      position: absolute;
+      inset: 3px;
+      width: calc(100% - 6px);
+      height: calc(100% - 6px);
+      border-radius: 3px;
+      touch-action: none;
+      pointer-events: none;
+      transition: opacity 0.55s ease;
+    }
+    .rcpt-closer.paper-ready .rcpt-scratch-foil { pointer-events: auto; }
+    .rcpt-scratch-foil.cleared { opacity: 0; pointer-events: none !important; }
+
+    .rcpt-confetti-piece {
+      position: fixed;
+      z-index: 999;
+      pointer-events: none;
+      animation: rcpt-confetti-pop 1.15s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+    }
+    @keyframes rcpt-confetti-pop {
+      0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+      70%  { opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7); opacity: 0; }
+    }
+
+    .rcpt-barcode-wrap { text-align: center; margin-top: 16px; }
+    .rcpt-barcode {
+      height: 40px;
+      margin: 0 14px;
+      background:
+        repeating-linear-gradient(90deg, #17150F 0 2px, transparent 2px 5px),
+        repeating-linear-gradient(90deg, #17150F 0 1px, transparent 1px 8px),
+        repeating-linear-gradient(90deg, #17150F 0 3px, transparent 3px 13px);
+      opacity: 0.88;
+    }
+    .rcpt-barcode-mail {
+      display: inline-block;
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      color: rgba(42,39,34,0.8);
+      margin-top: 7px;
+      text-decoration: none;
+    }
+    .rcpt-barcode-mail:hover { color: var(--orange); }
+    .rcpt-thanks {
+      text-align: center;
+      font-size: 11.5px;
+      letter-spacing: 0.22em;
+      margin-top: 16px;
+      color: rgba(42,39,34,0.85);
+    }
+    .rcpt-fine {
+      text-align: center;
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
+      color: rgba(42,39,34,0.45);
+      margin-top: 6px;
+    }
+
+    .rcpt-stamp {
+      position: absolute;
+      top: 164px;
+      right: 14px;
+      z-index: 5;
+      padding: 9px 16px 8px;
+      border: 3px solid var(--rcpt-stamp-red);
+      border-radius: 6px;
+      color: var(--rcpt-stamp-red);
+      font-family: var(--rcpt-mono);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transform: rotate(-10deg) scale(1.6);
+      opacity: 0;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(140% 140% at 32% 28%, #000 55%, rgba(0,0,0,0.72) 78%, rgba(0,0,0,0.5) 100%);
+      mask-image: radial-gradient(140% 140% at 32% 28%, #000 55%, rgba(0,0,0,0.72) 78%, rgba(0,0,0,0.5) 100%);
+    }
+    .rcpt-closer.stamped .rcpt-stamp {
+      animation: rcpt-stamp-thump 0.38s cubic-bezier(0.22, 1.4, 0.36, 1) forwards;
+    }
+    @keyframes rcpt-stamp-thump {
+      0%   { transform: rotate(-14deg) scale(1.6); opacity: 0; }
+      55%  { transform: rotate(-9deg) scale(0.93); opacity: 1; }
+      78%  { transform: rotate(-10.6deg) scale(1.04); opacity: 0.92; }
+      100% { transform: rotate(-10deg) scale(1); opacity: 0.94; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rcpt-receipt,
+      .rcpt-closer.printed .rcpt-receipt,
+      .rcpt-closer.stamped .rcpt-receipt {
+        animation: none !important;
+        transform: translateY(0) !important;
+      }
+      .rcpt-stamp,
+      .rcpt-closer.stamped .rcpt-stamp {
+        animation: none !important;
+        transform: rotate(-10deg) scale(1);
+        opacity: 0.94;
+      }
+      .rcpt-slot-label .rcpt-dot { animation: none; }
+      .rcpt-closer.printed .rcpt-tilt:hover { transform: none; }
+      .rcpt-pill, .rcpt-pill:hover { transform: none; }
+      .rcpt-scratch-zone.revealed .rcpt-scratch-answer { animation: none; }
+      .rcpt-scratch-redeem { transition: none; }
+      .rcpt-confetti-piece { display: none; }
     }
 
     /* Removed old footer CSS */
@@ -2200,6 +2733,8 @@
     /* ============================================================
        Component Library — embedded Settlr playground (light, wide)
        ============================================================ */
+    /* dwell room so the sticky playground frame stays pinned while you explore it */
+    .cs-lib-section { min-height: 150vh; }
     .cs-lib-head { max-width: 62ch; margin-bottom: calc(32 * var(--u)); }
     .cs-lib-title {
       font-family: var(--f-heading);
@@ -2217,7 +2752,8 @@
       opacity: 0.72;
     }
     .cs-lib-frame {
-      position: relative;
+      position: sticky;                 /* pins the playground while you explore it */
+      top: calc(16 * var(--u));
       border-radius: calc(14 * var(--u));
       overflow: hidden;
       border: calc(1 * var(--u)) solid rgba(27,28,26,0.1);
@@ -5172,7 +5708,7 @@
       pointer-events: none;
     }
     .cs-proto-sb-time {
-      font-family: 'Nohemi', -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       font-size: calc(13 * var(--u));
       font-weight: 600;
       color: #1B1C1A;
@@ -5344,12 +5880,18 @@
       background: var(--c-dark);
       border-radius: calc(28 * var(--u));
       padding: calc(64 * var(--u));
-      overflow: hidden;
+      /* overflow visible (was hidden) so the sticky viewer pins against the
+         scrolling .overlay-body instead of this section; min-height gives the
+         dwell room that keeps the phone + switcher in view while you play. */
+      overflow: visible;
+      min-height: 140vh;
     }
     .cs-proto-section--dark .cs-proto-viewer {
       margin-top: 0;
       align-items: flex-start;   /* heading top aligns with frame top edge */
       gap: calc(56 * var(--u));
+      position: sticky;
+      top: calc(28 * var(--u));
     }
     /* Phone floats directly on the dark bg — no white card wrapper */
     .cs-proto-section--dark .cs-proto-card {
@@ -5527,7 +6069,11 @@
       border-top: 1px solid var(--c-dim);
       padding: 120px 0;
       position: relative;
-      overflow: hidden;
+      /* overflow MUST stay visible: an overflow:hidden/auto ancestor captures
+         the sticky context and stops .card-stack__panel from pinning (same
+         fix as .experimental-section above). The dot-grid canvas is inset:0
+         and cards clip themselves, so nothing spills. */
+      overflow: visible;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -5713,13 +6259,16 @@
     /* ─── Experimental Featured Section ───────────────── */
     .experimental-section {
       padding: 100px 0;
-      background: #E6E4E4;
+      background: var(--bg); /* match the hero background (#F5F3EE) */
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 60px;
       position: relative;
-      overflow: hidden;
+      /* overflow MUST stay visible: an overflow:hidden/auto ancestor captures
+         the sticky context and stops .card-stack__panel from pinning. The
+         dot-grid canvas is inset:0 and panels clip themselves, so nothing spills. */
+      overflow: visible;
     }
 
     .interactive-dot-grid-canvas {
@@ -5746,8 +6295,8 @@
 
     .exp-card {
       position: relative;
-      width: 72vw;
-      max-width: 1100px;
+      width: 62vw;
+      max-width: 950px;
       aspect-ratio: 16 / 9;
       height: auto;
       border-radius: 20px;
@@ -6119,6 +6668,469 @@
       .exp-title { font-size: 32px; }
     }
 
+    /* ═══════════════════════════════════════════════════════════════════
+       Reusable Card Stack Engine — approved "Stack Spotlight" design.
+       Generic .card-stack* shell (sticky-pin + cover/dim/parallax) is
+       intentionally decoupled from the .cs2-* spec-sheet interior so a
+       later pass can reuse the same engine for the Film section with a
+       different panel interior. Namespaced so nothing leaks into the
+       .exp-* classes above (still used by Film) or any other section.
+       ═══════════════════════════════════════════════════════════════════ */
+
+    /* ── Featured masthead (editorial header) ─────────────────────────── */
+    .cs2-masthead { width: 100%; position: relative; z-index: 1; }
+    .cs2-masthead-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      width: 100%;
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 0 var(--pad-page) 26px;
+      border-bottom: 1px solid rgba(12,12,11,0.14);
+    }
+    .cs2-masthead-title {
+      font-family: var(--f-heading);
+      font-weight: 800;
+      font-size: clamp(34px, 3.4vw, 52px);
+      letter-spacing: -0.02em;
+      line-height: 1.02;
+      color: var(--text);
+    }
+    .cs2-masthead-title sup {
+      font-size: 0.36em;
+      font-weight: 500;
+      color: var(--c-orange);
+      vertical-align: super;
+      letter-spacing: 0.06em;
+      margin-left: 10px;
+    }
+    .cs2-masthead-note {
+      text-align: right;
+      font-size: 13px;
+      font-family: var(--f-body);
+      color: var(--grey);
+      line-height: 1.6;
+      padding-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ── .card-stack — generic sticky-stacking shell (reusable) ───────── */
+    .card-stack {
+      position: relative;
+      width: 100%;
+      padding: clamp(14px, 2vh, 28px) var(--pad-page) 0;
+      /* Local fallback: the site's :root does not define --nav-h even
+         though #alter-nav references it, so we scope our own copy here
+         (64px = #main-nav's actual fixed height) rather than edit :root. */
+      --nav-h: 64px;
+    }
+    .card-stack__slot { display: contents; }
+    .card-stack__slot:not(:last-child) .card-stack__panel { margin-bottom: 30vh; }
+
+    .card-stack__panel {
+      position: sticky;
+      top: calc(var(--nav-h) + clamp(12px, 2vh, 28px));
+      height: 75vh;
+      width: 100%;
+      max-width: 1350px;
+      margin: 0 auto;
+      border-radius: 26px;
+      overflow: hidden;
+      /* sharp-edged drop shadow (no blur), cast at 45° (equal right & down offset) */
+      box-shadow: 14px 14px 0 rgba(12,12,11,0.11);
+      will-change: transform;
+      transform-origin: center top;
+    }
+
+    .card-stack__dim {
+      position: absolute;
+      inset: 0;
+      background: #0C0C0B;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* ── film stacking overrides — reuses .card-stack engine, .exp-card
+       design is untouched. The panel is sized to hug the 16:9 .exp-card
+       (via width:fit-content) instead of the Featured section's fixed
+       85vh/1560px frame, so the darken veil matches the card's own bounds
+       and rounded corners rather than covering the full-width track. ── */
+    .card-stack__panel.film-panel {
+      width: fit-content;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+    .film-panel .card-stack__dim {
+      border-radius: 20px; /* match .exp-card's border-radius so the veil hugs the card shape */
+      /* pointer-events:none is already inherited from .card-stack__dim above,
+         so the covered card's full-bleed YouTube <a> (z-index:20) still
+         receives clicks even while dimmed. */
+    }
+
+    /* ── .cs2-panel — spec-sheet interior (Featured only) ──────────────── */
+    .cs2-panel {
+      /* positioning comes from .card-stack__panel (position: sticky) — do NOT
+         set position:relative here or it overrides sticky and breaks stacking */
+      display: grid;
+      grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+    }
+
+    /* per-panel color worlds */
+    .cs2-panel--settlr {
+      background: #F0E9DA; color: #1D160D;
+      --cs2-strong: #1D160D;
+      --cs2-mut:  rgba(29,22,13,0.58);
+      --cs2-line: rgba(29,22,13,0.16);
+      --cs2-pill: rgba(29,22,13,0.66);
+    }
+    .cs2-panel--refer {
+      background: #0E1B2E; color: #F3EFE4;
+      --cs2-strong: #F3EFE4;
+      --cs2-mut:  rgba(243,239,228,0.58);
+      --cs2-line: rgba(243,239,228,0.18);
+      --cs2-pill: rgba(243,239,228,0.72);
+    }
+    .cs2-panel--kinko {
+      background: #DEE8DC; color: #101609;
+      --cs2-strong: #101609;
+      --cs2-mut:  rgba(16,22,9,0.58);
+      --cs2-line: rgba(16,22,9,0.16);
+      --cs2-pill: rgba(16,22,9,0.66);
+    }
+
+    /* ── Text side ──────────────────────────────────────────────────────── */
+    .cs2-text {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(16px, 2.6vh, 26px);
+      padding: clamp(32px, 4.2vw, 68px) clamp(26px, 3.2vw, 56px) clamp(32px, 4.2vw, 68px) clamp(32px, 4.2vw, 64px);
+      z-index: 2;
+      min-width: 0;
+    }
+
+    .cs2-kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--f-body);
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cs2-mut);
+    }
+    .cs2-kicker::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--c-orange);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .cs2-kicker b { color: var(--cs2-strong); font-weight: 500; }
+
+    .cs2-title {
+      font-family: var(--f-heading);
+      font-weight: 800;
+      font-size: clamp(46px, 5.2vw, 82px);
+      letter-spacing: -0.025em;
+      line-height: 0.98;
+      text-wrap: balance;
+    }
+    .cs2-title .cs2-stop { color: var(--c-orange); }
+    .cs2-title .cs2-amp { font-weight: 300; color: var(--c-orange); }
+
+    .cs2-pitch {
+      font-family: var(--f-body);
+      font-size: clamp(15px, 1.15vw, 17.5px);
+      line-height: 1.62;
+      color: var(--cs2-mut);
+      max-width: 46ch;
+    }
+    .cs2-pitch b { color: var(--cs2-strong); font-weight: 500; }
+
+    /* spec-sheet stat grid — hairline top-rules, world-tuned */
+    .cs2-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0 clamp(14px, 1.4vw, 22px);
+      margin-top: clamp(2px, 0.8vh, 8px);
+    }
+    .cs2-stat {
+      min-width: 0;
+      border-top: 1px solid var(--cs2-line);
+      padding-top: 13px;
+    }
+    .cs2-stat i {
+      display: block;
+      font-style: normal;
+      font-family: var(--f-heading);
+      font-weight: 700;
+      font-size: clamp(19px, 1.65vw, 26px);
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .cs2-stat i sup {
+      font-size: 0.55em;
+      color: var(--c-orange);
+      font-weight: 600;
+    }
+    .cs2-stat em {
+      display: block;
+      font-style: normal;
+      margin-top: 5px;
+      font-family: var(--f-body);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--cs2-mut);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* tag pills */
+    .cs2-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cs2-tag {
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 450;
+      padding: 6px 14px;
+      border: 1px solid var(--cs2-line);
+      border-radius: 100px;
+      color: var(--cs2-pill);
+      white-space: nowrap;
+      transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cs2-panel:hover .cs2-tag { color: currentColor; }
+    .cs2-tag--lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-color: var(--c-orange);
+      color: var(--c-orange);
+    }
+    .cs2-panel:hover .cs2-tag--lock { color: var(--c-orange); }
+
+    /* underlined CTA */
+    .cs2-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      align-self: flex-start;
+      font-family: var(--f-heading);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+      color: currentColor;
+      padding-bottom: 4px;
+      border-bottom: 2px solid currentColor;
+      margin-top: clamp(2px, 1vh, 10px);
+      transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cs2-cta--link { text-decoration: none; cursor: pointer; }
+    .cs2-arr {
+      display: inline-block;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cs2-panel:hover .cs2-cta { color: var(--c-orange); border-color: var(--c-orange); }
+    .cs2-panel:hover .cs2-arr { transform: translateX(6px); }
+
+    /* ── Media side ─────────────────────────────────────────────────────── */
+    .cs2-media {
+      position: relative;
+      z-index: 1;
+      padding: 0;               /* image bleeds to the top/bottom/right card edges */
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      min-width: 0;
+    }
+    .cs2-media-frame {
+      position: relative;
+      /* Full-bleed on top/bottom/right; left corners square (the card's own
+         overflow:hidden + 26px radius rounds the right corners at the card edge). */
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    /* — Settlr: media theatre (crossfade + caption + dots) — */
+    .cs2-theatre { background: #E9E6DE; }
+    .cs2-theatre-inner {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+    }
+    .cs2-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    .cs2-slide.on { opacity: 1; }
+    .cs2-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.08);
+    }
+    .cs2-slide[data-fit="left"] img { object-position: left center; }
+
+    .cs2-slide-caption {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      background: rgba(12,12,11,0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #F5F3EE;
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 450;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+    }
+    .cs2-slide-caption .cs2-idx {
+      font-family: var(--f-heading);
+      font-weight: 600;
+      font-size: 10.5px;
+      color: var(--c-orange);
+    }
+
+    .cs2-dots {
+      position: absolute;
+      right: 20px;
+      bottom: 24px;
+      z-index: 3;
+      display: flex;
+      gap: 7px;
+    }
+    .cs2-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 100px;
+      border: none;
+      background: rgba(12,12,11,0.35);
+      cursor: pointer;
+      padding: 0;
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cs2-dot.on { width: 22px; background: var(--c-orange); }
+    .cs2-dot:focus-visible { outline: 2px solid var(--c-orange); outline-offset: 3px; }
+
+    /* — Refer & Earn / Kinko: single media image (parallax-driven) — */
+    .cs2-media-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.08);
+      will-change: transform;
+    }
+
+    /* — Refer & Earn: card-suit watermark behind the text side — */
+    .cs2-suits {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+    .cs2-suits span {
+      position: absolute;
+      font-size: var(--s, 120px);
+      line-height: 1;
+      color: #F3EFE4;
+      opacity: 0.04;
+      transform: rotate(var(--r, 0deg));
+    }
+
+    /* — Kinko: frosted NDA treatment over heavily blurred media — */
+    .cs2-panel--kinko .cs2-media-img { filter: blur(14px) saturate(0.85); transform: scale(1.16); }
+    .cs2-nda-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(238,244,238,0.22);
+      backdrop-filter: blur(6px) saturate(110%);
+      -webkit-backdrop-filter: blur(6px) saturate(110%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    .cs2-nda-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 34px 44px;
+      border-radius: 20px;
+      background: rgba(245,243,238,0.55);
+      border: 1px solid rgba(255,255,255,0.55);
+      box-shadow: 0 12px 34px rgba(12,12,11,0.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .cs2-nda-lock { width: 26px; height: 26px; color: #101609; opacity: 0.8; }
+    .cs2-nda-title {
+      font-family: var(--f-heading);
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: 0.06em;
+    }
+    .cs2-nda-sub {
+      font-family: var(--f-body);
+      font-size: 13px;
+      color: rgba(16,22,9,0.6);
+      max-width: 26ch;
+      line-height: 1.5;
+    }
+
+    /* ── Reduced motion: sticky released → true static stack ────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .card-stack__panel {
+        position: relative;
+        top: 0;
+        transform: none !important;
+        will-change: auto;
+      }
+      .card-stack__slot:not(:last-child) .card-stack__panel { margin-bottom: clamp(28px, 5vh, 56px); }
+      .card-stack__dim { display: none; }
+      .cs2-theatre-inner { transform: none !important; will-change: auto; }
+      .cs2-slide { transition: none; }
+      .cs2-slide img { transform: scale(1.02); }
+      .cs2-media-img { transform: scale(1.02) !important; will-change: auto; }
+      .cs2-panel--kinko .cs2-media-img { transform: scale(1.1) !important; }
+      .cs2-cta, .cs2-arr, .cs2-tag, .cs2-dot { transition: none; }
+    }
+
     /* Photography Lightbox */
     .photo-lightbox {
       position: fixed;
@@ -6357,6 +7369,9 @@
     /* ─── Smaller Projects Grid Responsive ──────────────── */
     @media (max-width: 1280px) {
       .small-grid { grid-template-columns: repeat(3, 1fr); }
+      /* flatten the stagger so the 3-col / 2-col grids align cleanly */
+      .small-grid > .small-card:nth-child(2),
+      .small-grid > .small-card:nth-child(4) { margin-top: 0; }
     }
     @media (max-width: 1024px) {
       .small-grid { grid-template-columns: repeat(2, 1fr); }
@@ -6367,7 +7382,6 @@
       .section-header h2 { font-size: clamp(3rem, 4.5vw, 5.5rem); }
     }
   </style>
-  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body>
 
@@ -6412,7 +7426,7 @@
     </div>
     <div class="nav-buttons">
       <button class="btn-hero btn-outline" id="navResumeTrigger" type="button">View Resume</button>
-      <a href="#connect" class="btn-hero btn-solid"><span>Lets Connect</span></a>
+      <a href="#connect" class="btn-hero btn-solid"><span>Let's Connect</span></a>
     </div>
   </header>
 
@@ -6448,7 +7462,7 @@
           <div class="hero-photo-inner" style="transform-style: preserve-3d; transform: translateY(0px) scale(1) rotateX(0deg) rotateY(180deg);">
 
             <!-- Front Face (White Polaroid) -->
-            <div class="hero-photo-face hero-photo-front" style="position:absolute;inset:0;background:rgb(255, 255, 255);border-radius:4px;border:none;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1); padding: 0;">
+            <div class="hero-photo-face hero-photo-front" style="position:absolute;inset:0;background:rgb(255, 255, 255);border-radius:4px;border:none;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:9px 9px 0 rgba(0,0,0,0.16); padding: 0;">
               <div style="position:absolute;top:12px;left:12px;right:12px;bottom:64px;border-radius:2px;overflow:hidden;background:transparent">
                 <img src="assets/images/hero/portrait-light.webp" alt="Divyansh Rastogi" draggable="false" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;user-select:none;pointer-events:none">
               </div>
@@ -6457,7 +7471,7 @@
             </div>
 
             <!-- Back Face (Dark Mode) -->
-            <div class="hero-photo-face hero-photo-back" style="position:absolute;inset:0;background:#1B1C1A;border-radius:4px;border:none;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);transform:rotateY(180deg); padding: 0; display:flex;align-items:center;justify-content:center;">
+            <div class="hero-photo-face hero-photo-back" style="position:absolute;inset:0;background:#1B1C1A;border-radius:4px;border:none;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:-9px 9px 0 rgba(0,0,0,0.42);transform:rotateY(180deg); padding: 0; display:flex;align-items:center;justify-content:center;">
               <div style="position:absolute;top:12px;left:12px;right:12px;bottom:64px;border-radius:2px;overflow:hidden;background:#111">
                 <img src="assets/images/hero/Alter%20ego%20image.webp" style="display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;user-select:none;pointer-events:none;" alt="Alter Ego Portrait" draggable="false">
               </div>
@@ -6484,52 +7498,152 @@
 
   <!-- ── Cinematic Featured Works ── -->
   <section class="experimental-section">
-    <canvas class="interactive-dot-grid-canvas" data-theme="light"></canvas>
-    <div class="section-header parallax-header reveal">
-      <h2>Featured Projects</h2>
+    <!-- dot-grid canvas removed: background now matches the hero, no dot matrix -->
+
+    <!-- Editorial masthead (approved Stack Spotlight design) -->
+    <div class="cs2-masthead reveal">
+      <div class="cs2-masthead-inner">
+        <h2 class="cs2-masthead-title">Featured Work<sup>(03)</sup></h2>
+        <p class="cs2-masthead-note">Selected product &amp; systems work.<br>Scroll — each project stacks over the last.</p>
+      </div>
     </div>
-    
-    <div class="exp-card-container">
 
-      <!-- Card 1: Settlr -->
-      <div class="exp-card reveal case-link" data-project="settlr">
-        <div class="exp-card-inner">
-          <div class="parallax-wrap">
-            <img src="assets/images/settlr/thumbnail.webp" class="exp-card-img" alt="Settlr">
-          </div>
-          <div class="exp-border-inner"></div>
-          <div class="exp-border-outer"></div>
-        </div>
-      </div>
+    <!-- Reusable scroll-stacking engine — see .card-stack* / initCardStack() -->
+    <div class="card-stack" id="featuredStack">
 
-      <!-- Card 2: Refer & Earn -->
-      <div class="exp-card reveal case-link" data-project="refer-earn">
-        <div class="exp-card-inner">
-          <div class="parallax-wrap">
-            <img src="assets/images/refer-earn/thumbnail.webp" class="exp-card-img" alt="Refer & Earn">
+      <!-- 01 · Settlr — flagship, warm cream world -->
+      <div class="card-stack__slot">
+        <article class="card-stack__panel cs2-panel cs2-panel--settlr case-link" data-project="settlr" aria-labelledby="cs2-settlr-title">
+          <div class="cs2-text">
+            <p class="cs2-kicker"><b>Flagship</b>&nbsp;·&nbsp;01&nbsp;&nbsp;—&nbsp;&nbsp;UX Audit &amp; Redesign, solo</p>
+            <h3 class="cs2-title" id="cs2-settlr-title">Settlr<span class="cs2-stop">.</span></h3>
+            <p class="cs2-pitch">
+              A college Splitwise study that grew into a <b>full redesign</b> — and a
+              <b>43-component design system</b>, built end-to-end with a
+              Figma&nbsp;MCP&nbsp;×&nbsp;Claude workflow.
+            </p>
+            <div class="cs2-stats" role="list" aria-label="Project stats">
+              <div class="cs2-stat" role="listitem"><i>43</i><em>Components</em></div>
+              <div class="cs2-stat" role="listitem"><i>290<sup>+</sup></i><em>Design tokens</em></div>
+              <div class="cs2-stat" role="listitem"><i>24</i><em>Screens</em></div>
+              <div class="cs2-stat" role="listitem"><i>AA</i><em>WCAG contrast</em></div>
+            </div>
+            <div class="cs2-tags" aria-label="Disciplines">
+              <span class="cs2-tag">UX Research</span>
+              <span class="cs2-tag">Design System</span>
+              <span class="cs2-tag">Accessibility</span>
+              <span class="cs2-tag">Claude workflow</span>
+            </div>
+            <span class="cs2-cta">View case study <span class="cs2-arr">→</span></span>
           </div>
-          <div class="exp-border-inner"></div>
-          <div class="exp-border-outer"></div>
-        </div>
-      </div>
-
-      <!-- Card 3: Kinko Insurance — not clickable until docs are written -->
-      <div class="exp-card reveal exp-card--nda" data-project="kinko">
-        <div class="exp-card-inner">
-          <div class="parallax-wrap">
-            <img src="assets/images/kinko/thumbnail.webp" class="exp-card-img" alt="Kinko Insurance">
-          </div>
-          <div class="exp-nda-overlay">
-            <div class="exp-nda-content">
-              <span class="exp-nda-tag">Confidential</span>
-              <h3 class="exp-nda-title">Under NDA</h3>
-              <p class="exp-nda-sub">Let's hop on a call. I'll walk you through it.</p>
-              <a href="#connect" class="btn-hero btn-solid exp-nda-cta" data-stop="true"><span>Lets Connect</span></a>
+          <div class="cs2-media">
+            <div class="cs2-media-frame cs2-theatre" aria-label="Settlr showcase — cycles through three views">
+              <div class="cs2-theatre-inner" data-parallax data-base="1">
+                <div class="cs2-slide on" data-caption="The redesigned app">
+                  <img src="assets/images/settlr/thumbnail.webp" alt="Settlr — redesigned app screens">
+                </div>
+                <div class="cs2-slide" data-fit="left" data-caption="42-component library">
+                  <img src="assets/images/settlr/Components.webp" alt="Settlr design system — full component sheet">
+                </div>
+                <div class="cs2-slide" data-caption="Tokens, straight to code">
+                  <img src="assets/images/settlr/Component%20cadebase.webp" alt="Settlr components mapped to the codebase">
+                </div>
+              </div>
+              <div class="cs2-slide-caption"><span class="cs2-idx">01</span><span class="cs2-cap-text">The redesigned app</span></div>
+              <div class="cs2-dots" role="tablist" aria-label="Showcase frames" data-stop="true">
+                <button class="cs2-dot on" role="tab" aria-selected="true" aria-label="Frame 1: the redesigned app"></button>
+                <button class="cs2-dot" role="tab" aria-selected="false" aria-label="Frame 2: component library"></button>
+                <button class="cs2-dot" role="tab" aria-selected="false" aria-label="Frame 3: tokens to code"></button>
+              </div>
             </div>
           </div>
-          <div class="exp-border-inner"></div>
-          <div class="exp-border-outer"></div>
-        </div>
+          <div class="card-stack__dim" aria-hidden="true"></div>
+        </article>
+      </div>
+
+      <!-- 02 · Refer & Earn — shipped, deep navy world -->
+      <div class="card-stack__slot">
+        <article class="card-stack__panel cs2-panel cs2-panel--refer case-link" data-project="refer-earn" aria-labelledby="cs2-refer-title">
+          <div class="cs2-suits" aria-hidden="true">
+            <span style="--s:190px; --r:-14deg; top:-4%;  left:2%;">♠</span>
+            <span style="--s:120px; --r:10deg;  top:30%;  left:26%;">♥</span>
+            <span style="--s:230px; --r:8deg;   top:56%;  left:-3%;">♦</span>
+            <span style="--s:110px; --r:-8deg;  top:8%;   left:44%;">♣</span>
+            <span style="--s:170px; --r:16deg;  top:66%;  left:38%;">♠</span>
+            <span style="--s:140px; --r:-12deg; top:-6%;  left:70%;">♦</span>
+            <span style="--s:210px; --r:6deg;   top:44%;  left:78%;">♣</span>
+            <span style="--s:100px; --r:-16deg; top:80%;  left:64%;">♥</span>
+          </div>
+          <div class="cs2-text">
+            <p class="cs2-kicker"><b>Shipped</b>&nbsp;·&nbsp;02&nbsp;&nbsp;—&nbsp;&nbsp;Head Digital Works · A23</p>
+            <h3 class="cs2-title" id="cs2-refer-title">Refer <span class="cs2-amp">&amp;</span> Earn<span class="cs2-stop">.</span></h3>
+            <p class="cs2-pitch">
+              A referral feature rebuilt for <b>clarity</b> and sharper <b>hierarchy</b> —
+              then rolled out across <b>three live gaming brands</b>.
+            </p>
+            <div class="cs2-stats" role="list" aria-label="Project stats">
+              <div class="cs2-stat" role="listitem"><i>03</i><em>Brands shipped</em></div>
+              <div class="cs2-stat" role="listitem"><i>♦ ♣ ♠</i><em>Game brands</em></div>
+              <div class="cs2-stat" role="listitem"><i>A23</i><em>Head Digital</em></div>
+              <div class="cs2-stat" role="listitem"><i>Live</i><em>In production</em></div>
+            </div>
+            <div class="cs2-tags" aria-label="Brands and disciplines">
+              <span class="cs2-tag">Product Design</span>
+              <span class="cs2-tag">A23 Rummy</span>
+              <span class="cs2-tag">A23 Poker</span>
+              <span class="cs2-tag">Adda52</span>
+            </div>
+            <span class="cs2-cta">View case study <span class="cs2-arr">→</span></span>
+          </div>
+          <div class="cs2-media">
+            <div class="cs2-media-frame">
+              <img class="cs2-media-img" data-parallax data-base="1.08" src="assets/images/refer-earn/thumbnail.webp" alt="Refer and Earn — redesigned referral screens">
+            </div>
+          </div>
+          <div class="card-stack__dim" aria-hidden="true"></div>
+        </article>
+      </div>
+
+      <!-- 03 · Kinko — muted sage world, under NDA (not a case-link) -->
+      <div class="card-stack__slot">
+        <article class="card-stack__panel cs2-panel cs2-panel--kinko" aria-labelledby="cs2-kinko-title">
+          <div class="cs2-text">
+            <p class="cs2-kicker"><b>Confidential</b>&nbsp;·&nbsp;03&nbsp;&nbsp;—&nbsp;&nbsp;Head Digital Works</p>
+            <h3 class="cs2-title" id="cs2-kinko-title">Kinko<span class="cs2-stop">.</span></h3>
+            <p class="cs2-pitch">
+              A <b>45+ component</b>, 300+ variant design system powering a
+              <b>React &amp; React Native</b> codebase — details on a call.
+            </p>
+            <div class="cs2-stats" role="list" aria-label="Project stats">
+              <div class="cs2-stat" role="listitem"><i>45<sup>+</sup></i><em>Components</em></div>
+              <div class="cs2-stat" role="listitem"><i>300<sup>+</sup></i><em>Variants</em></div>
+              <div class="cs2-stat" role="listitem"><i>×2</i><em>React &amp; RN</em></div>
+              <div class="cs2-stat" role="listitem"><i>NDA</i><em>On request</em></div>
+            </div>
+            <div class="cs2-tags" aria-label="Disciplines">
+              <span class="cs2-tag cs2-tag--lock">
+                <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+                Under NDA
+              </span>
+              <span class="cs2-tag">Design System</span>
+              <span class="cs2-tag">React / RN</span>
+            </div>
+            <a class="cs2-cta cs2-cta--link" href="#connect" data-stop="true">Let's connect <span class="cs2-arr">→</span></a>
+          </div>
+          <div class="cs2-media">
+            <div class="cs2-media-frame">
+              <img class="cs2-media-img" data-parallax data-base="1.16" src="assets/images/kinko/thumbnail.webp" alt="Kinko design system, blurred for confidentiality">
+              <div class="cs2-nda-veil">
+                <div class="cs2-nda-card">
+                  <svg class="cs2-nda-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+                  <span class="cs2-nda-title">UNDER NDA</span>
+                  <span class="cs2-nda-sub">Happy to walk you through it on a call.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-stack__dim" aria-hidden="true"></div>
+        </article>
       </div>
 
     </div>
@@ -6550,7 +7664,7 @@
           <p>Board game design · Game theory</p>
         </div>
       </a>
-      <a class="small-card reveal" href="https://www.behance.net/gallery/213230177/Mutual-Funds-for-Next-Billion-Users" target="_blank" rel="noopener" style="margin-top: 80px;">
+      <a class="small-card reveal" href="https://www.behance.net/gallery/213230177/Mutual-Funds-for-Next-Billion-Users" target="_blank" rel="noopener">
         <img class="small-card-bg" src="assets/images/small-cards/angel-one.webp" alt="Angel One">
         <img class="small-card-color" src="assets/images/small-cards/angel-one.webp" alt="">
         <div class="small-card-info">
@@ -6566,7 +7680,7 @@
           <p>IxD Research · Game design</p>
         </div>
       </a>
-      <a class="small-card reveal" href="https://www.behance.net/gallery/235938071/Creative-Burnout-in-Design-Students-System-Design" target="_blank" rel="noopener" style="margin-top: 80px;">
+      <a class="small-card reveal" href="https://www.behance.net/gallery/235938071/Creative-Burnout-in-Design-Students-System-Design" target="_blank" rel="noopener">
         <img class="small-card-bg" src="assets/images/small-cards/Creative-burnout.webp" alt="Creative Burnout">
         <img class="small-card-color" src="assets/images/small-cards/Creative-burnout.webp" alt="">
         <div class="small-card-info">
@@ -6579,46 +7693,121 @@
 
   <!-- ── Unified Footer ── -->
   <section class="unified-footer-section container" id="connect">
-    <div class="unified-footer">
-      <canvas class="interactive-dot-grid-canvas" data-theme="dark"></canvas>
-      
-      <div class="unified-footer-content">
-        <h2>Want to work together<span class="text-orange">?</span></h2>
-        <p>Open to full time roles in product design &amp; design systems</p>
-        
-        <div class="unified-footer-links reveal">
-          <a href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener" class="btn-outline">
-            <span>
+    <div class="rcpt-closer" id="rcptCloser">
+      <div class="rcpt-main">
+
+        <!-- Left: message + actions -->
+        <div class="rcpt-copy reveal">
+          <span class="rcpt-eyebrow">The bill, please</span>
+          <h2>Want to work together<span class="text-orange">?</span></h2>
+          <p class="rcpt-sub">Open to full-time product design &amp; design systems roles. The receipt on the right is itemized — everything's included.</p>
+          <div class="rcpt-links">
+            <a href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener" class="btn-outline">
+              <span>
               <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.7778 0C18.3671 0 18.9324 0.234126 19.3491 0.650874C19.7659 1.06762 20 1.63285 20 2.22222V17.7778C20 18.3671 19.7659 18.9324 19.3491 19.3491C18.9324 19.7659 18.3671 20 17.7778 20H2.22222C1.63285 20 1.06762 19.7659 0.650874 19.3491C0.234126 18.9324 0 18.3671 0 17.7778V2.22222C0 1.63285 0.234126 1.06762 0.650874 0.650874C1.06762 0.234126 1.63285 0 2.22222 0H17.7778ZM17.2222 17.2222V11.3333C17.2222 10.3727 16.8406 9.45133 16.1613 8.77204C15.482 8.09274 14.5607 7.71111 13.6 7.71111C12.6556 7.71111 11.5556 8.28889 11.0222 9.15556V7.92222H7.92222V17.2222H11.0222V11.7444C11.0222 10.8889 11.7111 10.1889 12.5667 10.1889C12.9792 10.1889 13.3749 10.3528 13.6666 10.6445C13.9583 10.9362 14.1222 11.3319 14.1222 11.7444V17.2222H17.2222ZM4.31111 6.17778C4.80618 6.17778 5.28098 5.98111 5.63104 5.63104C5.98111 5.28098 6.17778 4.80618 6.17778 4.31111C6.17778 3.27778 5.34444 2.43333 4.31111 2.43333C3.81309 2.43333 3.33547 2.63117 2.98332 2.98332C2.63117 3.33547 2.43333 3.81309 2.43333 4.31111C2.43333 5.34444 3.27778 6.17778 4.31111 6.17778ZM5.85556 17.2222V7.92222H2.77778V17.2222H5.85556Z"/></svg>
               LinkedIn
-            </span>
-          </a>
-          <a href="mailto:divyanshr.iitb@gmail.com" class="btn-solid connect-link" data-copy="divyanshr.iitb@gmail.com">
-            <span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              divyanshr.iitb@gmail.com
-            </span>
-            <span class="copy-toast">Copied!</span>
-          </a>
-          <a href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener" class="btn-outline">
-            <span>
+              </span>
+            </a>
+            <a href="mailto:divyanshr.iitb@gmail.com" class="btn-solid connect-link" data-copy="divyanshr.iitb@gmail.com">
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                divyanshr.iitb@gmail.com
+              </span>
+              <span class="copy-toast">Copied!</span>
+            </a>
+            <a href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener" class="btn-outline">
+              <span>
               <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15 9.53846C15.1538 9.76923 15.3077 10 15.3846 10.3846H12.9231C12.9231 10.3077 12.9231 10.1538 13 10C13.0769 9.84615 13.0769 9.76923 13.2308 9.61538C13.3077 9.46154 13.4615 9.38462 13.6154 9.30769C13.7692 9.23077 14 9.15385 14.2308 9.15385C14.5385 9.23077 14.8462 9.30769 15 9.53846ZM7.92308 9C8.07692 8.84615 8.23077 8.61538 8.23077 8.30769C8.23077 8.15385 8.23077 8 8.15385 7.84615C8.07692 7.76923 8 7.61538 7.92308 7.61538C7.84615 7.53846 7.69231 7.53846 7.53846 7.46154H5.53846V9.23077H7.23077C7.46154 9.23077 7.69231 9.15385 7.92308 9ZM7.30769 10.3077H5.53846V12.3846H7.30769C7.46154 12.3846 7.61539 12.3846 7.76923 12.3077C7.92308 12.3077 8.07692 12.2308 8.15385 12.1538C8.23077 12.0769 8.38462 12 8.46154 11.8462C8.53846 11.6923 8.53846 11.5385 8.53846 11.3846C8.53846 11 8.46154 10.6923 8.23077 10.5385C8 10.3846 7.69231 10.3077 7.30769 10.3077ZM20 3.76923V16.2308C20 18.3077 18.3077 20 16.2308 20H3.76923C1.69231 20 0 18.3077 0 16.2308V3.76923C0 1.69231 1.69231 0 3.76923 0H16.2308C18.3077 0 20 1.69231 20 3.76923ZM12.6154 7.38462H15.6923V6.61539H12.6154V7.38462ZM10.1538 11.5385C10.1538 11.0769 10.0769 10.6923 9.84615 10.3077C9.61538 10 9.30769 9.76923 8.84615 9.61538C9.15385 9.46154 9.46154 9.23077 9.61538 9C9.76923 8.76923 9.84615 8.46154 9.84615 8.07692C9.84615 7.5 9.76923 7.46154 9.69231 7.15385C9.53846 6.92308 9.38462 6.69231 9.23077 6.61539C9 6.46154 8.76923 6.38462 8.46154 6.30769C8.07692 6.15385 7.76923 6.15385 7.38462 6.15385H3.84615V13.6923H7.53846C7.84615 13.6923 8.23077 13.6154 8.53846 13.5385C8.84615 13.4615 9.15385 13.3077 9.38462 13.1538C9.61538 13 9.84615 12.7692 10 12.4615C10.0769 12.2308 10.1538 11.9231 10.1538 11.5385ZM12.9231 11.3077H16.8462C16.8462 10.8462 16.8462 10.4615 16.7692 10.0769C16.6923 9.69231 16.5385 9.30769 16.3077 9.07692C16.0769 8.76923 15.7692 8.53846 15.4615 8.38462C15.0769 8.23077 14.6923 8.07692 14.2308 8.07692C13.8462 8.07692 13.4615 8.15385 13.0769 8.30769C12.7692 8.46154 12.4615 8.69231 12.1538 8.92308C11.9231 9.15385 11.6923 9.46154 11.6154 9.84615C11.4615 10.2308 11.3846 10.6154 11.3846 11C11.3846 11.5769 11.4615 11.8462 11.6154 12.1538C11.7692 12.5385 11.9231 12.8462 12.1538 13.0769C12.3846 13.3077 12.6923 13.5385 13 13.6923C13.3846 13.8462 13.7692 13.9231 14.1538 13.9231C14.7692 13.9231 15.3077 13.7692 15.7692 13.4615C16.2308 13.1538 16.5385 12.6923 16.7692 12.0769H15.4615C15.3846 12.2308 15.3077 12.3846 15.0769 12.5385C14.8462 12.6923 14.6154 12.7692 14.3077 12.7692C13.9231 12.7692 13.5385 12.6923 13.3077 12.4615C13.0769 12.1538 12.9231 11.7692 12.9231 11.3077Z"/></svg>
               Behance
-            </span>
-          </a>
+              </span>
+            </a>
+          </div>
         </div>
-        
-        <div class="scratch-card-wrap reveal">
-          <div class="scratch-card-perspective">
-            <div class="scratch-card" id="scratchCard">
-              <div class="scratch-coupon">
-                <span class="coupon-emoji">☕</span>
-                <h3 class="coupon-title">One Coffee, On Me</h3>
-                <p class="coupon-sub">Thank you for spending time here.<br>Let’s spend another hour in person.</p>
-                <p class="coupon-fine">Reach me on LinkedIn or by email to plan.</p>
+
+        <!-- Right: printer slot + receipt -->
+        <div class="rcpt-printer-col reveal">
+          <div class="rcpt-printer-slot">
+            <div class="rcpt-slot-face" aria-hidden="true"></div>
+            <div class="rcpt-slot-label" aria-hidden="true">
+              <span>receipts &middot; est. 2001</span>
+              <span class="rcpt-dot"></span>
+            </div>
+          </div>
+
+          <div class="rcpt-viewport">
+            <div class="rcpt-tilt" id="rcptTilt">
+              <div class="rcpt-receipt" id="rcptReceipt" aria-label="Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.">
+
+                <div class="rcpt-head">
+                  <div class="rcpt-name">DIVYANSH&nbsp;RASTOGI</div>
+                  <div class="rcpt-role">Product Designer</div>
+                  <div class="rcpt-cred">IDC IIT Bombay &middot; AIR 5</div>
+                </div>
+
+                <hr class="rcpt-rule">
+                <div class="rcpt-meta"><span>ORDER #001</span><span>OPEN ROLE</span></div>
+                <hr class="rcpt-rule">
+
+                <div class="rcpt-line">
+                  <span class="rcpt-li-name">1&times; Product Designer</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">hired?</span>
+                </div>
+                <div class="rcpt-line rcpt-line--muted">
+                  <span class="rcpt-li-name">Design systems</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">incl.</span>
+                </div>
+                <div class="rcpt-line rcpt-line--muted">
+                  <span class="rcpt-li-name">UX research</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">incl.</span>
+                </div>
+                <div class="rcpt-line rcpt-line--muted">
+                  <span class="rcpt-li-name">Motion &amp; prototyping</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">incl.</span>
+                </div>
+                <div class="rcpt-line rcpt-line--muted">
+                  <span class="rcpt-li-name">Filmmaking after hours</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">free</span>
+                </div>
+
+                <hr class="rcpt-rule">
+
+                <div class="rcpt-line rcpt-subtotal">
+                  <span class="rcpt-li-name">SUBTOTAL</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-li-price">your team, better</span>
+                </div>
+
+                <div class="rcpt-total-row">
+                  <span class="rcpt-li-name">TOTAL</span>
+                  <span class="rcpt-li-dots"></span>
+                  <span class="rcpt-scratch-cue">scratch to settle the bill</span>
+                </div>
+                <div class="rcpt-scratch-zone" id="rcptScratchZone">
+                  <a class="rcpt-scratch-under" id="rcptScratchUnder"
+                     href="mailto:divyanshr.iitb@gmail.com?subject=Redeeming%20my%20coffee%20%E2%98%95"
+                     title="Redeem — email Divyansh"
+                     aria-label="Total: one coffee, on me. Click to redeem by email.">
+                    <span class="rcpt-scratch-answer">one coffee ☕ <em>— on me</em></span>
+                    <span class="rcpt-scratch-redeem">redeem &rarr;</span>
+                  </a>
+                  <canvas class="rcpt-scratch-foil" id="rcptScratchCanvas" aria-hidden="true"></canvas>
+                </div>
+
+                <div class="rcpt-barcode-wrap">
+                  <div class="rcpt-barcode" aria-hidden="true"></div>
+                  <a class="rcpt-barcode-mail" href="mailto:divyanshr.iitb@gmail.com">divyanshr.iitb@gmail.com</a>
+                </div>
+
+                <div class="rcpt-thanks">*&nbsp;THANK YOU! COME AGAIN&nbsp;*</div>
+                <div class="rcpt-fine">redeemable anywhere, anytime &middot; no expiry</div>
+
+                <div class="rcpt-stamp" aria-hidden="true">Open to Work</div>
               </div>
-              <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
-              <div class="scratch-glare"></div>
             </div>
           </div>
         </div>
@@ -6645,61 +7834,78 @@
         <p class="film-section-sub">My motivation for film</p>
       </div>
       <canvas class="interactive-dot-grid-canvas" data-theme="dark"></canvas>
-      <div class="exp-card-container film-cards-override" style="position:relative; z-index:1;">
+      <!-- Reusable scroll-stacking engine — see .card-stack* / initCardStack() -->
+      <div class="card-stack" id="filmStack">
+
         <!-- Film 1: Talaab -->
-        <div class="exp-card reveal film-theme">
-          <div class="exp-card-inner">
-            <div class="parallax-wrap">
-              <img src="https://img.youtube.com/vi/XMWdlqM76bk/hqdefault.jpg" class="exp-card-img" alt="Talaab">
+        <div class="card-stack__slot">
+          <div class="card-stack__panel film-panel">
+            <div class="exp-card film-theme">
+              <div class="exp-card-inner">
+                <div class="parallax-wrap">
+                  <img src="https://img.youtube.com/vi/XMWdlqM76bk/hqdefault.jpg" class="exp-card-img" alt="Talaab">
+                </div>
+                <div class="glass-play-btn">
+                  <div class="play-triangle"></div>
+                </div>
+                <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
+                  <span class="exp-label" style="color:rgba(255,255,255,0.7);">Short film · Direction &amp; Cinematography</span>
+                  <h3 class="exp-title">Talaab</h3>
+                </div>
+                <a href="https://www.youtube.com/watch?v=XMWdlqM76bk" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
+                <div class="exp-border-inner"></div>
+                <div class="exp-border-outer"></div>
+              </div>
             </div>
-            <div class="glass-play-btn">
-              <div class="play-triangle"></div>
-            </div>
-            <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
-              <span class="exp-label" style="color:rgba(255,255,255,0.7);">Short film · Direction &amp; Cinematography</span>
-              <h3 class="exp-title">Talaab</h3>
-            </div>
-            <a href="https://www.youtube.com/watch?v=XMWdlqM76bk" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
-            <div class="exp-border-inner"></div>
-            <div class="exp-border-outer"></div>
+            <div class="card-stack__dim" aria-hidden="true"></div>
           </div>
         </div>
 
         <!-- Film 2: Paithani -->
-        <div class="exp-card reveal film-theme">
-          <div class="exp-card-inner">
-            <div class="parallax-wrap">
-              <img src="https://img.youtube.com/vi/1jXkEcAHBug/hqdefault.jpg" class="exp-card-img" alt="Paithani">
+        <div class="card-stack__slot">
+          <div class="card-stack__panel film-panel">
+            <div class="exp-card film-theme">
+              <div class="exp-card-inner">
+                <div class="parallax-wrap">
+                  <img src="https://img.youtube.com/vi/1jXkEcAHBug/hqdefault.jpg" class="exp-card-img" alt="Paithani">
+                </div>
+                <div class="glass-play-btn">
+                  <div class="play-triangle"></div>
+                </div>
+                <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
+                  <span class="exp-label" style="color:rgba(255,255,255,0.7);">Short film · Direction &amp; Cinematography</span>
+                  <h3 class="exp-title">Paithani</h3>
+                </div>
+                <a href="https://www.youtube.com/watch?v=1jXkEcAHBug" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
+                <div class="exp-border-inner"></div>
+                <div class="exp-border-outer"></div>
+              </div>
             </div>
-            <div class="glass-play-btn">
-              <div class="play-triangle"></div>
-            </div>
-            <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
-              <span class="exp-label" style="color:rgba(255,255,255,0.7);">Short film · Direction &amp; Cinematography</span>
-              <h3 class="exp-title">Paithani</h3>
-            </div>
-            <a href="https://www.youtube.com/watch?v=1jXkEcAHBug" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
-            <div class="exp-border-inner"></div>
-            <div class="exp-border-outer"></div>
+            <div class="card-stack__dim" aria-hidden="true"></div>
           </div>
         </div>
 
         <!-- Film 3: Chor -->
-        <div class="exp-card reveal film-theme">
-          <div class="exp-card-inner">
-            <div class="parallax-wrap">
-              <img src="https://img.youtube.com/vi/4DbHJ2F3q3E/hqdefault.jpg" class="exp-card-img" alt="Chor">
+        <div class="card-stack__slot">
+          <div class="card-stack__panel film-panel">
+            <div class="exp-card film-theme">
+              <div class="exp-card-inner">
+                <div class="parallax-wrap">
+                  <img src="https://img.youtube.com/vi/4DbHJ2F3q3E/hqdefault.jpg" class="exp-card-img" alt="Chor">
+                </div>
+                <div class="glass-play-btn">
+                  <div class="play-triangle"></div>
+                </div>
+                <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
+                  <span class="exp-label" style="color:rgba(255,255,255,0.7);">Inter IIT Film Winner · Direction</span>
+                  <h3 class="exp-title">Chor</h3>
+                </div>
+                <a href="https://www.youtube.com/watch?v=4DbHJ2F3q3E" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
+                <div class="exp-border-inner"></div>
+                <div class="exp-border-outer"></div>
+              </div>
             </div>
-            <div class="glass-play-btn">
-              <div class="play-triangle"></div>
-            </div>
-            <div class="exp-card-text" style="background: linear-gradient(to top, rgba(13,14,12,0.95) 0%, transparent 100%);">
-              <span class="exp-label" style="color:rgba(255,255,255,0.7);">Inter IIT Film Winner · Direction</span>
-              <h3 class="exp-title">Chor</h3>
-            </div>
-            <a href="https://www.youtube.com/watch?v=4DbHJ2F3q3E" target="_blank" rel="noopener" style="position:absolute;inset:0;z-index:20;"></a>
-            <div class="exp-border-inner"></div>
-            <div class="exp-border-outer"></div>
+            <div class="card-stack__dim" aria-hidden="true"></div>
           </div>
         </div>
       </div>
@@ -6802,49 +8008,124 @@
     <!-- Connect -->
     <!-- ── Unified Footer (Dark Mode) ── -->
     <section class="unified-footer-section container" id="alter-connect">
-      <div class="unified-footer">
-        <canvas class="interactive-dot-grid-canvas" data-theme="dark"></canvas>
-        
-        <div class="unified-footer-content">
-          <h2>Want to work together<span class="text-orange">?</span></h2>
-          <p>Open to full time roles in product design &amp; design systems</p>
-          
-          <div class="unified-footer-links reveal">
-            <a href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener" class="btn-outline">
-              <span>
+      <div class="rcpt-closer">
+        <div class="rcpt-main">
+
+          <!-- Left: message + actions -->
+          <div class="rcpt-copy reveal">
+            <span class="rcpt-eyebrow">The bill, please</span>
+            <h2>Want to work together<span class="text-orange">?</span></h2>
+            <p class="rcpt-sub">Open to full-time product design &amp; design systems roles. The receipt on the right is itemized — everything's included.</p>
+            <div class="rcpt-links">
+              <a href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener" class="btn-outline">
+                <span>
                 <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.7778 0C18.3671 0 18.9324 0.234126 19.3491 0.650874C19.7659 1.06762 20 1.63285 20 2.22222V17.7778C20 18.3671 19.7659 18.9324 19.3491 19.3491C18.9324 19.7659 18.3671 20 17.7778 20H2.22222C1.63285 20 1.06762 19.7659 0.650874 19.3491C0.234126 18.9324 0 18.3671 0 17.7778V2.22222C0 1.63285 0.234126 1.06762 0.650874 0.650874C1.06762 0.234126 1.63285 0 2.22222 0H17.7778ZM17.2222 17.2222V11.3333C17.2222 10.3727 16.8406 9.45133 16.1613 8.77204C15.482 8.09274 14.5607 7.71111 13.6 7.71111C12.6556 7.71111 11.5556 8.28889 11.0222 9.15556V7.92222H7.92222V17.2222H11.0222V11.7444C11.0222 10.8889 11.7111 10.1889 12.5667 10.1889C12.9792 10.1889 13.3749 10.3528 13.6666 10.6445C13.9583 10.9362 14.1222 11.3319 14.1222 11.7444V17.2222H17.2222ZM4.31111 6.17778C4.80618 6.17778 5.28098 5.98111 5.63104 5.63104C5.98111 5.28098 6.17778 4.80618 6.17778 4.31111C6.17778 3.27778 5.34444 2.43333 4.31111 2.43333C3.81309 2.43333 3.33547 2.63117 2.98332 2.98332C2.63117 3.33547 2.43333 3.81309 2.43333 4.31111C2.43333 5.34444 3.27778 6.17778 4.31111 6.17778ZM5.85556 17.2222V7.92222H2.77778V17.2222H5.85556Z"/></svg>
                 LinkedIn
-              </span>
-            </a>
-            <a href="mailto:divyanshr.iitb@gmail.com" class="btn-solid connect-link" data-copy="divyanshr.iitb@gmail.com">
-              <span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                divyanshr.iitb@gmail.com
-              </span>
-              <span class="copy-toast">Copied!</span>
-            </a>
-            <a href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener" class="btn-outline">
-              <span>
+                </span>
+              </a>
+              <a href="mailto:divyanshr.iitb@gmail.com" class="btn-solid connect-link" data-copy="divyanshr.iitb@gmail.com">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  divyanshr.iitb@gmail.com
+                </span>
+                <span class="copy-toast">Copied!</span>
+              </a>
+              <a href="https://www.behance.net/divyansh_rastogi" target="_blank" rel="noopener" class="btn-outline">
+                <span>
                 <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15 9.53846C15.1538 9.76923 15.3077 10 15.3846 10.3846H12.9231C12.9231 10.3077 12.9231 10.1538 13 10C13.0769 9.84615 13.0769 9.76923 13.2308 9.61538C13.3077 9.46154 13.4615 9.38462 13.6154 9.30769C13.7692 9.23077 14 9.15385 14.2308 9.15385C14.5385 9.23077 14.8462 9.30769 15 9.53846ZM7.92308 9C8.07692 8.84615 8.23077 8.61538 8.23077 8.30769C8.23077 8.15385 8.23077 8 8.15385 7.84615C8.07692 7.76923 8 7.61538 7.92308 7.61538C7.84615 7.53846 7.69231 7.53846 7.53846 7.46154H5.53846V9.23077H7.23077C7.46154 9.23077 7.69231 9.15385 7.92308 9ZM7.30769 10.3077H5.53846V12.3846H7.30769C7.46154 12.3846 7.61539 12.3846 7.76923 12.3077C7.92308 12.3077 8.07692 12.2308 8.15385 12.1538C8.23077 12.0769 8.38462 12 8.46154 11.8462C8.53846 11.6923 8.53846 11.5385 8.53846 11.3846C8.53846 11 8.46154 10.6923 8.23077 10.5385C8 10.3846 7.69231 10.3077 7.30769 10.3077ZM20 3.76923V16.2308C20 18.3077 18.3077 20 16.2308 20H3.76923C1.69231 20 0 18.3077 0 16.2308V3.76923C0 1.69231 1.69231 0 3.76923 0H16.2308C18.3077 0 20 1.69231 20 3.76923ZM12.6154 7.38462H15.6923V6.61539H12.6154V7.38462ZM10.1538 11.5385C10.1538 11.0769 10.0769 10.6923 9.84615 10.3077C9.61538 10 9.30769 9.76923 8.84615 9.61538C9.15385 9.46154 9.46154 9.23077 9.61538 9C9.76923 8.76923 9.84615 8.46154 9.84615 8.07692C9.84615 7.5 9.76923 7.46154 9.69231 7.15385C9.53846 6.92308 9.38462 6.69231 9.23077 6.61539C9 6.46154 8.76923 6.38462 8.46154 6.30769C8.07692 6.15385 7.76923 6.15385 7.38462 6.15385H3.84615V13.6923H7.53846C7.84615 13.6923 8.23077 13.6154 8.53846 13.5385C8.84615 13.4615 9.15385 13.3077 9.38462 13.1538C9.61538 13 9.84615 12.7692 10 12.4615C10.0769 12.2308 10.1538 11.9231 10.1538 11.5385ZM12.9231 11.3077H16.8462C16.8462 10.8462 16.8462 10.4615 16.7692 10.0769C16.6923 9.69231 16.5385 9.30769 16.3077 9.07692C16.0769 8.76923 15.7692 8.53846 15.4615 8.38462C15.0769 8.23077 14.6923 8.07692 14.2308 8.07692C13.8462 8.07692 13.4615 8.15385 13.0769 8.30769C12.7692 8.46154 12.4615 8.69231 12.1538 8.92308C11.9231 9.15385 11.6923 9.46154 11.6154 9.84615C11.4615 10.2308 11.3846 10.6154 11.3846 11C11.3846 11.5769 11.4615 11.8462 11.6154 12.1538C11.7692 12.5385 11.9231 12.8462 12.1538 13.0769C12.3846 13.3077 12.6923 13.5385 13 13.6923C13.3846 13.8462 13.7692 13.9231 14.1538 13.9231C14.7692 13.9231 15.3077 13.7692 15.7692 13.4615C16.2308 13.1538 16.5385 12.6923 16.7692 12.0769H15.4615C15.3846 12.2308 15.3077 12.3846 15.0769 12.5385C14.8462 12.6923 14.6154 12.7692 14.3077 12.7692C13.9231 12.7692 13.5385 12.6923 13.3077 12.4615C13.0769 12.1538 12.9231 11.7692 12.9231 11.3077Z"/></svg>
                 Behance
-              </span>
-            </a>
+                </span>
+              </a>
+            </div>
           </div>
-          
-          <div class="scratch-card-wrap reveal">
-            <div class="scratch-card-perspective">
-              <div class="scratch-card" id="scratchCardDark">
-                <div class="scratch-coupon">
-                  <span class="coupon-emoji">☕</span>
-                  <h3 class="coupon-title">One Coffee, On Me</h3>
-                  <p class="coupon-sub">Thank you for spending time here.<br>Let’s spend another hour in person.</p>
-                  <p class="coupon-fine">Reach me on LinkedIn or by email to plan.</p>
-                </div>
-                <canvas class="scratch-canvas" id="scratchCanvasDark"></canvas>
-                <div class="scratch-glare"></div>
+
+          <!-- Right: printer slot + receipt -->
+          <div class="rcpt-printer-col reveal">
+            <div class="rcpt-printer-slot">
+              <div class="rcpt-slot-face" aria-hidden="true"></div>
+              <div class="rcpt-slot-label" aria-hidden="true">
+                <span>receipts &middot; est. 2001</span>
+                <span class="rcpt-dot"></span>
               </div>
             </div>
-        </div>
+
+            <div class="rcpt-viewport">
+              <div class="rcpt-tilt">
+                <div class="rcpt-receipt" aria-label="Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.">
+
+                  <div class="rcpt-head">
+                    <div class="rcpt-name">DIVYANSH&nbsp;RASTOGI</div>
+                    <div class="rcpt-role">Product Designer</div>
+                    <div class="rcpt-cred">IDC IIT Bombay &middot; AIR 5</div>
+                  </div>
+
+                  <hr class="rcpt-rule">
+                  <div class="rcpt-meta"><span>ORDER #001</span><span>OPEN ROLE</span></div>
+                  <hr class="rcpt-rule">
+
+                  <div class="rcpt-line">
+                    <span class="rcpt-li-name">1&times; Product Designer</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">hired?</span>
+                  </div>
+                  <div class="rcpt-line rcpt-line--muted">
+                    <span class="rcpt-li-name">Design systems</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">incl.</span>
+                  </div>
+                  <div class="rcpt-line rcpt-line--muted">
+                    <span class="rcpt-li-name">UX research</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">incl.</span>
+                  </div>
+                  <div class="rcpt-line rcpt-line--muted">
+                    <span class="rcpt-li-name">Motion &amp; prototyping</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">incl.</span>
+                  </div>
+                  <div class="rcpt-line rcpt-line--muted">
+                    <span class="rcpt-li-name">Filmmaking after hours</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">free</span>
+                  </div>
+
+                  <hr class="rcpt-rule">
+
+                  <div class="rcpt-line rcpt-subtotal">
+                    <span class="rcpt-li-name">SUBTOTAL</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-li-price">your team, better</span>
+                  </div>
+
+                  <div class="rcpt-total-row">
+                    <span class="rcpt-li-name">TOTAL</span>
+                    <span class="rcpt-li-dots"></span>
+                    <span class="rcpt-scratch-cue">scratch to settle the bill</span>
+                  </div>
+                  <div class="rcpt-scratch-zone">
+                    <a class="rcpt-scratch-under"
+                       href="mailto:divyanshr.iitb@gmail.com?subject=Redeeming%20my%20coffee%20%E2%98%95"
+                       title="Redeem — email Divyansh"
+                       aria-label="Total: one coffee, on me. Click to redeem by email.">
+                      <span class="rcpt-scratch-answer">one coffee ☕ <em>— on me</em></span>
+                      <span class="rcpt-scratch-redeem">redeem &rarr;</span>
+                    </a>
+                    <canvas class="rcpt-scratch-foil" aria-hidden="true"></canvas>
+                  </div>
+
+                  <div class="rcpt-barcode-wrap">
+                    <div class="rcpt-barcode" aria-hidden="true"></div>
+                    <a class="rcpt-barcode-mail" href="mailto:divyanshr.iitb@gmail.com">divyanshr.iitb@gmail.com</a>
+                  </div>
+
+                  <div class="rcpt-thanks">*&nbsp;THANK YOU! COME AGAIN&nbsp;*</div>
+                  <div class="rcpt-fine">redeemable anywhere, anytime &middot; no expiry</div>
+
+                  <div class="rcpt-stamp" aria-hidden="true">Open to Work</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="unified-footer-bottom">
@@ -6966,6 +8247,141 @@
         requestAnimationFrame(tick);
       })();
     })();
+
+    // ══ Reusable Card Stack Engine — approved "Stack Spotlight" design ══
+    // Generic sticky-stack mechanics: scale/dim the covered panel, drift
+    // any [data-parallax] media. Shared by Featured now; Film section will
+    // call the same initCardStack() on its own .card-stack in a later pass.
+    function initCardStack(stackEl) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (reduceMotion.matches) return; // static stack — CSS handles everything
+
+      const panels    = Array.from(stackEl.querySelectorAll('.card-stack__panel'));
+      const dims      = panels.map(p => p.querySelector('.card-stack__dim'));
+      const parallaxs = panels.map(p => p.querySelector('[data-parallax]'));
+      if (!panels.length) return;
+
+      // Trailing spacer inside the stack's CONTENT box so the LAST sticky card
+      // has room to stay pinned before the section releases (a sticky element is
+      // confined to its parent's content box, so a bottom *padding* won't do it).
+      if (!stackEl.querySelector('.card-stack__end')) {
+        const end = document.createElement('div');
+        end.className = 'card-stack__end';
+        end.style.height = '30vh';
+        end.setAttribute('aria-hidden', 'true');
+        stackEl.appendChild(end);
+      }
+
+      // ── ScrollStack (React Bits) properties — identical for every stack
+      //    (Featured + Film) so both interactions match exactly. ──────────
+      const BASE_SCALE          = 0.85;  // back/first card eases to 0.85
+      const ITEM_SCALE          = 0.03;  // +scale per card toward the front
+      const ITEM_STACK_DISTANCE = 30;    // px each card peeks above the one covering it
+      const MAX_DIM             = 0;     // no brightness/dim change on covered cards
+      const PARALLAX_PX         = 34;    // media drift range (fits scale(1.08) headroom)
+
+      let vh = window.innerHeight;
+      // Base pin offset comes from the panel's own computed `top` (accounts for
+      // the fixed nav); each card is then staggered by ITEM_STACK_DISTANCE so
+      // the covered cards leave a 30px edge visible (the ScrollStack "deck").
+      const basePinTop = parseFloat(getComputedStyle(panels[0]).top) || 0;
+      panels.forEach((p, i) => {
+        p.style.top = (basePinTop + ITEM_STACK_DISTANCE * i) + 'px';
+        p.style.transformOrigin = 'center top';
+        p.style.willChange = 'transform';
+      });
+
+      const clamp01 = v => v < 0 ? 0 : (v > 1 ? 1 : v);
+      const ease = t => t * (2 - t);
+
+      function update() {
+        for (let i = 0; i < panels.length; i++) {
+          if (i < panels.length - 1) {
+            const nextTop = panels[i + 1].getBoundingClientRect().top;
+            const pinTopI = basePinTop + ITEM_STACK_DISTANCE * i;
+            const p = ease(clamp01((vh - nextTop) / (vh - pinTopI)));
+            const targetScale = BASE_SCALE + i * ITEM_SCALE;   // 0.85, 0.88, 0.91…
+            panels[i].style.transform = 'scale(' + (1 - p * (1 - targetScale)).toFixed(4) + ')';
+            if (dims[i]) dims[i].style.opacity = (MAX_DIM * p).toFixed(3);
+          } else {
+            panels[i].style.transform = 'scale(1)';
+            if (dims[i]) dims[i].style.opacity = '0';
+          }
+
+          const el = parallaxs[i];
+          if (!el) continue;
+          const r = panels[i].getBoundingClientRect();
+          const t = clamp01((vh - r.top) / (vh + r.height));
+          const base = parseFloat(el.dataset.base || '1');
+          const drift = ((t - 0.5) * PARALLAX_PX).toFixed(2);
+          el.style.transform = base === 1
+            ? 'translate3d(0,' + drift + 'px,0)'
+            : 'translate3d(0,' + drift + 'px,0) scale(' + base + ')';
+        }
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => { update(); ticking = false; });
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', () => {
+        vh = window.innerHeight;
+        panels.forEach((p, i) => { p.style.top = (basePinTop + ITEM_STACK_DISTANCE * i) + 'px'; });
+        onScroll();
+      }, { passive: true });
+
+      reduceMotion.addEventListener('change', e => {
+        if (!e.matches) return;
+        window.removeEventListener('scroll', onScroll);
+        panels.forEach(p => { p.style.transform = ''; p.style.top = ''; });
+        dims.forEach(d => { if (d) d.style.opacity = '0'; });
+        parallaxs.forEach(m => { if (m) m.style.transform = ''; });
+      });
+
+      update();
+    }
+    document.querySelectorAll('.card-stack').forEach(initCardStack);
+
+    // ── Featured Settlr media theatre — crossfade, caption chip, dot nav ──
+    // Runs even under reduced motion for CLICK navigation; autoplay only
+    // starts when motion is allowed.
+    function initFeaturedTheatre(theatreEl) {
+      if (!theatreEl) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const slides  = Array.from(theatreEl.querySelectorAll('.cs2-slide'));
+      const dots    = Array.from(theatreEl.querySelectorAll('.cs2-dot'));
+      const capIdx  = theatreEl.querySelector('.cs2-idx');
+      const capText = theatreEl.querySelector('.cs2-cap-text');
+      if (!slides.length) return;
+      const PERIOD = 4000;
+      let current = 0;
+      let timer = null;
+
+      function show(n) {
+        current = (n + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle('on', i === current));
+        dots.forEach((d, i) => {
+          d.classList.toggle('on', i === current);
+          d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+        });
+        if (capIdx) capIdx.textContent = String(current + 1).padStart(2, '0');
+        if (capText) capText.textContent = slides[current].dataset.caption;
+      }
+
+      function play()  { if (!reduceMotion.matches && !timer) timer = setInterval(() => show(current + 1), PERIOD); }
+      function pause() { clearInterval(timer); timer = null; }
+
+      dots.forEach((d, i) => d.addEventListener('click', () => { show(i); pause(); play(); }));
+      theatreEl.addEventListener('mouseenter', pause);
+      theatreEl.addEventListener('mouseleave', play);
+      play(); // no-op under reduced motion — first frame stays
+    }
+    document.querySelectorAll('.cs2-theatre').forEach(initFeaturedTheatre);
 
     // ─── Bottom Name Scaling ───
     (function() {
@@ -7609,8 +9025,211 @@
       }
     }
 
-    // Init both scratch cards
-    initScratchCard('scratchCanvas', 'scratchHint', 'scratchCard');
+    // ── Receipt footer (light-mode #connect): print-on-scroll,
+    // scratch-off TOTAL, stamp thump, confetti. Namespaced, does not
+    // touch initScratchCard (still used by the dark footer below). ──
+    function initReceiptFooter(closer) {
+      const receipt = closer.querySelector('.rcpt-receipt');
+      const tilt    = closer.querySelector('.rcpt-tilt');
+      const zone    = closer.querySelector('.rcpt-scratch-zone');
+      const foil    = closer.querySelector('.rcpt-scratch-foil');
+      if (!receipt || !tilt || !zone || !foil) return;
+
+      const ctx = foil.getContext('2d');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let scratching = false;
+      let revealed   = false;
+      let paperReady = false;
+
+      function sizeFoil() {
+        const rect = foil.getBoundingClientRect();
+        if (rect.width === 0) return;
+        foil.width  = rect.width * 2;
+        foil.height = rect.height * 2;
+        ctx.setTransform(2, 0, 0, 2, 0, 0);
+        drawFoil(rect.width, rect.height);
+      }
+
+      function drawFoil(w, h) {
+        const grad = ctx.createLinearGradient(0, 0, w, h);
+        grad.addColorStop(0,    '#C9C9C6');
+        grad.addColorStop(0.28, '#DEDEDA');
+        grad.addColorStop(0.5,  '#ADADA9');
+        grad.addColorStop(0.72, '#D6D6D2');
+        grad.addColorStop(1,    '#B8B8B4');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        for (let b = 0; b < h; b += 2) {
+          ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.05})`;
+          ctx.fillRect(0, b, w, 1);
+        }
+        for (let i = 0; i < 2600; i++) {
+          ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.08})`;
+          ctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+        }
+        const sheen = ctx.createLinearGradient(0, 0, w, h);
+        sheen.addColorStop(0.32, 'rgba(255,255,255,0)');
+        sheen.addColorStop(0.46, 'rgba(255,255,255,0.30)');
+        sheen.addColorStop(0.52, 'rgba(255,255,255,0.42)');
+        sheen.addColorStop(0.62, 'rgba(255,255,255,0)');
+        ctx.fillStyle = sheen;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(w / 2, h / 2);
+        ctx.rotate(-0.14);
+        ctx.font = '700 7px ui-monospace, Menlo, monospace';
+        ctx.textAlign = 'center';
+        for (let row = -3; row <= 3; row++) {
+          for (let col = -4; col <= 4; col++) {
+            ctx.fillStyle = (row + col) % 2 === 0
+              ? 'rgba(90,90,86,0.34)'
+              : 'rgba(255,255,255,0.38)';
+            ctx.fillText('SCRATCH', col * 58, row * 13 + 2);
+          }
+        }
+        ctx.restore();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+        ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+        ctx.strokeRect(1.5, 1.5, w - 3, h - 3);
+      }
+
+      function getPos(e) {
+        const rect = foil.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      }
+
+      function scratch(pos) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 15, 0, Math.PI * 2);
+        ctx.fill();
+        for (let j = 0; j < 6; j++) {
+          const ox = (Math.random() - 0.5) * 24;
+          const oy = (Math.random() - 0.5) * 24;
+          const r  = 3 + Math.random() * 7;
+          ctx.beginPath();
+          ctx.arc(pos.x + ox, pos.y + oy, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      function checkReveal() {
+        if (revealed) return;
+        const imgData = ctx.getImageData(0, 0, foil.width, foil.height);
+        let cleared = 0;
+        for (let i = 3; i < imgData.data.length; i += 16) {
+          if (imgData.data[i] === 0) cleared++;
+        }
+        if (cleared / (imgData.data.length / 16) > 0.45) reveal(true);
+      }
+
+      function reveal(withConfetti) {
+        if (revealed) return;
+        revealed = true;
+        receipt.classList.add('settled');
+        zone.classList.add('revealed');
+        foil.classList.add('cleared');
+        tilt.classList.remove('hold-still');
+        if (withConfetti && !reduced) confettiBurst(zone);
+      }
+
+      function confettiBurst(el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const colors = ['#E06B2D', '#FFD700', '#FF6B35', '#FFA726', '#C0392B', '#F5F3EE'];
+        const COUNT = 18;
+        for (let i = 0; i < COUNT; i++) {
+          const piece = document.createElement('div');
+          piece.className = 'rcpt-confetti-piece';
+          const angle = (Math.PI * 2 * i) / COUNT + (Math.random() - 0.5) * 0.5;
+          const dist  = 46 + Math.random() * 74;
+          piece.style.left = cx + 'px';
+          piece.style.top  = cy + 'px';
+          piece.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+          piece.style.setProperty('--dy', (Math.sin(angle) * dist - 46) + 'px');
+          piece.style.setProperty('--rot', ((Math.random() - 0.5) * 340) + 'deg');
+          piece.style.background = colors[i % colors.length];
+          piece.style.width  = (4 + Math.random() * 6) + 'px';
+          piece.style.height = (4 + Math.random() * 6) + 'px';
+          piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          document.body.appendChild(piece);
+          setTimeout(() => piece.remove(), 1300);
+        }
+      }
+
+      foil.addEventListener('pointerdown', e => {
+        if (revealed || !paperReady) return;
+        scratching = true;
+        try { foil.setPointerCapture(e.pointerId); } catch (err) { /* no-op */ }
+        scratch(getPos(e));
+        e.preventDefault();
+      });
+      foil.addEventListener('pointermove', e => {
+        if (!scratching || revealed) return;
+        scratch(getPos(e));
+        e.preventDefault();
+      });
+      function endScratch() {
+        if (!scratching) return;
+        scratching = false;
+        checkReveal();
+      }
+      foil.addEventListener('pointerup', endScratch);
+      foil.addEventListener('pointercancel', endScratch);
+
+      foil.addEventListener('pointerenter', () => {
+        if (!revealed) tilt.classList.add('hold-still');
+      });
+      foil.addEventListener('pointerleave', () => {
+        tilt.classList.remove('hold-still');
+      });
+
+      window.addEventListener('resize', () => {
+        if (!revealed) sizeFoil();
+      });
+
+      function stamp() { closer.classList.add('stamped'); }
+      function armFoil() {
+        paperReady = true;
+        closer.classList.add('paper-ready');
+      }
+
+      if (reduced) {
+        closer.classList.add('printed', 'stamped');
+        armFoil();
+        reveal(false);
+      } else if ('IntersectionObserver' in window) {
+        sizeFoil();
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            closer.classList.add('printed');
+            io.disconnect();
+          });
+        }, { threshold: 0.35 });
+        io.observe(closer);
+
+        receipt.addEventListener('animationend', function onEnd(e) {
+          if (e.animationName !== 'rcpt-print-out') return;
+          receipt.removeEventListener('animationend', onEnd);
+          armFoil();
+          setTimeout(stamp, 400);
+        });
+      } else {
+        closer.classList.add('printed', 'stamped');
+        sizeFoil();
+        armFoil();
+      }
+    }
+    document.querySelectorAll('.rcpt-closer').forEach(initReceiptFooter);
 
     // ── Copy-to-clipboard: swap button text ──
     document.querySelectorAll('.connect-link[data-copy]').forEach(link => {
@@ -8058,7 +9677,7 @@
             <p class="cs-tag">Semantic Color</p>
             <h2 class="cs-section-title">Three layers. One change propagates everywhere.</h2>
             <div class="cs-body">
-              <p>50 raw color values. Mapped to meaning. Scoped to components. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">colors.css</code> holds the primitives, the palette above. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">semantic.css</code> handles layers 2 and 3. Change <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">olive-600</code> once, and every primary button, every brand text, every FAB updates.</p>
+              <p>57 raw color values. Mapped to meaning. Scoped to components. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">colors.css</code> holds the primitives, the palette above. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">semantic.css</code> handles layers 2 and 3. Change <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">olive-600</code> once, and every primary button, every brand text, every FAB updates.</p>
             </div>
 
             <!-- Tier architecture diagram -->
@@ -8382,7 +10001,7 @@
                     <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">tokens mapped</p>
                   </div>
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">40</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">43</p>
                     <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">coded components</p>
                   </div>
                   <div>
@@ -9314,7 +10933,7 @@
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">TRUST</span>
                   <p class="cs-decision-title">Live stats adjacent to the action zone</p>
-                  <p class="cs-decision-body">"₹25,483 users joined through referrals", not at the top where no one reads it, but placed near the moment of decision to trigger trust at exactly the right point.</p>
+                  <p class="cs-decision-body">"25,483 users joined through referrals", not at the top where no one reads it, but placed near the moment of decision to trigger trust at exactly the right point.</p>
                 </div>
               </div>
               <div class="cs-decision cs-decision--big">
@@ -9491,7 +11110,7 @@
     // Close triggers
     overlayClose.addEventListener('click', closeOverlay);
     backdrop.addEventListener('click', closeOverlay);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay(); });
 
     // Hash on load (for direct/shared links). Kinko gated until docs are written.
     if (location.hash) {
@@ -9573,7 +11192,7 @@
       const heroLede = document.querySelector('.hero-lede');
       if (heroLede) {
         heroLede.innerHTML = enabled
-          ? 'Shaping <span class="lede-accent-plain">myself</span><br>\n        though films, photography, art<br>\n        and experiences.'
+          ? 'Shaping <span class="lede-accent-plain">myself</span><br>\n        through films, photography, art<br>\n        and experiences.'
           : 'Shaping <span class="lede-strong">digital products,</span><br>\n        applications and design systems with<br>\n        clarity and <span class="lede-accent">character.</span>';
       }
 
@@ -10111,9 +11730,6 @@
         });
       }, { threshold: 0.12 });
       aeReveals.forEach(el => aeObserver.observe(el));
-
-      // Init dark scratch card after layout is ready (element was hidden before)
-      setTimeout(() => initScratchCard('scratchCanvasDark', 'scratchHintDark', 'scratchCardDark'), 120);
     }
 
     // ── 3D Photography Carousel (Vanilla Engine) ──
@@ -10362,11 +11978,6 @@
       }, { passive: false });
     }
 
-    /* ---- Fallback: lock browser history (only if needed) ---- */
-    history.pushState(null, null, location.href);
-    window.addEventListener('popstate', function () {
-      history.pushState(null, null, location.href);
-    });
     // ── Edge Glow Tracking for Project Cards ──
     (() => {
       document.querySelectorAll('.exp-card').forEach(card => {
