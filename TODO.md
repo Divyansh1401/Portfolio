@@ -55,8 +55,8 @@
 
 ### Claude's suggested additions (for review)
 - [ ] **Fix embedded-prototype 404s**: on load, the Settlr SPA embed requests `prototype/css/screens/*` and `prototype/js/*` (missing the `settlr/` path segment) → ~60 404s; the phone/playground may be rendering incompletely. Likely resolved by the folder re-sync above, but verify the iframe's asset base path.
-- [ ] **Audit mobile art/photo categorization**: Hydrone carousel's 1st image is a car render and Cyanotype's 1st is a 3D render — some assets look mislabeled / in the wrong folder; also re-check the motorcycle + night-car placements.
-- [ ] **Curate the big mobile carousels**: Cars (17) and More (17) have busy 17-dot rows and long swipes — trim to a tight best-of (~8) or split into sub-themes.
+- [x] **Audit mobile art/photo categorization**: CHECKED 2026-07-16 — not mislabels. Hydrone's five images are all the octocopter concept renders; Cyanotype's lead is a genuine cyanotype print of car photos. No changes needed.
+- [x] **Curate the big mobile carousels**: REVIEWED 2026-07-16 — owner saw a full keep/cut proposal (17→8 each + rotor 42→34 + motion curation) and chose to keep everything as is. Decision recorded in CLAUDE.md; don't re-propose.
 - [x] **Resume button = always preview (never download)**: DONE — mobile buttons now open the Drive `/view` in a new tab (download URL removed); desktop already opens the overlay panel. _(2026-07-13, Antigravity + verified)_
 - [ ] **Tablet (768–1023px) polish for `mobile.html`**: it renders as a 520px centred column on tablets; decide whether it needs a wider tablet layout.
 - [x] **Share/meta tags**: DONE — description, theme-color, apple-web-app, OG, Twitter card + inline-SVG favicon added to both `index.html` and `mobile.html`. _(2026-07-13, Antigravity + verified)_ · og:image DONE _(2026-07-16)_: real 1200×630 card at `assets/images/og-image.png`, absolute URLs, og:url + canonical + JSON-LD Person added to both pages.

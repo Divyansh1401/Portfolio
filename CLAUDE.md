@@ -95,8 +95,17 @@ script — keep it there (it needs every init before it).
 
 ## Pending work
 See `TODO.md` (backlog + work log) and the audit report artifact
-(2026-07-16) for the full prioritized list. Design decisions the owner has
-NOT yet made: orange consolidation, radius scale, hero credential line,
-motion curation, dark-world photo curation, case-study end CTAs, contrast
-fixes, Settlr cover-image regeneration (stray backtick is baked into
-`assets/images/settlr/thumbnail.webp`).
+(2026-07-16) for the full prioritized list.
+
+Owner decisions already made (2026-07-16) — do NOT re-propose:
+- APPLIED: hero credential line, case-study end CTAs, AA contrast pass,
+  one orange (#E06B2D), Settlr cover retouch (backtick + 40→43).
+- DECLINED, keep as-is: motion curation (small-card cursor-chase,
+  polaroid ±30° tilt, 34px stack drift all stay) and photo curation
+  (rotor keeps all 42 shots; mobile Cars/More keep 17 each). The
+  suspected Hydrone/Cyanotype mislabels were checked and are NOT
+  mislabels.
+
+Still open: radius scale, og-image refresh (could pick up the
+credential line), thumbnails (owner does last), then the one-time
+force-push.
