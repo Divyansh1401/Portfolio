@@ -1,303 +1,102 @@
 # Portfolio Website — Divyansh Rastogi
 
 ## Project Overview
-Single-file HTML/CSS/JS portfolio for Divyansh Rastogi, product designer (IDC IIT Bombay, AIR 5). Goal: get hired. Experimental/creative vibe. Desktop-only for now — no responsive layout changes until desktop is finalised.
+Portfolio for Divyansh Rastogi, product designer (IDC IIT Bombay, AIR 5).
+Goal: **get hired**. Experimental/creative vibe with a dual-persona concept:
+the light "day job" world flips (via the hero polaroid) into a dark
+"alter ego" world of films, photography, and art.
 
-## File Structure
-```
-/Users/divyanshrastogi/Desktop/Website/
-├── index.html          ← entire site (single file, no build step)
-├── design-system.md    ← full design system reference
-├── assets/
-│   └── images/
-│       └── refer-earn/           ← all P3 assets (16 in use, 14 in folder unused)
-│           ├── thumbnail-bg.png  ← P3 homepage BG layer (CSS background, left-aligned)
-│           ├── thumbnail-fg.png  ← P3 homepage FG layer (centered, parallax)
-│           ├── thumbnail.png     ← P3 original thumbnail (unused)
-│           ├── cover.png         ← case study hero image
-│           ├── approach-1.png    ← Ideation: Minimal UI + Gamification Layer
-│           ├── approach-2.png    ← Ideation: Contextual Primary CTA
-│           ├── infographic-v1.png ← Iteration v1 (light list)
-│           ├── infographic-v2.png ← Iteration v2 (dark two-column grid)
-│           ├── infographic-v3.png ← Iteration v3 — selected (dark numbered steps)
-│           ├── screen-before.png ← Before/After: original screen
-│           ├── screen-tooltip.png ← Before/After: tooltip state
-│           ├── screen-final.png  ← Before/After: final redesign
-│           ├── screen-rummy.png  ← Multi-brand: A23 Rummy
-│           ├── screen-poker.png  ← Multi-brand: A23 Poker
-│           ├── screen-adda52.png ← Multi-brand: Adda52
-│           ├── treasure-1.png    ← Treasure Referrals: chest modal mockup
-│           ├── treasure-2.png    ← Treasure Referrals: contacts list mockup
-│           └── [13 more unused]  ← see projects/03-refer-earn/docs.md for full list
-├── prototype/
-│   └── settlr/                   ← SPA mirror of /Desktop/settlr/ (last sync: 2026-07-01 from Jun-21 build, offline seed-data mode)
-│       ├── index.html            ← SPA shell (24 inlined views); iframe entry = index.html#home-dashboard
-│       ├── js/                   ← router-spa.js + views/* + store.js (supabase neutralized → local seed mode)
-│       ├── css/                  ← component CSS + css/screens/ per-view styles
-│       ├── tokens/               ← primitive + semantic CSS tokens (57 primitives · 290+ semantic)
-│       └── assets/               ← group covers (webp→jpg), images
-├── projects/                     ← per-project documentation
-│   ├── 01-kinko/
-│   │   └── docs.md               ← placeholder (content + thumbnail pending)
-│   ├── 02-settlr/
-│   │   ├── research-splitwise.md ← raw Splitwise research (HTA/SHERPA/NASA-TLX, 3 parts)
-│   │   ├── research-data.md      ← extracted data from research images
-│   │   ├── project-docs.md       ← unified Settlr arc (research + redesign + workflow)
-│   │   ├── case-study-plan.md    ← agreed narrative plan (capability-first)
-│   │   ├── design-manager-review.md ← design manager review notes
-│   │   ├── KT-handoff.md         ← knowledge transfer doc (Apr 9 + May 2 updates)
-│   │   └── CHANGELOG.md          ← Settlr project changelog (added 2026-05-02)
-│   └── 03-refer-earn/
-│       └── docs.md               ← full asset inventory + built section map
-└── .claude/
-    └── launch.json     ← preview server config (npx serve -p 3456)
-```
+Live at **https://www.divyanshrastogi.in** — GitHub Pages, repo
+`Divyansh1401/Portfolio`, branch `main`. "Push to git" = stage + commit +
+push (see Deployment below for the one-time force-push requirement).
 
-## Preview Server
-```
-npx serve -p 3456 .
-```
-Use `mcp__Claude_Preview__preview_start` with name `"portfolio"` to launch.
+> This file was rewritten 2026-07-16 to match the shipped site. Companion
+> docs: `PROJECT-INDEX.md` (file/system map), `design-system.md` (tokens,
+> type, buttons, motion rules), `TODO.md` (work log + backlog).
 
----
+## Architecture
+Two hand-written documents, no build step:
 
-## Design System
+- **`index.html`** — the desktop site (viewport ≥1024px). Everything lives
+  here: light world, dark world (`#alter-ego-content`, `display:none` until
+  flipped), case-study overlays (templates in the `caseStudies` JS object),
+  resume overlay, photography lightbox. One giant `<script>` block at the end.
+- **`mobile.html`** — the "pocket feed" (<1024px). Independent document,
+  same design language. First visit always opens on the WORK feed (dark mode
+  here is a *content switch* — `html.dark` hides `.world-light` — so
+  prefers-color-scheme is deliberately ignored; only a saved `feed-theme`
+  localStorage choice applies).
+- Each page's first head script redirects across the 1024px line **and
+  forwards `location.hash`** (mutually exclusive media queries, no loop).
 
-> Full design system reference: `/Users/divyanshrastogi/Desktop/Website/design-system.md`
+## Deep links — the hash is the source of truth (index.html)
+`routeHash()` + `hashchange` drive all overlay/world state; UI triggers set
+the hash. Supported: `#settlr` `#refer-earn` `#resume` `#hobbies`
+`#photo-N` (dark world + lightbox, 1-based) `#kinko` (scroll to locked card)
+`#connect` (native anchor). Back/Forward correctly open/close overlays;
+polaroid flips and lightbox browsing sync the URL via `replaceState` (no
+history spam). The initial `routeHash(true)` call is the LAST line of the
+script — keep it there (it needs every init before it).
 
-### Typography
-- **Headings**: Montserrat (800 weight primary, 700/600 secondary)
-- **Body**: Plus Jakarta Sans (400/500/600)
-- Loaded via Google Fonts @import
+## Dev workflow
+- **Server**: `npx serve -p 3457 .` (launch.json name `portfolio-v2`).
+  `serve.json` sets `cleanUrls:false` + a root rewrite — do not remove it;
+  it matches GitHub Pages behavior and keeps the Settlr prototype's `<base>`
+  shim race-free (removing it brings back a 72-error 404 storm).
+- **Verification**: the in-app browser pane throttles rAF and CANNOT drive
+  this site (card stack collapses, scrolls hang). Always verify with
+  headless Puppeteer (require from `/Users/divyanshrastogi/Desktop/settlr/node_modules/puppeteer`).
+  Existing suites in the session scratchpad: `verify-deeplinks.js` (20),
+  `verify-kbd-meta.js` (16), `fingerprint.js` (computed-style snapshot).
+- Both suites + zero console errors is the bar for any interaction change.
 
-### Colour Tokens
-```css
---c-orange:  #EA7623   /* accent / CTA */
---c-light:   #F2F0F0   /* page background */
---c-dark:    #1B1C1A   /* primary text */
---c-mid:     #888886   /* muted text */
---c-surface: #E6E4E4   /* project info bg (p1, p3) */
---c-dark2:   #2e2f2d
---c-dark3:   #444541   /* CTA section bg */
-```
+## Accessibility & performance invariants (don't regress these)
+- Case-study CTAs are real `<a href="#slug">` links; overlays are
+  focus-managed dialogs (focus in, Tab trap, focus restore); same-origin
+  iframes forward Escape to the parent.
+- `#heroPolaroid` is keyboard-operable (`role="button"`, Enter/Space).
+- Global `:focus-visible` outline on both pages.
+- `PREFERS_REDUCED_MOTION` gates: cursor (off + native cursor CSS), polaroid
+  tilt/flip, stacks, rotor effects, blob wipe.
+- Every rAF loop idles: settle-skip style writes; the 3D rotor renders only
+  while `alterEgoMode` is true. Overlay/rotor images are lazy.
 
-### Spacing / Radius
-```css
---radius-sm: 8px
---radius-md: 16px
---radius-pill: 100px
---nav-h: 64px
-```
+## Gotchas (current and real)
+1. **Polaroid inline transform**: markup ships `rotateY(180deg)` inline; the
+   polaroid tick's FIRST write corrects it (`firstWriteDone` flag). Don't
+   make the settle-skip unconditional.
+2. **Dark receipt foil**: both footers run `initReceiptFooter` at load; the
+   dark one is hidden (0×0 canvas) — a ResizeObserver redraws the foil when
+   it gains size. Same pattern applies to anything initialized inside
+   `#alter-ego-content`.
+3. **Settlr embed**: `prototype/settlr/` runs offline in seed-data mode.
+   `icons/` is deliberately excluded (37MB) — phosphor `@import`s are removed
+   from `tokens/index.css`; re-syncing the mirror must re-apply that patch
+   (full re-sync recipe in project memory).
+4. **Case overlay body scroll** is `scroll-behavior: smooth` — set it to
+   `auto` before scripted scrolling in tests.
+5. **Two oranges are live** (`--orange #E06B2D` vs `--c-orange #EA7623`) —
+   known inconsistency, consolidation is a pending DESIGN decision.
+6. **overlayBody injection** adds `loading="lazy" decoding="async"` to all
+   template images via string replace — keep that when touching `openOverlay`.
+7. `#kinko` is intentionally gated (NDA) — the hash scrolls to the card, the
+   `caseStudies.kinko` template is unreachable and still contains
+   placeholders (delete or finish before ever un-gating).
 
----
+## Deployment
+- GitHub Pages serves the repo root; pushing `main` updates the live site.
+- ⚠️ **Git history was rewritten 2026-07-16** (scrubbed `projects/`,
+  `.claude/`, `kinko-design-system-report.md` — they remain on disk,
+  gitignored). **The next push must be
+  `git push --force-with-lease origin main`**; normal pushes after that.
+  Pre-scrub backup: `~/Desktop/portfolio-pre-scrub-backup.bundle`.
+- All pushes are held until the project thumbnail images are final
+  (owner's call, tracked in TODO.md).
 
-## What's Built
-
-### ✅ Nav
-- Fixed top, `justify-content: space-between`
-- Left: `.nav-name` (hidden at top, fades in on scroll as hero name disappears)
-- Right: Resume (`<button id="resumeTrigger">`) + Let's connect (filled orange) buttons
-- Resume button triggers the resume overlay (no external redirect)
-- Box shadow appears after 20px scroll
-
-### ✅ Hero
-- Full viewport height (`min-height: 100vh`)
-- `display: flex; justify-content: space-between` — gap auto-grows on wider screens
-- Left: Name (h1), tagline (italic), education (IDC IIT Bombay AIR 5, Monash University)
-- Right: Polaroid-style photo placeholder
-  - `padding: 20px 20px 64px` (thick bottom = polaroid)
-  - `border-radius: 3px; rotate(1.2deg)`
-  - Hover: straightens to 0deg + subtle scale
-  - **Critical**: `.hero-photo-wrap.reveal` and `.hero-photo-wrap.reveal.visible` override the generic `.reveal` class to preserve the rotation in the transform
-
-### ✅ Scroll Animation (name → nav)
-- Uses `lerp()` for smooth interpolation
-- Tagline fades out in first 20% of hero height
-- Hero name fades + shrinks between 10–40% of hero height
-- Nav name fades in simultaneously
-- All driven by `window.addEventListener('scroll', ...)` with `{ passive: true }`
-
-### ✅ Featured Projects (3 rows, alternating layout)
-- `grid-template-columns: 1fr 1fr; min-height: 72vh`
-- P2 uses `direction: rtl` trick to flip image to right
-- Colors: P1 `var(--c-surface)`, P2 `var(--c-dark)`, P3 `var(--c-surface)`
-- Image zones have hover zoom (`scale(1.04)` on `.project-img-inner`)
-
-**P3 (Refer & Earn) thumbnail — layered approach:**
-- BG layer: `background-image: url('thumbnail-bg.png')` on `.project-img-inner`, `background-size: auto 100%; background-position: left center; background-repeat: no-repeat` — preserves ratio, left-aligned
-- FG layer: `<img id="p3-fg">` absolutely centered (`top:50%; left:50%; transform:translate(-50%,-50%)`), `height:100%; width:auto`
-- FG parallax: JS mousemove on `.project-row.p3` moves FG up to 18px towards cursor. `transition: transform 0.4s cubic-bezier(...)` on the img.
-
-| # | Project | Company | Link trigger |
-|---|---------|---------|-------------|
-| 01 | Kinko Insurance | Head Digital Works | `data-project="kinko"` |
-| 02 | Settlr | UX Audit & Redesign | `data-project="settlr"` |
-| 03 | Refer & Earn | Head Digital Works · A23 | `data-project="refer-earn"` |
-
-### ✅ Smaller Projects Grid (4 cards)
-- `grid-template-columns: repeat(4, 1fr); gap: 28px; overflow: visible`
-- Cards 2 & 4 have `margin-top: 80px` for staggered feel
-- `aspect-ratio: 9/16` (tall portrait), `border-radius: 10px`
-- Each card is an `<a>` tag linking to Behance (opens in new tab)
-- Real Behance CDN thumbnails used as `<img class="small-card-bg">` (grayscale by default)
-- Second `<img class="small-card-color">` sits on top, clipped to `circle(0%)` — on hover, JS lerps the radius open from cursor position (color reveals from where cursor enters)
-- Gradient overlay at bottom with title + subtitle
-- **Frame parallax**: JS moves the entire card frame ±14px horizontal, ±10px vertical towards cursor on mousemove. `overflow: visible` on `.small-grid` allows horizontal overflow.
-
-| Project | Behance URL | CDN Thumbnail |
-|---------|-------------|---------------|
-| Prosper | `/gallery/189640719/Prosper-Game-Design` | `c3f2bd189640719.Y3JvcCw4MDgsNjMyLDAsMA.png` |
-| Angel One | `/gallery/213230177/Mutual-Funds-for-Next-Billion-Users` | `814c77213230177.Y3JvcCwxMTE3LDg3NCwyLDA.png` |
-| AI/VR Trial Room | `/gallery/197680757/AIVR-Trial-Room-UIUX-Design-Case-Study` | `2f30d6197680757.Y3JvcCwxNDg2LDExNjIsNzMsMjU.png` |
-| Creative Burnout | `/gallery/235938071/Creative-Burnout-in-Design-Students-System-Design` | `3046d9235938071.Y3JvcCw3Njc2LDYwMDQsMCww.jpg` |
-
-All CDN URLs are prefixed with: `https://mir-s3-cdn-cf.behance.net/projects/404/`
-
-### ✅ CTA Section
-- Dark bg (`--c-dark3`) with orange radial glow
-- Links to `mailto:divyanshr.iitb@gmail.com`
-
-### ✅ Footer
-- 3-col grid: brand + Work links + Connect links
-- LinkedIn: `https://linkedin.com/in/divyanshriitb`
-- Behance: `https://www.behance.net/divyansh_rastogi`
-- Email: `divyanshr.iitb@gmail.com`
-
-### ✅ Custom Cursor
-- Orange dot (`#cursor`) + lagging ring (`#cursor-ring`)
-- rAF loop with lerp factor 0.14
-- Grows on hover over `a, button, .small-card, .project-row`
-
-### ✅ Scroll Reveal
-- `.reveal` → `.visible` via IntersectionObserver (threshold: 0.12)
-- Staggered with `setTimeout(i * 60ms)`
-
-### ✅ Case Study Overlay System
-Full-page overlay slides in **from the right** over the homepage.
-
-**Structure:**
-```html
-<div id="caseOverlay" class="case-overlay">
-  <div class="overlay-backdrop">        <!-- blurred bg, full screen -->
-  <div class="overlay-actions">         <!-- floating buttons, fixed right edge -->
-    ✕ close (top) | ↑ scroll-to-top (bottom)
-  <div class="overlay-panel">           <!-- width: 5/6 vw, right: 0, slides from right -->
-    <div class="overlay-body">          <!-- scrollable content -->
-```
-
-**Panel:** `width: calc(100vw * 5/6); right: 0` — 1/6 of homepage visible on left. `border-radius: 20px 0 0 20px`. `transform: translateX(100%)` when closed.
-
-**Floating action buttons (`.overlay-actions`):**
-- `position: fixed; top: 36px; bottom: 36px; right: 20px`
-- `flex-direction: column; justify-content: space-between` — X at top, ↑ at bottom
-- Fade in after panel arrives (0.42s delay)
-- `oa-close`: 42px circle, rotates 90° on hover
-- `oa-top`: always visible when overlay is open (no scroll threshold). Scrolls to top on click.
-- **No LinkedIn or email pills** in case study overlay (removed)
-
-**Overlay body padding:** `80px 80px 120px` (80px sides)
-
-**Hash routing:** `#kinko`, `#settlr`, `#refer-earn` — works on direct load too.
-
-**Content:** Templates in `caseStudies` JS object. Each has: hero image, meta grid (role/company/timeline/tools), problem/approach/outcome sections, screen placeholders, Behance link.
-
-### ✅ Resume Overlay
-Slides in from the right, same visual language as case study overlay.
-
-**Structure:**
-```html
-<div id="resumeOverlay" class="resume-overlay">
-  <div class="resume-backdrop">          <!-- blurred bg -->
-  <div class="resume-actions">           <!-- floating buttons, fixed top-right, z-index 970 -->
-    ✕ close | ↓ Download pill
-  <div class="resume-panel">             <!-- width: 2/3 viewport, right: 0 -->
-    <div class="resume-frame-wrap">      <!-- padding-right: 88px for FAB clearance -->
-      <iframe id="resumeFrame">          <!-- Google Drive /preview embed -->
-```
-
-**Key specs:**
-- Panel: `width: calc(100vw * 2/3); right: 0` — 1/3 of homepage visible on left
-- `border-radius: 20px 0 0 20px`
-- Iframe src set on open: `https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/preview`
-- Download link: `https://drive.google.com/uc?export=download&id=1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv`
-- `padding-right: 88px` on `.resume-frame-wrap` to clear FABs
-- Iframe src cleared on close (after 420ms for animation)
-- Reuses `.oa-btn`, `.oa-close`, `.oa-pill` button styles
-- Backdrop + panel fade/slide independently; actions fade in at 0.42s delay
-- Escape key + backdrop click both close
-
-### ✅ Refer & Earn Case Study (fully built)
-
-All images verified loading in preview (naturalWidth > 0, zero broken). Full section map:
-
-1. **Hero** — `cover.png` full-width banner
-2. **The Challenge** — stats + copy (no images)
-3. **Research** — user quotes + IA Audit / PRD Alignment / Hallway Testing cards (no images)
-4. **Ideation** — `approach-1.png` (Minimal UI + Gamification) · `approach-2.png` (Contextual CTA)
-5. **Iteration** — `infographic-v1.png` · `infographic-v2.png` · `infographic-v3.png` (v3 marked ✓ Selected)
-6. **Design Decisions** — stats/copy blocks (no images)
-7. **Before/After** — 3-col grid: `screen-before.png` | `screen-tooltip.png` | `screen-final.png`
-   - "BEFORE" label: `grid-column: 1` | "AFTER" label: `grid-column: 2 / 4`; static, no animation
-8. **Multi-Brand** — `screen-rummy.png` · `screen-poker.png` · `screen-adda52.png`
-9. **Treasure Referrals** (`.cs-dark-section`) — single-column stacked (NOT a 2-col grid)
-   - Order: `.cs-tag` → `h2.cs-section-title` → `.cs-dark-desc` → `.cs-treasure-mockups` → `.cs-treasure-points`
-   - `.cs-dark-desc`: `font-size: 16px; line-height: 1.7; opacity: 0.6; max-width: 60ch`
-   - `.cs-treasure-mockups`: `display: flex; gap: 32px; align-items: flex-end; justify-content: center; margin-top: 48px`
-   - `.cs-treasure-points`: `display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px; margin-top: 48px; border-top: 1px solid rgba(255,255,255,0.1)`
-   - Images: `treasure-1.png` (chest modal) + `treasure-2.png` (contacts list)
-
----
-
-## Pending Work
-
-### 🔲 Content to fill in
-- Case study text (user writes): replace `<!-- Add... -->` comments in JS `caseStudies` object
-- Real project thumbnail images for Kinko and Settlr
-- Hero portrait photo → replace `.photo-placeholder` with `<img>`
-- Footer work links → wire to `#kinko`, `#settlr`, `#refer-earn`
-
-### ✅ Settlr Prototype Viewer (DONE — SPA embed)
-- Built. `.cs-section` "Try It" has a phone-framed `<iframe id="settlrProto">` → `prototype/settlr/index.html#home-dashboard`
-- The mirror is now the real **SPA** (not standalone screens). Switcher pills use `data-slug` (+ `data-params` JSON); JS calls `iframe.contentWindow.SettlrRouterSPA.navigate(slug, params)` (same-origin), instant/animated, no reload
-- Runs offline in local seed-data mode (supabase-config neutralized). See MEMORY.md "Settlr prototype" for regen/gotchas
-
-### 🔲 Settlr case study — remaining polish
-- ✅ 2026-07-01: mirror re-synced to Jun-21 source build (onboarding polish — home-dashboard "Get started" checklist + onboarding type-templates now present). 13 landing-screen gallery shots regenerated from the SPA via `screenshot-spa.js` (in /Desktop/settlr).
-- Gallery still hardcodes 4 retired auth tiles (`login`/`otp`/`splash`/`welcome`) — these no longer exist as SPA routes; drop them from the gallery grid in `index.html` (separate content edit)
-- Mid-flow draft tiles (add-*, settle-amount/method, edit-*, create-group-members) keep their prior shots (need flow-seeding to re-capture)
-- Add a "multi-user" visual (two phones / one shared balance) for the new "From Prototype to Product" section
-
-### 🔲 Alter Ego Dark Page
-- Triggered by flipping the polaroid portrait (3D CSS flip interaction)
-- Separate dark-mode page for filmmaking / photography / art work
-- Page transition: flip animation → dark page slides in
-- Status: **not started**
-
-### 🔲 Deployment
-- Target: Netlify
-- Single `index.html` + `assets/` folder → drag-and-drop deploy
-- Custom domain TBD
-
-### 🔲 Responsive Layout
-- Currently desktop-only (no media query layout changes)
-- To be added after desktop is finalised
-
----
-
-## Known Patterns / Gotchas
-
-1. **Polaroid rotation + reveal class conflict**: The generic `.reveal` sets `transform: translateY(32px)` which overwrites `rotate(1.2deg)`. Fixed with specific overrides on `.hero-photo-wrap.reveal` and `.hero-photo-wrap.reveal.visible`. The hover state uses `!important` to win over both.
-
-2. **Overlay actions z-index**: `overlay-actions` is at `z-index: 820`, above case study overlay panel (`z-index: 800`). Resume actions at `z-index: 970`, above resume overlay (`z-index: 950`). Both use `position: fixed` so not clipped by panel's `overflow: hidden`. `pointer-events: none` on parent hides them when overlay is closed.
-
-3. **Scroll listener on window vs overlayBody**: The main page scroll drives the nav animation. The case study overlay `overlayBody` scroll listener is present but empty (↑ button is always visible now — no scroll threshold).
-
-4. **Eval in preview**: Always wrap multi-statement evals in an IIFE `(() => { ... })()` to avoid illegal return statements.
-
-5. **Small card color reveal + parallax**: Each card has two identical `<img>` tags — `.small-card-bg` (grayscale) and `.small-card-color` (color, `clip-path: circle(0%)`). Color reveal: JS lerps clip-path radius. Frame parallax: JS moves the `.small-card` element itself ±14px H / ±10px V towards cursor. CSS scale(1.05) still applies to images on hover via `.small-card:hover .small-card-bg/.small-card-color`. `overflow: visible` on `.small-grid` allows horizontal card overflow.
-
-6. **Resume iframe lazy load**: `resumeFrame.src` is set to the Drive preview URL only when the overlay opens, and cleared after close animation (420ms timeout).
-
-7. **P3 thumbnail parallax**: FG image (`#p3-fg`) is centered with `transform: translate(-50%, -50%)`. JS mousemove on `.project-row.p3` adds cursor offset to that base transform: `translate(calc(-50% + Xpx), calc(-50% + Ypx))`. Uses CSS `transition: transform 0.4s cubic-bezier(...)` for smooth follow.
-
-8. **Case study overlay panel**: No longer uses `left: var(--overlay-strip)`. Now uses `width: calc(100vw * 5/6); right: 0`. The `--overlay-strip` token is still in `:root` but only the resume overlay conceptually uses the "strip" idea. Transform for close state: `translateX(100%)`.
+## Pending work
+See `TODO.md` (backlog + work log) and the audit report artifact
+(2026-07-16) for the full prioritized list. Design decisions the owner has
+NOT yet made: orange consolidation, radius scale, hero credential line,
+motion curation, dark-world photo curation, case-study end CTAs, contrast
+fixes, Settlr cover-image regeneration (stray backtick is baked into
+`assets/images/settlr/thumbnail.webp`).
