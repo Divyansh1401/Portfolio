@@ -5608,7 +5608,7 @@
 
     /* ─── Experimental Featured Section ───────────────── */
     .experimental-section {
-      padding: 100px 0;
+      padding: 100px 0 48px;
       background: var(--bg); /* match the hero background (#F5F3EE) */
       display: flex;
       flex-direction: column;
@@ -7538,7 +7538,7 @@
       if (!stackEl.querySelector('.card-stack__end')) {
         const end = document.createElement('div');
         end.className = 'card-stack__end';
-        end.style.height = '30vh';
+        end.style.height = '12vh';
         end.setAttribute('aria-hidden', 'true');
         stackEl.appendChild(end);
       }
@@ -8422,10 +8422,10 @@
               </div>
               <div style="background:var(--c-surface);border-radius:16px;padding:24px;">
                 <p style="font-family:var(--f-heading);font-weight:800;font-size:15px;margin:0 0 8px;">Add friends before they join</p>
-                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">Ghost contacts, phone matching, and QR/invite links mean you can split with someone who isn't on Settlr yet — and when they sign up, their history merges automatically. Unlink is the safety net.</p>
+                <p style="font-size:13px;line-height:1.7;color:var(--c-dark);opacity:0.7;margin:0;">Ghost contacts and QR/invite links mean you can split with someone who isn't on Settlr yet — when they join through your invite, the shared history folds into their new account automatically. Unlink is the safety net.</p>
               </div>
             </div>
-            <p style="font-size:12px;color:var(--c-mid);margin-top:16px;padding-left:2px;">Deployed on Cloudflare Pages at <strong>settlrapp.in</strong> · Android TWA in Play Store internal testing · participant-scoped access control, rate-limited lookups, and account deletion built in. <em>v1 tracks balances; it doesn't move money. Real SMS verification and user testing come before public launch.</em></p>
+            <p style="font-size:12px;color:var(--c-mid);margin-top:16px;padding-left:2px;">Deployed on Cloudflare Pages at <strong>settlrapp.in</strong> · Android TWA in Play Store internal testing · participant-scoped access control, rate-limited lookups, and account deletion built in. <em>v1 tracks balances; it doesn't move money. Identity is email/handle-based — no phone number required. Wider user testing comes before public launch.</em></p>
           </div>
 
           <div class="cs-divider"></div>
