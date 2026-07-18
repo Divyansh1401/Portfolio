@@ -32,7 +32,7 @@ the hero actions and `#hobbies` / `#photo-N` to the after-hours feed
 
 - **Fonts**: local variable WOFF2 (Unbounded 200–900, PJS 200–800 + italic),
   TTF fallback, preloaded.
-- **Custom cursor**: dot + lagging ring (+ glass blob, currently inert);
+- **Custom cursor**: dot + lagging ring;
   disabled entirely under reduced motion (native cursor restored via CSS).
 - **Card Stack engine** (`initCardStack`): sticky ScrollStack used by Featured
   (light) and Films (dark).
