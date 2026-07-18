@@ -74,6 +74,11 @@
       --orange: #E06B2D;
       --grey: #6E6B63;   /* was #808080 — darkened to pass AA (4.8:1 on --bg) */
       --radius-pill: 100px;
+      --radius-xs: 4px;    /* chips, tiny tiles */
+      --radius-sm: 8px;    /* buttons, small cards */
+      --radius-md: 12px;   /* cards, media chips */
+      --radius-lg: 20px;   /* large surfaces, frames */
+      --radius-xl: 28px;   /* hero-scale cards */
       /* Brand palette tokens (per design-system.md) — these were referenced
          site-wide but never defined; CSS was falling back to transparent
          which is why action-button fills weren't rendering. */
@@ -334,7 +339,7 @@
       color: #fff;
       background: var(--c-orange);
       padding: 5px 10px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
@@ -785,11 +790,11 @@
       position: relative;
       width: 100%;
       transform-style: preserve-3d;
-      border-radius: 4px; /* Framer radius */
+      border-radius: var(--radius-xs); /* Framer radius */
     }
     .hero-photo-face {
       padding: 12px 12px 64px; /* Framer padding */
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       width: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
@@ -812,7 +817,7 @@
     .polaroid-glare {
       position: absolute;
       inset: 0;
-      border-radius: 3px;
+      border-radius: var(--radius-xs);
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.4s ease;
@@ -858,7 +863,7 @@
       align-items: center;
       padding: 20px 20px 64px;
       background: var(--c-bg3);
-      border-radius: 3px;
+      border-radius: var(--radius-xs);
       box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(237,236,234,0.05);
       max-width: 420px; width: 100%;
       transform: rotate(-1.2deg);
@@ -938,7 +943,7 @@
     .small-grid > .small-card:nth-child(4) { margin-top: 80px; }
 
     .small-card {
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       overflow: hidden;
       aspect-ratio: 9/16;
       position: relative;
@@ -1027,7 +1032,7 @@
     }
     .unified-footer {
       background: #080808;
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       position: relative;
       overflow: hidden;
       display: flex;
@@ -1155,7 +1160,7 @@
       font-size: 12px;
       font-weight: 600;
       padding: 5px 12px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.25s, transform 0.25s;
@@ -1206,7 +1211,7 @@
       position: fixed;
       width: 8px;
       height: 8px;
-      border-radius: 2px;
+      border-radius: var(--radius-xs);
       pointer-events: none;
       z-index: 9999;
       animation: confettiFall 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
@@ -1229,7 +1234,7 @@
       --rcpt-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Courier New', monospace;
       position: relative;
       background: var(--rcpt-ink);
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       overflow: hidden;
       color: #F5F3EE;
     }
@@ -1327,7 +1332,7 @@
     .rcpt-slot-face {
       position: relative;
       height: 28px;
-      border-radius: 9px;
+      border-radius: var(--radius-sm);
       background: linear-gradient(180deg, #1E1F1C 0%, #131412 55%, #0A0B09 100%);
       border: 1px solid rgba(245,243,238,0.09);
       box-shadow:
@@ -1342,7 +1347,7 @@
       top: 50%;
       height: 7px;
       transform: translateY(-50%);
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       background: #050505;
       box-shadow:
         0 2px 4px rgba(0,0,0,0.9) inset,
@@ -1522,7 +1527,7 @@
       height: 70px;
       margin: 3px 0 2px;
       border: 1.5px dashed rgba(42,39,34,0.38);
-      border-radius: 5px;
+      border-radius: var(--radius-xs);
       padding: 3px;
     }
     .rcpt-scratch-under {
@@ -1533,7 +1538,7 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
-      border-radius: 3px;
+      border-radius: var(--radius-xs);
       text-decoration: none;
       color: #191713;
       background: radial-gradient(120% 160% at 50% 0%, rgba(224,107,45,0.07), transparent 60%), transparent;
@@ -1578,7 +1583,7 @@
       inset: 3px;
       width: calc(100% - 6px);
       height: calc(100% - 6px);
-      border-radius: 3px;
+      border-radius: var(--radius-xs);
       touch-action: none;
       pointer-events: none;
       transition: opacity 0.55s ease;
@@ -1639,7 +1644,7 @@
       z-index: 5;
       padding: 9px 16px 8px;
       border: 3px solid var(--rcpt-stamp-red);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       color: var(--rcpt-stamp-red);
       font-family: var(--rcpt-mono);
       font-weight: 700;
@@ -1870,7 +1875,7 @@
       align-items: center;
       width: 42px;
       height: 42px;
-      border-radius: 21px;
+      border-radius: var(--radius-lg);
       padding: 0;
       overflow: hidden;
       justify-content: flex-start;
@@ -1920,7 +1925,7 @@
     }
     .overlay-body::-webkit-scrollbar { width: 4px; }
     .overlay-body::-webkit-scrollbar-track { background: transparent; }
-    .overlay-body::-webkit-scrollbar-thumb { background: rgba(27,28,26,0.15); border-radius: 2px; }
+    .overlay-body::-webkit-scrollbar-thumb { background: rgba(27,28,26,0.15); border-radius: var(--radius-xs); }
 
     /* ── Case study content pieces ─── */
     .cs-hero {
@@ -4747,12 +4752,12 @@
     .cs-viz-owe { font-size: 13px; font-weight: 600; background: #F7E4DC; color: #B85C42; padding: 6px 12px; border-radius: var(--radius-pill); }
     .cs-viz-total { font-family: var(--f-heading); font-size: 17px; font-weight: 800; color: var(--c-dark); }
     .cs-viz-rows { display: flex; gap: 4px; }
-    .cs-viz-rows i { height: 4px; background: var(--c-dark); opacity: 0.14; border-radius: 2px; }
+    .cs-viz-rows i { height: 4px; background: var(--c-dark); opacity: 0.14; border-radius: var(--radius-xs); }
     .cs-viz-rows i:nth-child(1) { width: 44px; } .cs-viz-rows i:nth-child(2) { width: 30px; } .cs-viz-rows i:nth-child(3) { width: 36px; }
     .cs-viz-seg { display: inline-flex; border: 1px solid rgba(27,28,26,0.18); border-radius: var(--radius-pill); overflow: hidden; font-size: 11px; font-weight: 600; }
     .cs-viz-seg i { font-style: normal; padding: 6px 12px; color: var(--c-dark); opacity: 0.55; }
     .cs-viz-seg i.on { background: var(--c-dark); color: var(--c-light); opacity: 1; }
-    .cs-viz-tok { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 10px; font-weight: 600; color: var(--c-dark); background: rgba(27,28,26,0.07); padding: 5px 7px; border-radius: 5px; }
+    .cs-viz-tok { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 10px; font-weight: 600; color: var(--c-dark); background: rgba(27,28,26,0.07); padding: 5px 7px; border-radius: var(--radius-xs); }
     .cs-viz-tok--olivebg { background: rgba(74,93,35,0.12); }
     .cs-viz-tok--btn { background: #4A5D23; color: #fff; border-radius: var(--radius-pill); padding: 5px 9px; }
     .cs-viz-arrow { opacity: 0.4; font-size: 11px; color: var(--c-dark); }
@@ -4763,7 +4768,7 @@
       height: 200px; width: auto; max-width: 320px; object-fit: cover;
       transform: translate(0, -100%) scale(0.98);
       transform-origin: bottom left;
-      border-radius: 10px; border: 1px solid rgba(27,28,26,0.12);
+      border-radius: var(--radius-sm); border: 1px solid rgba(27,28,26,0.12);
       box-shadow: 0 14px 40px rgba(27,28,26,0.22);
       pointer-events: none; z-index: 810;
       opacity: 0; visibility: hidden;
@@ -5436,7 +5441,7 @@
     .art-panel { overflow-y: auto; background: var(--c-bg3); border-left: 1px solid var(--c-dim); padding: 28px 20px; scrollbar-width: thin; scrollbar-color: var(--c-dim) transparent; }
     .art-cat-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--c-muted); opacity: 0.5; margin-bottom: 12px; padding-left: 2px; }
     .art-thumb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 28px; }
-    .art-thumb { aspect-ratio: 1; border-radius: 4px; overflow: hidden; cursor: none; position: relative; transition: transform 0.15s ease; outline: 1.5px solid transparent; outline-offset: 2px; }
+    .art-thumb { aspect-ratio: 1; border-radius: var(--radius-xs); overflow: hidden; cursor: none; position: relative; transition: transform 0.15s ease; outline: 1.5px solid transparent; outline-offset: 2px; }
     .art-thumb:hover { transform: scale(1.04); }
     .art-thumb.active { outline-color: var(--c-accent); transform: scale(1.04); }
     .art-thumb .art-fill { transition: filter 0.2s ease; }
@@ -5519,7 +5524,7 @@
       position: absolute;
       height: 100%;
       width: max-content;
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       box-shadow: 0 40px 80px rgba(0,0,0,0.6);
       will-change: transform, opacity;
       opacity: 0;
@@ -5532,7 +5537,7 @@
       height: 100%;
       width: auto;
       object-fit: contain;
-      border-radius: 10.75px; 
+      border-radius: var(--radius-md); 
       display: block;
       pointer-events: none;
       background: var(--c-bg);
@@ -5625,7 +5630,7 @@
       max-width: 950px;
       aspect-ratio: 16 / 9;
       height: auto;
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       cursor: none;
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: transform;
@@ -5685,7 +5690,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -5867,10 +5872,10 @@
     .exp-desc { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.9); margin-bottom: 32px; max-width: 32ch; }
     .exp-tools-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; margin-bottom: 12px; display: block; color: #fff; }
     .exp-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
-    .tool-tag { font-size: 12px; padding: 4px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 99px; color: #fff; }
+    .tool-tag { font-size: 12px; padding: 4px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-pill); color: #fff; }
 
-    .exp-border-inner { position: absolute; inset: 2px; border: 1.5px solid #D1CFCF; border-radius: 18px; pointer-events: none; z-index: 5; }
-    .exp-border-outer { position: absolute; inset: 0; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 20px; pointer-events: none; z-index: 6; overflow: hidden; }
+    .exp-border-inner { position: absolute; inset: 2px; border: 1.5px solid #D1CFCF; border-radius: var(--radius-lg); pointer-events: none; z-index: 5; }
+    .exp-border-outer { position: absolute; inset: 0; border: 1.5px solid rgba(255,255,255,0.3); border-radius: var(--radius-lg); pointer-events: none; z-index: 6; overflow: hidden; }
 
     @media (max-width: 768px) {
       .exp-card { height: 70vh; width: 95vw; }
@@ -5892,7 +5897,7 @@
       position: absolute;
       inset: 0;
       border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       pointer-events: none;
       z-index: 6;
       /* removed overflow:hidden to allow pseudo glow to span the stroke */
@@ -5903,7 +5908,7 @@
       content: "";
       position: absolute;
       inset: -1px; /* Cover border width exactly */
-      border-radius: 20px; /* Match outer */
+      border-radius: var(--radius-lg); /* Match outer */
       padding: 1.5px; /* Stroke width of the glow */
       background: radial-gradient(
         350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
@@ -5999,7 +6004,7 @@
       width: 100%;
       max-width: 1350px;
       margin: 0 auto;
-      border-radius: 26px;
+      border-radius: var(--radius-xl);
       overflow: hidden;
       /* sharp-edged drop shadow (no blur), cast at 45° (equal right & down offset) */
       box-shadow: 14px 14px 0 rgba(12,12,11,0.11);
@@ -6032,7 +6037,7 @@
       overflow: visible;
     }
     .film-panel .card-stack__dim {
-      border-radius: 20px; /* match .exp-card's border-radius so the veil hugs the card shape */
+      border-radius: var(--radius-lg); /* match .exp-card's border-radius so the veil hugs the card shape */
       /* pointer-events:none is already inherited from .card-stack__dim above,
          so the covered card's full-bleed YouTube <a> (z-index:20) still
          receives clicks even while dimmed. */
@@ -6096,7 +6101,7 @@
       content: '';
       width: 8px;
       height: 8px;
-      border-radius: 2px;
+      border-radius: var(--radius-xs);
       background: var(--c-orange);
       transform: rotate(45deg);
       flex-shrink: 0;
@@ -6357,7 +6362,7 @@
       align-items: center;
       gap: 10px;
       padding: 34px 44px;
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       background: rgba(245,243,238,0.55);
       border: 1px solid rgba(255,255,255,0.55);
       box-shadow: 0 12px 34px rgba(12,12,11,0.14);
@@ -6434,7 +6439,7 @@
       max-width: 100%;
       max-height: 90vh;
       object-fit: contain;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
     .lightbox-btn {
