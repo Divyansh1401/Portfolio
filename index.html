@@ -411,6 +411,13 @@
       text-decoration: none;
       transition: all 0.2s;
     }
+    /* ── Nav toggle A: segmented world switch (preview only) ── */
+    .world-seg { display: inline-flex; border: 1px solid rgba(12,12,11,0.35); margin-right: 14px; }
+    .world-seg__opt { appearance: none; background: none; border: 0; padding: 0 14px; height: 46px; font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); opacity: 0.5; cursor: pointer; }
+    .world-seg__opt.is-on { background: var(--text); color: var(--bg); opacity: 1; }
+    #main-nav.is-dark .world-seg { border-color: rgba(237,236,234,0.35); }
+    #main-nav.is-dark .world-seg__opt { color: #EDECEA; }
+    #main-nav.is-dark .world-seg__opt.is-on { background: #EDECEA; color: #0D0E0C; }
     .btn-outline {
       position: relative;
       min-width: 180px;
@@ -6650,6 +6657,10 @@
       </div>
     </div>
     <div class="nav-buttons">
+      <div class="world-seg" role="group" aria-label="Choose world" data-world-toggle>
+        <button type="button" class="world-seg__opt world-seg__opt--work is-on flip-trigger-btn" aria-pressed="true">Work</button>
+        <button type="button" class="world-seg__opt world-seg__opt--play flip-trigger-btn" aria-pressed="false">After hours</button>
+      </div>
       <button class="btn-hero btn-outline" id="navResumeTrigger" type="button">View Resume</button>
       <a href="#connect" class="btn-hero btn-solid"><span>Let's Connect</span></a>
     </div>
@@ -10824,6 +10835,43 @@
     routeHash(true);
   </script>
 
+  <!-- Nav world-toggle: reflect world state on the segmented switch.
+       Order matters: the worldsync listener MUST be registered before the
+       initial sync() dispatch, or a deep-linked #hobbies load (where
+       routeHash(true) has already set is-dark) leaves the toggle stale. -->
+  <script>
+  (function () {
+    const nav = document.getElementById('main-nav');
+    const seg = document.querySelector('.world-seg');
+    if (!nav || !seg) return;
+    const workBtn = seg.querySelector('.world-seg__opt--work');
+    const playBtn = seg.querySelector('.world-seg__opt--play');
+
+    seg.addEventListener('worldsync', (e) => {
+      const dark = e.detail;
+      workBtn.classList.toggle('is-on', !dark);
+      workBtn.setAttribute('aria-pressed', String(!dark));
+      playBtn.classList.toggle('is-on', dark);
+      playBtn.setAttribute('aria-pressed', String(dark));
+    });
+
+    // Clicking the already-active side must not flip the world.
+    seg.addEventListener('click', (e) => {
+      const btn = e.target.closest('.world-seg__opt');
+      if (btn && btn.classList.contains('is-on')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    }, true);
+
+    const sync = () => {
+      const dark = nav.classList.contains('is-dark');
+      document.querySelectorAll('[data-world-toggle]').forEach(el => el.dispatchEvent(new CustomEvent('worldsync', { detail: dark })));
+    };
+    new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ['class'] });
+    sync();
+  })();
+  </script>
 
 </body>
 </html>

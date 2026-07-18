@@ -38,7 +38,10 @@ the hero actions and `#hobbies` / `#photo-N` to the after-hours feed
   (light) and Films (dark).
 - **Hero**: toolbar rail · fit-to-width name (`scaleName()`) · polaroid
   (`#heroPolaroid`, keyboard-operable) that flips worlds via
-  `playEgoTransition` → `setAlterEgoMode`.
+  `playEgoTransition` → `setAlterEgoMode`. The nav also carries a persistent
+  Work / After-hours segmented toggle (`.world-seg`, buttons classed
+  `flip-trigger-btn`) whose active side is kept in sync with
+  `#main-nav.is-dark` via a `MutationObserver`.
 - **Receipt footers** (`initReceiptFooter`, one per world): print-on-scroll,
   scratch-off foil (ResizeObserver re-draws the dark one when it becomes
   visible), stamp, confetti.
