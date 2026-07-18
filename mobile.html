@@ -406,6 +406,11 @@
   .pa-link-cta svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
   .pa-link-cta:active svg { transform: translateX(3px); }
 
+  .pa-live { display: inline-flex; align-items: center; gap: 6px; }
+  .pa-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #2E8B57; box-shadow: 0 0 0 2px rgba(46,139,87,0.18); flex-shrink: 0; }
+  .suit { font-style: normal; }
+  .suit--red { color: #C43C31; }
+
   /* text-only post */
   .post-quote {
     font-size: 17px; line-height: 1.6; max-width: 34ch;
@@ -732,6 +737,7 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
     .reveal { transition: none; opacity: 1; transform: none; }
     .hp-inner { transition-duration: 0.01s; }
   }
@@ -801,12 +807,12 @@
   <!-- ── Post 01 · Settlr ── -->
   <article class="post reveal" id="settlr">
     <div class="scroller-wrap">
-      <div class="cards-scroller">
+      <div class="cards-scroller" role="region" aria-roledescription="carousel" aria-label="Settlr screens">
         <div class="post-media featured-card tilt-l"><img src="assets/images/settlr/thumbnail.webp" alt="Settlr cover — app and design system" loading="lazy"></div>
         <div class="post-media featured-card tilt-r"><img src="assets/images/settlr/Components.webp" alt="Settlr design-system component sheet" loading="lazy"></div>
         <div class="post-media featured-card tilt-l"><img src="assets/images/settlr/cover-phone.webp" alt="Settlr app on a phone — splitting made easy" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
       </div>
     </div>
@@ -831,18 +837,19 @@
     </div>
     <div class="post-actions" style="margin-top:0;">
       <a href="index.html#settlr" class="pa-link-cta">View case study <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a class="pa-link pa-live" href="https://settlrapp.in" target="_blank" rel="noopener"><span class="pa-live-dot" aria-hidden="true"></span>Live at settlrapp.in</a>
     </div>
   </article>
 
   <!-- ── Post 02 · Refer & Earn ── -->
   <article class="post reveal" id="refer-earn">
     <div class="scroller-wrap">
-      <div class="cards-scroller">
+      <div class="cards-scroller" role="region" aria-roledescription="carousel" aria-label="Refer & Earn screens">
         <div class="post-media featured-card tilt-r"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 1" loading="lazy"></div>
         <div class="post-media featured-card tilt-l"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 2" loading="lazy"></div>
         <div class="post-media featured-card tilt-r"><img src="assets/images/refer-earn/thumbnail.webp" alt="Refer &amp; Earn 3" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
       </div>
     </div>
@@ -854,7 +861,7 @@
       <p>A referral feature rebuilt for <b>clarity</b> and sharper <b>hierarchy</b> — then rolled out across <b>three live gaming brands</b>.</p>
       <div class="post-stats">
         <div class="post-stat"><i>03</i><em>Brands shipped</em></div>
-        <div class="post-stat"><i>♦ ♣ ♠</i><em>Game brands</em></div>
+        <div class="post-stat"><i><span class="suit suit--red">&#9830;&#xFE0E;</span> <span class="suit">&#9827;&#xFE0E;</span> <span class="suit">&#9824;&#xFE0E;</span></i><em>Game brands</em></div>
         <div class="post-stat"><i>A23</i><em>Head Digital</em></div>
         <div class="post-stat"><i>Live</i><em>In production</em></div>
       </div>
@@ -873,7 +880,7 @@
   <!-- ── Post 03 · Kinko (NDA) ── -->
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller">
+      <div class="cards-scroller" role="region" aria-roledescription="carousel" aria-label="Kinko Insurance preview">
         <div class="post-media featured-card tilt-l">
           <img src="assets/images/kinko/thumbnail.webp" alt="Kinko Insurance design system, blurred — under NDA" loading="lazy">
           <div class="nda-veil"><span>Coming soon</span></div>
@@ -1029,14 +1036,14 @@
   <!-- ── Photography (categorized) ── -->
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2" role="region" aria-roledescription="carousel" aria-label="Astrophotography photos">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_20211004_184448-01.webp" alt="Astrophotography" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_3181.webp" alt="Astrophotography" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/IMG_3657.webp" alt="Astrophotography" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/Snapseed.webp" alt="Astrophotography" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/moon%20fin.webp" alt="Astrophotography" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1055,7 +1062,7 @@
 
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2" role="region" aria-roledescription="carousel" aria-label="Cars photos">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5406.webp" alt="Cars" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_5422.webp" alt="Cars" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_5433.webp" alt="Cars" loading="lazy"></div>
@@ -1074,7 +1081,7 @@
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6225.webp" alt="Cars" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6239.webp" alt="Cars" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1105,12 +1112,12 @@
 
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2" role="region" aria-roledescription="carousel" aria-label="Animals photos">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_2164.webp" alt="Animals" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_6288.webp" alt="Animals" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_6311.webp" alt="Animals" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1127,7 +1134,7 @@
 
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller matted" style="--card-ar: 3 / 2">
+      <div class="cards-scroller matted" style="--card-ar: 3 / 2" role="region" aria-roledescription="carousel" aria-label="More photos">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_2352.webp" alt="More" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/DSC_3675.webp" alt="More" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/DSC_3801.webp" alt="More" loading="lazy"></div>
@@ -1146,7 +1153,7 @@
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/photography/IMG_3876.webp" alt="More" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/photography/Snapseed-1.webp" alt="More" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1178,7 +1185,7 @@
   <!-- ── Cyanotype ── -->
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller matted" style="--card-ar: 4 / 3">
+      <div class="cards-scroller matted" style="--card-ar: 4 / 3" role="region" aria-roledescription="carousel" aria-label="Cyanotype prints">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/Group-26088911.webp" alt="Cyanotype" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/Cyanotype/Group-26088913.webp" alt="Cyanotype" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/Group-26088914.webp" alt="Cyanotype" loading="lazy"></div>
@@ -1186,7 +1193,7 @@
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/Cyanotype/IMG_6662-1.webp" alt="Cyanotype" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/Cyanotype/IMG_6840-1.webp" alt="Cyanotype" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1210,14 +1217,14 @@
   <!-- ── Hydrone ── -->
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller" style="--card-ar: 16 / 9">
+      <div class="cards-scroller" style="--card-ar: 16 / 9" role="region" aria-roledescription="carousel" aria-label="Hydrone renders">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/1.webp" alt="Hydrone" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/hydrone/2.webp" alt="Hydrone" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/3.webp" alt="Hydrone" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/hydrone/5.webp" alt="Hydrone" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/hydrone/6.webp" alt="Hydrone" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1243,14 +1250,14 @@
   <!-- ── 3D Watch ── -->
   <article class="post reveal">
     <div class="scroller-wrap">
-      <div class="cards-scroller" style="--card-ar: 1 / 1">
+      <div class="cards-scroller" style="--card-ar: 1 / 1" role="region" aria-roledescription="carousel" aria-label="Visible watch renders">
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/1.webp" alt="3D Watch" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/watch/2.webp" alt="3D Watch" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/3.webp" alt="3D Watch" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-r"><img src="assets/images/watch/4.webp" alt="3D Watch" loading="lazy"></div>
         <div class="post-media featured-card fit tilt-l"><img src="assets/images/watch/5.webp" alt="3D Watch" loading="lazy"></div>
       </div>
-      <div class="carousel-dots">
+      <div class="carousel-dots" aria-hidden="true">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
@@ -1402,7 +1409,7 @@
   document.querySelectorAll('.redirect-card').forEach(card => {
     card.addEventListener('click', () => {
       const wantDark = card.dataset.flipTo === 'dark';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       if (root.classList.contains('dark') === wantDark) return;
       const t0 = Date.now();
       const iv = setInterval(() => {

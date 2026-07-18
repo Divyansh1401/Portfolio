@@ -1760,6 +1760,7 @@
     .resume-overlay.is-open .resume-panel { transform: translateX(0); box-shadow: -16px 0 80px rgba(27,28,26,0.28); }
 
     .resume-frame-wrap {
+      position: relative;
       width: 100%;
       height: 100%;
       box-sizing: border-box;                        /* iframe spans the full card now */
@@ -1770,6 +1771,8 @@
       border: none;
       display: block;
     }
+    .resume-fallback { position: absolute; left: 16px; bottom: 16px; z-index: 2; margin: 0; font-size: 12px; color: var(--grey); background: var(--bg); border: 1px solid rgba(12,12,11,0.15); padding: 6px 12px; border-radius: var(--radius-pill); }
+    .resume-fallback a { color: var(--orange); text-decoration: none; border-bottom: 1px solid var(--orange); }
 
     /* ─── Case Study Overlay ────────────────────────── */
     .case-overlay {
@@ -6176,6 +6179,9 @@
       transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .cs2-panel:hover .cs2-tag { color: currentColor; }
+    .cs2-live { display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin-top: 14px; font-size: 13px; font-weight: 700; color: inherit; text-decoration: none; letter-spacing: 0.01em; }
+    .cs2-live:hover { color: var(--c-orange); }
+    .cs2-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #2E8B57; box-shadow: 0 0 0 3px rgba(46,139,87,0.18); }
     .cs2-tag--lock {
       display: inline-flex;
       align-items: center;
@@ -6610,6 +6616,8 @@
       outline-offset: 3px;
     }
 
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
     /* Reduced motion: restore the native cursor (the custom one never
        initializes) and hide its now-static decorations. */
     @media (prefers-reduced-motion: reduce) {
@@ -6747,6 +6755,7 @@
               <span class="cs2-tag">Accessibility</span>
               <span class="cs2-tag">Claude workflow</span>
             </div>
+            <a class="cs2-live" href="https://settlrapp.in" target="_blank" rel="noopener" data-stop="true"><span class="cs2-live-dot" aria-hidden="true"></span>Live at settlrapp.in</a>
             <a class="cs2-cta cs2-cta--link" href="#settlr">View case study <span class="cs2-arr">→</span></a>
           </div>
           <div class="cs2-media">
@@ -6778,14 +6787,14 @@
       <div class="card-stack__slot">
         <article class="card-stack__panel cs2-panel cs2-panel--refer case-link" data-project="refer-earn" aria-labelledby="cs2-refer-title">
           <div class="cs2-suits" aria-hidden="true">
-            <span style="--s:190px; --r:-14deg; top:-4%;  left:2%;">♠</span>
-            <span style="--s:120px; --r:10deg;  top:30%;  left:26%;">♥</span>
-            <span style="--s:230px; --r:8deg;   top:56%;  left:-3%;">♦</span>
-            <span style="--s:110px; --r:-8deg;  top:8%;   left:44%;">♣</span>
-            <span style="--s:170px; --r:16deg;  top:66%;  left:38%;">♠</span>
-            <span style="--s:140px; --r:-12deg; top:-6%;  left:70%;">♦</span>
-            <span style="--s:210px; --r:6deg;   top:44%;  left:78%;">♣</span>
-            <span style="--s:100px; --r:-16deg; top:80%;  left:64%;">♥</span>
+            <span class="suit" style="--s:190px; --r:-14deg; top:-4%;  left:2%;">&#9824;&#xFE0E;</span>
+            <span class="suit suit--red" style="--s:120px; --r:10deg;  top:30%;  left:26%;">&#9829;&#xFE0E;</span>
+            <span class="suit suit--red" style="--s:230px; --r:8deg;   top:56%;  left:-3%;">&#9830;&#xFE0E;</span>
+            <span class="suit" style="--s:110px; --r:-8deg;  top:8%;   left:44%;">&#9827;&#xFE0E;</span>
+            <span class="suit" style="--s:170px; --r:16deg;  top:66%;  left:38%;">&#9824;&#xFE0E;</span>
+            <span class="suit suit--red" style="--s:140px; --r:-12deg; top:-6%;  left:70%;">&#9830;&#xFE0E;</span>
+            <span class="suit" style="--s:210px; --r:6deg;   top:44%;  left:78%;">&#9827;&#xFE0E;</span>
+            <span class="suit suit--red" style="--s:100px; --r:-16deg; top:80%;  left:64%;">&#9829;&#xFE0E;</span>
           </div>
           <div class="cs2-text">
             <p class="cs2-kicker"><b>Shipped</b>&nbsp;·&nbsp;02&nbsp;&nbsp;—&nbsp;&nbsp;Head Digital Works · A23</p>
@@ -6796,7 +6805,7 @@
             </p>
             <div class="cs2-stats" role="list" aria-label="Project stats">
               <div class="cs2-stat" role="listitem"><i>03</i><em>Brands shipped</em></div>
-              <div class="cs2-stat" role="listitem"><i>♦ ♣ ♠</i><em>Game brands</em></div>
+              <div class="cs2-stat" role="listitem"><i><span class="suit suit--red">&#9830;&#xFE0E;</span> <span class="suit">&#9827;&#xFE0E;</span> <span class="suit">&#9824;&#xFE0E;</span></i><em>Game brands</em></div>
               <div class="cs2-stat" role="listitem"><i>A23</i><em>Head Digital</em></div>
               <div class="cs2-stat" role="listitem"><i>Live</i><em>In production</em></div>
             </div>
@@ -6949,7 +6958,8 @@
 
           <div class="rcpt-viewport">
             <div class="rcpt-tilt" id="rcptTilt">
-              <div class="rcpt-receipt" id="rcptReceipt" aria-label="Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.">
+              <div class="rcpt-receipt" id="rcptReceipt">
+                <span class="sr-only">Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.</span>
 
                 <div class="rcpt-head">
                   <div class="rcpt-name">DIVYANSH&nbsp;RASTOGI</div>
@@ -7044,7 +7054,6 @@
     <section class="film-section" id="films">
       <div class="film-section-header reveal">
         <h2 class="film-section-title">Filmmaking</h2>
-        <p class="film-section-sub">My motivation for film</p>
       </div>
       <canvas class="interactive-dot-grid-canvas" data-theme="dark"></canvas>
       <!-- Reusable scroll-stacking engine — see .card-stack* / initCardStack() -->
@@ -7264,7 +7273,8 @@
 
             <div class="rcpt-viewport">
               <div class="rcpt-tilt">
-                <div class="rcpt-receipt" aria-label="Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.">
+                <div class="rcpt-receipt">
+                  <span class="sr-only">Receipt: an itemized bill of what you get by hiring Divyansh Rastogi. Scratch the foil over the total to reveal the price.</span>
 
                   <div class="rcpt-head">
                     <div class="rcpt-name">DIVYANSH&nbsp;RASTOGI</div>
@@ -7384,6 +7394,7 @@
     <div class="resume-panel">
       <div class="resume-frame-wrap">
         <iframe id="resumeFrame" src="" frameborder="0" allowfullscreen title="Divyansh Rastogi Resume"></iframe>
+        <p class="resume-fallback">Preview blocked? <a href="https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/view" target="_blank" rel="noopener">Open in Drive ↗</a></p>
       </div>
     </div>
   </div>
