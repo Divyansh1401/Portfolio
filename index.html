@@ -20,7 +20,7 @@
   <meta property="og:image" content="https://www.divyanshrastogi.in/assets/images/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Divyansh Rastogi — product designer. Shaping digital products and design systems with clarity and character.">
+  <meta property="og:image:alt" content="Divyansh Rastogi — Product Designer II at Head Digital Works, IDC IIT Bombay · AIR 5, open to full-time roles. Shaping digital products and design systems with clarity and character.">
   <meta name="twitter:card" content="summary_large_image">
   <script type="application/ld+json">
   {
@@ -4799,6 +4799,45 @@
       margin-top: calc(2 * var(--u));
     }
 
+    /* Philosophy specimen visuals — tiny embodiments of each principle,
+       using the Settlr app's own palette (not portfolio tokens). */
+    .cs-phil-viz { display: flex; align-items: center; gap: 10px; height: 56px; margin: 4px 0 2px; }
+    .cs-phil-viz--col { flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; }
+    .cs-viz-dot { width: 34px; height: 34px; border-radius: 50%; }
+    .cs-viz-dot--olive { background: #4A5D23; box-shadow: 0 2px 8px rgba(74,93,35,0.35); }
+    .cs-viz-dot--blue { background: #5B6B8C; opacity: 0.35; position: relative; }
+    .cs-viz-dot--blue::after { content: ''; position: absolute; left: -4px; top: 15px; width: 42px; height: 2px; background: #B3261E; transform: rotate(-24deg); }
+    .cs-viz-owe { font-size: 13px; font-weight: 600; background: #F7E4DC; color: #B85C42; padding: 6px 12px; border-radius: var(--radius-pill); }
+    .cs-viz-total { font-family: var(--f-heading); font-size: 17px; font-weight: 800; color: var(--c-dark); }
+    .cs-viz-rows { display: flex; gap: 4px; }
+    .cs-viz-rows i { height: 4px; background: var(--c-dark); opacity: 0.14; border-radius: 2px; }
+    .cs-viz-rows i:nth-child(1) { width: 44px; } .cs-viz-rows i:nth-child(2) { width: 30px; } .cs-viz-rows i:nth-child(3) { width: 36px; }
+    .cs-viz-seg { display: inline-flex; border: 1px solid rgba(27,28,26,0.18); border-radius: var(--radius-pill); overflow: hidden; font-size: 11px; font-weight: 600; }
+    .cs-viz-seg i { font-style: normal; padding: 6px 12px; color: var(--c-dark); opacity: 0.55; }
+    .cs-viz-seg i.on { background: var(--c-dark); color: var(--c-light); opacity: 1; }
+    .cs-viz-tok { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 10px; font-weight: 600; color: var(--c-dark); background: rgba(27,28,26,0.07); padding: 5px 7px; border-radius: 5px; }
+    .cs-viz-tok--olivebg { background: rgba(74,93,35,0.12); }
+    .cs-viz-tok--btn { background: #4A5D23; color: #fff; border-radius: var(--radius-pill); padding: 5px 9px; }
+    .cs-viz-arrow { opacity: 0.4; font-size: 11px; color: var(--c-dark); }
+
+    /* Decision-row hover preview: bottom-left corner rides the cursor. */
+    #csHoverPreview {
+      position: fixed; left: 0; top: 0;
+      height: 200px; width: auto; max-width: 320px; object-fit: cover;
+      transform: translate(0, -100%) scale(0.98);
+      transform-origin: bottom left;
+      border-radius: 10px; border: 1px solid rgba(27,28,26,0.12);
+      box-shadow: 0 14px 40px rgba(27,28,26,0.22);
+      pointer-events: none; z-index: 810;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.16s ease, transform 0.16s ease;
+    }
+    #csHoverPreview.on { opacity: 1; visibility: visible; transform: translate(0, -100%) scale(1); }
+    @media (prefers-reduced-motion: reduce) {
+      #csHoverPreview { transition: none; }
+    }
+    .cs-decision--big[data-hover-img] { cursor: none; }
+
     /* ── Tier architecture diagram ───────────────────── */
     .cs-tier-grid {
       display: grid;
@@ -7438,6 +7477,9 @@
     </div>
   </div>
 
+  <!-- Cursor-anchored hover preview for case-study decision rows -->
+  <img id="csHoverPreview" alt="" aria-hidden="true">
+
   <!-- ── Photography Lightbox ── -->
   <div id="photo-lightbox" class="photo-lightbox">
     <div class="lightbox-overlay" id="lightbox-overlay"></div>
@@ -8440,26 +8482,31 @@
             <div class="cs-principles-grid">
               <div class="cs-principle-card">
                 <span class="cs-principle-num">01</span>
+                <div class="cs-phil-viz"><span class="cs-viz-dot cs-viz-dot--olive"></span><span class="cs-viz-dot cs-viz-dot--blue"></span></div>
                 <p class="cs-principle-title">Warm over clinical</p>
                 <p class="cs-principle-body">Most fintech goes cold and authoritative. Olive over blue. Warm neutral backgrounds over cool grays. The product feels like a friend, not a bank.</p>
               </div>
               <div class="cs-principle-card">
                 <span class="cs-principle-num">02</span>
+                <div class="cs-phil-viz"><span class="cs-viz-owe">you owe ₹840</span></div>
                 <p class="cs-principle-title">Honest, not alarming</p>
                 <p class="cs-principle-body">Coral for amounts you owe, not red. The debt is real, but the colour shouldn't make it feel like an error. Design should reflect reality without amplifying anxiety.</p>
               </div>
               <div class="cs-principle-card">
                 <span class="cs-principle-num">03</span>
+                <div class="cs-phil-viz cs-phil-viz--col"><span class="cs-viz-total">₹1,14,802</span><span class="cs-viz-rows"><i></i><i></i><i></i></span></div>
                 <p class="cs-principle-title">Batch, don't burden</p>
                 <p class="cs-principle-body">Home shows total balance, not an itemised list. Detail lives where you need it: group page, activity feed. Cognitive load is managed by deferring complexity, not hiding it.</p>
               </div>
               <div class="cs-principle-card">
                 <span class="cs-principle-num">04</span>
+                <div class="cs-phil-viz"><span class="cs-viz-seg"><i class="on">Equally</i><i>Amount</i><i>%</i></span></div>
                 <p class="cs-principle-title">Behaviour-anchored defaults</p>
                 <p class="cs-principle-body">Equal split is default. The review screen shows ₹X per person even on equal splits. Recent groups surface first. The right choice should always be the easiest one.</p>
               </div>
               <div class="cs-principle-card">
                 <span class="cs-principle-num">05</span>
+                <div class="cs-phil-viz"><span class="cs-viz-tok cs-viz-tok--olivebg">olive-600</span><span class="cs-viz-arrow">→</span><span class="cs-viz-tok">--btn-primary</span><span class="cs-viz-arrow">→</span><span class="cs-viz-tok cs-viz-tok--btn">Button</span></div>
                 <p class="cs-principle-title">System over screens</p>
                 <p class="cs-principle-body">Every colour traces to a token. Every token has a reason. One change propagates everywhere. The product is built to be changed, not redesigned from scratch.</p>
               </div>
@@ -9793,7 +9840,7 @@
               <p>The final design isn't one big idea; it's five precise interventions that compound. Each decision is traceable back to a specific research finding.</p>
             </div>
             <div class="cs-decision-list cs-decision-list--big">
-              <div class="cs-decision cs-decision--big">
+              <div class="cs-decision cs-decision--big" data-hover-img="re-banner.webp">
                 <span class="cs-decision-ghost" aria-hidden="true">01</span>
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">VISUAL HIERARCHY</span>
@@ -9801,7 +9848,7 @@
                   <p class="cs-decision-body">Made the video the hero. The most dismissed element became the first thing users see, with an unmissable play button. Directly addresses the 4% video watch rate.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big">
+              <div class="cs-decision cs-decision--big" data-hover-img="screen-final.webp">
                 <span class="cs-decision-ghost" aria-hidden="true">02</span>
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">PRIMARY ACTION</span>
@@ -9809,7 +9856,7 @@
                   <p class="cs-decision-body">97% of users share via WhatsApp. We merged the copy code + share flow into one primary action and elevated its hierarchy above all other CTAs on the page.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big">
+              <div class="cs-decision cs-decision--big" data-hover-img="screen-tooltip.webp">
                 <span class="cs-decision-ghost" aria-hidden="true">03</span>
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">TRUST</span>
@@ -9817,7 +9864,7 @@
                   <p class="cs-decision-body">"25,483 users joined through referrals", not at the top where no one reads it, but placed near the moment of decision to trigger trust at exactly the right point.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big">
+              <div class="cs-decision cs-decision--big" data-hover-img="screen-referred.webp">
                 <span class="cs-decision-ghost" aria-hidden="true">04</span>
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">SOCIAL PROOF</span>
@@ -9825,7 +9872,7 @@
                   <p class="cs-decision-body">Real earnings from real users. Pushed down the scroll once the user has already referred, reducing visual noise for repeat visitors who no longer need the nudge.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big cs-decision--last">
+              <div class="cs-decision cs-decision--big cs-decision--last" data-hover-img="infographic-v3.webp">
                 <span class="cs-decision-ghost" aria-hidden="true">05</span>
                 <div class="cs-decision-content">
                   <span class="cs-decision-eyebrow">COMPREHENSION</span>
@@ -10099,6 +10146,34 @@
       if (overlay.classList.contains('is-open')) trapTab(overlay, e);
       else if (resumeOverlay.classList.contains('is-open')) trapTab(resumeOverlay, e);
     });
+
+    // ── Decision-row hover preview: image bottom-left anchored to cursor ──
+    (function initDecisionHover() {
+      const floater = document.getElementById('csHoverPreview');
+      if (!floater) return;
+      let showing = false;
+      overlayBody.addEventListener('mousemove', e => {
+        const row = e.target.closest('.cs-decision--big[data-hover-img]');
+        if (!row) {
+          if (showing) { floater.classList.remove('on'); showing = false; }
+          return;
+        }
+        const file = row.dataset.hoverImg;
+        const src = 'assets/images/refer-earn/' + file;
+        if (!floater.src.endsWith(file)) floater.src = src;
+        floater.style.left = e.clientX + 'px';
+        floater.style.top = e.clientY + 'px';
+        if (!showing) { floater.classList.add('on'); showing = true; }
+      }, { passive: true });
+      overlayBody.addEventListener('mouseleave', () => {
+        if (showing) { floater.classList.remove('on'); showing = false; }
+      });
+      // Scrolling can move the row out from under a stationary cursor —
+      // hide rather than let the preview linger.
+      overlayBody.addEventListener('scroll', () => {
+        if (showing) { floater.classList.remove('on'); showing = false; }
+      }, { passive: true });
+    })();
 
     // ── Settlr overlay interactions (proto switcher + chip toggle) ──
     overlayBody.addEventListener('click', e => {
