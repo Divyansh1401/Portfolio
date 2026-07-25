@@ -179,7 +179,7 @@
     #ego-transition-overlay {
       position: fixed;
       inset: 0;
-      z-index: 9800;
+      z-index: 740;  /* below #main-nav (750) — the nav rides above the wipe so its light/dark restyle sweeps visibly */
       --ego-blob-base: #0d0e0c;
       --ego-blob-shadow: rgba(13,14,12,0.14);
       --ego-blob-highlight: rgba(255,255,255,0.07);
@@ -412,12 +412,15 @@
       transition: all 0.2s;
     }
     /* ── Nav toggle A: segmented world switch (preview only) ── */
-    .world-seg { display: inline-flex; border: 1px solid rgba(12,12,11,0.35); margin-right: 14px; }
-    .world-seg__opt { appearance: none; background: none; border: 0; padding: 0 14px; height: 46px; font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); opacity: 0.5; cursor: pointer; }
-    .world-seg__opt.is-on { background: var(--text); color: var(--bg); opacity: 1; }
+    .world-seg { position: relative; display: inline-flex; border: 1px solid rgba(12,12,11,0.35); margin-right: 14px; }
+    .world-seg__opt { position: relative; z-index: 1; appearance: none; background: none; border: 0; padding: 0 14px; height: 46px; font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); opacity: 0.5; cursor: pointer; transition: color 250ms ease; }
+    .world-seg__opt.is-on { color: var(--bg); opacity: 1; }
+    .world-seg__thumb { position: absolute; top: 0; bottom: 0; left: 0; width: 0; transform: translateX(0); background: var(--text); pointer-events: none; }
+    .world-seg__thumb.is-ready { transition: transform 320ms cubic-bezier(0.34, 1.3, 0.64, 1), width 320ms cubic-bezier(0.34, 1.3, 0.64, 1); }
     #main-nav.is-dark .world-seg { border-color: rgba(237,236,234,0.35); }
     #main-nav.is-dark .world-seg__opt { color: #EDECEA; }
-    #main-nav.is-dark .world-seg__opt.is-on { background: #EDECEA; color: #0D0E0C; }
+    #main-nav.is-dark .world-seg__opt.is-on { color: #0D0E0C; }
+    #main-nav.is-dark .world-seg__thumb { background: #EDECEA; }
     .btn-outline {
       position: relative;
       min-width: 180px;
@@ -680,7 +683,7 @@
       -webkit-backdrop-filter: blur(18px) saturate(115%) brightness(92%);
       background: rgba(255, 255, 255, 0.42);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      z-index: 750;  /* below all overlays (case study 800, resume 950) */
+      z-index: 750;  /* above the blob wipe (740) so the nav restyle sweeps visibly; below all overlays (case study 800, resume 950) */
       opacity: 1;
       transform: none;
       pointer-events: auto;
@@ -702,6 +705,69 @@
     }
     #main-nav.is-dark.is-scrolled {
       box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45);
+    }
+    /* Restyle-sweep skin: the blob wipe sits at z-index 740 (just beneath the
+       nav at 750), so this pseudo-layer carries the dark bar style and reveals
+       it via clip-path in sync with the blob edge crossing right→left.
+       Direct children get z-index:1 so nav text/buttons stay above the skin. */
+    #main-nav > .nav-name,
+    #main-nav > .nav-buttons {
+      position: relative;
+      z-index: 1;
+    }
+    #main-nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: rgba(13, 14, 12, 0.25);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+      clip-path: inset(0 0 0 100%);   /* resting/light: collapsed to a sliver at the right edge — hidden */
+    }
+    #main-nav.is-dark::before {
+      clip-path: inset(0 0 0 0);      /* resting/dark: fully revealed */
+    }
+    /* These transitions only apply while a flip is in flight (sweep-to-dark /
+       sweep-to-light, set by setNavWorld with animate=true) — deep-link and
+       reduced-motion calls never get these classes, so they stay snap-instant. */
+    #main-nav.sweep-to-dark::before,
+    #main-nav.sweep-to-light::before {
+      transition: clip-path 840ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #main-nav.sweep-to-dark::before {
+      clip-path: inset(0 0 0 0);      /* left-inset 100%→0: reveal grows from a zero-width sliver at the right, its leading edge sweeping right→left */
+    }
+    #main-nav.sweep-to-light::before {
+      clip-path: inset(0 100% 0 0);   /* right-inset 0→100%: dark skin's trailing edge retracts from the right edge toward the left, collapsing to nothing at the left */
+    }
+    #main-nav.sweep-to-dark,
+    #main-nav.sweep-to-light {
+      transition: background 0.5s ease, border-bottom-color 0.5s ease,
+        backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease;
+    }
+    /* Foreground crossfade, staggered right→left to track the blob edge. */
+    #main-nav.sweep-to-dark .btn-outline,
+    #main-nav.sweep-to-light .btn-outline,
+    #main-nav.sweep-to-dark .btn-solid,
+    #main-nav.sweep-to-light .btn-solid {
+      transition: color 0.35s ease, border-color 0.35s ease, background 0.35s ease;
+      transition-delay: 0.1s;   /* rightmost group — blob edge reaches here first */
+    }
+    #main-nav.sweep-to-dark .world-seg,
+    #main-nav.sweep-to-light .world-seg {
+      transition: border-color 0.35s ease;
+      transition-delay: 0.2s;   /* middle */
+    }
+    #main-nav.sweep-to-dark .world-seg__opt,
+    #main-nav.sweep-to-light .world-seg__opt {
+      transition: color 0.35s ease, background 0.35s ease;
+      transition-delay: 0.2s;
+    }
+    #main-nav.sweep-to-dark .nav-name,
+    #main-nav.sweep-to-light .nav-name {
+      transition: color 0.35s ease;
+      transition-delay: 0.45s;  /* leftmost — blob edge reaches here last */
     }
     #main-nav .nav-name {
       font-family: var(--f-heading);
@@ -727,6 +793,33 @@
       height: 1.25em;
       line-height: 1.25em;
       white-space: nowrap;
+    }
+    /* Typewriter caret (nav-name typewriter, see typeNavTitle in the main
+       script): blinks while idle at the ends of a run, solid while a
+       delete/type step is actively in flight, fades out and is removed
+       from the DOM once a run finishes lingering. currentColor keeps it
+       in sync with the nav-name color flip. */
+    #main-nav .nav-caret {
+      display: inline-block;
+      width: 2px;
+      height: 0.95em;
+      margin-left: 1px;
+      background: currentColor;
+      vertical-align: text-bottom;
+      animation: navCaretBlink 1s steps(1) infinite;
+    }
+    #main-nav .nav-caret.is-typing {
+      animation: none;
+      opacity: 1;
+    }
+    #main-nav .nav-caret.is-fading {
+      animation: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    @keyframes navCaretBlink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
     }
     #main-nav.is-dark .nav-name { color: #edecea; }
     #main-nav .nav-buttons { display: flex; gap: 12px; align-items: center; }
@@ -2079,8 +2172,8 @@
     /* ============================================================
        Component Library — embedded Settlr playground (light, wide)
        ============================================================ */
-    /* dwell room so the sticky playground frame stays pinned while you explore it */
-    .cs-lib-section { min-height: 150vh; }
+    /* Playground is explore-at-leisure, not a scroll reveal — it sits in normal
+       flow (no sticky, no dwell) so the page never feels hijacked around it. */
     .cs-lib-head { max-width: 62ch; margin-bottom: calc(32 * var(--u)); }
     .cs-lib-title {
       font-family: var(--f-heading);
@@ -2098,8 +2191,6 @@
       opacity: 0.72;
     }
     .cs-lib-frame {
-      position: sticky;                 /* pins the playground while you explore it */
-      top: calc(16 * var(--u));
       border-radius: calc(14 * var(--u));
       overflow: hidden;
       border: calc(1 * var(--u)) solid rgba(27,28,26,0.1);
@@ -2124,7 +2215,7 @@
     .cs-lib-frame iframe {
       display: block;
       width: 100%;
-      height: calc(760 * var(--u));
+      height: min(calc(760 * var(--u)), calc(100vh - 120px));
       border: 0;
       background: #fff;
     }
@@ -5269,22 +5360,39 @@
        Additive: only applies under .cs-proto-section--dark so the
        light version stays intact if this modifier is removed.
        ============================================================ */
+    /* Bounded sticky. The wrapper owns the scroll distance; the dark section
+       pins to the top of the scrolling .overlay-body while you scroll through
+       the wrapper, then releases at the wrapper's bottom so the next section
+       scrolls up cleanly after it — no pinning over the rest of the page. The
+       black bg now hugs the section's own content; the dwell happens over the
+       transparent wrapper space below it. Tune the pin duration via min-height
+       (section height ≈ one screen, so the extra ≈ how long it stays pinned). */
+    .cs-proto-sticky-wrap {
+      min-height: 125vh;   /* short dwell — a brief pin, not a hold */
+    }
     .cs-proto-section--dark {
       background: var(--c-dark);
       border-radius: calc(28 * var(--u));
       padding: calc(64 * var(--u));
-      /* overflow visible (was hidden) so the sticky viewer pins against the
-         scrolling .overlay-body instead of this section; min-height gives the
-         dwell room that keeps the phone + switcher in view while you play. */
       overflow: visible;
-      min-height: 140vh;
+      position: sticky;
+      top: calc(28 * var(--u));
     }
     .cs-proto-section--dark .cs-proto-viewer {
       margin-top: 0;
       align-items: flex-start;   /* heading top aligns with frame top edge */
       gap: calc(56 * var(--u));
-      position: sticky;
-      top: calc(28 * var(--u));
+    }
+    /* Only pin when the section comfortably fits the viewport — a too-tall
+       pinned card reads as "frozen scroll". Below the threshold (and for
+       reduced-motion users) the section sits in normal flow, no dwell. */
+    @media (max-height: 900px) {
+      .cs-proto-sticky-wrap { min-height: auto; }
+      .cs-proto-section--dark { position: static; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cs-proto-sticky-wrap { min-height: auto; }
+      .cs-proto-section--dark { position: static; }
     }
     /* Phone floats directly on the dark bg — no white card wrapper */
     .cs-proto-section--dark .cs-proto-card {
@@ -6635,6 +6743,7 @@
     @media (prefers-reduced-motion: reduce) {
       body, a, button, [tabindex], .small-card { cursor: auto !important; }
       #custom-cursor, #cursor-ring { display: none !important; }
+      .world-seg__thumb { transition: none !important; }
     }
   </style>
 </head>
@@ -6651,13 +6760,14 @@
   <!-- ── Main Nav ── -->
   <header id="main-nav" role="banner">
     <div class="nav-name" aria-label="Divyansh Rastogi">
-      <div class="nav-name-roll">
+      <div class="nav-name-roll" aria-hidden="true">
         <span class="nav-name-line">Product Designer</span>
         <span class="nav-name-line">Divyansh Rastogi</span>
       </div>
     </div>
     <div class="nav-buttons">
       <div class="world-seg" role="group" aria-label="Choose world" data-world-toggle>
+        <span class="world-seg__thumb" aria-hidden="true"></span>
         <button type="button" class="world-seg__opt world-seg__opt--work is-on flip-trigger-btn" aria-pressed="true">Work</button>
         <button type="button" class="world-seg__opt world-seg__opt--play flip-trigger-btn" aria-pressed="false">After hours</button>
       </div>
@@ -8285,7 +8395,9 @@
 
           <div class="cs-divider"></div>
 
-          <!-- PROTOTYPE VIEWER -->
+          <!-- PROTOTYPE VIEWER — bounded sticky: the wrapper defines the scroll
+               distance; the dark section pins for that distance, then releases. -->
+          <div class="cs-proto-sticky-wrap">
           <div class="cs-section cs-proto-section--dark">
             <div class="cs-proto-viewer">
               <!-- Left: phone card -->
@@ -8332,6 +8444,7 @@
               </div>
             </div>
           </div>
+          </div><!-- /.cs-proto-sticky-wrap -->
 
           <div class="cs-divider"></div>
 
@@ -10124,6 +10237,112 @@
     let alterEgoMode = false;
     let egoTransitionInFlight = false;
 
+    // setNavWorld animation bookkeeping — lets an in-flight animated sweep
+    // survive the instant setNavWorld(nextMode,false) call that setAlterEgoMode
+    // fires partway through playEgoTransition's blob timeline (see the no-op
+    // guard inside setNavWorld).
+    let navWorldAnimating = false;
+    let navWorldAnimTarget = null;
+    let navWorldSweepTimer = null;
+
+    // Nav-name typewriter — see setNavWorld's call at the bottom of this
+    // function for how dark/light targets are chosen. navTypeGen is bumped
+    // by every ANIMATED run; every deferred step below closes over the gen
+    // it was scheduled under and bails if a newer run has since started, so
+    // a rapid re-flip mid-type "deletes from wherever the text currently is
+    // and retypes the new target" instead of interleaving two runs' output.
+    let navTypeGen = 0;
+
+    // First text-node child of the first .nav-name-line (creating one if the
+    // line is somehow empty) — the caret span always lives AFTER this node,
+    // so mutating nodeValue never disturbs it. Returns null if the nav isn't
+    // in the DOM yet.
+    function getNavTitleNode() {
+      const navLine = document.querySelector('#main-nav .nav-name-line');
+      if (!navLine) return null;
+      let textNode = navLine.firstChild;
+      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
+        textNode = document.createTextNode('');
+        navLine.insertBefore(textNode, navLine.firstChild);
+      }
+      return { navLine, textNode };
+    }
+
+    // show=false removes the caret span outright (the instant path never
+    // leaves one in the DOM). typing=true forces it solid (active
+    // delete/type step); typing=false lets the CSS blink animation run
+    // (idle at the start/end of a run).
+    function setNavCaret(navLine, show, typing) {
+      let caret = navLine.querySelector('.nav-caret');
+      if (!show) {
+        if (caret) caret.remove();
+        return null;
+      }
+      if (!caret) {
+        caret = document.createElement('span');
+        caret.className = 'nav-caret';
+        caret.setAttribute('aria-hidden', 'true');
+        navLine.appendChild(caret);
+      }
+      caret.classList.remove('is-fading');
+      caret.classList.toggle('is-typing', !!typing);
+      return caret;
+    }
+
+    // Retypes the nav title toward `target`. animate=false (or reduced
+    // motion) sets the exact string instantly and strips the caret — no
+    // typing. animate=true deletes whatever is CURRENTLY displayed
+    // char-by-char, pauses, types the target char-by-char, lingers with a
+    // blinking caret, then fades it out and removes it.
+    function typeNavTitle(target, animate) {
+      const parts = getNavTitleNode();
+      if (!parts) return;
+      const { navLine, textNode } = parts;
+      const gen = ++navTypeGen;
+
+      if (!animate || PREFERS_REDUCED_MOTION.matches) {
+        textNode.nodeValue = target;
+        setNavCaret(navLine, false);
+        return;
+      }
+
+      setNavCaret(navLine, true, true);
+
+      const after = (delay, fn) => {
+        window.setTimeout(() => {
+          if (gen !== navTypeGen) return; // superseded by a newer run — bail
+          fn();
+        }, delay);
+      };
+
+      function deleteStep(str) {
+        if (str.length === 0) {
+          after(200, () => typeStep('')); // brief pause at empty
+          return;
+        }
+        str = str.slice(0, -1);
+        textNode.nodeValue = str;
+        after(55 + (Math.random() * 30 - 15), () => deleteStep(str));
+      }
+
+      function typeStep(str) {
+        if (str.length >= target.length) {
+          setNavCaret(navLine, true, false); // done typing — idle blink starts
+          after(600, () => {
+            const caret = navLine.querySelector('.nav-caret');
+            if (caret) caret.classList.add('is-fading');
+            after(250, () => setNavCaret(navLine, false));
+          });
+          return;
+        }
+        str = target.slice(0, str.length + 1);
+        textNode.nodeValue = str;
+        after(70 + (Math.random() * 50 - 25), () => typeStep(str));
+      }
+
+      deleteStep(textNode.nodeValue || '');
+    }
+
     // Route #connect → #alter-connect when alter ego is active
     document.addEventListener('click', e => {
       const link = e.target.closest('a[href="#connect"]');
@@ -10145,15 +10364,57 @@
       if (darkPara) darkPara.style.display = enabled ? '' : 'none';
     }
 
+    // Owns the nav's world state: is-dark class, title text, and the
+    // restyle-sweep classes (blob-synced clip-path skin + staggered
+    // foreground crossfade defined in the #main-nav CSS above).
+    function setNavWorld(dark, animate) {
+      const mainNav = document.getElementById('main-nav');
+      if (!mainNav) return;
+
+      // No-op guard: playEgoTransition starts an animated sweep at t=0, then
+      // setAlterEgoMode fires an instant setNavWorld(nextMode,false) at
+      // t=380ms as part of the world switch. That instant call must not stomp
+      // the sweep/text that's still mid-flight toward the same target.
+      if (!animate && navWorldAnimating && navWorldAnimTarget === dark) {
+        return;
+      }
+
+      if (animate) {
+        // A new animated call supersedes any sweep already in flight (rapid
+        // re-flip) — clear its cleanup timer and re-toggle the sweep classes
+        // cleanly toward the new target.
+        if (navWorldSweepTimer) window.clearTimeout(navWorldSweepTimer);
+        navWorldAnimating = true;
+        navWorldAnimTarget = dark;
+      } else {
+        navWorldAnimating = false;
+        navWorldAnimTarget = null;
+      }
+
+      mainNav.classList.toggle('is-dark', dark);
+
+      mainNav.classList.remove('sweep-to-dark', 'sweep-to-light');
+      if (animate) {
+        mainNav.classList.add(dark ? 'sweep-to-dark' : 'sweep-to-light');
+        navWorldSweepTimer = window.setTimeout(() => {
+          mainNav.classList.remove('sweep-to-dark', 'sweep-to-light');
+          navWorldAnimating = false;
+          navWorldAnimTarget = null;
+          navWorldSweepTimer = null;
+        }, 1000); // a little longer than the 840ms clip-path transition
+      }
+
+      // Nav-name roll: dark mode leads with "not just a product designer".
+      // Animated flips run the typewriter (delete → pause → type); instant
+      // calls (deep-link restore, reduced motion) set the text directly and
+      // strip any caret — both paths are handled inside typeNavTitle.
+      typeNavTitle(dark ? 'not just a product designer' : 'Product Designer', animate);
+    }
+
     function setAlterEgoMode(enabled) {
       alterEgoMode = enabled;
       setHeroAlterEgoState(enabled);
-      const mainNav = document.getElementById('main-nav');
-      if (mainNav) mainNav.classList.toggle('is-dark', enabled);
-
-      // Nav-name roll: dark mode leads with "not just a product designer".
-      const navRollTop = document.querySelector('#main-nav .nav-name-line');
-      if (navRollTop) navRollTop.textContent = enabled ? 'not just a product designer' : 'Product Designer';
+      setNavWorld(enabled, false);
 
       // Toolbar label: dark mode reads "My Hobbies" instead of "My Toolbar".
       const toolbarLabel = document.querySelector('.toolbar-label');
@@ -10219,6 +10480,7 @@
 
       egoTransitionInFlight = true;
       onStartFlip();
+      setNavWorld(nextMode, true);
 
       overlay.classList.toggle('mode-light', !nextMode);
       overlay.classList.remove('is-leaving');
@@ -10846,6 +11108,15 @@
     if (!nav || !seg) return;
     const workBtn = seg.querySelector('.world-seg__opt--work');
     const playBtn = seg.querySelector('.world-seg__opt--play');
+    const thumb = seg.querySelector('.world-seg__thumb');
+
+    // Slide + resize the thumb to exactly overlay the active button.
+    const placeThumb = (dark) => {
+      if (!thumb) return;
+      const activeBtn = dark ? playBtn : workBtn;
+      thumb.style.width = activeBtn.offsetWidth + 'px';
+      thumb.style.transform = 'translateX(' + activeBtn.offsetLeft + 'px)';
+    };
 
     seg.addEventListener('worldsync', (e) => {
       const dark = e.detail;
@@ -10853,6 +11124,7 @@
       workBtn.setAttribute('aria-pressed', String(!dark));
       playBtn.classList.toggle('is-on', dark);
       playBtn.setAttribute('aria-pressed', String(dark));
+      placeThumb(dark);
     });
 
     // Clicking the already-active side must not flip the world.
@@ -10870,6 +11142,21 @@
     };
     new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ['class'] });
     sync();
+
+    // First placement (just above, via sync -> worldsync -> placeThumb)
+    // must render with no transition or it flashes in from the left.
+    // Force a reflow, THEN arm the transition for every later move.
+    if (thumb) {
+      thumb.offsetWidth;
+      thumb.classList.add('is-ready');
+    }
+
+    // Label widths shift with viewport size and with web-font swap-in
+    // (Unbounded/Plus Jakarta Sans) — re-place for the current world.
+    window.addEventListener('resize', () => placeThumb(nav.classList.contains('is-dark')));
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => placeThumb(nav.classList.contains('is-dark')));
+    }
   })();
   </script>
 

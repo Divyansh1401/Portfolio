@@ -227,10 +227,15 @@
     .pg-spec dd { margin: 0; color: var(--text-secondary); }
 
     @media (max-width: 980px) {
-      .pg-shell { grid-template-columns: 1fr; }
-      .pg-sidebar { height: auto; flex-direction: row; flex-wrap: wrap; }
+      /* Keep the index (sidebar) pinned on the left at all embed widths —
+         only stack the inner content + controls when the pane gets narrow. */
       .pg-body { grid-template-columns: 1fr; }
       .pg-controls { position: static; }
+    }
+    /* True-mobile fallback only: a genuinely tiny screen still stacks the index. */
+    @media (max-width: 560px) {
+      .pg-shell { grid-template-columns: 1fr; }
+      .pg-sidebar { height: auto; flex-direction: row; flex-wrap: wrap; }
     }
   </style>
 </head>
