@@ -6426,6 +6426,10 @@
     }
     .cs2-dot.on { width: 22px; background: var(--c-orange); }
     .cs2-dot:focus-visible { outline: 2px solid var(--c-orange); outline-offset: 3px; }
+    /* R&E handheld shots have a near-black hand under the dot cluster —
+       lift the idle dots to light so they stay visible. */
+    .cs2-panel--refer .cs2-dot { background: rgba(245,243,238,0.45); }
+    .cs2-panel--refer .cs2-dot.on { background: var(--c-orange); }
 
     /* — Refer & Earn / Kinko: single media image (parallax-driven) — */
     .cs2-media-img {
@@ -6885,23 +6889,19 @@
             <a class="cs2-cta cs2-cta--link" href="#settlr">View case study <span class="cs2-arr">→</span></a>
           </div>
           <div class="cs2-media">
-            <div class="cs2-media-frame cs2-theatre" aria-label="Settlr showcase — cycles through three views">
+            <div class="cs2-media-frame cs2-theatre" aria-label="Settlr showcase — cycles through two views">
               <div class="cs2-theatre-inner" data-parallax data-base="1">
-                <div class="cs2-slide on" data-caption="The redesigned app">
-                  <img src="assets/images/settlr/thumbnail.webp" alt="Settlr — redesigned app screens">
+                <div class="cs2-slide on" data-caption="Live on settlrapp.in">
+                  <img src="assets/images/settlr/featured-couch.webp" alt="Settlr home dashboard on a phone resting on a leather sofa">
                 </div>
-                <div class="cs2-slide" data-fit="left" data-caption="41-component library">
-                  <img src="assets/images/settlr/Components.webp" alt="Settlr design system — full component sheet">
-                </div>
-                <div class="cs2-slide" data-caption="Tokens, straight to code">
-                  <img src="assets/images/settlr/Component%20cadebase.webp" alt="Settlr components mapped to the codebase">
+                <div class="cs2-slide" data-caption="The component playground">
+                  <img src="assets/images/settlr/featured-playground.webp" alt="Settlr component playground open on a laptop">
                 </div>
               </div>
-              <div class="cs2-slide-caption"><span class="cs2-idx">01</span><span class="cs2-cap-text">The redesigned app</span></div>
+              <div class="cs2-slide-caption"><span class="cs2-idx">01</span><span class="cs2-cap-text">Live on settlrapp.in</span></div>
               <div class="cs2-dots" role="group" aria-label="Showcase frames" data-stop="true">
-                <button class="cs2-dot on" aria-pressed="true" aria-label="Frame 1: the redesigned app"></button>
-                <button class="cs2-dot" aria-pressed="false" aria-label="Frame 2: component library"></button>
-                <button class="cs2-dot" aria-pressed="false" aria-label="Frame 3: tokens to code"></button>
+                <button class="cs2-dot on" aria-pressed="true" aria-label="Frame 1: the shipped app"></button>
+                <button class="cs2-dot" aria-pressed="false" aria-label="Frame 2: component playground"></button>
               </div>
             </div>
           </div>
@@ -6944,8 +6944,20 @@
             <a class="cs2-cta cs2-cta--link" href="#refer-earn">View case study <span class="cs2-arr">→</span></a>
           </div>
           <div class="cs2-media">
-            <div class="cs2-media-frame">
-              <img class="cs2-media-img" data-parallax data-base="1.08" src="assets/images/refer-earn/thumbnail.webp" alt="Refer and Earn — redesigned referral screens">
+            <div class="cs2-media-frame cs2-theatre" aria-label="Refer &amp; Earn showcase — cycles through two views">
+              <div class="cs2-theatre-inner" data-parallax data-base="1">
+                <div class="cs2-slide on" data-caption="The redesigned referral screen">
+                  <img src="assets/images/refer-earn/featured-handheld-1.webp" alt="Redesigned A23 Rummy Refer &amp; Earn screen on a handheld phone">
+                </div>
+                <div class="cs2-slide" data-caption="Earnings state, after a referral">
+                  <img src="assets/images/refer-earn/featured-handheld-2.webp" alt="Refer &amp; Earn screen showing total earnings after a friend signs up">
+                </div>
+              </div>
+              <div class="cs2-slide-caption"><span class="cs2-idx">01</span><span class="cs2-cap-text">The redesigned referral screen</span></div>
+              <div class="cs2-dots" role="group" aria-label="Showcase frames" data-stop="true">
+                <button class="cs2-dot on" aria-pressed="true" aria-label="Frame 1: the redesigned referral screen"></button>
+                <button class="cs2-dot" aria-pressed="false" aria-label="Frame 2: earnings state"></button>
+              </div>
             </div>
           </div>
           <div class="card-stack__dim" aria-hidden="true"></div>
@@ -7695,7 +7707,7 @@
       const capIdx  = theatreEl.querySelector('.cs2-idx');
       const capText = theatreEl.querySelector('.cs2-cap-text');
       if (!slides.length) return;
-      const PERIOD = 4000;
+      const PERIOD = 2000;
       let current = 0;
       let timer = null;
 

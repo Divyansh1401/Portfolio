@@ -47,3 +47,6 @@ screenshots/
 
 # Skill metadata
 skills-lock.json
+
+# Raw photo drops (converted to webp into assets/images/ before use)
+dump/
