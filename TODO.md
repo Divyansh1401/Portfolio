@@ -12,7 +12,7 @@
 
 ## 3. Section Redesigns
 - [ ] **Connect Section**: Complete redesign of the contact/social section.
-- [ ] **Philosophy Section**: Reduce text density and replace with visual illustrations.
+- [x] **Philosophy Section**: DONE 2026-07-26 — rebuilt as Proposal A (editorial list). See §19.
 - [ ] **Refer and Earn**: Reduce text and redesign for a more visually appealing layout.
 
 ## 4. Navigation & Page Structure
@@ -162,6 +162,14 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 19. Phase B1 — Philosophy section (2026-07-26)
+- [x] **Owner picked Proposal A (editorial list)** from the two mockups sitting in the gitignored `_section-redesign-test.html` since 2026-07-19 (kept, not deleted, precisely for this).
+- Replaced the 5-across `.cs-principles-grid` card wall with a two-column layout: a left lede holding the argument, and the five principles as a numbered list with the specimen visuals alternating side to side. All five principles kept — Proposal B cut to three, which would have dropped "System over screens", the one that demonstrates systems thinking (what design-system roles hire for).
+- Reused the existing `.cs-phil-viz` / `.cs-viz-*` specimen visuals verbatim; only the layout around them changed. Old `.cs-principle-*` CSS removed (0 references left).
+- **Bug caught by measuring rather than eyeballing:** the specimen slot was 140px but the Equally/Amount/% segment control measures **166px**, so it overflowed into the body text (6px overlap on row 04) and the token chip wrapped on row 05. Slot widened to 180px — sized to real measured content. Re-measured: all five rows now 0 overflow, 0 overlap.
+- Responsive: below 1180px the lede stacks above the list and the mirroring drops (alternation only reads as rhythm with room for three columns).
+- Verified at 1440 and 1280: 0 horizontal overflow, 0 console errors, gate 92/92.
+
 ## 18. Phase A — performance finishers (2026-07-26)
 - [x] **A1/A2 · Font subsetting.** All three variable fonts subset to only the characters the site renders. Method that made it safe: collected glyphs at RUNTIME across every state (light, dark, both injected case-study overlays, resume, lightbox, nav typewriter, mobile light+dark), unioned with printable ASCII and every non-ASCII char in either document, then **intersected with each font's own cmap** — so nothing the font lacks is "lost". That check is what proved the card suits `♠♣♦` are absent from Unbounded and already fell back to a system face, i.e. excluding them changes nothing.
   - Unbounded **252 → 44 KB** woff2 (1138 → 114 codepoints), Jakarta 58 → 25 KB, Jakarta Italic 63 → 28 KB. TTF fallbacks subset in step. **Fonts over the wire: 376 → 100 KB.**

@@ -4798,45 +4798,84 @@
     }
 
     /* ── Principles grid ────────────────────────────── */
-    .cs-principles-grid {
+    /* Philosophy — editorial list (owner picked Proposal A, 2026-07-26).
+       Replaced a 5-across card grid that forced every principle into a narrow
+       column of dense text. A left-column lede holds the argument; the
+       principles run as a numbered list with the specimen visuals alternating
+       side to side, which gives the section magazine rhythm and whitespace
+       instead of five equal blocks competing for attention. */
+    .cs-phil-layout {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: calc(12 * var(--u));
-      margin-top: calc(40 * var(--u));
+      grid-template-columns: calc(300 * var(--u)) 1fr;
+      gap: calc(48 * var(--u));
+      margin-top: calc(28 * var(--u));
+      align-items: start;
     }
-    .cs-principle-card {
-      border: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
-      border-radius: calc(14 * var(--u));
-      padding: calc(24 * var(--u)) calc(20 * var(--u));
-      background: var(--c-light);
-      display: flex;
-      flex-direction: column;
-      gap: calc(10 * var(--u));
+    .cs-phil-lede-title {
+      font-family: var(--f-heading);
+      font-size: calc(22 * var(--u));
+      font-weight: 800;
+      line-height: 1.32;
+      letter-spacing: -0.01em;
+      margin: 0 0 calc(16 * var(--u));
+      color: var(--c-dark);
     }
-    /* Figma alternates 02 and 04 with a darker gray fill for rhythm */
-    .cs-principle-card:nth-child(2),
-    .cs-principle-card:nth-child(4) {
-      background: #DDDBD7;
-      border-color: rgba(27,28,26,0.05);
+    .cs-phil-lede-body {
+      font-size: calc(13.5 * var(--u));
+      line-height: 1.7;
+      color: var(--c-mid);
+      margin: 0;
     }
-    .cs-principle-num {
-      font-size: calc(12 * var(--u));
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--c-orange);
+    .cs-phil-list { display: flex; flex-direction: column; }
+    .cs-phil-row {
+      display: grid;
+      /* 180px, not 140: the widest specimen (the Equally/Amount/% segment
+         control) measures 166px and was overflowing its slot into the body
+         text. Sized to the real content, not a guess. */
+      grid-template-columns: calc(64 * var(--u)) 1fr calc(180 * var(--u));
+      align-items: center;
+      gap: calc(20 * var(--u));
+      padding: calc(22 * var(--u)) 0;
+      border-top: 1px solid rgba(27,28,26,0.09);
     }
-    .cs-principle-title {
-      font-size: calc(13 * var(--u));
+    .cs-phil-row:last-child { border-bottom: 1px solid rgba(27,28,26,0.09); }
+    /* Alternate rows mirror: number right, specimen left. */
+    .cs-phil-row--flip { grid-template-columns: calc(180 * var(--u)) 1fr calc(64 * var(--u)); }
+    .cs-phil-row--flip .cs-phil-num { order: 3; text-align: right; }
+    .cs-phil-row--flip .cs-phil-text { order: 2; }
+    .cs-phil-row--flip .cs-phil-slot { order: 1; justify-content: flex-start; }
+    .cs-phil-num {
+      font-family: var(--f-heading);
+      font-size: calc(26 * var(--u));
+      font-weight: 800;
+      color: rgba(27,28,26,0.14);
+      line-height: 1;
+    }
+    .cs-phil-text-title {
+      font-family: var(--f-heading);
+      font-size: calc(14.5 * var(--u));
       font-weight: 700;
       color: var(--c-dark);
-      font-family: var(--f-heading);
+      margin: 0 0 calc(4 * var(--u));
       line-height: 1.3;
     }
-    .cs-principle-body {
-      font-size: calc(12 * var(--u));
-      line-height: 1.65;
+    .cs-phil-text-body {
+      font-size: calc(12.5 * var(--u));
+      line-height: 1.55;
       color: var(--c-mid);
-      margin-top: calc(2 * var(--u));
+      margin: 0;
+      max-width: calc(480 * var(--u));
+    }
+    .cs-phil-slot { display: flex; justify-content: flex-end; min-width: 0; }
+    /* Narrow overlays: stack the lede above the list and drop the mirroring,
+       which only reads as rhythm when there's room for three columns. */
+    @media (max-width: 1180px) {
+      .cs-phil-layout { grid-template-columns: 1fr; gap: calc(24 * var(--u)); }
+      .cs-phil-row,
+      .cs-phil-row--flip { grid-template-columns: calc(48 * var(--u)) 1fr calc(150 * var(--u)); }
+      .cs-phil-row--flip .cs-phil-num { order: 1; text-align: left; }
+      .cs-phil-row--flip .cs-phil-text { order: 2; }
+      .cs-phil-row--flip .cs-phil-slot { order: 3; justify-content: flex-end; }
     }
 
     /* Philosophy specimen visuals — tiny embodiments of each principle,
@@ -8685,40 +8724,57 @@
           <!-- SECTION: Goals, Principles & Philosophy -->
           <div class="cs-section">
             <p class="cs-tag">Philosophy</p>
-            <h2 class="cs-section-title">Splitting money between friends shouldn't feel like filing a court summons.</h2>
-            <div class="cs-body">
-              <p>Settlr is designed to feel like a conversation: warm, honest, and low-friction. Every decision in the system traces back to one question: does this make people feel better or worse about the money between them?</p>
-            </div>
-            <div class="cs-principles-grid">
-              <div class="cs-principle-card">
-                <span class="cs-principle-num">01</span>
-                <div class="cs-phil-viz"><span class="cs-viz-dot cs-viz-dot--olive"></span><span class="cs-viz-dot cs-viz-dot--blue"></span></div>
-                <p class="cs-principle-title">Warm over clinical</p>
-                <p class="cs-principle-body">Most fintech goes cold and authoritative. Olive over blue. Warm neutral backgrounds over cool grays. The product feels like a friend, not a bank.</p>
+            <div class="cs-phil-layout">
+              <div class="cs-phil-lede">
+                <h2 class="cs-section-title cs-phil-lede-title">Splitting money between friends shouldn't feel like filing a court summons.</h2>
+                <p class="cs-phil-lede-body">Settlr is designed to feel like a conversation: warm, honest, and low-friction. Every decision in the system traces back to one question: does this make people feel better or worse about the money between them?</p>
               </div>
-              <div class="cs-principle-card">
-                <span class="cs-principle-num">02</span>
-                <div class="cs-phil-viz"><span class="cs-viz-owe">you owe ₹840</span></div>
-                <p class="cs-principle-title">Honest, not alarming</p>
-                <p class="cs-principle-body">Coral for amounts you owe, not red. The debt is real, but the colour shouldn't make it feel like an error. Design should reflect reality without amplifying anxiety.</p>
-              </div>
-              <div class="cs-principle-card">
-                <span class="cs-principle-num">03</span>
-                <div class="cs-phil-viz cs-phil-viz--col"><span class="cs-viz-total">₹1,14,802</span><span class="cs-viz-rows"><i></i><i></i><i></i></span></div>
-                <p class="cs-principle-title">Batch, don't burden</p>
-                <p class="cs-principle-body">Home shows total balance, not an itemised list. Detail lives where you need it: group page, activity feed. Cognitive load is managed by deferring complexity, not hiding it.</p>
-              </div>
-              <div class="cs-principle-card">
-                <span class="cs-principle-num">04</span>
-                <div class="cs-phil-viz"><span class="cs-viz-seg"><i class="on">Equally</i><i>Amount</i><i>%</i></span></div>
-                <p class="cs-principle-title">Behaviour-anchored defaults</p>
-                <p class="cs-principle-body">Equal split is default. The review screen shows ₹X per person even on equal splits. Recent groups surface first. The right choice should always be the easiest one.</p>
-              </div>
-              <div class="cs-principle-card">
-                <span class="cs-principle-num">05</span>
-                <div class="cs-phil-viz"><span class="cs-viz-tok cs-viz-tok--olivebg">olive-600</span><span class="cs-viz-arrow">→</span><span class="cs-viz-tok">--btn-primary</span><span class="cs-viz-arrow">→</span><span class="cs-viz-tok cs-viz-tok--btn">Button</span></div>
-                <p class="cs-principle-title">System over screens</p>
-                <p class="cs-principle-body">Every colour traces to a token. Every token has a reason. One change propagates everywhere. The product is built to be changed, not redesigned from scratch.</p>
+
+              <div class="cs-phil-list">
+                <div class="cs-phil-row">
+                  <span class="cs-phil-num">01</span>
+                  <div class="cs-phil-text">
+                    <p class="cs-phil-text-title">Warm over clinical</p>
+                    <p class="cs-phil-text-body">Most fintech goes cold and authoritative. Olive over blue, warm neutrals over cool grays. The product feels like a friend, not a bank.</p>
+                  </div>
+                  <div class="cs-phil-slot"><div class="cs-phil-viz"><span class="cs-viz-dot cs-viz-dot--olive"></span><span class="cs-viz-dot cs-viz-dot--blue"></span></div></div>
+                </div>
+
+                <div class="cs-phil-row cs-phil-row--flip">
+                  <div class="cs-phil-slot"><div class="cs-phil-viz"><span class="cs-viz-owe">you owe ₹840</span></div></div>
+                  <div class="cs-phil-text">
+                    <p class="cs-phil-text-title">Honest, not alarming</p>
+                    <p class="cs-phil-text-body">Coral for amounts you owe, not red. The debt is real, but the colour shouldn't make it feel like an error. Design should reflect reality without amplifying anxiety.</p>
+                  </div>
+                  <span class="cs-phil-num">02</span>
+                </div>
+
+                <div class="cs-phil-row">
+                  <span class="cs-phil-num">03</span>
+                  <div class="cs-phil-text">
+                    <p class="cs-phil-text-title">Batch, don't burden</p>
+                    <p class="cs-phil-text-body">Home shows total balance, not an itemised list. Detail lives where you need it: group page, activity feed. Cognitive load is managed by deferring complexity, not hiding it.</p>
+                  </div>
+                  <div class="cs-phil-slot"><div class="cs-phil-viz cs-phil-viz--col"><span class="cs-viz-total">₹1,14,802</span><span class="cs-viz-rows"><i></i><i></i><i></i></span></div></div>
+                </div>
+
+                <div class="cs-phil-row cs-phil-row--flip">
+                  <div class="cs-phil-slot"><div class="cs-phil-viz"><span class="cs-viz-seg"><i class="on">Equally</i><i>Amount</i><i>%</i></span></div></div>
+                  <div class="cs-phil-text">
+                    <p class="cs-phil-text-title">Behaviour-anchored defaults</p>
+                    <p class="cs-phil-text-body">Equal split is default. The review screen shows ₹X per person even on equal splits. Recent groups surface first. The right choice should always be the easiest one.</p>
+                  </div>
+                  <span class="cs-phil-num">04</span>
+                </div>
+
+                <div class="cs-phil-row">
+                  <span class="cs-phil-num">05</span>
+                  <div class="cs-phil-text">
+                    <p class="cs-phil-text-title">System over screens</p>
+                    <p class="cs-phil-text-body">Every colour traces to a token. Every token has a reason. One change propagates everywhere. The product is built to be changed, not redesigned from scratch.</p>
+                  </div>
+                  <div class="cs-phil-slot"><div class="cs-phil-viz"><span class="cs-viz-tok cs-viz-tok--olivebg">olive-600</span><span class="cs-viz-arrow">→</span><span class="cs-viz-tok cs-viz-tok--btn">Button</span></div></div>
+                </div>
               </div>
             </div>
           </div>
