@@ -13,7 +13,7 @@
 ## 3. Section Redesigns
 - [x] **Connect Section**: **DECLINED 2026-07-26 — owner reviewed three directions and kept the current design.** Do not re-propose. (Mockups: contact-rows / availability-ledger / email-as-hero, all keeping the receipt and filling the bottom-left space. Owner: "keep as is, i like current one.") Explorations left on disk in the gitignored `_connect-explorations.html`.
 - [x] **Philosophy Section**: DONE 2026-07-26 — rebuilt as Proposal A (editorial list). See §19.
-- [ ] **Refer and Earn**: Reduce text and redesign for a more visually appealing layout.
+- [x] **Refer and Earn**: **PREMISE WAS STALE — closed differently 2026-07-27.** The item (written 2026-04-21) asked to "reduce text and redesign for a more visually appealing layout"; measurement showed the opposite. At **972 words / 14 images it is 69 words-per-image vs Settlr's 76** — marginally *less* text-dense than the flagship, and the two sections that looked image-less are the strongest (a real conversion funnel with per-stage drop-offs, and a three-lens research grid with user quotes). Cutting would have destroyed good work. The actual gap was that a case study built on a broken funnel **never said whether it worked**. Closed by adding an honest outcome section instead — see §21.
 
 ## 4. Navigation & Page Structure
 - [ ] **UX/Hobbies Toggle**: Add a clear toggle or profile button to help users distinguish between UX/Work and Photography/Art/Hobbies pages.
@@ -162,6 +162,12 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 21. Refer & Earn — honest close (2026-07-27)
+- **Diagnosis first, and it contradicted the task.** Measured before building: R&E is 972 words / 14 images (69 w/img) vs Settlr 2,873 / 38 (76 w/img). Not text-heavy — just a third the depth (7 sections vs 16). The "zero image" sections turned out to be the best ones: a conversion funnel with drop-off percentages at every stage, and a three-lens research grid with verbatim quotes. Reported this rather than executing the redesign as written.
+- **The real gap:** the case study opens on 1.2M users → 2,609 conversions, walks through research → exploration → iterations → final design → multi-brand rollout, then ends on a *concept* marked "not yet shipped." No outcome. For a conversion brief that is the first thing a hiring manager scrolls for.
+- [x] **Added "What I'd Measure Next"** (owner chose the honest version over inventing numbers). States plainly that post-launch measurement was out of scope and refuses to claim an unverified lift, then names three metrics — **referral initiation rate** (baseline −83.37%), **reward comprehension** (baseline 45% unclear), **referrals per referrer** (baseline 72% single) — each tied to a baseline *already established earlier in the same case study*, so it closes the narrative loop. Ends with how to read the results: which combination implicates motivation vs clarity vs incentive design.
+- Reuses the existing `cs-research-methods` pattern rather than inventing markup. Verified: renders at 653px, 3 columns, 0 horizontal overflow, 0 console errors, JS template literal intact (0 backticks / 0 `${`), 0 em dashes in the new copy, gate 105/105.
+
 ## 20. Analytics — PostHog, cookieless (2026-07-26)
 - [x] **Integrated but inert.** Loader in both documents' `<head>`; set `PH_KEY` in BOTH to switch on. Owner chose cookieless/no-banner over session replay.
 - **Three site-specific traps found before writing any code**, each of which would have silently corrupted the data:
