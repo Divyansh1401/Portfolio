@@ -58,7 +58,7 @@
 - [x] **Audit mobile art/photo categorization**: CHECKED 2026-07-16 — not mislabels. Hydrone's five images are all the octocopter concept renders; Cyanotype's lead is a genuine cyanotype print of car photos. No changes needed.
 - [x] **Curate the big mobile carousels**: REVIEWED 2026-07-16 — owner saw a full keep/cut proposal (17→8 each + rotor 42→34 + motion curation) and chose to keep everything as is. Decision recorded in CLAUDE.md; don't re-propose.
 - [x] **Resume button = always preview (never download)**: DONE — mobile buttons now open the Drive `/view` in a new tab (download URL removed); desktop already opens the overlay panel. _(2026-07-13, Antigravity + verified)_
-- [ ] **Tablet (768–1023px) polish for `mobile.html`**: it renders as a 520px centred column on tablets; decide whether it needs a wider tablet layout.
+- [x] **Tablet (768–1023px) polish for `mobile.html`**: DONE 2026-07-27 — column now scales with the viewport instead of sitting at a hard 520px. See §23.
 - [x] **Share/meta tags**: DONE — description, theme-color, apple-web-app, OG, Twitter card + inline-SVG favicon added to both `index.html` and `mobile.html`. _(2026-07-13, Antigravity + verified)_ · og:image DONE _(2026-07-16)_: real 1200×630 card at `assets/images/og-image.png`, absolute URLs, og:url + canonical + JSON-LD Person added to both pages.
 - [ ] **Deploy**: live site is GitHub Pages (Divyansh1401/Portfolio), NOT Netlify. Held until thumbnails land; first push must be `git push --force-with-lease origin main` (history rewritten 2026-07-16).
 
@@ -162,6 +162,12 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 23. Tablet band, 768–1023px (2026-07-27)
+- **Measured the actual problem:** the hard 520px `.col` used 68% of a 768px viewport (fine) but only **51% at 1023px — 252px of dead gutter each side**, reading as a phone screenshot pasted onto a tablet. So the gap was real but concentrated at the TOP of the band, not across it.
+- **Fix:** `@media (min-width: 700px) { .col { max-width: clamp(520px, 68vw, 640px) } }`. Scales instead of jumping — 522px at 768 (unchanged, it already read as a feed), 567 at 834 (iPad Air portrait), 640 at 1023. Usage now a consistent **63–68%**.
+- **Why 640 is the ceiling:** line length, not available space. The cap is a typographic decision, and it turned out the design already anticipated this — `.post-body p` carries `max-width: 46ch`, so **body copy stays at 455px / ~64 chars per line at every tablet width** while only the imagery grows (media 491 → 610px). Widening the column therefore cannot degrade readability, which is exactly the property that made this safe.
+- Verified at 390 / 768 / 834 / 900 / 1023: 0 horizontal overflow at every width, gate 105/105. Phone layout untouched (media query starts at 700px).
+
 ## 22. Settlr pair — both items reframed (2026-07-27)
 - **Prototype embed container: already done.** Investigated before building (third stale item in a row). The section is a dark rounded container with the live shipping build, a 6-of-24 jump-to-screen pill grid, and an honest caption; 0 console errors, 0 4xx. CLAUDE.md's re-sync note and commit `f4cefcf` already covered it.
 - **Settlr title: real defect, but not the one described.** The item asked for a title/header *section*; the cover art already shows the title. The actual gap was structural and affected **both** case studies: **no `<h1>` at all** — 16 headings (Settlr) and 9 (R&E) hanging under nothing, with the project name only ever rendered as pixels.
