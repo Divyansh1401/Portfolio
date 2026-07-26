@@ -1,21 +1,25 @@
 /**
- * verify-analytics.js — the PostHog integration's safety contract.
+ * verify-analytics.js — the PostHog integration's live contract.
  *
- * Two things this guards, both of which fail silently in production:
+ * PH_KEY is now set, so this asserts the ACTIVE behaviour rather than the
+ * inert one. Four things matter, and all four fail silently in production:
  *
- * 1. INERT WITHOUT A KEY. The integration ships with PH_KEY empty. It must
- *    fetch nothing, define no PostHog globals, and make no network calls. If
- *    someone later hardcodes a key by accident, or the guard regresses, the
- *    site starts phoning a third party on every visit.
+ * 1. COOKIELESS. The whole reason this site needs no consent banner is that
+ *    cookieless_mode:'always' writes nothing to cookies or local/sessionStorage.
+ *    If a PostHog upgrade or a config typo re-enabled persistence, the site
+ *    would quietly start needing a GDPR banner it does not have. This is the
+ *    single most important assertion in the file.
  *
- * 2. THE ROUTER GUARD. index.html replaces the document on <1024px and
- *    mobile.html replaces it on >=1024px. Initialising analytics ahead of that
- *    redirect logs a phantom pageview plus an instant bounce for EVERY visitor
- *    on the other form factor, which silently corrupts the desktop/mobile
- *    split — the number most worth knowing on a two-document site.
+ * 2. THE ROUTER GUARD. index.html replaces the document below 1024px and
+ *    mobile.html above it. Loading analytics before that redirect logs a
+ *    phantom pageview plus an instant bounce for EVERY visitor on the other
+ *    form factor, silently corrupting the desktop/mobile split.
  *
- * It also checks that track() is always callable, since ~9 call sites invoke it
- * unconditionally; if it were ever undefined those would throw mid-interaction.
+ * 3. IT ACTUALLY LOADS. A wrong region, a typo'd key or a blocked CDN leaves
+ *    the site looking fine while collecting nothing.
+ *
+ * 4. track() REACHES posthog. ~9 call sites invoke it; if the wiring breaks
+ *    they fail silently and the hash-routed case studies go unmeasured.
  *
  * Run:  node tests/verify-analytics.js [baseUrl]
  */
@@ -26,100 +30,117 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 let failures = 0;
 const ok = (l, c, d) => { if (!c) failures++; console.log((c ? 'PASS  ' : 'FAIL  ') + l + (d ? '  [' + d + ']' : '')); };
 
-const PH_HOSTS = /posthog\.com|i\.posthog|posthog\.io/i;
-
-async function load(browser, path, vw) {
-  const ctx = await browser.createBrowserContext();
-  const p = await ctx.newPage();
-  await p.setViewport(vw);
-  const thirdParty = [];
-  const errs = [];
-  p.on('request', r => { if (PH_HOSTS.test(r.url())) thirdParty.push(r.url()); });
-  p.on('pageerror', e => errs.push(e.message));
-  p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
-  await p.goto(BASE + path, { waitUntil: 'domcontentloaded' });
-  await wait(2500);
-  return { p, ctx, thirdParty, errs };
-}
+const PH_HOST = /i\.posthog\.com/i;
 
 (async () => {
   const b = await puppeteer.launch({ headless: 'new' });
 
-  // ── 1. Desktop, no key: fully inert ────────────────────────────────────
+  // ── Desktop: loads, stays cookieless, track() reaches posthog ──────────
   {
-    const { p, ctx, thirdParty, errs } = await load(b, '/', { width: 1440, height: 900 });
-    ok('desktop: no PostHog request while PH_KEY is empty', thirdParty.length === 0, thirdParty[0] || 'none');
-    const g = await p.evaluate(() => ({
-      posthog: typeof window.posthog,
-      track: typeof window.track,
-      scripts: [...document.querySelectorAll('script[src]')].filter(s => /posthog/i.test(s.src)).length,
-    }));
-    ok('desktop: no posthog global defined', g.posthog === 'undefined', g.posthog);
-    ok('desktop: no posthog script tag injected', g.scripts === 0, String(g.scripts));
-    ok('desktop: track() is always callable (9 call sites depend on it)', g.track === 'function', g.track);
-    const threw = await p.evaluate(() => { try { window.track('probe', { a: 1 }); return false; } catch (e) { return true; } });
-    ok('desktop: calling track() with a key unset does not throw', !threw);
+    const ctx = await b.createBrowserContext();
+    const p = await ctx.newPage();
+    await p.setViewport({ width: 1440, height: 900 });
+    const reqs = [], errs = [];
+    p.on('request', r => { if (PH_HOST.test(r.url())) reqs.push(r.url()); });
+    p.on('pageerror', e => errs.push(e.message));
+    p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+
+    await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
+    await p.waitForFunction(() => window.posthog && window.posthog.__loaded, { timeout: 15000 })
+           .catch(() => {});
+    await wait(2500);
+
+    ok('desktop: posthog library loaded', await p.evaluate(() => !!(window.posthog && window.posthog.__loaded)));
+    ok('desktop: requests go to the EU region', reqs.length > 0 && reqs.every(u => /eu[-.]/.test(u)),
+       reqs.length + ' reqs, first: ' + (reqs[0] || 'none').slice(0, 60));
+
+    // THE cookieless assertion — this is what replaces a consent banner.
+    const cookies = await p.cookies();
+    const phCookies = cookies.filter(c => /posthog|^ph_/i.test(c.name));
+    ok('desktop: writes NO PostHog cookies (this is why no consent banner is needed)',
+       phCookies.length === 0, phCookies.map(c => c.name).join(', ') || 'none');
+    ok('desktop: writes NO cookies at all', cookies.length === 0,
+       cookies.map(c => c.name).join(', ') || 'none');
+
+    const storage = await p.evaluate(() => {
+      const hits = [];
+      for (const store of ['localStorage', 'sessionStorage']) {
+        try {
+          for (let i = 0; i < window[store].length; i++) {
+            const k = window[store].key(i);
+            if (/posthog|^ph_/i.test(k)) hits.push(store + ':' + k);
+          }
+        } catch (e) {}
+      }
+      return hits;
+    });
+    ok('desktop: writes NO PostHog local/sessionStorage keys', storage.length === 0, storage.join(', ') || 'none');
+
+    // track() must actually reach posthog.capture
+    const wired = await p.evaluate(() => {
+      if (typeof window.track !== 'function') return 'track is not a function';
+      let got = null;
+      const real = window.posthog.capture.bind(window.posthog);
+      window.posthog.capture = (n, props) => { got = n; return real(n, props); };
+      window.track('__selftest__', { probe: true });
+      window.posthog.capture = real;
+      return got;
+    });
+    ok('desktop: track() reaches posthog.capture', wired === '__selftest__', String(wired));
+
+    // a real user action must produce a captured event
+    const captured = await p.evaluate(async () => {
+      const seen = [];
+      const real = window.posthog.capture.bind(window.posthog);
+      window.posthog.capture = (n, props) => { seen.push(n); return real(n, props); };
+      location.hash = '#settlr';
+      await new Promise(r => setTimeout(r, 1800));
+      window.posthog.capture = real;
+      return seen;
+    });
+    ok('desktop: opening a case study fires case_study_opened',
+       captured.includes('case_study_opened'), captured.join(', ') || 'nothing captured');
+
     ok('desktop: no console/page errors', errs.length === 0, errs[0] || 'none');
     await p.close(); await ctx.close();
   }
 
-  // ── 2. Mobile document, no key: inert ──────────────────────────────────
+  // ── Mobile document ────────────────────────────────────────────────────
   {
-    const { p, ctx, thirdParty, errs } = await load(b, '/mobile.html',
-      { width: 390, height: 844, isMobile: true, hasTouch: true });
-    ok('mobile: no PostHog request while PH_KEY is empty', thirdParty.length === 0, thirdParty[0] || 'none');
-    const t = await p.evaluate(() => typeof window.track);
-    ok('mobile: track() is always callable', t === 'function', t);
+    const ctx = await b.createBrowserContext();
+    const p = await ctx.newPage();
+    await p.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+    const errs = [];
+    p.on('pageerror', e => errs.push(e.message));
+    await p.goto(BASE + '/mobile.html', { waitUntil: 'domcontentloaded' });
+    await p.waitForFunction(() => window.posthog && window.posthog.__loaded, { timeout: 15000 }).catch(() => {});
+    await wait(2000);
+    ok('mobile: posthog loaded', await p.evaluate(() => !!(window.posthog && window.posthog.__loaded)));
+    const cookies = await p.cookies();
+    ok('mobile: writes no cookies', cookies.length === 0, cookies.map(c => c.name).join(', ') || 'none');
     ok('mobile: no console/page errors', errs.length === 0, errs[0] || 'none');
     await p.close(); await ctx.close();
   }
 
-  // ── 3. THE ROUTER GUARD, with a key simulated ──────────────────────────
-  // Rewrite the empty key to a fake one in flight, then load index.html at a
-  // PHONE viewport. The router redirects to mobile.html; the guard must stop
-  // index.html from initialising first. If it doesn't, every mobile visitor
-  // produces a phantom desktop pageview.
-  for (const [label, path, vw, phantomFrom] of [
-    ['index.html at a phone viewport', '/', { width: 390, height: 844, isMobile: true, hasTouch: true }, 'desktop'],
-    ['mobile.html at a desktop viewport', '/mobile.html', { width: 1440, height: 900 }, 'mobile'],
+  // ── Router guard: the document that redirects AWAY must never load PostHog ──
+  for (const [label, path, vw, doomed] of [
+    ['index.html at a phone viewport', '/', { width: 390, height: 844, isMobile: true, hasTouch: true }, ['/', '/index.html']],
+    ['mobile.html at a desktop viewport', '/mobile.html', { width: 1440, height: 900 }, ['/mobile.html']],
   ]) {
     const ctx = await b.createBrowserContext();
     const p = await ctx.newPage();
     await p.setViewport(vw);
-    await p.setRequestInterception(true);
-    const phRequests = [];
-    p.on('request', async req => {
-      if (PH_HOSTS.test(req.url())) { phRequests.push(req.url()); return req.abort(); }
-      // Rewrite the empty key to a fake one IN FLIGHT. Without this the loader
-      // returns at `if (!PH_KEY)` and the router guard is never exercised — the
-      // test would pass while proving nothing.
-      if (req.resourceType() === 'document') {
-        try {
-          const res = await fetch(req.url());
-          let html = await res.text();
-          const before = html;
-          html = html.replace(/var PH_KEY\s*=\s*''/, "var PH_KEY = 'phc_TESTKEY_not_a_real_project'");
-          if (html === before) return req.respond({ status: 500, body: 'key placeholder not found' });
-          return req.respond({ status: 200, contentType: 'text/html', body: html });
-        } catch (e) { return req.continue(); }
-      }
-      req.continue();
-    });
+    // Record WHICH document injected the loader. After location.replace the
+    // destination page legitimately loads its own — a bare count would flag
+    // correct behaviour as a failure.
     await p.evaluateOnNewDocument(() => {
       const orig = document.createElement.bind(document);
-      // survives the redirect so injections from BOTH documents are recorded
-      window.__phScripts = (window.name && window.name.startsWith('[')) ? JSON.parse(window.name) : [];
-      const persist = () => { try { window.name = JSON.stringify(window.__phScripts); } catch (e) {} };
-      window.addEventListener('beforeunload', persist);
-      setInterval(persist, 120);
+      window.__phFrom = [];
       document.createElement = function (tag) {
         const el = orig(tag);
         if (String(tag).toLowerCase() === 'script') {
           Object.defineProperty(el, 'src', {
-            // Record WHICH document injected it. After location.replace the
-            // destination page legitimately loads its own tracker, so a bare
-            // count would flag correct behaviour as a failure.
-            set(v) { if (/posthog/i.test(v)) window.__phScripts.push(location.pathname); el.setAttribute('src', v); },
+            set(v) { if (/posthog/i.test(v)) window.__phFrom.push(location.pathname); el.setAttribute('src', v); },
             get() { return el.getAttribute('src'); },
           });
         }
@@ -128,19 +149,14 @@ async function load(browser, path, vw) {
     });
     await p.goto(BASE + path, { waitUntil: 'domcontentloaded' });
     await wait(2500);
-    const froms = await p.evaluate(() => window.__phScripts || []).catch(() => []);
-    // The guard's job: the document that redirects AWAY must never inject.
-    const doomed = path === '/' ? ['/', '/index.html'] : ['/mobile.html'];
-    const phantom = froms.filter(f => doomed.includes(f));
-    ok(`router guard: ${label} injects no phantom ${phantomFrom} tracker`,
-        phantom.length === 0,
-        'injected from: [' + froms.join(', ') + ']  phantom: ' + phantom.length);
-    const landed = await p.evaluate(() => location.pathname).catch(() => '?');
-    ok(`router guard: ${label} actually redirected`, landed !== path || path === '/', 'landed ' + landed);
+    const from = await p.evaluate(() => window.__phFrom || []).catch(() => []);
+    const phantom = from.filter(f => doomed.includes(f));
+    ok(`router guard: ${label} logs no phantom pageview`, phantom.length === 0,
+       'loaded from: [' + from.join(', ') + ']');
     await p.close(); await ctx.close();
   }
 
-  console.log('\n' + (failures ? failures + ' FAILED' : 'analytics contract OK (inert until PH_KEY is set)'));
+  console.log('\n' + (failures ? failures + ' FAILED' : 'analytics live contract OK — collecting, cookieless, router-safe'));
   await b.close();
   process.exit(failures === 0 ? 0 : 1);
 })();

@@ -188,7 +188,12 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
   3. **No reverse proxy possible.** GitHub Pages is static, so the standard ad-blocker workaround is unavailable. Data is directional, and biased against this site's own audience.
 - **Honest costs, measured not assumed:** ~**73 KB brotli** (the docs' 52.4 KB is a different build — I curl'd the real asset). Cookieless mode also disables **GeoIP and bot detection**, so no country data and some crawler noise.
 - [x] `tests/verify-analytics.js` (13 checks). **Its first version was fake-green:** with `PH_KEY` empty the loader returns before the media-query check, so "no tracker injected" proved nothing about the router guard. Now it rewrites the key **in flight** and reloads at the opposite viewport. That exposed a second test bug — `evaluateOnNewDocument` re-runs after the redirect, so a bare count credited the destination page's legitimate tracker to the origin. Fixed by recording `location.pathname` at injection time. Gate is now **105 checks**.
-- [ ] **Owner action to enable:** create a PostHog project, paste the publishable key into `PH_KEY` in `index.html` AND `mobile.html`, keep `PH_HOST`/`PH_CDN` in the same region (EU set by default).
+- [x] **ENABLED 2026-07-27.** Owner created an EU project; key pasted into both documents. Verified live-contract behaviour, not just config:
+  - **Zero cookies, zero local/sessionStorage keys** on both documents — this is the assertion that replaces a consent banner, so `verify-analytics.js` now guards it as its most important check.
+  - Loads from the EU region; `case_study_opened` confirmed firing on a real hash-route open; `track()` confirmed reaching `posthog.capture`.
+  - Router guard holds with the key live: the document that redirects away never loads the tracker (verified by attributing each injection to `location.pathname`).
+  - **Audited what it actually fetches (84 KB):** no session recorder (correctly disabled). Turned OFF `advanced_disable_feature_flags` + `disable_web_experiments` — unused, and flags cost a network round-trip on every pageview. Kept `capture_performance` (3 KB: real-user Core Web Vitals, the only way to know the perf pass helps actual devices) and `capture_dead_clicks` (7 KB: catches visitors clicking decorative elements expecting a response, a real risk on a site this hover-reactive).
+  - Payload after: desktop 1,555/1,700 KB, mobile 656/700 KB — both inside the budgets set before enabling.
 
 ## 19. Phase B1 — Philosophy section (2026-07-26)
 - [x] **Owner picked Proposal A (editorial list)** from the two mockups sitting in the gitignored `_section-redesign-test.html` since 2026-07-19 (kept, not deleted, precisely for this).

@@ -10,7 +10,7 @@
      router would log a phantom mobile pageview for every desktop visitor. -->
 <script>
 (function () {
-  var PH_KEY  = '';                                // ← project API key (publishable)
+  var PH_KEY  = 'phc_p8UCDF8rzqra2ABqJCQoNZyiBAYcGNz8gGK7vzdsvJti';                                // ← project API key (publishable)
   var PH_HOST = 'https://eu.i.posthog.com';
   var PH_CDN  = 'https://eu-assets.i.posthog.com';
 
@@ -28,7 +28,18 @@
       defaults: '2026-05-30',
       capture_pageview: true,
       autocapture: true,
-      disable_session_recording: true
+      disable_session_recording: true,
+      // Feature flags are unused here, and the flags call is a network
+      // round-trip on every single pageview. Off.
+      advanced_disable_feature_flags: true,
+      disable_web_experiments: true,
+      // Kept deliberately: real-user Core Web Vitals (3 KB) is the only way
+      // to know whether the perf work actually helps visitors on real
+      // devices, and dead-click capture (7 KB) surfaces people clicking
+      // decorative elements expecting them to do something — a real risk on
+      // a site with this much hover-reactive art.
+      capture_performance: true,
+      capture_dead_clicks: true
     });
     window.track = function (name, props) {
       try { posthog.capture(name, props || {}); } catch (e) {}
