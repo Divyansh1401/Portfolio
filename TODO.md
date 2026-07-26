@@ -162,6 +162,16 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 20. Analytics — PostHog, cookieless (2026-07-26)
+- [x] **Integrated but inert.** Loader in both documents' `<head>`; set `PH_KEY` in BOTH to switch on. Owner chose cookieless/no-banner over session replay.
+- **Three site-specific traps found before writing any code**, each of which would have silently corrupted the data:
+  1. **Phantom pageviews.** The viewport router `location.replace()`s across 1024px. Initialising above it logs a desktop pageview + instant bounce for EVERY mobile visitor (and vice versa), wrecking the desktop/mobile split. Loader sits below the router and re-checks the media query.
+  2. **Invisible case studies.** They're hash routes (`#settlr`), not pages — autocapture never sees them. Wired explicit `track()` calls into `openOverlay`, `openResume`, `setAlterEgoMode`, `openPhotoLightbox`, plus mailto/outbound delegation.
+  3. **No reverse proxy possible.** GitHub Pages is static, so the standard ad-blocker workaround is unavailable. Data is directional, and biased against this site's own audience.
+- **Honest costs, measured not assumed:** ~**73 KB brotli** (the docs' 52.4 KB is a different build — I curl'd the real asset). Cookieless mode also disables **GeoIP and bot detection**, so no country data and some crawler noise.
+- [x] `tests/verify-analytics.js` (13 checks). **Its first version was fake-green:** with `PH_KEY` empty the loader returns before the media-query check, so "no tracker injected" proved nothing about the router guard. Now it rewrites the key **in flight** and reloads at the opposite viewport. That exposed a second test bug — `evaluateOnNewDocument` re-runs after the redirect, so a bare count credited the destination page's legitimate tracker to the origin. Fixed by recording `location.pathname` at injection time. Gate is now **105 checks**.
+- [ ] **Owner action to enable:** create a PostHog project, paste the publishable key into `PH_KEY` in `index.html` AND `mobile.html`, keep `PH_HOST`/`PH_CDN` in the same region (EU set by default).
+
 ## 19. Phase B1 — Philosophy section (2026-07-26)
 - [x] **Owner picked Proposal A (editorial list)** from the two mockups sitting in the gitignored `_section-redesign-test.html` since 2026-07-19 (kept, not deleted, precisely for this).
 - Replaced the 5-across `.cs-principles-grid` card wall with a two-column layout: a left lede holding the argument, and the five principles as a numbered list with the specimen visuals alternating side to side. All five principles kept — Proposal B cut to three, which would have dropped "System over screens", the one that demonstrates systems thinking (what design-system roles hire for).

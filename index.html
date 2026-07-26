@@ -2,6 +2,49 @@
 <html lang="en">
 <head>
   <script>(function(){function go(){if(matchMedia('(max-width: 1023.98px)').matches)location.replace('mobile.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+  <!-- ── Analytics: PostHog, cookieless ────────────────────────────────────
+       Paste the project key into PH_KEY to switch it on. Empty = fully inert:
+       no script fetched, no requests, no globals. Safe to ship unset.
+
+       cookieless_mode:'always' means NO cookies and NO local/sessionStorage,
+       so no consent banner is required. The trade: no identify(), no session
+       replay, no cross-visit stitching, and PostHog's IP-based GeoIP and bot
+       detection do NOT enrich events — expect no country data and some crawler
+       noise in the counts.
+
+       MUST stay below the viewport router above and re-check the media query:
+       that router replaces the document on <1024px, so initialising ahead of it
+       would log a phantom desktop pageview + instant bounce for EVERY mobile
+       visitor, wrecking the desktop/mobile split. -->
+  <script>
+  (function () {
+    var PH_KEY  = '';                              // ← project API key (publishable)
+    var PH_HOST = 'https://eu.i.posthog.com';      // EU residency; US: https://us.i.posthog.com
+    var PH_CDN  = 'https://eu-assets.i.posthog.com'; // must match the host region
+
+    window.track = function () {};                 // no-op until (and unless) PostHog loads
+    if (!PH_KEY) return;
+    if (matchMedia('(max-width: 1023.98px)').matches) return;  // this document is being replaced
+
+    var s = document.createElement('script');
+    s.src = PH_CDN + '/static/array.js';
+    s.async = true;
+    s.onload = function () {
+      posthog.init(PH_KEY, {
+        api_host: PH_HOST,
+        cookieless_mode: 'always',
+        defaults: '2026-05-30',
+        capture_pageview: true,
+        autocapture: true,
+        disable_session_recording: true
+      });
+      window.track = function (name, props) {
+        try { posthog.capture(name, props || {}); } catch (e) {}
+      };
+    };
+    document.head.appendChild(s);
+  })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Divyansh Rastogi · Product Designer</title>
@@ -8093,6 +8136,7 @@
 
     let resumeReturnFocus = null;
     function openResume() {
+      track('resume_opened');
       window._isOverlayOpen = true;
       resumeReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
@@ -8458,6 +8502,20 @@
     document.querySelectorAll('.rcpt-closer').forEach(initReceiptFooter);
 
     // ── Copy-to-clipboard: swap button text ──
+    // Conversion events: the email CTA and outbound profile links are the whole
+    // point of the funnel, so capture them explicitly rather than relying on
+    // autocapture's generic click payload.
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href^="mailto:"]');
+      if (a) track('email_clicked', { where: a.closest('#alter-connect') ? 'dark' : 'light' });
+      const out = e.target.closest('a[target="_blank"][href^="http"]');
+      if (out) {
+        let host = '';
+        try { host = new URL(out.href).hostname.replace(/^www\./, ''); } catch (err) {}
+        track('outbound_clicked', { host: host });
+      }
+    }, true);
+
     document.querySelectorAll('.connect-link[data-copy]').forEach(link => {
       let copying = false;
       link.addEventListener('click', e => {
@@ -10267,6 +10325,8 @@
     function openOverlay(slug) {
       const study = caseStudies[slug];
       if (!study) return;
+      // Case studies are hash routes, not pages — autocapture never sees them.
+      track('case_study_opened', { slug: slug });
       window._isOverlayOpen = true;
       caseReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
@@ -10675,6 +10735,7 @@
     }
 
     function setAlterEgoMode(enabled) {
+      track('world_flipped', { to: enabled ? 'dark' : 'light' });
       alterEgoMode = enabled;
       setHeroAlterEgoState(enabled);
       setNavWorld(enabled, false);
@@ -11237,6 +11298,7 @@
 
       // Deep-link entry point (#photo-N), clamped to the gallery bounds.
       window.openPhotoLightbox = function (i) {
+        track('photo_opened', { index: i + 1 });
         openLightbox(Math.max(0, Math.min(images.length - 1, i)));
       };
 

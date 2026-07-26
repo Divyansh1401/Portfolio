@@ -120,6 +120,29 @@ a synthetic `wheel` event goes through the lerp, so wait for it to settle
    shrink the sticky constraint box). `initCardStack` measures it at runtime;
    don't hardcode it.
 
+## Analytics (PostHog, cookieless)
+Both documents carry an inert PostHog loader in `<head>`, immediately **below**
+the viewport router. Set `PH_KEY` in BOTH files to switch it on; empty = no
+script, no request, no globals.
+
+- `cookieless_mode: 'always'` — no cookies, no local/sessionStorage, **no
+  consent banner required**. Costs: no `identify()`, no session replay, no
+  cross-visit stitching, and PostHog's IP-based **GeoIP and bot detection do
+  not enrich events** (expect no country data and some crawler noise).
+- **The loader MUST stay below the router and re-check the media query.**
+  index.html replaces the document under 1024px and mobile.html above it, so
+  initialising first logs a phantom pageview + instant bounce for every visitor
+  on the other form factor and wrecks the desktop/mobile split.
+- Case studies are hash routes, invisible to autocapture — hence explicit
+  `track()` calls. Events: `case_study_opened` `resume_opened` `world_flipped`
+  `photo_opened` `email_clicked` `outbound_clicked` `desktop_case_study_copied`.
+- `window.track()` is defined as a no-op before load, so the ~9 call sites are
+  always safe to invoke. Guarded by `tests/verify-analytics.js`.
+- GitHub Pages is static and **cannot reverse-proxy**, so ad blockers will drop
+  a share of traffic — biased toward exactly this site's design/tech audience.
+  Treat the numbers as directional.
+- Cost when enabled: ~73 KB brotli (measured, not the docs' 52 KB figure).
+
 ## Deployment
 - GitHub Pages serves the repo root; pushing `main` updates the live site.
 - ⚠️ **Git history was rewritten 2026-07-16** (scrubbed `projects/`,

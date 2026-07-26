@@ -2,6 +2,41 @@
 <html lang="en">
 <head>
 <script>(function(){function go(){if(matchMedia('(min-width: 1024px)').matches)location.replace('index.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+<!-- ── Analytics: PostHog, cookieless ──────────────────────────────────────
+     Keep PH_KEY / PH_HOST / PH_CDN identical to index.html or the two
+     documents report into different projects. Empty key = fully inert.
+     See index.html for the full rationale; the guard below is the mirror of
+     it — this document is replaced on >=1024px, so initialising ahead of the
+     router would log a phantom mobile pageview for every desktop visitor. -->
+<script>
+(function () {
+  var PH_KEY  = '';                                // ← project API key (publishable)
+  var PH_HOST = 'https://eu.i.posthog.com';
+  var PH_CDN  = 'https://eu-assets.i.posthog.com';
+
+  window.track = function () {};
+  if (!PH_KEY) return;
+  if (matchMedia('(min-width: 1024px)').matches) return;   // this document is being replaced
+
+  var s = document.createElement('script');
+  s.src = PH_CDN + '/static/array.js';
+  s.async = true;
+  s.onload = function () {
+    posthog.init(PH_KEY, {
+      api_host: PH_HOST,
+      cookieless_mode: 'always',
+      defaults: '2026-05-30',
+      capture_pageview: true,
+      autocapture: true,
+      disable_session_recording: true
+    });
+    window.track = function (name, props) {
+      try { posthog.capture(name, props || {}); } catch (e) {}
+    };
+  };
+  document.head.appendChild(s);
+})();
+</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Feed · Divyansh Rastogi</title>
@@ -1427,6 +1462,7 @@
   const wantsAfterHours = /^#(hobbies|photo-\d+)$/.test(location.hash);
   if (saved === 'dark' || wantsAfterHours) root.classList.add('dark');
   function toggleTheme() {
+    track('world_flipped', { to: document.documentElement.classList.contains('dark') ? 'light' : 'dark' });
     const dark = root.classList.toggle('dark');
     if (themeStore) themeStore.setItem('feed-theme', dark ? 'dark' : 'light');
     setTimeout(observeReveals, 60);   // the newly shown world's posts still need their reveal
@@ -1506,6 +1542,7 @@
   document.querySelectorAll('.pa-link-cta--desktop').forEach(a => {
     a.addEventListener('click', async e => {
       e.preventDefault();
+      track('desktop_case_study_copied', { study: a.dataset.desktopCase });
       try {
         await navigator.clipboard.writeText(a.href);
         showToast('Link copied. Open it on a desktop');
@@ -1518,6 +1555,7 @@
   // ── copy email ──
   document.getElementById('copyEmail').addEventListener('click', async () => {
     try {
+      track('email_clicked', { via: 'copy' });
       await navigator.clipboard.writeText('divyanshr.iitb@gmail.com');
       showToast('Email copied');
     } catch {
