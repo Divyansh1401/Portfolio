@@ -22,6 +22,7 @@ Individual suites take an optional base URL: `node tests/verify-deeplinks.js htt
 | `verify-deeplinks.js` | 21 | Hash routing — the source of truth for all overlay/world state. Every target (`#settlr` `#refer-earn` `#resume` `#hobbies` `#photo-N` `#kinko` `#connect`) as a cold load *and* a live `hashchange`, cross-transitions (case→case swaps in place, case→resume closes first, dark→`#kinko` returns to light), Back/Forward, and `replaceState` history hygiene on polaroid flip |
 | `verify-kbd-meta.js` | 22 | A11y + metadata. Case CTAs are real `<a href="#slug">`; polaroid is Enter/Space operable; overlay is a focus-managed dialog (focus in → Tab **and** Shift+Tab trapped → Escape → focus restored to trigger → scroll lock released); Escape forwarded out of same-origin iframes; `:focus-visible` exists; share/OG/twitter/canonical/JSON-LD on **both** documents |
 | `verify-eased-scroll.js` | 10 | The eased wheel loop: eases over many frames, monotonic, settles exactly at page end, nested scrollers (`.overlay-body`) never hijacked, page frozen behind an open overlay, reduced motion falls back to native, and no throw when `e.target` isn't an Element |
+| `verify-mobile-cta.js` | 9 | The desktop-only case-study CTAs on `mobile.html`. index.html's router sends sub-1024px viewports back to mobile.html, so a plain `href="index.html#slug"` **bounces** the reader to the post they're already on — these say "on desktop" and copy the canonical URL. Asserts the label, absolute href, that it's still a real `<a>`, no navigation on tap, the toast, the copied value, and that email-copy still shares the toast |
 | `verify-cards.js` | 15 | Both featured theatres (2 slides, images decoded, dot nav + `aria-pressed`) and the last-card recede on **both** stacks (full size at pin → mid-recede → deck scale before release, with earlier cards staying settled) |
 
 ## Notes for whoever runs these next
@@ -41,3 +42,10 @@ Individual suites take an optional base URL: `node tests/verify-deeplinks.js htt
   loop and behaves natively, so scripted scrolls need no special handling.
 - Overlay transitions and the alter-ego blob wipe run 650–900ms; the suites use
   a ~1100ms settle rather than racing them.
+- **`navigator.share` exists in headless Chrome but never settles** — awaiting it
+  hangs indefinitely (it hung this harness for two minutes). Don't rely on it in
+  page code, and don't await it in a test.
+- **Prefer `waitForFunction` over fixed delays.** `verify-mobile-cta.js` was
+  briefly flaky because a fixed settle raced the script attaching its click
+  handler on cold runs. A flaky gate is worse than no gate.
+- `tests/` totals **77 checks**; a full `run-all.js` pass takes ~60–90s.

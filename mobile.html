@@ -413,6 +413,10 @@
   .post-actions {
     display: flex; align-items: center; gap: 14px;
     margin-top: 15px;
+    /* "View case study on desktop" + "Live at …" don't both fit on one line at
+       390px — let the pair stack instead of each wrapping internally, which
+       stranded the CTA's icon beside two lines of text. */
+    flex-wrap: wrap; row-gap: 10px;
   }
   .pa-link {
     display: inline-flex; align-items: center; gap: 7px;
@@ -432,6 +436,15 @@
   }
   .pa-link-cta svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
   .pa-link-cta:active svg { transform: translateX(3px); }
+  /* Desktop-only case studies: the tap copies the link instead of navigating
+     (index.html's viewport router would bounce a phone straight back here), so
+     the monitor glyph must NOT slide like the "go" arrows do. */
+  .pa-link-cta--desktop svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .pa-link-cta--desktop:active svg { transform: none; }
+  .pa-link-cta--desktop:active { opacity: 0.65; }
+  /* Keep the label on one line so the monitor glyph stays next to the words
+     rather than floating beside a two-line block. */
+  .pa-link-cta--desktop { white-space: nowrap; }
 
   .pa-live { display: inline-flex; align-items: center; gap: 6px; }
   .pa-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #2E8B57; box-shadow: 0 0 0 2px rgba(46,139,87,0.18); flex-shrink: 0; }
@@ -864,7 +877,7 @@
       </div>
     </div>
     <div class="post-actions" style="margin-top:0;">
-      <a href="index.html#settlr" class="pa-link-cta">View case study <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="https://www.divyanshrastogi.in/#settlr" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="Settlr">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
       <a class="pa-link pa-live" href="https://settlrapp.in" target="_blank" rel="noopener"><span class="pa-live-dot" aria-hidden="true"></span>Live at settlrapp.in</a>
     </div>
   </article>
@@ -902,7 +915,7 @@
       </div>
     </div>
     <div class="post-actions" style="margin-top:0;">
-      <a href="index.html#refer-earn" class="pa-link-cta">View case study <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="https://www.divyanshrastogi.in/#refer-earn" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="Refer &amp; Earn">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
     </div>
   </article>
 
@@ -1450,13 +1463,44 @@
     });
   });
 
-  // ── copy email ──
+  // ── toast ──
   const toast = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  // ── desktop-only case studies ──
+  // The case studies live in index.html, which is desktop-only — and its head
+  // router sends any viewport under 1024px straight back here, so tapping
+  // through would just bounce the reader to the post they're already reading.
+  // Copy the link instead so they can finish reading on a laptop.
+  //
+  // Deliberately NOT navigator.share: it exists in some webviews/embedded
+  // browsers but never settles, so awaiting it leaves the tap with no feedback
+  // at all — the exact dead end this replaces. Clipboard is deterministic and
+  // instant, and the href stays a real canonical URL, so long-press
+  // "Share"/"Copy link" is still there for anyone who wants the share sheet.
+  document.querySelectorAll('.pa-link-cta--desktop').forEach(a => {
+    a.addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(a.href);
+        showToast('Link copied — open it on a desktop');
+      } catch {
+        showToast('Open divyanshrastogi.in on a desktop');
+      }
+    });
+  });
+
+  // ── copy email ──
   document.getElementById('copyEmail').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText('divyanshr.iitb@gmail.com');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 1600);
+      showToast('Email copied');
     } catch {
       location.href = 'mailto:divyanshr.iitb@gmail.com';
     }

@@ -146,6 +146,19 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [x] **Owner removed the Settlr stats-card slide** (2026-07-26): the mobile Settlr carousel is now
   2 slides (couch + playground), matching the desktop card; dots 3→2. `settlr/mobile-cover.webp`
   became orphaned and was deleted rather than left in the repo.
+- [x] **Mobile case-study CTAs now say "View case study on desktop"** (owner request, 2026-07-26) — and
+  the tap was fixed, not just relabelled. It was a **dead bounce**: `href="index.html#settlr"` hit
+  index.html's viewport router, which sends anything under 1024px back to `mobile.html#settlr` — i.e.
+  right back to the post the reader was already on (verified empirically). Now the href is the
+  canonical `https://www.divyanshrastogi.in/#slug`, the tap copies it and toasts "Link copied — open
+  it on a desktop", and it stays a real `<a>` so long-press Share/Copy-link still works.
+  **Deliberately NOT `navigator.share`:** it exists in some webviews but never settles, so awaiting it
+  leaves the tap with zero feedback — it hung the test harness for 2 minutes. Clipboard is
+  deterministic. `.post-actions` got `flex-wrap` + the label `white-space: nowrap` so the pair stacks
+  at 360/390px instead of stranding the monitor glyph beside two wrapped lines.
+- [x] New suite `tests/verify-mobile-cta.js` (9 checks) added to the runner — gate is now **77 checks**.
+  It was briefly flaky (a fixed settle raced the click handler on cold runs); replaced with
+  `waitForFunction` and proven stable over 3 consecutive runs.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
