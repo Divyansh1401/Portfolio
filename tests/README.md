@@ -1,0 +1,43 @@
+# tests/ — the pre-push gate
+
+Headless Puppeteer suites for `index.html` / `mobile.html`. **CLAUDE.md's bar
+for any interaction change is: all suites pass, zero console errors.**
+
+These used to live in a session scratchpad and were lost. They live in the repo
+now so that can't happen again — if you change interaction code, run them.
+
+## Run
+
+```bash
+npx serve -p 3457 .          # in one shell (launch.json name: portfolio-v2)
+node tests/run-all.js        # in another — exits non-zero if anything fails
+```
+
+Individual suites take an optional base URL: `node tests/verify-deeplinks.js http://localhost:3457`.
+
+## Suites
+
+| File | Checks | Covers |
+|---|---|---|
+| `verify-deeplinks.js` | 21 | Hash routing — the source of truth for all overlay/world state. Every target (`#settlr` `#refer-earn` `#resume` `#hobbies` `#photo-N` `#kinko` `#connect`) as a cold load *and* a live `hashchange`, cross-transitions (case→case swaps in place, case→resume closes first, dark→`#kinko` returns to light), Back/Forward, and `replaceState` history hygiene on polaroid flip |
+| `verify-kbd-meta.js` | 22 | A11y + metadata. Case CTAs are real `<a href="#slug">`; polaroid is Enter/Space operable; overlay is a focus-managed dialog (focus in → Tab **and** Shift+Tab trapped → Escape → focus restored to trigger → scroll lock released); Escape forwarded out of same-origin iframes; `:focus-visible` exists; share/OG/twitter/canonical/JSON-LD on **both** documents |
+| `verify-eased-scroll.js` | 10 | The eased wheel loop: eases over many frames, monotonic, settles exactly at page end, nested scrollers (`.overlay-body`) never hijacked, page frozen behind an open overlay, reduced motion falls back to native, and no throw when `e.target` isn't an Element |
+| `verify-cards.js` | 15 | Both featured theatres (2 slides, images decoded, dot nav + `aria-pressed`) and the last-card recede on **both** stacks (full size at pin → mid-recede → deck scale before release, with earlier cards staying settled) |
+
+## Notes for whoever runs these next
+
+- **Always headless.** The in-app browser pane throttles rAF and cannot drive
+  this site (card stacks collapse, scrolls hang). Puppeteer is resolved from
+  `/Users/divyanshrastogi/Desktop/settlr/node_modules/puppeteer`.
+- **Never `networkidle2`** on this site — the dark world lazy-loads 42 rotor
+  shots and each case overlay 30+ images, so the network never goes idle inside
+  the default 30s timeout. Use `domcontentloaded` plus an explicit settle wait.
+- **`alterEgoMode` is a script-scope `let`, not on `window`.** Probe the dark
+  world via `getComputedStyle(document.getElementById('alter-ego-content')).display`.
+- **`.overlay-body` is `scroll-behavior: smooth`** — set it to `auto` before any
+  scripted scrolling or reads return stale values.
+- **Synthetic `wheel` events go through the eased-scroll lerp**, so wait ~600ms
+  for a notch to settle before asserting. `window.scrollTo` is adopted by the
+  loop and behaves natively, so scripted scrolls need no special handling.
+- Overlay transitions and the alter-ego blob wipe run 650–900ms; the suites use
+  a ~1100ms settle rather than racing them.
