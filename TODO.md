@@ -162,6 +162,18 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 18. Phase A — performance finishers (2026-07-26)
+- [x] **A1/A2 · Font subsetting.** All three variable fonts subset to only the characters the site renders. Method that made it safe: collected glyphs at RUNTIME across every state (light, dark, both injected case-study overlays, resume, lightbox, nav typewriter, mobile light+dark), unioned with printable ASCII and every non-ASCII char in either document, then **intersected with each font's own cmap** — so nothing the font lacks is "lost". That check is what proved the card suits `♠♣♦` are absent from Unbounded and already fell back to a system face, i.e. excluding them changes nothing.
+  - Unbounded **252 → 44 KB** woff2 (1138 → 114 codepoints), Jakarta 58 → 25 KB, Jakarta Italic 63 → 28 KB. TTF fallbacks subset in step. **Fonts over the wire: 376 → 100 KB.**
+  - Weight axis (200–900) and all variation tables (fvar/gvar/HVAR/MVAR/STAT/avar) preserved — verified.
+  - **Proved by pixel-diff, not assertion:** rendered hero / featured / case-study / mobile-feed with original vs subset fonts. Three were byte-identical; hero differed by 30 px scattered over a 2000px span with **max channel delta 1** (antialiasing dither, not a glyph). First run showed false diffs until `setInterval` was frozen — the carousels were auto-advancing between captures.
+- [x] **A3 · Kinko thumbnail 128 → 34 KB.** It renders under `filter: blur(14px)`, so source detail is destroyed at paint: 960×540 q62 is indistinguishable. Verified by diffing the *rendered blurred card* — 32% of pixels shift but max channel delta **4/255**, imperceptible.
+- [x] **A4 · `tests/verify-payload.js`** — cold-load budget per page (total/images/fonts + no single asset >300 KB). Ceilings ~15% above measured. Caught its own measurement bug first: Puppeteer shares an HTTP cache across pages, so mobile initially reported **0 KB of fonts**; now a fresh cache-disabled context per page.
+- [x] **`tests/verify-fonts.js`** — coverage guard so new copy can't silently fall back: walks all states, asks `document.fonts.check()` per rendered character, requires anything uncovered to be on the documented `KNOWN_FALLBACK` list. Also asserts the weight axis still varies. Gate is now **92 checks**.
+- [x] **Removed 4.2 MB of unreferenced static font files** (`fonts/*/static/`, 22 files) — never referenced by any `@font-face`, but Pages serves the repo root so they were public URLs.
+- **Net:** desktop **2,796 → 1,468 KB (−47%)**, mobile **847 → 571 KB (−33%)**, LCP 184ms desktop / 112ms mobile, CLS ~0, zero long tasks on mobile.
+- **Re-subset recipe** if copy ever needs a new glyph: rerun the runtime collector, union with ASCII + document non-ASCII, intersect with the *original* font cmaps (backups needed — current files are already subset), then `python3 -m fontTools.subset FONT --text-file=CHARS --flavor=woff2 --layout-features='*' --name-IDs='*' --glyph-names --notdef-outline`. `verify-fonts.js` fails loudly if you forget.
+
 ## 17. Load audit + payload pass (2026-07-26)
 Measured with CDP network tracking + PerformanceObserver (LCP/CLS/longtasks), both pages.
 - **Before:** desktop 2,796 KB / 28 req (images 2,325 KB). Mobile was already healthy: 847 KB, CLS 0.
