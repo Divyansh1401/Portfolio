@@ -50,3 +50,7 @@ skills-lock.json
 
 # Raw photo drops (converted to webp into assets/images/ before use)
 dump/
+
+# Local design-exploration docs (never ship — Pages serves the repo root)
+_section-redesign-test.html
+_explorations/

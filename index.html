@@ -7613,13 +7613,17 @@
       // Trailing spacer inside the stack's CONTENT box so the LAST sticky card
       // has room to stay pinned before the section releases (a sticky element is
       // confined to its parent's content box, so a bottom *padding* won't do it).
+      // Its height is also the scroll distance over which the last card recedes
+      // into the deck (see the `else` branch in update()) — long enough to read
+      // as a settle, short enough not to stall the page.
       if (!stackEl.querySelector('.card-stack__end')) {
         const end = document.createElement('div');
         end.className = 'card-stack__end';
-        end.style.height = '12vh';
+        end.style.height = '40vh';
         end.setAttribute('aria-hidden', 'true');
         stackEl.appendChild(end);
       }
+      const endEl = stackEl.querySelector('.card-stack__end');
 
       // ── ScrollStack (React Bits) properties — identical for every stack
       //    (Featured + Film) so both interactions match exactly. ──────────
@@ -7653,8 +7657,25 @@
             panels[i].style.transform = 'scale(' + (1 - p * (1 - targetScale)).toFixed(4) + ')';
             if (dims[i]) dims[i].style.opacity = (MAX_DIM * p).toFixed(3);
           } else {
-            panels[i].style.transform = 'scale(1)';
-            if (dims[i]) dims[i].style.opacity = '0';
+            // Last card has no successor to cover it, so nothing drives its
+            // recede the normal way — it used to exit at full size while the
+            // cards behind it sat settled. Drive it from the stack's bottom
+            // edge instead: p runs 0→1 across the pinned dwell, from the pin
+            // moment to the sticky release, so the whole deck scrolls out
+            // settled together. NOTE the card's own bottom margin counts:
+            // the trailing spacer makes its slot match :not(:last-child), so
+            // it carries the 30vh gap too — sticky pins at
+            // stackBottom = releaseAt + margin + spacer and releases at
+            // releaseAt + margin (margins shrink the sticky constraint box).
+            const pinTopI = basePinTop + ITEM_STACK_DISTANCE * i;
+            const releaseAt = pinTopI + panels[i].offsetHeight
+                            + (parseFloat(getComputedStyle(panels[i]).marginBottom) || 0);
+            const dwell = Math.max(1, endEl.offsetHeight);
+            const stackBottom = stackEl.getBoundingClientRect().bottom;
+            const p = ease(clamp01((releaseAt + dwell - stackBottom) / dwell));
+            const targetScale = BASE_SCALE + i * ITEM_SCALE;
+            panels[i].style.transform = 'scale(' + (1 - p * (1 - targetScale)).toFixed(4) + ')';
+            if (dims[i]) dims[i].style.opacity = (MAX_DIM * p).toFixed(3);
           }
 
           const el = parallaxs[i];
@@ -7695,6 +7716,128 @@
       update();
     }
     document.querySelectorAll('.card-stack').forEach(initCardStack);
+
+    // ── Eased scroll (hand-rolled, no dependency) ────────────────────────
+    // Wheel input moves a virtual `target`; a rAF loop lerps the REAL scroll
+    // position toward it via scrollTo. Driving native scroll (rather than
+    // transforming a wrapper, the Locomotive-style approach) is what keeps
+    // position:sticky, the card stacks, IntersectionObservers, scrollbar
+    // drag, and hash deep-links all working untouched — they just receive a
+    // smoothed scroll stream.
+    //
+    // Deliberately NOT hijacked: keyboard, scrollbar drag, programmatic
+    // scrolls, and anything inside a nested scroller (.overlay-body, the
+    // horizontal rails, iframes). Those fall through to native and simply
+    // resync the target — see the scroll listener at the bottom.
+    (function initEasedScroll() {
+      // Touch devices already have momentum scrolling that feels better than
+      // any lerp, and coarse pointers don't emit the wheel events this reads.
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      // Tuning: EASE is the fraction of the remaining distance covered per
+      // frame (lower = longer, floatier glide — 0.075 ≈ 490ms to settle a
+      // notch at 60fps); MAX_STEP caps how far one wheel notch can ask for,
+      // so the page travels gently and a flick can't fling it.
+      const EASE = 0.075;
+      const MAX_STEP = 100;
+
+      let target  = window.scrollY;
+      let current = window.scrollY;
+      let running = false;
+      let enabled = false;
+      // Position of our last write. Scroll events are dispatched ASYNCHRONOUSLY,
+      // so a "am I currently writing?" boolean is always false again by the time
+      // the event lands — the loop would read its own write as user input and
+      // kill itself after one frame. Compare positions instead.
+      let lastWritten = -1;
+
+      const maxScroll = () =>
+        Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+      // True when the wheel is over something that can itself scroll that way
+      // — the case-study overlay body, a horizontal rail, an iframe. Those
+      // keep native behavior so nested scrolling never fights the page lerp.
+      function overNestedScroller(node, dy) {
+        // e.target is an Element for real wheel input, but can be window or
+        // document for synthetic events — normalize or getComputedStyle throws.
+        let start = node instanceof Element ? node : null;
+        for (let el = start; el && el !== document.body; el = el.parentElement) {
+          if (el.tagName === 'IFRAME') return true;
+          const s = getComputedStyle(el);
+          const oy = s.overflowY, ox = s.overflowX;
+          if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1) {
+            const atTop = el.scrollTop <= 0;
+            const atEnd = el.scrollTop >= el.scrollHeight - el.clientHeight - 1;
+            if (!((dy < 0 && atTop) || (dy > 0 && atEnd))) return true; // still has room
+          }
+          if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth + 1) return true;
+        }
+        return false;
+      }
+
+      function write(y) {
+        lastWritten = y;
+        window.scrollTo(0, y);
+      }
+
+      function frame() {
+        const diff = target - current;
+        if (Math.abs(diff) < 0.35) {
+          current = target;
+          write(current);
+          running = false;
+          return;
+        }
+        current += diff * EASE;
+        write(current);
+        requestAnimationFrame(frame);
+      }
+
+      function onWheel(e) {
+        if (!enabled) return;
+        if (e.ctrlKey) return;                            // pinch-zoom
+        if (document.body.style.overflow === 'hidden') return; // an overlay owns scroll
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;   // horizontal intent
+        if (overNestedScroller(e.target, e.deltaY)) return;
+
+        e.preventDefault();
+        // deltaMode 1 = lines, 2 = pages (Firefox / some mice)
+        const raw = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+        target += Math.max(-MAX_STEP, Math.min(MAX_STEP, raw));
+        target = Math.max(0, Math.min(maxScroll(), target));
+        if (!running) { running = true; requestAnimationFrame(frame); }
+      }
+
+      // Any scroll we did NOT drive (scrollbar, keyboard, scrollIntoView,
+      // hash routing) is authoritative — adopt it so the next wheel notch
+      // eases from where the page actually is.
+      function onScroll() {
+        // Within a pixel of our own last write? Then it's the loop's echo, and
+        // the browser may also have clamped/rounded it — adopt the real value
+        // so `current` never drifts away from the actual scroll position.
+        if (Math.abs(window.scrollY - lastWritten) <= 1.5) {
+          current = window.scrollY;
+          return;
+        }
+        target = current = window.scrollY;
+        running = false;
+      }
+
+      function setEnabled(on) {
+        enabled = on;
+        // The CSS smooth-scroll and this loop would fight over the same
+        // property, so hand scroll-behavior back to the browser when off.
+        document.documentElement.style.scrollBehavior = on ? 'auto' : '';
+        if (!on) { running = false; target = current = window.scrollY; }
+      }
+
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', () => { target = current = window.scrollY; }, { passive: true });
+
+      setEnabled(!PREFERS_REDUCED_MOTION.matches);
+      PREFERS_REDUCED_MOTION.addEventListener('change', e => setEnabled(!e.matches));
+    })();
 
     // ── Featured Settlr media theatre — crossfade, caption chip, dot nav ──
     // Runs even under reduced motion for CLICK navigation; autoplay only

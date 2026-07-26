@@ -10,9 +10,11 @@ Live at **https://www.divyanshrastogi.in** — GitHub Pages, repo
 `Divyansh1401/Portfolio`, branch `main`. "Push to git" = stage + commit +
 push (see Deployment below for the one-time force-push requirement).
 
-> This file was rewritten 2026-07-16 to match the shipped site. Companion
-> docs: `PROJECT-INDEX.md` (file/system map), `design-system.md` (tokens,
-> type, buttons, motion rules), `TODO.md` (work log + backlog).
+> This file was rewritten 2026-07-16 to match the shipped site, and
+> corrected 2026-07-26 (two stale gotchas removed — see Gotchas; eased
+> scroll + last-card recede documented). Companion docs:
+> `PROJECT-INDEX.md` (file/system map), `design-system.md` (tokens, type,
+> buttons, motion rules), `TODO.md` (work log + backlog).
 
 ## Architecture
 Two hand-written documents, no build step:
@@ -38,6 +40,27 @@ polaroid flips and lightbox browsing sync the URL via `replaceState` (no
 history spam). The initial `routeHash(true)` call is the LAST line of the
 script — keep it there (it needs every init before it).
 
+## Scroll (index.html only)
+Wheel input is **eased** by a hand-rolled lerp loop (no dependency, in the
+main script after `initCardStack`). It moves a virtual `target` and lerps the
+**real** scroll position toward it via `scrollTo` — never a transformed
+wrapper. That is deliberate: driving native scroll is why `position: sticky`,
+both card stacks, IntersectionObservers, scrollbar drag and hash routing keep
+working untouched; they just receive a smoothed stream. Tuning lives in two
+constants: `EASE` (fraction of remaining distance per frame) and `MAX_STEP`
+(px cap per notch).
+
+Left native on purpose: keyboard, scrollbar drag, programmatic scrolls,
+horizontal intent, ctrl+wheel zoom, and **anything inside a nested scroller**
+(`.overlay-body`, horizontal rails, iframes — walked by
+`overNestedScroller`). Off entirely under reduced motion and on coarse
+pointers (touch momentum beats any lerp). `mobile.html` has none of this.
+
+**Testing implication:** `window.scrollTo` from a test is adopted by the loop
+and behaves natively, so existing scripted-scroll tests are unaffected — but
+a synthetic `wheel` event goes through the lerp, so wait for it to settle
+(~600ms at current tuning) before asserting.
+
 ## Dev workflow
 - **Server**: `npx serve -p 3457 .` (launch.json name `portfolio-v2`).
   `serve.json` sets `cleanUrls:false` + a root rewrite — do not remove it;
@@ -57,7 +80,9 @@ script — keep it there (it needs every init before it).
 - `#heroPolaroid` is keyboard-operable (`role="button"`, Enter/Space).
 - Global `:focus-visible` outline on both pages.
 - `PREFERS_REDUCED_MOTION` gates: cursor (off + native cursor CSS), polaroid
-  tilt/flip, stacks, rotor effects, blob wipe.
+  tilt/flip, stacks, rotor effects, blob wipe, **eased scroll** (falls back to
+  native wheel and hands `scroll-behavior` back to the browser), nav
+  typewriter (sets text instantly, no caret).
 - Every rAF loop idles: settle-skip style writes; the 3D rotor renders only
   while `alterEgoMode` is true. Overlay/rotor images are lazy.
 
@@ -75,13 +100,25 @@ script — keep it there (it needs every init before it).
    (full re-sync recipe in project memory).
 4. **Case overlay body scroll** is `scroll-behavior: smooth` — set it to
    `auto` before scripted scrolling in tests.
-5. **Two oranges are live** (`--orange #E06B2D` vs `--c-orange #EA7623`) —
-   known inconsistency, consolidation is a pending DESIGN decision.
-6. **overlayBody injection** adds `loading="lazy" decoding="async"` to all
+5. **overlayBody injection** adds `loading="lazy" decoding="async"` to all
    template images via string replace — keep that when touching `openOverlay`.
-7. `#kinko` is intentionally gated (NDA) — the hash scrolls to the card, the
-   `caseStudies.kinko` template is unreachable and still contains
-   placeholders (delete or finish before ever un-gating).
+6. `#kinko` is intentionally gated (NDA) — the hash scrolls to the locked
+   card. There is **no `caseStudies.kinko` template**; the object holds
+   exactly two keys, `settlr` and `'refer-earn'`. Nothing to un-gate.
+7. **Scroll events are dispatched ASYNCHRONOUSLY.** A "am I writing right
+   now?" boolean around a `scrollTo` is always `false` again by the time the
+   event lands, so a scroll-driving loop reads its own write as user input.
+   Compare positions (`lastWritten`) instead — this exact bug killed the
+   eased-scroll loop after one frame (page moved 15px and stopped).
+8. **`transform` writes do not dirty layout**, so the card stack's
+   `getBoundingClientRect()` reads next to `style.transform` writes are NOT
+   layout thrash (measured: 30 layouts / 180 scroll frames). Don't "fix" it.
+9. **Card-stack trailing spacer has a side effect**: appending
+   `.card-stack__end` makes the last slot match
+   `:not(:last-child)`, so the LAST panel also inherits the 30vh slot
+   margin — and sticky pin/release points shift by that margin (margins
+   shrink the sticky constraint box). `initCardStack` measures it at runtime;
+   don't hardcode it.
 
 ## Deployment
 - GitHub Pages serves the repo root; pushing `main` updates the live site.
@@ -91,7 +128,16 @@ script — keep it there (it needs every init before it).
   `git push --force-with-lease origin main`**; normal pushes after that.
   Pre-scrub backup: `~/Desktop/portfolio-pre-scrub-backup.bundle`.
 - All pushes are held until the project thumbnail images are final
-  (owner's call, tracked in TODO.md).
+  (owner's call, tracked in TODO.md). Partly closed 2026-07-25: the desktop
+  featured cards now carry real photography; `mobile.html` still uses the
+  older `thumbnail.webp` set.
+- `main` has **no upstream tracking ref locally** (fallout of the rewrite), so
+  `git log origin/main..HEAD` returns nothing — fetch before trying to diff
+  against the remote.
+- `dump/` is gitignored: raw photo drops land there and are converted to webp
+  into `assets/images/` before use. Pages serves the repo ROOT, so any stray
+  file that gets committed becomes a public URL — check `git status` for
+  scratch files (e.g. `_section-redesign-test.html`) before pushing.
 
 ## Pending work
 See `TODO.md` (backlog + work log) and the audit report artifact
@@ -106,6 +152,37 @@ Owner decisions already made (2026-07-16) — do NOT re-propose:
   suspected Hydrone/Cyanotype mislabels were checked and are NOT
   mislabels.
 
-Still open: radius scale, og-image refresh (could pick up the
-credential line), thumbnails (owner does last), then the one-time
-force-push.
+Shipped since (do not re-propose as "pending"): radius token scale · nav
+world-toggle + flip choreography (typewriter title, blob-synced bar sweep,
+sliding thumb) · Settlr case-study refresh from the project's own
+`CASE-STUDY-REPORT.md`, counts unified on the report's numbers (60 primitives
+/ 190+ tokens / 41 components) · featured-card photography carousels ·
+card-stack last-card recede · eased scroll.
+
+**Verified DONE despite what older notes claim** (checked 2026-07-26, don't
+redo the analysis):
+- Responsiveness: **zero horizontal overflow** at 1024/1280/1366/1440/1512/
+  1728/1920, card panels fit every viewport. TODO §1 overstates the problem.
+  (The only element past the right edge is the parked case-study overlay — by
+  design.) Tablet 768–1023px on `mobile.html` is the one real gap.
+- One orange: consolidated to `#E06B2D` (was gotcha 5).
+- Kinko placeholders: template deleted entirely (was gotcha 7).
+- UX/Hobbies toggle: shipped as the Work / After-hours nav switch (TODO §19).
+- og-image: **already correct.** The 1200×630 card at
+  `assets/images/og-image.png` carries the credential line ("Product Designer
+  II at Head Digital Works · IDC IIT Bombay · AIR 5 · Open to full-time
+  roles"). The long-standing "og-image refresh to pick up the credential line"
+  note was stale — it's in there. It's a personal card, not project-specific,
+  so case-study edits don't invalidate it.
+- Scroll performance: already 60fps before eased scroll (p50 16.7ms, 0 frames
+  >20ms); only 7 elements are genuinely promoted layers. **No perf pass
+  needed** — don't chase `will-change` counts, they're CSS declarations, not
+  layers. The nav's `backdrop-filter: blur(18px)` does re-blur every scrolled
+  frame; that is inherent to the glass look and changing it is a DESIGN call,
+  not a perf fix.
+
+Still open: mobile thumbnails · third carousel slide per card · Splitwise
+research images + copy · the Tier-3 design work in TODO.md (Connect,
+Philosophy density, Refer & Earn layout, Settlr title/embed container, tablet
+768–1023px) · rebuild the deep-link + kbd-meta suites (they lived in a session
+scratchpad and are gone) · then the one-time force-push.
