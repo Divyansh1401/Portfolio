@@ -8563,8 +8563,13 @@
         html: `
 
           <!-- HERO -->
+          <!-- The cover art carries the project title as pixels, so the
+               document had 16 h2s under no h1 and no machine-readable title.
+               This h1 restores a valid heading outline for screen-reader
+               heading navigation; the design is unchanged. -->
+          <h1 class="sr-only">Settlr: splitting made easy</h1>
           <div class="cs-hero cs-hero--settlr">
-            <img src="assets/images/settlr/cover-phone.webp" alt="Settlr: splitting made easy">
+            <img src="assets/images/settlr/cover-phone.webp" alt="Settlr cover: the app open on a phone, held in one hand">
           </div>
 
           <!-- OVERVIEW: meta + project hook (matches Figma exactly) -->
@@ -9922,8 +9927,10 @@
 
       'refer-earn': {
         html: `
+          <!-- See the Settlr hero: same missing-h1 gap, same fix. -->
+          <h1 class="sr-only">Refer and Earn: redesign and gamification for A23 Games</h1>
           <div class="cs-hero cs-hero--re">
-            <img src="assets/images/refer-earn/cover.webp" alt="Refer & Earn Redesign & Gamification · A23 Games">
+            <img src="assets/images/refer-earn/cover.webp" alt="Refer and Earn cover: the redesigned referral screen on two phones, A23 branding">
           </div>
 
           <div class="cs-overview cs-overview--re">

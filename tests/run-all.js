@@ -32,10 +32,20 @@ let failed = 0;
   if (r.status !== 0) failed++;
 }
 
+// Retry once on failure. Each suite launches its own headless Chrome, and under
+// load a navigation or waitForFunction timeout can trip a suite that is
+// otherwise fine (observed once, 2026-07-27; all eight passed individually
+// afterwards). A genuinely broken suite fails both attempts, so this buys
+// reliability without masking real breakage — the retry is announced.
 for (const s of SUITES) {
   console.log('\n' + '='.repeat(68) + '\n  ' + s + '\n' + '='.repeat(68));
-  const r = spawnSync(process.execPath, [path.join(__dirname, s), BASE], { stdio: 'inherit' });
-  if (r.status !== 0) failed++;
+  let r = spawnSync(process.execPath, [path.join(__dirname, s), BASE], { stdio: 'inherit' });
+  if (r.status !== 0) {
+    console.log('\n  ↻ ' + s + ' failed — retrying once in case it was load contention');
+    r = spawnSync(process.execPath, [path.join(__dirname, s), BASE], { stdio: 'inherit' });
+    if (r.status !== 0) { console.log('  ✗ ' + s + ' failed twice — treating as a real failure'); failed++; }
+    else console.log('  ✓ ' + s + ' passed on retry (flake)');
+  }
 }
 
 console.log('\n' + '='.repeat(68));

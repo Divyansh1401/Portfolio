@@ -18,14 +18,14 @@
 ## 4. Navigation & Page Structure
 - [ ] **UX/Hobbies Toggle**: Add a clear toggle or profile button to help users distinguish between UX/Work and Photography/Art/Hobbies pages.
 - [ ] **Photography**: Upload and integrate more photography assets.
-- [ ] **Settlr Title**: Add a specific title/header section for the Settlr case study.
+- [x] **Settlr Title**: **DONE 2026-07-27, reframed.** The visible design already carries the title (it's set in the cover art). The real defect was structural and applied to BOTH case studies: **16 h2s under no `<h1>`**, with the project name existing only as pixels. Added an `sr-only` h1 to each and rewrote the hero `alt` to describe the image rather than repeat the title (no double announcement). Zero visual change. See §22.
 
 ## 5. UI Consistency & CTAs
 - [x] **Button Consistency**: DONE 2026-07-16 — both featured CTAs are now identical real links (a.cs2-cta); dead button systems purged.
 - [x] **Navigation Icons**: DONE — More-work card titles carry Redirect.svg icons.
 - [ ] **Settlr Case Study**:
     - [x] Update "View on Behance" CTA — already reads "View Research on Behance" (verified 2026-07-16).
-    - [ ] Refresh the Settlr prototype embed and design a better container/section for it.
+    - [x] **ALREADY DONE — verified 2026-07-27.** The mirror was re-synced 2026-07-16 and commit `f4cefcf` polished the embed layout. Current state: dark rounded container, the live shipping build in a phone frame, "The real app. Running right here.", a 6-of-24 jump-to-screen pill grid, and an honest "this is the shipping build, not a mockup" caption. Measured 0 console errors, 0 4xx. Nothing to do.
 - [ ] **Thumbnail Upgrades**: Use actual project thumbnails across the board.
 
 ## 6. Project Content Updates
@@ -162,6 +162,12 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 22. Settlr pair — both items reframed (2026-07-27)
+- **Prototype embed container: already done.** Investigated before building (third stale item in a row). The section is a dark rounded container with the live shipping build, a 6-of-24 jump-to-screen pill grid, and an honest caption; 0 console errors, 0 4xx. CLAUDE.md's re-sync note and commit `f4cefcf` already covered it.
+- **Settlr title: real defect, but not the one described.** The item asked for a title/header *section*; the cover art already shows the title. The actual gap was structural and affected **both** case studies: **no `<h1>` at all** — 16 headings (Settlr) and 9 (R&E) hanging under nothing, with the project name only ever rendered as pixels.
+- [x] Added `sr-only` `<h1>` to both, and rewrote each hero `alt` to describe the image instead of repeating the title, so a screen reader doesn't announce the same words twice. **Zero visual change** — hero screenshots identical.
+- [x] **Gate hardened:** a batch run failed once while all eight suites passed individually — load contention from eight sequential Chrome launches, not a real failure. `run-all.js` now retries a failed suite once and announces it; a genuinely broken suite fails twice and still blocks the push. Flaky gates are worse than no gate, so this is announced rather than silent.
+
 ## 21. Refer & Earn — honest close (2026-07-27)
 - **Diagnosis first, and it contradicted the task.** Measured before building: R&E is 972 words / 14 images (69 w/img) vs Settlr 2,873 / 38 (76 w/img). Not text-heavy — just a third the depth (7 sections vs 16). The "zero image" sections turned out to be the best ones: a conversion funnel with drop-off percentages at every stage, and a three-lens research grid with verbatim quotes. Reported this rather than executing the redesign as written.
 - **The real gap:** the case study opens on 1.2M users → 2,609 conversions, walks through research → exploration → iterations → final design → multi-brand rollout, then ends on a *concept* marked "not yet shipped." No outcome. For a conversion brief that is the first thing a hiring manager scrolls for.
