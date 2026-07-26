@@ -151,6 +151,10 @@ Owner decisions already made (2026-07-16) — do NOT re-propose:
   (rotor keeps all 42 shots; mobile Cars/More keep 17 each). The
   suspected Hydrone/Cyanotype mislabels were checked and are NOT
   mislabels.
+- DECLINED 2026-07-26: **Connect section redesign.** Three directions were
+  built and reviewed; owner kept the current design ("keep as is, i like
+  current one"). The ~350px of empty space bottom-left is accepted. Do not
+  re-propose.
 
 Shipped since (do not re-propose as "pending"): radius token scale · nav
 world-toggle + flip choreography (typewriter title, blob-synced bar sweep,

@@ -11,7 +11,7 @@
 - [x] **Cursor Interaction**: "Hold to Peel" — OBSOLETE 2026-07-16: feature no longer exists (zero references in the code).
 
 ## 3. Section Redesigns
-- [ ] **Connect Section**: Complete redesign of the contact/social section.
+- [x] **Connect Section**: **DECLINED 2026-07-26 — owner reviewed three directions and kept the current design.** Do not re-propose. (Mockups: contact-rows / availability-ledger / email-as-hero, all keeping the receipt and filling the bottom-left space. Owner: "keep as is, i like current one.") Explorations left on disk in the gitignored `_connect-explorations.html`.
 - [x] **Philosophy Section**: DONE 2026-07-26 — rebuilt as Proposal A (editorial list). See §19.
 - [ ] **Refer and Earn**: Reduce text and redesign for a more visually appealing layout.
 
