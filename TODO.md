@@ -162,6 +162,14 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 17. Load audit + payload pass (2026-07-26)
+Measured with CDP network tracking + PerformanceObserver (LCP/CLS/longtasks), both pages.
+- **Before:** desktop 2,796 KB / 28 req (images 2,325 KB). Mobile was already healthy: 847 KB, CLS 0.
+- **Fixed:** `small-cards/angel-one.webp` was **4320×7680 (33 MP, 308 KB) shown at ~616px** → 1080×1920, 47 KB, matching its siblings. Three YouTube `maxresdefault` film posters (~300 KB, external) were **eager-loading inside the display:none dark world on every light-world load** → `loading="lazy" decoding="async"` (mobile already had this; only desktop leaked). Featured-carousel photography re-encoded **from the PNG masters in `dump/`** (no generational loss) at q78: 1,243 → 823 KB, text-on-screen verified crisp at 1:1.
+- **After:** desktop **1,838 KB / 25 req (−34%)**, CLS 0.0622 → **0**, LCP 240ms (hero), zero long tasks on mobile.
+- **Checked and left alone:** mobile topbar avatar reuses the 97 KB hero portrait — same URL as the hero polaroid, so it's ONE fetch serving both; not waste. Slide-2 carousel images are in-viewport (opacity:0), so `loading=lazy` can't defer them and a data-src swap isn't worth it for a 2s cycle. Fonts (376 KB) are preloaded, cached, and core to the design.
+- **Optional future wins, owner's call:** subset Unbounded (253 KB variable font; latin+₹+→+≠ subset ≈ 60–80 KB, needs glyph-coverage care) · quality pass on `kinko/thumbnail.webp` (128 KB).
+
 ## 15. Em-dash copy pass (2026-07-26) — 70 → 1
 Ran as a 21-agent workflow: 7 read-only section proposers → 14 adversarial reviewers (mechanics lens + voice lens) → applied serially. Agents were **read-only by design**: `index.html` is one 11k-line file, so parallel writers would clobber each other.
 - **Scope:** reader-facing copy only (rendered prose, case-study templates, meta/OG/alt/aria). Excluded: the ~141 code comments, `prototype/settlr/` (616 — mirrored app, its own re-sync recipe overwrites edits), and the .md docs.
