@@ -143,6 +143,9 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - Verified on a 390×844 phone viewport: all slides distinct, dot count matches slide count, every
   image loaded, all assets square, no horizontal overflow, 0 console errors, 0 4xx. Desktop gate
   (68 checks) still green.
+- [x] **Owner removed the Settlr stats-card slide** (2026-07-26): the mobile Settlr carousel is now
+  2 slides (couch + playground), matching the desktop card; dots 3→2. `settlr/mobile-cover.webp`
+  became orphaned and was deleted rather than left in the repo.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
