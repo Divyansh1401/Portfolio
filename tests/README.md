@@ -13,6 +13,10 @@ npx serve -p 3457 .          # in one shell (launch.json name: portfolio-v2)
 node tests/run-all.js        # in another — exits non-zero if anything fails
 ```
 
+`run-all.js` also runs `emdash-inventory.js --check` as a copy guard: it fails on
+any reader-facing em dash that isn't on the explicit `APPROVED` allowlist. Comments
+are exempt by design. Adding to that allowlist should be a deliberate choice.
+
 Individual suites take an optional base URL: `node tests/verify-deeplinks.js http://localhost:3457`.
 
 ## Suites

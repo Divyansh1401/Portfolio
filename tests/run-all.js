@@ -24,6 +24,14 @@ if (probe.stdout.trim() !== '200') {
 }
 
 let failed = 0;
+
+// Copy guard: no unapproved reader-facing em dashes (see emdash-inventory.js).
+{
+  console.log('\n' + '='.repeat(68) + '\n  emdash-inventory.js --check\n' + '='.repeat(68));
+  const r = spawnSync(process.execPath, [path.join(__dirname, 'emdash-inventory.js'), '--check'], { stdio: 'inherit' });
+  if (r.status !== 0) failed++;
+}
+
 for (const s of SUITES) {
   console.log('\n' + '='.repeat(68) + '\n  ' + s + '\n' + '='.repeat(68));
   const r = spawnSync(process.execPath, [path.join(__dirname, s), BASE], { stdio: 'inherit' });
