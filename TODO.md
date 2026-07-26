@@ -177,7 +177,7 @@ Ran as a 21-agent workflow: 7 read-only section proposers → 14 adversarial rev
 - **Real mechanism:** when Safari's address bar minimizes, the OS paints the document canvas *above the layout viewport* behind the status bar (soft system blur). The strip isn't the page's viewport at all, so no `viewport-fit` change can touch it — the lever is to paint INTO that region.
 - **Fix:** the plate now hangs at `top:-80px; height:calc(80px + env(safe-area-inset-top,0px))` — permanently offscreen in layout (bottom edge exactly at y=0 when env=0), rendering only inside Safari's above-viewport bleed, filling it with `var(--bg)`. env() term kept for PWA contexts.
 - Topbar opacity reverted 94% → **86%** per owner ("keep it as it was"); the suite now guards the revert.
-- `tests/verify-statusbar.js` rewritten to assert the geometry contract and to say plainly what it cannot see: **the on-device look needs a human eye.** Awaiting owner confirmation.
+- `tests/verify-statusbar.js` rewritten to assert the geometry contract and to say plainly what it cannot see: **the on-device look needs a human eye.** ✅ **Owner confirmed on device 2026-07-26: status bar is clean**, light and dark.
 
 ## 16. iOS status-bar scrim (2026-07-26) — reported from a real device
 - **Bug:** `mobile.html` ships `viewport-fit=cover` (deliberate — the feed runs edge to edge), so page content scrolls **under** the iOS status bar. The `.topbar` is `translateY(-100%)` until you scroll past the hero, so across the whole hero there was nothing behind the clock/battery: they sat directly on top of moving copy. Owner caught it on device; headless never would, because `env(safe-area-inset-top)` reports **0** there.
