@@ -10524,11 +10524,76 @@
     };
 
     let caseReturnFocus = null;
-    function openOverlay(slug) {
+
+    /* ── Case-study read-depth + dwell instrumentation ──────────────────
+       ONE session object per open. Milestones fire AS THEY ARE CROSSED and
+       are never batched to close time: the most valuable reader is exactly
+       the person who closes the tab with the overlay still open, and anything
+       that only flushes on close systematically loses them.
+
+       endCaseSession() nulls caseSession FIRST and no-ops when it is already
+       null. That idempotence is the ONLY thing keeping case_study_closed to
+       exactly one fire per open across all the close paths (button, backdrop,
+       Escape, iframe-forwarded Escape, four routeHash branches, and the
+       overlay-to-overlay swap). Do NOT "simplify" it into an inline track()
+       call inside closeOverlay.
+
+       Do NOT add a tick on open. On a COLD open the templates carry 30+ lazy
+       images, so overlayBody.scrollHeight immediately after innerHTML is far
+       smaller than the real document and would report a bogus 100%. (Note the
+       case-to-case SWAP path does produce one tick anyway, because
+       openOverlay's existing `overlayBody.scrollTop = 0` dispatches a scroll
+       event asynchronously after the new session is installed. Measured 5-16%
+       — below the 25% floor, so no spurious milestone fires with the current
+       templates, but max_pct is seeded to 9-16 instead of 0. A future template
+       shorter than ~4x viewport height would start firing a false 25% on a
+       swap; that is the thing to watch, not the comment.) */
+    let caseSession = null;
+    let pendingCaseSource = null;      // set by a click, consumed by routeHash
+    const CASE_MILESTONES = [25, 50, 75, 100];
+
+    function caseProgressTick() {
+      const s = caseSession;
+      if (!s || s.fired.size === CASE_MILESTONES.length) return;  // idles once complete
+      const h = overlayBody.scrollHeight;
+      if (!h) return;
+      const seen = overlayBody.scrollTop + overlayBody.clientHeight;
+      // 2px tolerance: fractional device pixels and browser zoom leave the
+      // bottom a hair short of scrollHeight even when visually at the end.
+      const pct = seen >= h - 2 ? 100 : (seen / h) * 100;
+      if (pct > s.maxPct) s.maxPct = pct;
+      for (let i = 0; i < CASE_MILESTONES.length; i++) {
+        const m = CASE_MILESTONES[i];
+        if (pct >= m && !s.fired.has(m)) {
+          s.fired.add(m);
+          track('case_study_progress', { slug: s.slug, pct: m });
+        }
+      }
+    }
+
+    function endCaseSession() {
+      const s = caseSession;
+      if (!s) return;                  // already ended — never double-fire
+      caseSession = null;              // null FIRST, so a re-entrant call bails
+      track('case_study_closed', {
+        slug: s.slug,
+        seconds_open: Math.round((Date.now() - s.start) / 100) / 10,
+        max_pct: Math.round(s.maxPct),
+        reached_end: s.fired.has(100)
+      });
+    }
+
+    function openOverlay(slug, source) {
       const study = caseStudies[slug];
       if (!study) return;
+      // Swapping straight from one case study to the next (the "Next case
+      // study" link) does NOT route through closeOverlay — routeHash calls
+      // openOverlay directly. End the old session here or its
+      // case_study_closed is lost entirely.
+      endCaseSession();
       // Case studies are hash routes, not pages — autocapture never sees them.
-      track('case_study_opened', { slug: slug });
+      track('case_study_opened', { slug: slug, source: source || 'unknown' });
+      caseSession = { slug: slug, start: Date.now(), maxPct: 0, fired: new Set() };
       window._isOverlayOpen = true;
       caseReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
@@ -10580,6 +10645,13 @@
     }
 
     function closeOverlay() {
+      // Every genuine close funnels through here. Paths verified: overlayClose
+      // click, backdrop click, document Escape, Escape forwarded out of a
+      // same-origin iframe (all four via uiCloseCase, which itself guards on
+      // .is-open), plus the four routeHash branches (#resume, #hobbies/#photo-N,
+      // #kinko, and empty/plain-anchor). endCaseSession() is idempotent, so
+      // none of them can double-fire case_study_closed.
+      endCaseSession();
       window._isOverlayOpen = false;
       overlay.classList.remove('is-open');
       setTimeout(() => { document.body.classList.remove('overlay-is-open'); }, 650);
@@ -10598,7 +10670,9 @@
         // Don't hijack inner CTAs (e.g. NDA "Let's Connect" button)
         if (e.target.closest('[data-stop="true"]')) return;
         e.preventDefault();
-        setHash(link.dataset.project);
+        // The "View case study" CTA (.cs2-cta) lives INSIDE the .case-link
+        // article, so both land in this one handler — separate them here.
+        setHash(link.dataset.project, e.target.closest('.cs2-cta') ? 'cta' : 'card');
       });
     });
 
@@ -10614,8 +10688,9 @@
        world) · #photo-N (dark world + lightbox) · #kinko (scroll to
        the locked card). Initial call sits at the end of this script,
        after every init it depends on has run. */
-    function setHash(h) {
-      if (location.hash === '#' + h) return;
+    function setHash(h, source) {
+      if (location.hash === '#' + h) return;   // no hashchange → strand nothing
+      if (source) pendingCaseSource = source;
       location.hash = h;                       // fires hashchange → routeHash
     }
     function stripOverlayHash() {
@@ -10644,13 +10719,19 @@
     }
     function routeHash(isLoad) {
       const raw = location.hash.replace(/^#/, '');
+      // Consume the click-set source on EVERY route, not just the case-study
+      // branch, so a leftover value can never mislabel a later back/forward
+      // hop. No pending source means nobody clicked: this is a real deeplink
+      // (initial load or hashchange).
+      const caseSource = pendingCaseSource || 'deeplink';
+      pendingCaseSource = null;
       const caseOpen = overlay.classList.contains('is-open');
       const resumeOpen = resumeOverlay.classList.contains('is-open');
       const photoMatch = raw.match(/^photo-(\d+)$/);
 
       if (Object.prototype.hasOwnProperty.call(caseStudies, raw) && raw !== 'kinko') {
         if (resumeOpen) closeResume();
-        if (!(caseOpen && overlayBody.dataset.case === raw)) openOverlay(raw);
+        if (!(caseOpen && overlayBody.dataset.case === raw)) openOverlay(raw, caseSource);
         return;
       }
       if (raw === 'resume') {
@@ -10723,12 +10804,23 @@
       // Scrolling can move the row out from under a stationary cursor —
       // hide rather than let the preview linger.
       overlayBody.addEventListener('scroll', () => {
+        // Read-depth piggy-backs THIS listener on purpose. #overlayBody must
+        // keep exactly one scroll listener, and PostHog's scroll_root_selector
+        // must NOT be pointed at '.overlay-body': PostHog takes the first
+        // RESOLVING selector from that array, .overlay-body is always in the
+        // DOM (empty and parked), so it would permanently hijack window-scroll
+        // measurement for the entire site.
+        caseProgressTick();
         if (showing) { floater.classList.remove('on'); showing = false; }
       }, { passive: true });
     })();
 
     // ── Settlr overlay interactions (proto switcher + chip toggle) ──
     overlayBody.addEventListener('click', e => {
+      // "Next case study" is a native <a href="#slug"> with no handler of its
+      // own — flag the source here, before the hash change reaches routeHash.
+      // Do NOT preventDefault: the native hash navigation is what opens it.
+      if (e.target.closest('.cs-next-case')) { pendingCaseSource = 'next_case'; return; }
       // Prototype screen switcher
       const pill = e.target.closest('.cs-proto-pill');
       if (pill) {
