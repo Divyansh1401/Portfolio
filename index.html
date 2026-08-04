@@ -8226,6 +8226,7 @@
       const navResumeTrigger = document.getElementById('navResumeTrigger');
       if (navResumeTrigger) {
         navResumeTrigger.addEventListener('click', () => {
+          resumeOpenSource = 'nav';   // consumed by openResume; see its declaration
           location.hash = 'resume';   // hash router opens the overlay
         });
       }
@@ -8277,9 +8278,15 @@
     const resumeFrame    = document.getElementById('resumeFrame');
     const RESUME_EMBED   = 'https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/preview';
 
+    // Which trigger opened the resume. The nav button opens it by SETTING
+    // THE HASH, so by the time openResume runs the router cannot tell a button
+    // click from a pasted #resume link — the trigger has to leave this note
+    // behind. Defaults to 'deeplink'; openResume resets it after each capture.
+    let resumeOpenSource = 'deeplink';
     let resumeReturnFocus = null;
     function openResume() {
-      track('resume_opened');
+      track('resume_opened', { source: resumeOpenSource });
+      resumeOpenSource = 'deeplink';
       window._isOverlayOpen = true;
       resumeReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
@@ -8648,14 +8655,78 @@
     // Conversion events: the email CTA and outbound profile links are the whole
     // point of the funnel, so capture them explicitly rather than relying on
     // autocapture's generic click payload.
+
+    // Human-readable name for an outbound link. The fallback order is
+    // deliberate, and every branch is load-bearing:
+    //   1. data-label — nothing in the markup sets it today; it is the opt-in
+    //      hook for links rendered from the case-study templates, which this
+    //      handler must not edit.
+    //   2. the art rotor renders two IDENTICAL "View on Behance" tiles
+    //      (Hydrone, 3D watch). Their own text cannot tell them apart, so use
+    //      the category label instead.
+    //   3. an <h3> inside the anchor — the "More work" cards wrap a title AND
+    //      a sub-line, so their raw textContent is unusable.
+    //   4. the anchor's own collapsed text.
+    //   5. the three film cards ship a bare full-bleed <a> with NO text at
+    //      all — borrow the card's .exp-title. Do not delete this branch as
+    //      "redundant": without it every film reports an empty label.
+    function outboundLabel(el) {
+      if (el.dataset.label) return el.dataset.label.slice(0, 60);
+      if (el.classList.contains('art-thumb-link')) {
+        const cat = el.closest('.art-category');
+        const catLabel = cat && cat.querySelector('.art-cat-label');
+        if (catLabel) return catLabel.textContent.replace(/\s+/g, ' ').trim().slice(0, 60);
+      }
+      const h = el.querySelector('h3');
+      let t = ((h ? h.textContent : el.textContent) || '').replace(/\s+/g, ' ').trim();
+      if (!t) {
+        const card = el.closest('.exp-card');
+        const title = card && card.querySelector('.exp-title');
+        if (title) t = title.textContent.replace(/\s+/g, ' ').trim();
+      }
+      return (t || 'untitled').slice(0, 60);
+    }
+
     document.addEventListener('click', e => {
+      // The light and dark worlds mirror each other, so "which world" alone
+      // said nothing about intent. `surface` is the actionable dimension;
+      // `world` is kept only as a secondary cut.
+      const world = document.body.classList.contains('alter-ego') ? 'dark' : 'light';
+
       const a = e.target.closest('a[href^="mailto:"]');
-      if (a) track('email_clicked', { where: a.closest('#alter-connect') ? 'dark' : 'light' });
+      if (a) {
+        // These four are EVERY mailto surface that exists in this document.
+        // There is no hero, nav or Kinko mailto — do not add those values
+        // speculatively. 'other' catches anything added later.
+        let surface = 'other';
+        if (a.closest('.cs-end-cta')) surface = 'case_end';
+        else if (a.classList.contains('rcpt-barcode-mail')) surface = 'receipt_barcode';
+        else if (a.classList.contains('rcpt-scratch-under')) surface = 'scratch_coffee';
+        else if (a.classList.contains('connect-link')) surface = 'connect';
+        // The connect button preventDefaults into a clipboard write (see the
+        // .connect-link[data-copy] handler below), so on desktop the address
+        // is copied and no mail client ever opens. `via` is what makes the
+        // desktop and mobile numbers comparable — keep it.
+        track('email_clicked', {
+          surface: surface,
+          world: world,
+          via: a.matches('.connect-link[data-copy]') ? 'copy' : 'mailto'
+        });
+      }
+
       const out = e.target.closest('a[target="_blank"][href^="http"]');
       if (out) {
         let host = '';
         try { host = new URL(out.href).hostname.replace(/^www\./, ''); } catch (err) {}
-        track('outbound_clicked', { host: host });
+        // #resumeFrame is a cross-origin Google Drive iframe and permanently
+        // opaque, so these two clicks are the ONLY read-depth proxy the resume
+        // will ever have. They get their own event and deliberately do NOT
+        // also fire outbound_clicked, which used to bury them as anonymous
+        // drive.google.com hits. Do not "unify" this into the branch below.
+        const resumeVariant = out.closest('.resume-actions') ? 'download'
+                            : out.closest('.resume-fallback') ? 'open_in_drive' : '';
+        if (resumeVariant) { track('resume_downloaded', { variant: resumeVariant }); return; }
+        track('outbound_clicked', { host: host, label: outboundLabel(out), world: world });
       }
     }, true);
 
@@ -10708,13 +10779,13 @@
       if (location.hash === '#resume') stripOverlayHash();
       closeResume();
     }
-    function enterAlterEgo(instant) {
+    function enterAlterEgo(instant, trigger) {
       if (alterEgoMode) return;
       if (instant) {
         if (window.syncPolaroidFlip) window.syncPolaroidFlip(true);
-        setAlterEgoMode(true);
+        setAlterEgoMode(true, trigger);
       } else {
-        playEgoTransition(true, () => { if (window.syncPolaroidFlip) window.syncPolaroidFlip(true); });
+        playEgoTransition(true, () => { if (window.syncPolaroidFlip) window.syncPolaroidFlip(true); }, trigger);
       }
     }
     function routeHash(isLoad) {
@@ -10742,7 +10813,7 @@
       if (raw === 'hobbies' || photoMatch) {
         if (caseOpen) closeOverlay();
         if (resumeOpen) closeResume();
-        enterAlterEgo(isLoad === true);
+        enterAlterEgo(isLoad === true, 'deeplink');
         if (photoMatch && window.openPhotoLightbox) window.openPhotoLightbox(parseInt(photoMatch[1], 10) - 1);
         return;
       }
@@ -10751,7 +10822,7 @@
         if (resumeOpen) closeResume();
         if (alterEgoMode) {                    // Kinko card lives in the light world
           if (window.syncPolaroidFlip) window.syncPolaroidFlip(false);
-          setAlterEgoMode(false);
+          setAlterEgoMode(false, 'kinko_route');
         }
         const kinkoCard = document.getElementById('cs2-kinko-title');
         if (kinkoCard) setTimeout(() => kinkoCard.scrollIntoView({ behavior: isLoad ? 'auto' : 'smooth', block: 'center' }), isLoad ? 300 : 0);
@@ -11028,8 +11099,12 @@
       typeNavTitle(dark ? 'not just a product designer' : 'Product Designer', animate);
     }
 
-    function setAlterEgoMode(enabled) {
-      track('world_flipped', { to: enabled ? 'dark' : 'light' });
+    function setAlterEgoMode(enabled, trigger) {
+      // `trigger` is threaded down from whatever initiated the flip:
+      // 'polaroid' | 'nav_toggle' | 'footer_btn' | 'deeplink' | 'kinko_route'.
+      // Every existing call site passes one; 'unknown' means a new call site
+      // forgot to.
+      track('world_flipped', { to: enabled ? 'dark' : 'light', trigger: trigger || 'unknown' });
       alterEgoMode = enabled;
       setHeroAlterEgoState(enabled);
       setNavWorld(enabled, false);
@@ -11085,14 +11160,14 @@
       }
     }
 
-    function playEgoTransition(nextMode, onStartFlip) {
+    function playEgoTransition(nextMode, onStartFlip, trigger) {
       const overlay = document.getElementById('ego-transition-overlay');
       if (!overlay || egoTransitionInFlight || alterEgoMode === nextMode) return;
 
       // Reduced motion: switch worlds without the blob wipe.
       if (PREFERS_REDUCED_MOTION.matches) {
         onStartFlip();
-        setAlterEgoMode(nextMode);
+        setAlterEgoMode(nextMode, trigger);
         return;
       }
 
@@ -11109,7 +11184,7 @@
       });
 
       window.setTimeout(() => {
-        setAlterEgoMode(nextMode);
+        setAlterEgoMode(nextMode, trigger);
       }, 380);
 
       window.setTimeout(() => {
@@ -11178,7 +11253,11 @@
       polaroid.addEventListener('mousedown', () => { tScale = 0.985; });
       polaroid.addEventListener('mouseup',   () => { tScale = 1; });
 
-      function triggerFlip() {
+      // `trigger` MUST be passed explicitly by each listener below. Do not
+      // "simplify" those back to addEventListener('click', triggerFlip) — the
+      // DOM would then pass the Event object in as `trigger` and every flip
+      // would be logged as an object.
+      function triggerFlip(trigger) {
         const nextMode = !alterEgoMode;
         // Keep the URL shareable without polluting Back-button history.
         history.replaceState(null, '', nextMode ? '#hobbies' : location.pathname + location.search);
@@ -11186,17 +11265,22 @@
         setTimeout(() => {
           playEgoTransition(nextMode, () => {
             window.syncPolaroidFlip(nextMode);
-          });
+          }, trigger);
         }, 50); // slight delay to allow smooth scroll to kick in
       }
 
-      polaroid.addEventListener('click', triggerFlip);
+      polaroid.addEventListener('click', () => triggerFlip('polaroid'));
       polaroid.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerFlip(); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerFlip('polaroid'); }
       });
 
+      // .flip-trigger-btn is worn by BOTH the nav segmented switch (two
+      // buttons inside .world-seg) and the two footer "meet the other me"
+      // buttons. One selector, two very different intents — split them here.
       const flipBtns = document.querySelectorAll('.flip-trigger-btn');
-      flipBtns.forEach(btn => btn.addEventListener('click', triggerFlip));
+      flipBtns.forEach(btn => btn.addEventListener('click', () => {
+        triggerFlip(btn.closest('.world-seg') ? 'nav_toggle' : 'footer_btn');
+      }));
 
       let firstWriteDone = false; // markup ships rotateY(180) inline; tick #1 must correct it
       (function tick() {
@@ -11577,7 +11661,25 @@
         if (lightbox.classList.contains('active')) history.replaceState(null, '', '#photo-' + (index + 1));
       }
 
-      function openLightbox(index) {
+      // photo_opened lives HERE, not in the window.openPhotoLightbox wrapper.
+      // The wrapper is only reachable from the #photo-N hash route; every real
+      // gallery click comes straight into this function, so a capture in the
+      // wrapper missed effectively all of them. Do not move it back.
+      // The payload is src/alt, never the index — indexes shift whenever a new
+      // batch of photos is dropped into the rotor, silently rewriting history.
+      function openLightbox(index, source) {
+        // Re-entry guard: the hash route can call through while the lightbox is
+        // already showing this exact photo (Back/Forward, a re-pasted URL).
+        // That is not a new open and must not be counted twice.
+        const reopeningSame = lightbox.classList.contains('active') && currentIndex === index;
+        const photo = images[index];
+        if (photo && !reopeningSame) {
+          track('photo_opened', {
+            src: photo.getAttribute('src') || '',
+            alt: photo.getAttribute('alt') || '',
+            source: source || 'gallery'
+          });
+        }
         updateImage(index);
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -11592,8 +11694,7 @@
 
       // Deep-link entry point (#photo-N), clamped to the gallery bounds.
       window.openPhotoLightbox = function (i) {
-        track('photo_opened', { index: i + 1 });
-        openLightbox(Math.max(0, Math.min(images.length - 1, i)));
+        openLightbox(Math.max(0, Math.min(images.length - 1, i)), 'deeplink');
       };
 
       function nextImage() {
@@ -11628,7 +11729,7 @@
           link.addEventListener('click', (e) => {
             e.preventDefault();
             if (!isDraggingLightbox) {
-              openLightbox(index);
+              openLightbox(index, 'gallery');
             }
           });
         }
