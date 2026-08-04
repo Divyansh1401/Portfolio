@@ -30,7 +30,7 @@ Individual suites take an optional base URL: `node tests/verify-deeplinks.js htt
 | `verify-statusbar.js` | 2 | The iOS status-bar scrim on `mobile.html`. `viewport-fit=cover` lets the feed run edge to edge, so content scrolls **under** the status bar and the topbar only appears after the hero — reported on a real device as the clock/battery sitting on moving copy. Headless reports `env(safe-area-inset-top)` as 0, so the suite fakes a 47px inset and asserts the scrim paints the page background and stays under the topbar (z 49 < 50) |
 | `verify-fonts.js` | 5 | Subset-webfont coverage. The three variable fonts are subset to the characters the site renders (Unbounded 1138 → 114 codepoints), so new copy using an outside glyph would silently render in a fallback face. Walks every state, collects rendered characters per font, and asks `document.fonts.check()` whether the loaded font truly covers them; anything uncovered must be on `KNOWN_FALLBACK` (absent from the ORIGINAL fonts too). Also asserts the 200→900 weight axis still varies |
 | `verify-payload.js` | 8 | Over-the-wire budget per page (total / images / fonts / no single asset >300 KB), measured cold with a fresh cache-disabled context per page. Exists because a 33-megapixel image shipped unnoticed to fill a 616px slot |
-| `verify-analytics.js` | 13 | The PostHog integration's safety contract. Asserts it is **fully inert while `PH_KEY` is empty** (no request, no globals, no script tag) and that `track()` is always callable, since ~9 call sites invoke it unconditionally. Critically, it rewrites the empty key to a fake one **in flight** and reloads at the opposite viewport to prove the router guard holds — without that rewrite the loader returns at `if (!PH_KEY)` and the guard is never exercised |
+| `verify-analytics.js` | 110 | The PostHog live contract. Cookieless (zero cookies, storage against a named allowlist), EU region, router guard, every custom event driven through real DOM paths on both documents, the four new ones (`case_study_progress` `case_study_closed` `resume_downloaded` `work_viewed`), `?nostats=1`, `location.search` forwarding, the 1024–1210 viewport band + resize ping-pong, and — the reason the file exists — that a cold deep link's `track()` call survives the buffer and still reaches PostHog. **PostHog is permanently opted out under Puppeteer** (`navigator.webdriver` trips its bot filter, and `internal_or_test_user_hostname` suppresses localhost), so every event assertion is made in-page via a `capture` trap, never on the network; the upside is the gate never pollutes production |
 | `verify-cards.js` | 15 | Both featured theatres (2 slides, images decoded, dot nav + `aria-pressed`) and the last-card recede on **both** stacks (full size at pin → mid-recede → deck scale before release, with earlier cards staying settled) |
 
 ## Notes for whoever runs these next
@@ -50,6 +50,13 @@ Individual suites take an optional base URL: `node tests/verify-deeplinks.js htt
   loop and behaves natively, so scripted scrolls need no special handling.
 - Overlay transitions and the alter-ego blob wipe run 650–900ms; the suites use
   a ~1100ms settle rather than racing them.
+- **PostHog never sends an event under Puppeteer.** Two gates: posthog-js's bot
+  check ends in `!!navigator.webdriver`, which Puppeteer always sets, and
+  `internal_or_test_user_hostname` suppresses capture on localhost. Only the 4
+  CDN asset requests ever leave the browser. Assert events with the in-page
+  `capture` trap in `verify-analytics.js`. **Never spoof `navigator.webdriver`**
+  to "fix" it — that would fire real events into production project 233134 on
+  every run.
 - **`navigator.share` exists in headless Chrome but never settles** — awaiting it
   hangs indefinitely (it hung this harness for two minutes). Don't rely on it in
   page code, and don't await it in a test.
@@ -67,4 +74,6 @@ Individual suites take an optional base URL: `node tests/verify-deeplinks.js htt
 - **Prefer `waitForFunction` over fixed delays.** `verify-mobile-cta.js` was
   briefly flaky because a fixed settle raced the script attaching its click
   handler on cold runs. A flaky gate is worse than no gate.
-- `tests/` totals **105 checks**; a full `run-all.js` pass takes ~60–90s.
+- `tests/` totals **206 checks** (counted from a real `run-all.js` pass on
+  2026-08-04, not estimated); a full pass now takes ~6–8 min, because
+  `verify-analytics.js` alone drives 20 separate browser contexts.

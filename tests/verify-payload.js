@@ -25,7 +25,7 @@ const PAGES = [
   { path: '/',            label: 'desktop', vw: { width: 1440, height: 900, deviceScaleFactor: 2 },
     totalKB: 1700, imagesKB: 1470, fontsKB: 120 },
   { path: '/mobile.html', label: 'mobile',  vw: { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
-    totalKB: 700,  imagesKB: 525, fontsKB: 120 },   // +40 headroom for PostHog (73 KB br) once PH_KEY is set
+    totalKB: 700,  imagesKB: 525, fontsKB: 120 },   // includes PostHog: 4 requests, 86 KB (measured 2026-08-04 — array.js 75 + dead-clicks 7 + web-vitals 3 + config 1). The old "73 KB" figure was the docs' number, not this build's.
 ];
 const MAX_SINGLE_ASSET_KB = 300;   // no one file should dominate a page load
 
