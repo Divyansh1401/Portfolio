@@ -9,7 +9,8 @@ the light "day job" world flips (via the hero polaroid) into a dark
 Live at **https://www.divyanshrastogi.in** — Vercel (serving the repo root from
 the `main` branch), repo
 `Divyansh1401/Portfolio`, branch `main`. "Push to git" = stage + commit +
-push (see Deployment below for the one-time force-push requirement).
+push. A plain `git push origin main` — see Deployment below; the old
+force-push requirement is spent.
 
 > This file was rewritten 2026-07-16 to match the shipped site, and
 > corrected 2026-07-26 (two stale gotchas removed — see Gotchas; eased
@@ -82,9 +83,13 @@ a synthetic `wheel` event goes through the lerp, so wait for it to settle
 - **Verification**: the in-app browser pane throttles rAF and CANNOT drive
   this site (card stack collapses, scrolls hang). Always verify with
   headless Puppeteer (require from `/Users/divyanshrastogi/Desktop/settlr/node_modules/puppeteer`).
-  Existing suites in the session scratchpad: `verify-deeplinks.js` (20),
-  `verify-kbd-meta.js` (16), `fingerprint.js` (computed-style snapshot).
-- Both suites + zero console errors is the bar for any interaction change.
+  The suites live in `tests/` and are committed — an older note called them
+  lost to a session scratchpad, which was wrong: `verify-deeplinks.js` (21)
+  and `verify-kbd-meta.js` (22) both run green today. `node tests/run-all.js`
+  runs the whole gate (**206 checks**, ~6–8 min, each suite retried once on
+  failure). Only `fingerprint.js` (computed-style snapshot) is genuinely gone.
+- The full gate passing + zero console errors is the bar for any interaction
+  change.
 
 ## Accessibility & performance invariants (don't regress these)
 - Case-study CTAs are real `<a href="#slug">` links; overlays are
@@ -207,10 +212,16 @@ script, no request, no globals.
 ## Deployment
 - Vercel (serving the repo root from the `main` branch) serves the repo root;
   pushing `main` updates the live site.
-- ⚠️ **Git history was rewritten 2026-07-16** (scrubbed `projects/`,
-  `.claude/`, `kinko-design-system-report.md` — they remain on disk,
-  gitignored). **The next push must be
-  `git push --force-with-lease origin main`**; normal pushes after that.
+- Git history was rewritten 2026-07-16 (scrubbed `projects/`, `.claude/`,
+  `kinko-design-system-report.md` — they remain on disk, gitignored).
+  ✅ **That force-push has already happened; normal pushes from here.** The
+  long-standing "the next push MUST be `git push --force-with-lease origin
+  main`" warning was stale and is retired — verified 2026-08-04:
+  `origin/main` was at `34a0874`, a direct ancestor of local `HEAD`, and
+  `git push --dry-run` reported a plain fast-forward (`34a0874..f8e61a5`).
+  **Do not reinstate it.** If you ever genuinely need to know, ask git rather
+  than this file: `git fetch origin && git merge-base --is-ancestor
+  origin/main HEAD` exits 0 when a normal push suffices.
   Pre-scrub backup: `~/Desktop/portfolio-pre-scrub-backup.bundle`.
 - All pushes are held until the project thumbnail images are final
   (owner's call, tracked in TODO.md). Partly closed 2026-07-25: the desktop
@@ -273,5 +284,6 @@ redo the analysis):
 Still open: mobile thumbnails · third carousel slide per card · Splitwise
 research images + copy · the Tier-3 design work in TODO.md (Connect,
 Philosophy density, Refer & Earn layout, Settlr title/embed container, tablet
-768–1023px) · rebuild the deep-link + kbd-meta suites (they lived in a session
-scratchpad and are gone) · then the one-time force-push.
+768–1023px). The "rebuild the deep-link + kbd-meta suites" and "one-time
+force-push" items are **both closed** — the suites were in `tests/` all along
+and the force-push is spent.
