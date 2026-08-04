@@ -169,21 +169,39 @@ below is refinement or cleanup, none of it blocking. Deployed through
 `c296cca`. Gate: `node tests/run-all.js` = **209 checks**.
 
 ### A. Finish the swap fix (do these first — small, and one is scaffolding)
-- [ ] **Confirm the instant-scroll fix in production.** Not yet verified by a
-  real click. Hard-reload, read Settlr down, click "Next case study". Expect
-  `case_study_opened refer-earn` and **no** `case_study_progress`, and **no**
-  `case_progress_suppressed` at all (an instant reset fires no early scroll
-  events). Root cause was `.overlay-body { scroll-behavior: smooth }` making
-  `scrollTop = 0` *animate* down from the previous study's position.
-- [ ] **Then strip the temporary scaffolding** from `index.html`:
-  - the 500ms age guard in `caseProgressTick` (`if (age < 500)`)
-  - the `d_age_ms` / `d_scroll_top` / `d_scroll_height` / `d_client_height`
-    keys on `case_study_progress`
-  - the whole `case_progress_suppressed` event
-  - then hide its event definition in PostHog (same treatment as the probes)
-- [ ] **Audit other programmatic scrolls for the same class of bug.**
-  `scroll-behavior: smooth` is also on `html` (index.html:325). Anywhere code
-  sets a scroll position expecting it to be instant is suspect.
+- [x] **Instant-scroll fix CONFIRMED against production 2026-08-04.** Verified
+  without a manual click and without waiting for PostHog: the bug was a DOM
+  scroll bug that analytics merely revealed, so it is measurable directly.
+  Drove the real production build headlessly — read Settlr to scrollTop 17727
+  of 19787, clicked "Next case study" — and sampled `overlayBody.scrollTop`
+  across the window where the glide used to happen: **0 at rAF and at every
+  sample after**, versus the pre-fix trace of 10321 → 3586 mid-glide. Zero
+  `case_study_progress` fired. The false 100% read is gone.
+  **Critically, the script never sets `scrollBehavior = 'auto'` near the swap**
+  — that override is precisely what blinded the committed suite (see Lessons).
+- [x] **Scaffolding stripped** (the age guard, the four `d_*` keys, and the
+  whole `case_progress_suppressed` event). The TODO's expectation of "no
+  `case_progress_suppressed` at all" was **slightly wrong, and the difference
+  is what proved the guard redundant**: one stray tick does still arrive on a
+  swap, but it reported `scroll_top: 0`, `would_have_been_pct: 9` — below the
+  25% milestone, so it emits nothing. The reset is synchronous and scroll
+  events are asynchronous, so a post-swap event can only ever observe the
+  already-reset position. Timing no longer needs guarding; position speaks for
+  itself. Still to do: hide the `case_progress_suppressed` event definition in
+  PostHog (owner-only, same treatment as the probes).
+- [x] **Audited every other programmatic scroll — clean, nothing to fix.**
+  All nine remaining scroll writes across both documents pass an **explicit**
+  `behavior`, so CSS `scroll-behavior: smooth` cannot surprise any of them:
+  `overlayBody.scrollTo({behavior:'smooth'})` (back-to-top button),
+  `kinkoCard.scrollIntoView({behavior: isLoad ? 'auto' : 'smooth'})`, the nav
+  anchor and both to-top calls (all explicitly smooth, all intentional), and
+  mobile.html's single reduced-motion-aware `scrollTo`. The overlay reset was
+  the only implicit one. Two things also checked and cleared: the eased-scroll
+  loop's `window.scrollTo(0, y)` is safe because `setEnabled` neutralises
+  `scroll-behavior` to `auto` while the loop owns scrolling and hands it back
+  when off; and there is **no scroll-restore bug class here at all**, because
+  overlays freeze the page with `body.style.overflow = 'hidden'`, which
+  preserves scroll position rather than needing a restoring write.
 - [ ] **Known data artefact:** four bogus `case_study_progress` bursts on
   2026-08-04 (~14:05, 14:27, 14:31, 14:48) inflate read depth for that day.
   Left in place — not worth deleting at this volume, but don't be misled.

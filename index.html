@@ -10633,42 +10633,16 @@
       const s = caseSession;
       if (!s || s.fired.size === CASE_MILESTONES.length) return;  // idles once complete
 
-      // ── MECHANISM-INDEPENDENT GUARD ──────────────────────────────────────
-      // Three targeted fixes failed because each assumed a cause: a collapsed
-      // layout, a synchronous scroll event during the innerHTML swap, and the
-      // session being installed before the swap. Production disproved all
-      // three. What is certain from the data: every bogus tick landed 13-19ms
-      // after the session opened, reporting a scrollTop that openOverlay had
-      // already set to 0. Something restores the scroll position after the
-      // reset and we do not yet know what.
-      // So this guard assumes NOTHING about the cause — it just refuses to
-      // measure in the first 500ms, because nobody reads a case study in half
-      // a second. Milestones are not lost: the loop below fires every
-      // milestone at or below the current pct, so a genuine fast reader gets
-      // them on their next scroll event.
-      // The suppressed tick is reported ONCE per session as
-      // case_progress_suppressed, carrying the raw numbers, so the real cause
-      // can be identified from live traffic. Once it is, replace this guard
-      // with a precise fix and delete the diagnostic event.
-      const age = Date.now() - s.start;
-      if (age < 500) {
-        if (!s.diagSent) {
-          s.diagSent = true;
-          const dh = overlayBody.scrollHeight;
-          const dc = overlayBody.clientHeight;
-          const dt = Math.round(overlayBody.scrollTop);
-          track('case_progress_suppressed', {
-            slug: s.slug,
-            age_ms: age,
-            scroll_top: dt,
-            scroll_height: dh,
-            client_height: dc,
-            would_have_been_pct: dh ? Math.round((dt + dc) >= dh - 2 ? 100 : ((dt + dc) / dh) * 100) : -1
-          });
-        }
-        return;
-      }
-
+      // A 500ms age guard used to sit here, plus a case_progress_suppressed
+      // diagnostic event. Both were scaffolding for a cause we had not yet
+      // found, and both are gone now that the cause is known and fixed: the
+      // scroll reset in openOverlay is INSTANT (see the comment there), and
+      // scroll events are always asynchronous, so any event arriving after a
+      // swap necessarily observes the already-reset scrollTop of 0. Verified
+      // against production on 2026-08-04 by driving a real swap from a Settlr
+      // read at scrollTop 17727: the one stray tick reported scroll_top 0 and
+      // would have computed 9% — below the first milestone, so it emits
+      // nothing. Timing no longer needs guarding; position speaks for itself.
       const h = overlayBody.scrollHeight;
       if (!h) return;
       // ⚠️ NOT REDUNDANT — this is the fix for a bug that shipped and was
@@ -10694,17 +10668,7 @@
         const m = CASE_MILESTONES[i];
         if (pct >= m && !s.fired.has(m)) {
           s.fired.add(m);
-          track('case_study_progress', {
-            slug: s.slug,
-            pct: m,
-            // TEMPORARY DIAGNOSTICS (2026-08-04). Delete these four keys once
-            // the swap bug is understood — they exist to show what the tick
-            // actually measured, because it could not be reproduced locally.
-            d_age_ms: age,
-            d_scroll_top: Math.round(overlayBody.scrollTop),
-            d_scroll_height: h,
-            d_client_height: overlayBody.clientHeight
-          });
+          track('case_study_progress', { slug: s.slug, pct: m });
         }
       }
     }
