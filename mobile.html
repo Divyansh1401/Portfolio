@@ -132,7 +132,11 @@
     // stays attributable via $current_url ("/mobile.html" vs "/").
     // Wrapped for the same reason as index.html's: a partial posthog stub
     // would otherwise throw and strand window.track as the buffer.
-    try { posthog.register({ surface: 'mobile' }); } catch (e) {}
+    // ⚠️ NAMED doc_surface, NOT surface — must match index.html. `surface`
+    // collided with email_clicked's own surface property (an event property
+    // overrides a super-property), which silently destroyed the desktop/mobile
+    // split on exactly the event that most needed it. Caught live 2026-08-04.
+    try { posthog.register({ doc_surface: 'mobile' }); } catch (e) {}
     window.track = function (name, props) {
       try { posthog.capture(name, props || {}); } catch (e) {}
     };

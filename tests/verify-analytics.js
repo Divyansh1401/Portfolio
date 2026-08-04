@@ -415,10 +415,53 @@ const settle   = 1600;   // overlay/blob transitions run 650–900ms; don't race
     await clearCap(p);
     await p.evaluate(() => { location.hash = '#refer-earn'; });
     await wait(settle);
-    const swapClosed = (await full(p)).filter(e => e.n === 'case_study_closed');
+    const swapAfter   = await full(p);
+    const swapClosed  = swapAfter.filter(e => e.n === 'case_study_closed');
     ok('desktop: a case-to-case swap closes the old session exactly once',
        swapClosed.length === 1 && swapClosed[0].p.slug === 'settlr',
        JSON.stringify(swapClosed.map(e => e.p)));
+
+    // Smoke check only. ⚠️ It does NOT reproduce the production bug: served
+    // from localhost the template images have height almost immediately, so
+    // this passed identically with and without the fix (verified by stashing
+    // it). Kept because a gross regression would still trip it — but the real
+    // guard is the deterministic one below. Do not treat this as the coverage.
+    const swapProgress = swapAfter.filter(e => e.n === 'case_study_progress');
+    ok('desktop: a case-to-case swap reports no read depth (smoke; see the real guard below)',
+       swapProgress.length === 0,
+       swapProgress.length + ' fired: ' + JSON.stringify(swapProgress.map(e => e.p)));
+
+    // THE REAL REGRESSION GUARD. This bug shipped and had to be caught from
+    // production data, because the timing race it depends on does not occur on
+    // localhost. So recreate the STATE instead of racing for it: a live case
+    // session whose overlay is not yet taller than the viewport — exactly what
+    // openOverlay's `overlayBody.scrollTop = 0` scroll event sees on a swap,
+    // before the template's 30+ lazy images have any height.
+    // Without the guard, `seen >= h - 2` is trivially true, pct computes as
+    // 100, and ONE tick emits all four milestones. Measured live 2026-08-04:
+    // refer-earn logged 25/50/75/100 seventeen milliseconds after opening,
+    // from a visitor who had read nothing — which also false-fires the
+    // "Hot lead" alert, since that triggers on pct >= 100.
+    // Verified this assertion is not vacuous: with the guard 0 events, with it
+    // stashed 4 events. If you change caseProgressTick, re-run that check.
+    await p.evaluate(() => { location.hash = '#settlr'; });
+    await wait(settle);
+    await clearCap(p);
+    const collapsed = await p.evaluate(() => {
+      const body = document.getElementById('overlayBody');
+      body.innerHTML = '<div style="height:1px"></div>';   // shorter than the viewport
+      const dims = { h: body.scrollHeight, c: body.clientHeight };
+      body.dispatchEvent(new Event('scroll'));
+      return dims;
+    });
+    await wait(400);
+    const bogus = (await full(p)).filter(e => e.n === 'case_study_progress');
+    ok('desktop: an overlay too short to scroll reports NO depth, not a fake 100%',
+       bogus.length === 0,
+       'scrollHeight=' + collapsed.h + ' clientHeight=' + collapsed.c +
+       ' -> ' + bogus.length + ' fired ' + JSON.stringify(bogus.map(e => e.p)));
+    await p.evaluate(() => { location.hash = ''; });
+    await wait(settle);
     await p.keyboard.press('Escape');
     await wait(settle);
 

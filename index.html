@@ -173,7 +173,13 @@
       // Wrapped: an ad-blocker surrogate that defines init but not register
       // would otherwise throw here, leaving window.track stuck as the buffer
       // forever and tripping the suite's no-console-errors assertion.
-      try { posthog.register({ surface: 'desktop' }); } catch (e) {}
+      // ⚠️ NAMED doc_surface, NOT surface. `surface` collided: email_clicked
+      // emits its OWN surface property (connect | case_end | receipt_barcode |
+      // scratch_coffee), and an event property overrides a super-property — so
+      // every email_clicked lost the desktop/mobile split, which is the one
+      // thing this registration exists to provide. Caught live 2026-08-04.
+      // Do not rename it back, and do not add a `surface` key to any event.
+      try { posthog.register({ doc_surface: 'desktop' }); } catch (e) {}
       window.track = function (name, props) {
         try { posthog.capture(name, props || {}); } catch (e) {}
       };
@@ -10628,6 +10634,20 @@
       if (!s || s.fired.size === CASE_MILESTONES.length) return;  // idles once complete
       const h = overlayBody.scrollHeight;
       if (!h) return;
+      // ⚠️ NOT REDUNDANT — this is the fix for a bug that shipped and was
+      // caught in production on 2026-08-04. openOverlay's
+      // `overlayBody.scrollTop = 0` dispatches a scroll event asynchronously,
+      // and on a case-to-case swap that lands BEFORE the new template's 30+
+      // lazy images have any height. scrollHeight is then only about one
+      // viewport tall, so `seen >= h - 2` is trivially true, pct computes as
+      // 100, and the milestone loop below fires ALL FOUR at once. Measured
+      // live: refer-earn logged 25/50/75/100 seventeen milliseconds after
+      // opening, from a visitor who had read nothing. That also false-fires
+      // the "Hot lead" alert, which triggers on pct >= 100.
+      // An overlay that cannot scroll cannot have been scrolled through, so
+      // bail. A genuinely shorter-than-viewport case study reports no depth
+      // at all rather than a fake full read — the right way to be wrong.
+      if (h <= overlayBody.clientHeight + 2) return;
       const seen = overlayBody.scrollTop + overlayBody.clientHeight;
       // 2px tolerance: fractional device pixels and browser zoom leave the
       // bottom a hair short of scrollHeight even when visually at the end.
