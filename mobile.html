@@ -1,30 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>(function(){function go(){if(matchMedia('(min-width: 1024px)').matches)location.replace('index.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+<!-- ── Viewport router ──────────────────────────────────────────────────────
+     Mirror of index.html's. Two things differ from a naive mirror and both
+     are deliberate:
+
+     1. The threshold is 1064px, NOT 1024px. That 40px gap is hysteresis: with
+        both documents switching at the same number, any few-px disagreement
+        between their two width readings ping-pongs the visitor forever. The
+        1024-1063.98px dead band, where NEITHER document redirects, is the
+        entire point — someone already on the feed simply stays on the feed.
+        DO NOT "fix" this back to 1024 to match index.html. The PostHog guard
+        below MUST use the same 1064px number, or every visitor sitting in the
+        dead band gets no analytics at all.
+     2. The sessionStorage cooldown caps this tab at one hop per 8s. A real
+        iPad at viewport width 1210 was observed bouncing between the two
+        documents — 7 pageviews in 3.5 minutes. Its pre- and post-viewport-meta
+        readings differed by ~230px, far too wide for hysteresis alone to
+        absorb, so the cooldown is the actual fix.
+
+     location.search is forwarded with location.hash so UTM tags and the
+     ?nostats=1 owner bypass survive the hop. The storage key is functional,
+     like the feed-theme key this document already writes — PostHog itself
+     still stores nothing and the cookieless, no-consent-banner posture is
+     unchanged. Storage is read only after the media query already matched. -->
+<script>(function(){var t,K='vp-hop';function go(){if(!matchMedia('(min-width: 1064px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('index.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
 <!-- ── Analytics: PostHog, cookieless ──────────────────────────────────────
      Keep PH_KEY / PH_HOST / PH_CDN identical to index.html or the two
      documents report into different projects. Empty key = fully inert.
      See index.html for the full rationale; the guard below is the mirror of
-     it — this document is replaced on >=1024px, so initialising ahead of the
-     router would log a phantom mobile pageview for every desktop visitor. -->
+     it — this document is replaced at >=1064px (the router's hysteresis
+     threshold, not 1024px), so initialising ahead of the router would log a
+     phantom mobile pageview for every desktop visitor. The guard below must
+     track the router's number exactly; if they drift apart, visitors in the
+     1024-1063.98px dead band silently stop being counted. -->
 <script>
 (function () {
   var PH_KEY  = 'phc_p8UCDF8rzqra2ABqJCQoNZyiBAYcGNz8gGK7vzdsvJti';                                // ← project API key (publishable)
   var PH_HOST = 'https://eu.i.posthog.com';
   var PH_CDN  = 'https://eu-assets.i.posthog.com';
+  // ⚠️ PINNED ON PURPOSE — do not switch back to /static/array.js and do not
+  // bump this in a "keep deps current" sweep. Keep PH_VER identical to
+  // index.html's. See index.html for the full rationale: the unversioned path
+  // is a rolling "latest" (max-age=14400) that drifted across six releases in
+  // nine days; the versioned path is immutable.
+  // This pins array.js ONLY — the lazily-loaded web-vitals and
+  // dead-clicks-autocapture chunks still come from the rolling path with a
+  // ?v= cache-buster, and /array/<token>/config.js is never version-scoped.
+  // Verified: 200, 237,247 bytes / 77.0 KB brotli.
+  var PH_VER  = '1.410.5';
 
-  window.track = function () {};
+  // BUFFER — do not restore the no-op. On index.html a /#settlr deep-link
+  // fired case_study_opened at ~1.2-2.1s while the real wrapper only
+  // installed at ~1.9-4.3s, dropping the event outright. Same shape here.
+  // Push-drops when full (never shift): the EARLY events are the ones worth
+  // keeping if PostHog never loads. Safe with an empty PH_KEY and safe if an
+  // ad blocker eats the script — the queue grows to 50 and is discarded.
+  // It never throws, so every track() call site stays safe to invoke.
+  var q = [];
+  window.track = function (name, props) {
+    if (q.length < 50) q.push([name, props, new Date()]);
+  };
   if (!PH_KEY) return;
-  if (matchMedia('(min-width: 1024px)').matches) return;   // this document is being replaced
+  // Owner bypass. PostHog's internal_or_test_user_hostname only covers
+  // localhost, and its cohort-based "filter internal users" is structurally
+  // inert under cookieless_mode (no persons are ever created), so a URL flag
+  // is the only mechanism that excludes the owner on the production domain.
+  if (location.search.indexOf('nostats') > -1) return;
+  // 1064px, NOT 1024px — must match the router's hysteresis threshold above.
+  // Using 1024 here reopens a silent analytics hole across the whole
+  // 1024-1063.98px dead band, where this document is the one that renders.
+  if (matchMedia('(min-width: 1064px)').matches) return;   // this document is being replaced
 
   var s = document.createElement('script');
-  s.src = PH_CDN + '/static/array.js';
+  s.src = PH_CDN + '/static/' + PH_VER + '/array.js';
   s.async = true;
   s.onload = function () {
     posthog.init(PH_KEY, {
       api_host: PH_HOST,
       cookieless_mode: 'always',
+      // ⛔ DO NOT BUMP THIS DATE. It is a bundle of behaviour flags, not a
+      // version number, and it is NOT a dependency to keep current.
+      // At '2026-06-25' or later, PostHog auto-enables
+      // disable_capture_url_hashes, which SILENTLY strips the fragment from
+      // $current_url. The case studies are hash routes (#settlr,
+      // #refer-earn, #hobbies), so that one flag collapses them all into an
+      // indistinguishable "/" pageview and destroys the only record of which
+      // work a recruiter opened. No error, no warning — the data just goes
+      // flat. Must stay identical to index.html's value.
       defaults: '2026-05-30',
       capture_pageview: true,
       autocapture: true,
@@ -39,11 +102,47 @@
       // decorative elements expecting them to do something — a real risk on
       // a site with this much hover-reactive art.
       capture_performance: true,
-      capture_dead_clicks: true
+      capture_dead_clicks: true,
+      // Use before_send, NOT sanitize_properties. The shipped bundle logs
+      // "sanitize_properties is deprecated. Use before_send instead".
+      // Never add both. Kept byte-identical to index.html's filter so the two
+      // files stay diffable, even though the crawler clause rarely fires here.
+      before_send: function (event) {
+        if (!event) return null;
+        // Leftover manual test events from the analytics bring-up.
+        if (event.event === 'direct_probe' ||
+            event.event === 'probe_AFTER_SETTING') return null;
+        // Headless-crawler signature: 7 of 18 sessions matched it. Real
+        // browser chrome always costs 50-130px of height, so a viewport whose
+        // HEIGHT equals the screen height is the discriminator. The width
+        // comparison alone also matches legitimate maximised windows, so do
+        // NOT "simplify" this to a single condition.
+        try {
+          if (innerWidth >= 1024 &&
+              innerWidth === screen.width &&
+              innerHeight === screen.height) return null;
+        } catch (e) {}
+        return event;
+      }
     });
+    // $device_type is UA-derived while the router is viewport-derived, and the
+    // two already disagree — so record which document actually rendered.
+    // 'mobile' here, 'desktop' in index.html; keep each in sync with its file.
+    // The first $pageview fires inside init() and predates this call; that one
+    // stays attributable via $current_url ("/mobile.html" vs "/").
+    // Wrapped for the same reason as index.html's: a partial posthog stub
+    // would otherwise throw and strand window.track as the buffer.
+    try { posthog.register({ surface: 'mobile' }); } catch (e) {}
     window.track = function (name, props) {
       try { posthog.capture(name, props || {}); } catch (e) {}
     };
+    // Flush the buffer, preserving each call's ORIGINAL timestamp so a queued
+    // event is not restamped seconds late and reordered after events it
+    // actually preceded.
+    for (var i = 0; i < q.length; i++) {
+      try { posthog.capture(q[i][0], q[i][1] || {}, { timestamp: q[i][2] }); } catch (e) {}
+    }
+    q.length = 0;
   };
   document.head.appendChild(s);
 })();

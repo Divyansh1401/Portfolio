@@ -1,16 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>(function(){function go(){if(matchMedia('(max-width: 1023.98px)').matches)location.replace('mobile.html'+location.hash);}go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+  <!-- ── Viewport router ───────────────────────────────────────────────────
+       Sends <1024px visitors to mobile.html. Three details are deliberate:
+
+       1. location.search is forwarded alongside location.hash. Without it
+          every UTM/campaign parameter is destroyed for any visitor who
+          crosses the 1024px line — and ?nostats=1 (the owner's analytics
+          opt-out, read by the loader below) would not survive the hop.
+       2. mobile.html's RETURN threshold is 1064px, not 1024px — a deliberate
+          40px hysteresis band. Two documents switching at the same number
+          ping-pong whenever their two width readings disagree by a few px.
+          DO NOT "tidy" the asymmetry by making both 1024.
+       3. The sessionStorage cooldown caps this tab at one hop per 8s. A real
+          iPad reporting viewport width 1210 was observed bouncing between the
+          two documents: 7 pageviews in 3.5 minutes. Its two readings differed
+          by ~230px (Safari's pre-viewport-meta layout viewport is 980px; the
+          post-meta one was 1210) — far too wide for any sane hysteresis band
+          to absorb, so the cooldown is the real fix and hysteresis is only
+          the cheap first line of defence. 8s outlasts a slow page load plus
+          the 250ms resize debounce; it is not a number to trim. go() runs
+          only on load and on resize, never on a timer, so suppressing the
+          first corrective hop ends the loop rather than merely slowing it.
+
+       Storage is read ONLY after the media query already matched, so a
+       visitor who never crosses the line touches no storage at all. The key
+       is functional (like mobile.html's existing localStorage feed-theme),
+       not analytics: PostHog still stores nothing and the cookieless,
+       no-consent-banner posture is unchanged. If sessionStorage throws
+       (locked-down Safari), the catch falls through to the redirect, i.e.
+       it degrades to exactly today's behaviour. -->
+  <script>(function(){var t,K='vp-hop';function go(){if(!matchMedia('(max-width: 1023.98px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('mobile.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
   <!-- ── Analytics: PostHog, cookieless ────────────────────────────────────
        Paste the project key into PH_KEY to switch it on. Empty = fully inert:
        no script fetched, no requests, no globals. Safe to ship unset.
 
        cookieless_mode:'always' means NO cookies and NO local/sessionStorage,
-       so no consent banner is required. The trade: no identify(), no session
-       replay, no cross-visit stitching, and PostHog's IP-based GeoIP and bot
-       detection do NOT enrich events — expect no country data and some crawler
-       noise in the counts.
+       so no consent banner is required. NEVER change this setting — the site
+       has no consent banner and is not built to acquire one.
+
+       The trade: no identify(), no session replay, and no cross-VISIT
+       stitching. Sessions still work, but not client-side: under cookieless
+       the SDK never constructs a SessionIdManager (it throws if you try), so
+       events carry no $session_id and PostHog sessionizes them server-side
+       (this project runs cookieless_server_hash_mode 2, "Stateful", and the
+       18 recorded sessions group correctly). Session-scoped funnels and
+       durations are therefore available; only the returning-visitor link is
+       lost.
+
+       PostHog's IP-based GeoIP and bot detection do NOT enrich events, so
+       expect no country data and some crawler noise — the before_send filter
+       below removes the one crawler signature that dominated the sample.
+       anonymize_ips is also true on this project, which is a second and
+       independent reason GeoIP is absent.
+
+       Payload when enabled: ~86 KB brotli across 4 requests (array.js plus
+       the lazily-loaded web-vitals and dead-click chunks). Not the 52 KB in
+       PostHog's docs, and not the 73 KB an older note claimed.
 
        MUST stay below the viewport router above and re-check the media query:
        that router replaces the document on <1024px, so initialising ahead of it
@@ -21,18 +67,66 @@
     var PH_KEY  = 'phc_p8UCDF8rzqra2ABqJCQoNZyiBAYcGNz8gGK7vzdsvJti';                              // ← project API key (publishable)
     var PH_HOST = 'https://eu.i.posthog.com';      // EU residency; US: https://us.i.posthog.com
     var PH_CDN  = 'https://eu-assets.i.posthog.com'; // must match the host region
+    // ⚠️ PINNED ON PURPOSE — do not switch back to /static/array.js and do
+    // not bump this in a "keep deps current" sweep. The unversioned path is a
+    // rolling "latest" served with only max-age=14400, so $lib_version
+    // drifted across six releases in nine days and every behaviour change
+    // reached production unannounced. The versioned path is served immutable
+    // (max-age=31536000).
+    // This pins array.js ONLY. Measured on 1.410.5 the SDK still lazy-loads
+    // /static/web-vitals.js?v=1.410.5 and
+    // /static/dead-clicks-autocapture.js?v=1.410.5 from the ROLLING path
+    // (?v= is a cache-buster, not a path segment), and /array/<token>/config.js
+    // is never version-scoped. The SDK ships strict_script_versioning:false by
+    // default; adding strict_script_versioning:true to the init config below
+    // would pin the chunks too, but that is UNTESTED here — do not add it
+    // casually.
+    // Verified: 200, 237,247 bytes raw / 77.0 KB brotli.
+    var PH_VER  = '1.410.5';
 
-    window.track = function () {};                 // no-op until (and unless) PostHog loads
+    // BUFFER — do not restore the no-op. Measured: a /#settlr deep-link
+    // arrival fires case_study_opened at ~1.2-2.1s, but the real wrapper
+    // below only installs at ~1.9-4.3s, so the single most valuable event on
+    // the site was being silently thrown away. Queue instead, flush after
+    // posthog.init. Push-drops when full (never shift): if PostHog never
+    // loads, the EARLY events are the ones worth keeping. Safe with an empty
+    // PH_KEY and safe if an ad blocker eats the script — the queue simply
+    // grows to 50 and is discarded. It never throws, so all ~11 call sites
+    // stay safe to invoke at any time. q is closure-scoped, not a global.
+    var q = [];
+    window.track = function (name, props) {
+      if (q.length < 50) q.push([name, props, new Date()]);
+    };
     if (!PH_KEY) return;
+    // Owner bypass. PostHog ships internal_or_test_user_hostname (auto-enabled
+    // by defaults >= '2026-01-30'), but it only excludes localhost/127.0.0.1 —
+    // it cannot exclude the owner browsing the PRODUCTION domain. And
+    // PostHog's cohort-based "filter internal users" is structurally inert
+    // under cookieless_mode: no persons are ever created to put in a cohort.
+    // So a URL flag is the only mechanism that works on the live site. The
+    // router above forwards location.search, so ?nostats=1 survives a hop
+    // across the 1024px line.
+    if (location.search.indexOf('nostats') > -1) return;
     if (matchMedia('(max-width: 1023.98px)').matches) return;  // this document is being replaced
 
     var s = document.createElement('script');
-    s.src = PH_CDN + '/static/array.js';
+    s.src = PH_CDN + '/static/' + PH_VER + '/array.js';
     s.async = true;
     s.onload = function () {
       posthog.init(PH_KEY, {
         api_host: PH_HOST,
         cookieless_mode: 'always',
+        // ⛔ DO NOT BUMP THIS DATE. It is a bundle of behaviour flags, not a
+        // version number, and it is NOT a dependency to keep current.
+        // At '2026-06-25' or later, PostHog auto-enables
+        // disable_capture_url_hashes, which SILENTLY strips the fragment from
+        // $current_url. Every case study on this site is a hash route
+        // (#settlr, #refer-earn, #hobbies), so that single flag collapses all
+        // of them into one indistinguishable "/" pageview and destroys the
+        // only record of which work a recruiter actually opened. There is no
+        // error and no warning — the data just goes flat. Leave it at
+        // 2026-05-30. If it must ever move, verify $current_url still carries
+        // the hash BEFORE shipping.
         defaults: '2026-05-30',
         capture_pageview: true,
         autocapture: true,
@@ -47,11 +141,49 @@
         // decorative elements expecting them to do something — a real risk on
         // a site with this much hover-reactive art.
         capture_performance: true,
-        capture_dead_clicks: true
+        capture_dead_clicks: true,
+        // Use before_send, NOT sanitize_properties. The shipped bundle logs
+        // "sanitize_properties is deprecated. Use before_send instead".
+        // Never add both.
+        before_send: function (event) {
+          if (!event) return null;
+          // Leftover manual test events from the analytics bring-up.
+          if (event.event === 'direct_probe' ||
+              event.event === 'probe_AFTER_SETTING') return null;
+          // Headless-crawler signature: 7 of 18 sessions matched it. Real
+          // browser chrome always costs 50-130px of height, so a viewport
+          // whose HEIGHT equals the screen height is the discriminator. The
+          // width comparison alone also matches legitimate maximised windows,
+          // so do NOT "simplify" this to a single condition. Kept identical
+          // in mobile.html even though it can rarely fire there, so the two
+          // files stay diffable.
+          try {
+            if (innerWidth >= 1024 &&
+                innerWidth === screen.width &&
+                innerHeight === screen.height) return null;
+          } catch (e) {}
+          return event;
+        }
       });
+      // $device_type is UA-derived while the router is viewport-derived, and
+      // the two already disagree — so record which document actually
+      // rendered. Keep this value in sync with the file it lives in.
+      // The very first $pageview fires inside init() and predates this call;
+      // that one stays attributable via $current_url ("/" vs "/mobile.html").
+      // Wrapped: an ad-blocker surrogate that defines init but not register
+      // would otherwise throw here, leaving window.track stuck as the buffer
+      // forever and tripping the suite's no-console-errors assertion.
+      try { posthog.register({ surface: 'desktop' }); } catch (e) {}
       window.track = function (name, props) {
         try { posthog.capture(name, props || {}); } catch (e) {}
       };
+      // Flush the buffer, preserving each call's ORIGINAL timestamp so a
+      // deep-link event is not restamped seconds late and reordered after
+      // the events it actually preceded.
+      for (var i = 0; i < q.length; i++) {
+        try { posthog.capture(q[i][0], q[i][1] || {}, { timestamp: q[i][2] }); } catch (e) {}
+      }
+      q.length = 0;
     };
     document.head.appendChild(s);
   })();
