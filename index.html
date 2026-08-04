@@ -10684,7 +10684,6 @@
       endCaseSession();
       // Case studies are hash routes, not pages — autocapture never sees them.
       track('case_study_opened', { slug: slug, source: source || 'unknown' });
-      caseSession = { slug: slug, start: Date.now(), maxPct: 0, fired: new Set() };
       window._isOverlayOpen = true;
       caseReturnFocus = document.activeElement;
       document.body.classList.add('overlay-is-open');
@@ -10694,6 +10693,23 @@
       overlayBody.dataset.case = slug;
       overlay.setAttribute('aria-label', (slug === 'settlr' ? 'Settlr' : 'Refer & Earn') + ' case study');
       overlayBody.scrollTop = 0;
+      // ⚠️ THE SESSION IS INSTALLED HERE, LAST — AFTER the innerHTML swap and
+      // AFTER the scroll reset. Do not move it back up next to the
+      // case_study_opened call, however natural that looks.
+      // Replacing innerHTML while the previous case study was scrolled down
+      // makes the browser CLAMP the old scrollTop to the new content and fire
+      // a scroll event for it. With the session installed earlier, that event
+      // was attributed to the NEW study and read as "already at the bottom":
+      // seen >= scrollHeight - 2, so pct computed as 100 and one tick emitted
+      // all four milestones. Live evidence 2026-08-04: refer-earn logged
+      // 25/50/75/100 thirteen milliseconds after opening, twice, from a
+      // visitor who had just read settlr to the bottom — and it false-fires
+      // the "Hot lead" alert, which triggers on pct >= 100.
+      // endCaseSession() has already nulled caseSession by this point, so any
+      // scroll event during the teardown above now finds no session and
+      // no-ops. That is the actual fix; the scrollHeight guard inside
+      // caseProgressTick only covers the not-yet-laid-out case.
+      caseSession = { slug: slug, start: Date.now(), maxPct: 0, fired: new Set() };
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
