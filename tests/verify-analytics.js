@@ -431,6 +431,37 @@ const settle   = 1600;   // overlay/blob transitions run 650–900ms; don't race
        swapProgress.length === 0,
        swapProgress.length + ' fired: ' + JSON.stringify(swapProgress.map(e => e.p)));
 
+    // ── THE test that actually catches the swap bug ─────────────────────────
+    // .overlay-body carries `scroll-behavior: smooth`, so a bare
+    // `overlayBody.scrollTop = 0` in openOverlay does not reset — it ANIMATES
+    // down from wherever the previous case study was left. Swapping out of a
+    // study read to the bottom clamps that position onto the new, shorter
+    // content and glides down from it, firing a scroll event at every step;
+    // the first ones sit at the very bottom, so read depth reported 100% for a
+    // study nobody had opened yet.
+    // ⚠️ DO NOT wrap this block in scrollBehavior='auto'. Every earlier guard
+    // failed precisely because the suite sets that (the documented gotcha for
+    // scripted scrolling), which disables the behaviour under test — which is
+    // why three fixes shipped before one worked.
+    // Verified not vacuous: without the instant reset scrollTop is still
+    // ~10329 forty milliseconds after the swap (production logged 10321);
+    // with it, 0.
+    const reset = await p.evaluate(async () => {
+      const bd = document.getElementById('overlayBody');
+      bd.style.scrollBehavior = 'auto';
+      bd.scrollTop = bd.scrollHeight;   // read the open study to the end
+      bd.style.scrollBehavior = '';     // hand smooth scrolling BACK to CSS
+      await new Promise(r => setTimeout(r, 300));
+      const before = Math.round(bd.scrollTop);
+      location.hash = '#settlr';        // swap to the other study
+      await new Promise(r => setTimeout(r, 40));   // read DURING any glide
+      return { before, after: Math.round(bd.scrollTop) };
+    });
+    ok('desktop: opening a case study resets scroll INSTANTLY, not via a smooth glide',
+       reset.after <= 2,
+       'left the previous study at ' + reset.before + '; 40ms after the swap scrollTop was ' + reset.after);
+    await wait(settle);
+
     // THE REAL REGRESSION GUARD. This bug shipped and had to be caught from
     // production data, because the timing race it depends on does not occur on
     // localhost. So recreate the STATE instead of racing for it: a live case

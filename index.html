@@ -10739,7 +10739,23 @@
       overlayBody.innerHTML = study.html.replace(/<img (?![^>]*\bloading=)/g, '<img loading="lazy" decoding="async" ');
       overlayBody.dataset.case = slug;
       overlay.setAttribute('aria-label', (slug === 'settlr' ? 'Settlr' : 'Refer & Earn') + ' case study');
+      // ⚠️ THE RESET MUST BE INSTANT. `.overlay-body` sets
+      // `scroll-behavior: smooth`, so a bare `overlayBody.scrollTop = 0`
+      // ANIMATES from wherever the previous case study was left. Swapping from
+      // a study read to the bottom clamps that position onto the new (shorter)
+      // content and then glides down from it, firing a scroll event at every
+      // step — and the first ones sit at the very bottom of the new document,
+      // so read depth measured 100% for a study nobody had read.
+      // Live proof 2026-08-04: 2ms after the swap, scrollTop 10321 with
+      // scrollHeight 11144 and clientHeight 823 — exactly the bottom — then
+      // 3586 half a second later, mid-glide.
+      // This never reproduced locally because the test suite sets
+      // scrollBehavior='auto' before scripted scrolling (the documented
+      // gotcha), which disables the very thing that causes it.
+      const prevScrollBehavior = overlayBody.style.scrollBehavior;
+      overlayBody.style.scrollBehavior = 'auto';
       overlayBody.scrollTop = 0;
+      overlayBody.style.scrollBehavior = prevScrollBehavior;
       // ⚠️ THE SESSION IS INSTALLED HERE, LAST — AFTER the innerHTML swap and
       // AFTER the scroll reset. Do not move it back up next to the
       // case_study_opened call, however natural that looks.
