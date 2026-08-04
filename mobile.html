@@ -1002,13 +1002,13 @@
     </div>
     <p class="lede"><span class="lede-light">Shaping <b>digital products</b> and design systems with clarity and <span class="accent">character.</span></span><span class="lede-dark">Shaping <span class="accent lede-upright">myself</span> through films, photography, art and experiences.</span></p>
     <div class="hero-actions" id="resume">
-      <a class="btn-hero btn-solid" href="https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/view" target="_blank" rel="noopener">
+      <a class="btn-hero btn-solid" href="https://drive.google.com/file/d/1KgYi6ZdNP7QKaseUvkf09Z1subnG62Rv/view" target="_blank" rel="noopener" data-resume-source="hero">
         <span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Resume
         </span>
       </a>
-      <a class="btn-hero btn-outline" href="mailto:divyanshr.iitb@gmail.com">Contact me</a>
+      <a class="btn-hero btn-outline" href="mailto:divyanshr.iitb@gmail.com" data-email-surface="hero">Contact me</a>
     </div>
     <p class="hero-note">Project documentation is desktop-only. <b>Kindly open on a desktop to view the project details.</b></p>
   </section>
@@ -1051,7 +1051,7 @@
       </div>
     </div>
     <div class="post-actions" style="margin-top:0;">
-      <a href="https://www.divyanshrastogi.in/#settlr" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="Settlr">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
+      <a href="https://www.divyanshrastogi.in/#settlr" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="settlr">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
       <a class="pa-link pa-live" href="https://settlrapp.in" target="_blank" rel="noopener"><span class="pa-live-dot" aria-hidden="true"></span>Live at settlrapp.in</a>
     </div>
   </article>
@@ -1089,7 +1089,7 @@
       </div>
     </div>
     <div class="post-actions" style="margin-top:0;">
-      <a href="https://www.divyanshrastogi.in/#refer-earn" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="Refer &amp; Earn">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
+      <a href="https://www.divyanshrastogi.in/#refer-earn" class="pa-link-cta pa-link-cta--desktop" data-desktop-case="refer-earn">View case study on desktop <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.2"/><path d="M5.5 14h5M8 11.5V14"/></svg></a>
     </div>
   </article>
 
@@ -1125,7 +1125,7 @@
       </div>
     </div>
     <div class="post-actions" style="margin-top:0;">
-      <a href="mailto:divyanshr.iitb@gmail.com" class="pa-link-cta">Let's connect <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="mailto:divyanshr.iitb@gmail.com" class="pa-link-cta" data-email-surface="kinko-nda">Let's connect <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
   </article>
 
@@ -1540,7 +1540,7 @@
       <hr class="rt-rule">
       <div class="rt-scratch-cue">scratch to settle the bill</div>
       <div class="rt-scratch-zone" id="rtScratchZone">
-        <a class="rt-scratch-under" href="mailto:divyanshr.iitb@gmail.com?subject=Coffee%2C%20let%27s%20talk">
+        <a class="rt-scratch-under" href="mailto:divyanshr.iitb@gmail.com?subject=Coffee%2C%20let%27s%20talk" data-email-surface="receipt-scratch">
           <span class="rt-scratch-answer">one coffee ☕<em>, on me</em></span>
           <span class="rt-scratch-redeem">redeem →</span>
         </a>
@@ -1581,8 +1581,15 @@
   const saved = themeStore ? themeStore.getItem('feed-theme') : null;
   const wantsAfterHours = /^#(hobbies|photo-\d+)$/.test(location.hash);
   if (saved === 'dark' || wantsAfterHours) root.classList.add('dark');
-  function toggleTheme() {
-    track('world_flipped', { to: document.documentElement.classList.contains('dark') ? 'light' : 'dark' });
+  // `trigger` is supplied by every caller. Do NOT wire this straight into
+  // addEventListener again — `('click', toggleTheme)` hands the MouseEvent in
+  // as `trigger` and ships an object to PostHog. The typeof guard is the
+  // second line of defence, not decoration; leave it.
+  function toggleTheme(trigger) {
+    track('world_flipped', {
+      to: document.documentElement.classList.contains('dark') ? 'light' : 'dark',
+      trigger: typeof trigger === 'string' ? trigger : 'unknown'
+    });
     const dark = root.classList.toggle('dark');
     if (themeStore) themeStore.setItem('feed-theme', dark ? 'dark' : 'light');
     setTimeout(observeReveals, 60);   // the newly shown world's posts still need their reveal
@@ -1606,9 +1613,9 @@
 
   // the hero polaroid IS the switch too — flip = world change, like the desktop hero
   const heroPolaroid = document.getElementById('heroPolaroid');
-  heroPolaroid.addEventListener('click', toggleTheme);
+  heroPolaroid.addEventListener('click', () => toggleTheme('polaroid'));
   heroPolaroid.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme('polaroid'); }
   });
 
   // ── scroll reveals ──
@@ -1632,7 +1639,7 @@
       const iv = setInterval(() => {
         if (window.scrollY < 8 || Date.now() - t0 > 1400) {
           clearInterval(iv);
-          toggleTheme();
+          toggleTheme('redirect-card');
         }
       }, 90);
     });
@@ -1662,37 +1669,112 @@
   document.querySelectorAll('.pa-link-cta--desktop').forEach(a => {
     a.addEventListener('click', async e => {
       e.preventDefault();
-      track('desktop_case_study_copied', { study: a.dataset.desktopCase });
+      let copied = false;
       try {
         await navigator.clipboard.writeText(a.href);
+        copied = true;
         showToast('Link copied. Open it on a desktop');
       } catch {
         showToast('Open divyanshrastogi.in on a desktop');
       }
+      // Captured AFTER the await, carrying the real outcome. Firing before it
+      // (what this replaces) counted every clipboard failure — which shows a
+      // completely different toast — as a successful copy. Do not hoist it
+      // back above the try for "readability".
+      // `slug`, lowercase, is the same key and the same values as desktop's
+      // case_study_opened, so the two documents union with no mapping.
+      track('desktop_case_study_copied', { slug: a.dataset.desktopCase, copied: copied });
     });
   });
+
+  // ── conversion clicks: email · outbound · resume ──
+  // Ported from index.html's delegated handler (capture phase + closest()), so
+  // it covers every current AND future link without per-link wiring. These are
+  // the funnel — autocapture's generic click payload cannot tell the Drive
+  // resume from any other outbound link, and mobile has no case-study routes
+  // for it to capture at all.
+  //
+  // `world` here is a CONTENT SWITCH on <html>, not a second document
+  // (html.dark hides .world-light) — but it reports the same 'dark' | 'light'
+  // values the desktop events use. NOTE: index.html's email_clicked uses the
+  // property name `world` only after region C's edit E1; before that it was
+  // `where`. The VALUES always unioned; the KEYS only union once E1 lands.
+  const feedWorld = () => root.classList.contains('dark') ? 'dark' : 'light';
+  document.addEventListener('click', e => {
+    const mail = e.target.closest('a[href^="mailto:"]');
+    if (mail) track('email_clicked', {
+      surface: mail.dataset.emailSurface || 'other',
+      world: feedWorld(),
+      via: 'mailto'
+    });
+    const out = e.target.closest('a[target="_blank"][href^="http"]');
+    if (!out) return;
+    // The resume is hosted on Drive, so it is literally an outbound link — but
+    // it is its own funnel step and desktop reports it as resume_opened.
+    // Report it the same way and deliberately do NOT also count it as a
+    // generic outbound click; double-counting it breaks the desktop/mobile
+    // comparison. Keep the early return.
+    if (out.dataset.resumeSource) {
+      track('resume_opened', { source: out.dataset.resumeSource });
+      return;
+    }
+    let host = '';
+    try { host = new URL(out.href).hostname.replace(/^www\./, ''); } catch (err) {}
+    // label is the raw link text (aria-label wins when present), whitespace
+    // collapsed and capped. Uncurated on purpose — a new link needs no code
+    // change. Some labels therefore carry the "↗" glyph; that is fine.
+    track('outbound_clicked', {
+      host: host,
+      label: (out.getAttribute('aria-label') || out.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60),
+      world: feedWorld()
+    });
+  }, true);
 
   // ── copy email ──
   document.getElementById('copyEmail').addEventListener('click', async () => {
     try {
-      track('email_clicked', { via: 'copy' });
       await navigator.clipboard.writeText('divyanshr.iitb@gmail.com');
+      track('email_clicked', { surface: 'receipt-actions', world: feedWorld(), via: 'copy' });
       showToast('Email copied');
     } catch {
+      // Clipboard denied or absent: the fallback below is a real mail intent,
+      // so report it as one. Exactly one email_clicked fires per tap either
+      // way, and `via` tells the truth about which path ran. The old
+      // pre-await capture reported every failure as a copy.
+      track('email_clicked', { surface: 'receipt-actions', world: feedWorld(), via: 'mailto' });
       location.href = 'mailto:divyanshr.iitb@gmail.com';
     }
   });
 
   // ── carousel pagination dots ──
   document.querySelectorAll('.scroller-wrap').forEach(wrap => {
-    const track = wrap.querySelector('.cards-scroller');
+    // Named `scroller`, NOT `track`: the old name shadowed the global track()
+    // analytics helper inside this whole callback, so any track('…') call in
+    // here threw "track is not a function". Do not rename it back. The
+    // window.track() call below is belt-and-braces against exactly that.
+    const scroller = wrap.querySelector('.cards-scroller');
     const dots = wrap.querySelectorAll('.carousel-dots .dot');
-    if (!track || dots.length === 0) return;
-    track.addEventListener('scroll', () => {
-      const index = Math.round(track.scrollLeft / track.clientWidth);
+    if (!scroller || dots.length === 0) return;
+    // work_viewed: the case studies live in index.html and are desktop-only,
+    // so on mobile swiping a work card IS the "looked at the work" signal —
+    // without this the mobile half of the traffic has none at all.
+    // Work feed only: the dark world's photo carousels are not work and must
+    // stay silent here. (Kinko never reaches this code — it has one slide and
+    // no dots, so it returns above.)
+    const workPost = wrap.closest('.world-light') ? wrap.closest('article.post[id]') : null;
+    const seen = new Set();
+    let lastIndex = 0;
+    scroller.addEventListener('scroll', () => {
+      if (!scroller.clientWidth) return;   // hidden world: the divide would be NaN
+      const index = Math.round(scroller.scrollLeft / scroller.clientWidth);
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
       });
+      if (index === lastIndex) return;     // scroll fires continuously; only act on a real slide change
+      lastIndex = index;
+      if (!workPost || index < 1 || index >= dots.length || seen.has(index)) return;
+      seen.add(index);                     // once per slide per page load
+      window.track('work_viewed', { slug: workPost.id, slide: index + 1 });
     }, { passive: true });
   });
 
