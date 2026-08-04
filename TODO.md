@@ -162,6 +162,81 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 26. Analytics — open items (paused 2026-08-04)
+
+Paused mid-flight: **the site works and analytics are collecting.** Everything
+below is refinement or cleanup, none of it blocking. Deployed through
+`c296cca`. Gate: `node tests/run-all.js` = **209 checks**.
+
+### A. Finish the swap fix (do these first — small, and one is scaffolding)
+- [ ] **Confirm the instant-scroll fix in production.** Not yet verified by a
+  real click. Hard-reload, read Settlr down, click "Next case study". Expect
+  `case_study_opened refer-earn` and **no** `case_study_progress`, and **no**
+  `case_progress_suppressed` at all (an instant reset fires no early scroll
+  events). Root cause was `.overlay-body { scroll-behavior: smooth }` making
+  `scrollTop = 0` *animate* down from the previous study's position.
+- [ ] **Then strip the temporary scaffolding** from `index.html`:
+  - the 500ms age guard in `caseProgressTick` (`if (age < 500)`)
+  - the `d_age_ms` / `d_scroll_top` / `d_scroll_height` / `d_client_height`
+    keys on `case_study_progress`
+  - the whole `case_progress_suppressed` event
+  - then hide its event definition in PostHog (same treatment as the probes)
+- [ ] **Audit other programmatic scrolls for the same class of bug.**
+  `scroll-behavior: smooth` is also on `html` (index.html:325). Anywhere code
+  sets a scroll position expecting it to be instant is suspect.
+- [ ] **Known data artefact:** four bogus `case_study_progress` bursts on
+  2026-08-04 (~14:05, 14:27, 14:31, 14:48) inflate read depth for that day.
+  Left in place — not worth deleting at this volume, but don't be misled.
+
+### B. Owner-only (no agent can do these)
+- [ ] **UTM-tag the LinkedIn / Behance / resume-PDF / email-signature links.**
+  Highest-leverage item remaining. Only works now that the router forwards
+  `location.search`. Suggested: `?utm_source=linkedin&utm_medium=profile`.
+- [ ] Delete the `direct_probe` and `probe_AFTER_SETTING` event definitions at
+  eu.posthog.com/project/233134/data-management/events (MCP cannot delete
+  definitions; they are only hidden).
+
+### C. Decisions parked
+- [ ] **`vercel.json` PostHog reverse proxy** — full draft, loader changes,
+  required test updates and the id-collapse risk are in
+  `.claude/vercel-proxy-draft/`. Recovers ad-blocked traffic. Must be validated
+  on a Vercel preview URL, never localhost.
+- [ ] **DEF-1: hoist `<meta charset>` + `<meta name="viewport">` above the
+  router** in both files. The router reads the pre-meta layout viewport, so
+  iPads at tablet widths land on the phone feed *stably* (the ping-pong is
+  fixed, this isn't). Charset also sits ~3000 bytes deep, past the spec's
+  1024-byte limit. Needs a real iPad in Safari to verify — cannot be done
+  headlessly.
+- [ ] **Fullscreen false-positive in the crawler filter.** `before_send` drops
+  events when `innerWidth >= 1024 && innerWidth === screen.width &&
+  innerHeight === screen.height`. The justifying comment claims browser chrome
+  always costs 50–130px of height — false in fullscreen (F11 / macOS green
+  button). Could not reproduce headlessly, so unquantified. A portfolio is a
+  plausible thing to view fullscreen.
+- [ ] **Hot lead alert.** Currently fires on `resume_downloaded`,
+  `email_clicked`, LinkedIn outbound, or `case_study_progress pct >= 100`.
+  Owner's call (correct): someone who reads a case study deeply *then* clicks
+  through to the next one is genuinely hot — worth making that an **explicit**
+  signal rather than something arriving by accident.
+- [ ] **DEF-5** `test_account_filters_default_checked` is `null`, so ph-2b's
+  filters only apply where someone ticks the box. Setting `true` applies them
+  by default.
+- [ ] **DEF-3** `strict_script_versioning: true` would pin the two lazy chunks
+  as well as `array.js`. Untested; could 404 if those paths are GC'd.
+- [ ] **DEF-8** `PH_VER` bump policy. `/static/1.300.1/` already 404s, so
+  PostHog garbage-collects old versions — the pin cannot sit untouched forever.
+  Needs a deliberate periodic bump plus a re-run of the analytics suite.
+
+### Hard-won lessons (read before touching read-depth again)
+- **The suite was blind to the swap bug by construction.** Tests set
+  `scrollBehavior = 'auto'` before scripted scrolling — correct for driving a
+  scroll, but it disables the exact behaviour that caused the bug. Three fixes
+  shipped and failed before diagnostics in production found it. If something
+  cannot be reproduced locally, **ship diagnostics, don't ship theories.**
+- **A green regression test can be worthless.** The first guard passed
+  identically with and without the fix. Verify a new guard actually fails
+  against the broken code before trusting it.
+
 ## 25. Analytics correctness pass (2026-08-04)
 - **The buffering race was the headline bug.** `window.track()` was a no-op until
   `array.js` loaded, but `routeHash()` runs on the last line of the body script — so a
@@ -307,4 +382,4 @@ Ran as a 21-agent workflow: 7 read-only section proposers → 14 adversarial rev
 - New suite `tests/verify-statusbar.js` wired into the runner. Gate is now **79 checks**.
 
 ---
-*Section 7 added 2026-07-13. Sections 1–6 generated by Antigravity 2026-04-21. Section 8 added 2026-07-18. Sections 9–10 added 2026-07-25. Sections 11–13 added 2026-07-26. Sections 14–15 added 2026-07-26. Section 25 added 2026-08-04.*
+*Section 7 added 2026-07-13. Sections 1–6 generated by Antigravity 2026-04-21. Section 8 added 2026-07-18. Sections 9–10 added 2026-07-25. Sections 11–13 added 2026-07-26. Sections 14–15 added 2026-07-26. Sections 25–26 added 2026-08-04.*
