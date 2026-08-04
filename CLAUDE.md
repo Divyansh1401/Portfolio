@@ -6,7 +6,8 @@ Goal: **get hired**. Experimental/creative vibe with a dual-persona concept:
 the light "day job" world flips (via the hero polaroid) into a dark
 "alter ego" world of films, photography, and art.
 
-Live at **https://www.divyanshrastogi.in** — GitHub Pages, repo
+Live at **https://www.divyanshrastogi.in** — Vercel (serving the repo root from
+the `main` branch), repo
 `Divyansh1401/Portfolio`, branch `main`. "Push to git" = stage + commit +
 push (see Deployment below for the one-time force-push requirement).
 
@@ -28,8 +29,20 @@ Two hand-written documents, no build step:
   here is a *content switch* — `html.dark` hides `.world-light` — so
   prefers-color-scheme is deliberately ignored; only a saved `feed-theme`
   localStorage choice applies).
-- Each page's first head script redirects across the 1024px line **and
-  forwards `location.hash`** (mutually exclusive media queries, no loop).
+- Each page's first head script redirects across the 1024px line and forwards
+  **both `location.search` and `location.hash`** (search matters: it carries
+  UTM tags and the `?nostats=1` analytics opt-out).
+- ⚠️ **"Mutually exclusive media queries, no loop" was WRONG.** A real iPad
+  reporting viewport width 1210 ping-ponged between the two documents — 7
+  pageviews in 3.5 minutes — because the two documents read different widths,
+  not because the queries overlapped. Two defences now: **asymmetric
+  thresholds** (index.html leaves at `max-width: 1023.98px`, mobile.html
+  returns only at `min-width: 1064px`, leaving a 1024–1063.98px dead band where
+  neither redirects) and a **one-hop-per-8s `sessionStorage` cooldown** per
+  tab. Do not "tidy" the asymmetry to 1024/1024 — that is the bug.
+  Root cause is only partly addressed: the router still runs **before**
+  `<meta name="viewport">`, so it reads the pre-meta layout viewport. See
+  "Deferred" in `.claude/ANALYTICS-PLAN.md`.
 
 ## Deep links — the hash is the source of truth (index.html)
 `routeHash()` + `hashchange` drive all overlay/world state; UI triggers set
@@ -125,26 +138,75 @@ Both documents carry an inert PostHog loader in `<head>`, immediately **below**
 the viewport router. Set `PH_KEY` in BOTH files to switch it on; empty = no
 script, no request, no globals.
 
-- `cookieless_mode: 'always'` — no cookies, no local/sessionStorage, **no
-  consent banner required**. Costs: no `identify()`, no session replay, no
-  cross-visit stitching, and PostHog's IP-based **GeoIP and bot detection do
-  not enrich events** (expect no country data and some crawler noise).
+- `cookieless_mode: 'always'` — **PostHog** writes no cookies and no
+  local/sessionStorage, so **no consent banner is required**. (The viewport
+  router does write one sessionStorage key, `vp-hop`, and mobile.html writes
+  `feed-theme` in localStorage. Both are *functional* keys — a redirect
+  cooldown and a saved theme — not analytics identifiers, and neither changes
+  the no-banner posture.)
+  Costs: no `identify()`, no session replay, no cross-**visit** stitching.
+  Sessions themselves still work: the SDK never builds a client-side session id
+  under cookieless (it throws if you try), so events carry no `$session_id` and
+  PostHog sessionizes them **server-side** (`cookieless_server_hash_mode: 2`,
+  "Stateful"). Session-scoped funnels and durations are available; only the
+  returning-visitor link is lost.
+- **Bot detection — read this before touching any insight.** Two different
+  mechanisms get confused:
+  - **Client-side blocking is REAL and it runs.** posthog-js checks the UA
+    against a blocklist and ends with `return !!navigator.webdriver`. That is
+    why headless Puppeteer never sends a single ingestion request — useful for
+    the test gate, but it means automated checks can never assert on network
+    traffic.
+  - **Query-time `$virt_is_bot` is dead here.** It is derived from
+    server-side/IP enrichment, which cookieless plus `anonymize_ips: true`
+    switches off. With no enrichment, **every real human on this site
+    classifies as a bot.** ⚠️ **NEVER add an "exclude bots" filter to an
+    insight, funnel or dashboard — it returns a confident zero.** The site's
+    actual crawler defence is the `before_send` filter in both loaders, which
+    drops the one signature that dominated the sample (viewport height ==
+    screen height at >=1024px wide).
+  - Also absent for the same reason: GeoIP, so there is no country data.
 - **The loader MUST stay below the router and re-check the media query.**
   index.html replaces the document under 1024px and mobile.html above it, so
   initialising first logs a phantom pageview + instant bounce for every visitor
   on the other form factor and wrecks the desktop/mobile split.
 - Case studies are hash routes, invisible to autocapture — hence explicit
-  `track()` calls. Events: `case_study_opened` `resume_opened` `world_flipped`
-  `photo_opened` `email_clicked` `outbound_clicked` `desktop_case_study_copied`.
-- `window.track()` is defined as a no-op before load, so the ~9 call sites are
-  always safe to invoke. Guarded by `tests/verify-analytics.js`.
-- GitHub Pages is static and **cannot reverse-proxy**, so ad blockers will drop
-  a share of traffic — biased toward exactly this site's design/tech audience.
-  Treat the numbers as directional.
-- Cost when enabled: ~73 KB brotli (measured, not the docs' 52 KB figure).
+  `track()` calls. Events: `case_study_opened` `case_study_progress`
+  `case_study_closed` `resume_opened` `resume_downloaded` `world_flipped`
+  `photo_opened` `email_clicked` `outbound_clicked` `work_viewed` (mobile only)
+  `desktop_case_study_copied`.
+- `window.track()` is a **50-slot buffer** before load, not a no-op: it queues
+  `[name, props, timestamp]` and the flush after `posthog.init` replays each
+  call with its ORIGINAL timestamp. The no-op silently threw away every event
+  fired on a cold deep link — which was the most valuable event on the site.
+  It never throws, so the ~11 call sites are always safe to invoke. Guarded by
+  `tests/verify-analytics.js`.
+- `?nostats=1` on either document suppresses PostHog entirely (no script, no
+  globals) and survives the viewport redirect. It is the only owner opt-out
+  that works on the production domain: cookieless creates no persons, so
+  PostHog's cohort-based "filter internal users" is structurally inert, and
+  `internal_or_test_user_hostname` only covers localhost.
+- **The site is hosted on Vercel, not GitHub Pages** (confirmed 2026-08-04 from
+  the live response headers). The old "GitHub Pages is static and cannot
+  reverse-proxy" line was wrong on both counts. Ad blockers still drop a share
+  of traffic — biased toward exactly this site's design/tech audience, so treat
+  the numbers as directional — **but that is now fixable**: a `vercel.json`
+  rewrite from a first-party path to `eu.i.posthog.com`, plus matching
+  `api_host` / `ui_host` in both loaders, would recover it. That is the single
+  largest source of undercounting on this site. There is no `vercel.json` in
+  the repo today. Staged separately — see the note in
+  `.claude/ANALYTICS-PLAN.md`; it needs a post-deploy check that a fresh
+  visitor still gets a DISTINCT cookieless id, or every visitor collapses into
+  one person.
+- Cost when enabled: **~86 KB brotli across 4 requests** (measured 2026-08-04:
+  array.js 75 + dead-clicks-autocapture 7 + web-vitals 3 + remote config 1).
+  Not the docs' 52 KB, and not the 73 KB an earlier note claimed. The SDK is
+  pinned to a version (`PH_VER`) in both files; that pins array.js only — the
+  lazy chunks still come from the rolling path with a `?v=` cache-buster.
 
 ## Deployment
-- GitHub Pages serves the repo root; pushing `main` updates the live site.
+- Vercel (serving the repo root from the `main` branch) serves the repo root;
+  pushing `main` updates the live site.
 - ⚠️ **Git history was rewritten 2026-07-16** (scrubbed `projects/`,
   `.claude/`, `kinko-design-system-report.md` — they remain on disk,
   gitignored). **The next push must be

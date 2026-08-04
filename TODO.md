@@ -162,6 +162,55 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 25. Analytics correctness pass (2026-08-04)
+- **The buffering race was the headline bug.** `window.track()` was a no-op until
+  `array.js` loaded, but `routeHash()` runs on the last line of the body script — so a
+  cold `/#settlr` fired `case_study_opened` at ~1.2–2.1s while the real wrapper installed
+  at ~1.9–4.3s. Every deep-linked case study, resume open, photo open and world flip since
+  go-live was silently discarded. Replaced with a 50-slot buffer flushed after
+  `posthog.init`, replaying each call with its ORIGINAL timestamp so a queued event is not
+  reordered after events it preceded.
+- **The router loops.** "Mutually exclusive media queries, no loop" was wrong: a real iPad
+  at viewport 1210 produced 7 pageviews in 3.5 minutes, and the sweep reproduces headlessly
+  (1440→1010→1210→1010→1210 = 5 full navigations). The two documents read *different*
+  widths. Fixed with asymmetric thresholds (1023.98 down / 1064 up, leaving a dead band)
+  plus a per-tab 8s hop cooldown. **Root cause only partly addressed** — the router still
+  runs above `<meta name="viewport">`, so it reads the pre-meta layout viewport. Hoisting
+  the charset + viewport metas above it is the real fix and is deliberately NOT done here.
+- **The router ate `location.search`**, destroying every UTM tag for anyone who crossed the
+  1024px line — which also meant the new `?nostats=1` owner opt-out could not have worked.
+- **`photo_opened` could not fire from a real photo click.** The capture lived in the
+  deep-link-only wrapper; 42 rotor cards called `openLightbox` directly. Moved, and the
+  payload changed from an unstable `{index}` to `{src, alt, source}`.
+- New events: `case_study_progress` (25/50/75/100, fired as crossed, never batched to close
+  time — the best reader is the one who closes the tab with the overlay open),
+  `case_study_closed`, `resume_downloaded`, `work_viewed` (mobile).
+- **Docs were wrong about four things** and are corrected in CLAUDE.md: the host is Vercel
+  not GitHub Pages (so a reverse proxy IS available); client-side bot *blocking* is real
+  while query-time `$virt_is_bot` is dead, meaning **every real human classifies as a bot
+  and an "exclude bots" filter returns a confident zero**; the payload is ~86 KB across 4
+  requests, not 73 KB; and the router does loop.
+- SDK pinned to 1.410.5 (the unversioned path is a rolling "latest" with `max-age=14400`
+  and drifted six releases in nine days). `defaults: '2026-05-30'` pinned with a warning:
+  at `'2026-06-25'` PostHog silently strips URL fragments, which would collapse every
+  hash-routed case study into one `/` pageview.
+- PostHog side: 6 retroactive actions over existing autocapture data, authorized domains
+  (unlocks the 51 already-recorded heatmap clicks), replaced the permanently-inert
+  cohort-based test-account filter, a "Hot lead" daily alert and a Monday digest of
+  qualified sessions (4 of 18 sessions qualify), and an annotation for the 2026-07-28 build.
+- `tests/verify-analytics.js` grew from 13 checks to 110 (whole gate 105 → **206**),
+  including an in-page capture trap (PostHog can never send an ingestion request under
+  Puppeteer, so network assertions are impossible) and a cookieless storage **allowlist**
+  rather than a `/posthog|^ph_/` grep. The allowlist has three entries: `feed-theme`,
+  `vp-hop`, and `settlr_data` — that last one was *found* by the new check, not introduced
+  by it. The `#settlr` overlay embeds the Settlr prototype in a same-origin iframe, so the
+  prototype's offline seed store lands in the page's localStorage the moment the overlay
+  opens. Functional demo data, no visitor information, predates this pass, and does not
+  touch the no-consent-banner posture (which rests on PostHog storing nothing).
+- **Still open:** UTM-tagging the LinkedIn / Behance / resume-PDF / email-signature links
+  (owner-only, and it only pays off now that the router forwards `location.search`); the
+  `vercel.json` reverse proxy; hoisting the viewport meta above the router.
+
 ## 23. Tablet band, 768–1023px (2026-07-27)
 - **Measured the actual problem:** the hard 520px `.col` used 68% of a 768px viewport (fine) but only **51% at 1023px — 252px of dead gutter each side**, reading as a phone screenshot pasted onto a tablet. So the gap was real but concentrated at the TOP of the band, not across it.
 - **Fix:** `@media (min-width: 700px) { .col { max-width: clamp(520px, 68vw, 640px) } }`. Scales instead of jumping — 522px at 768 (unchanged, it already read as a feed), 567 at 834 (iPad Air portrait), 640 at 1023. Usage now a consistent **63–68%**.
@@ -258,4 +307,4 @@ Ran as a 21-agent workflow: 7 read-only section proposers → 14 adversarial rev
 - New suite `tests/verify-statusbar.js` wired into the runner. Gate is now **79 checks**.
 
 ---
-*Section 7 added 2026-07-13. Sections 1–6 generated by Antigravity 2026-04-21. Section 8 added 2026-07-18. Sections 9–10 added 2026-07-25. Sections 11–13 added 2026-07-26. Sections 14–15 added 2026-07-26.*
+*Section 7 added 2026-07-13. Sections 1–6 generated by Antigravity 2026-04-21. Section 8 added 2026-07-18. Sections 9–10 added 2026-07-25. Sections 11–13 added 2026-07-26. Sections 14–15 added 2026-07-26. Section 25 added 2026-08-04.*
