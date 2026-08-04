@@ -162,6 +162,52 @@ Owner supplied 4 shots in `dump/`; converted to webp in `assets/images/`.
 - [ ] **Remaining for the owner:** third slide per card (desktop + mobile) when shots exist.
 
 ---
+## 27. The gate is flaky under load — fix it before it stops being read (2026-08-04)
+
+**Observed while verifying §26.A: `node tests/run-all.js` failed 2 of 4 full
+runs on unchanged, correct code.** §22 added a one-shot retry on the belief
+that a single retry absorbs load contention. It does not — run 3 had a suite
+fail **twice** and then pass cleanly minutes later.
+
+| Run | Conditions | Result |
+|---|---|---|
+| 1 | MCP queries + curl running alongside | 1 suite failed (identity lost, see Lesson) |
+| 2 | moderate | ALL PASSED |
+| 3 | after a server stop/restart | kbd-meta + payload flaked and recovered on retry; analytics failed **twice** |
+| 4 | quiet, nothing competing | ALL PASSED, **zero retries needed** |
+
+`verify-analytics.js` standalone: 113/113. The code was never the problem —
+green when the machine is quiet, red when it is not. Eight sequential Chrome
+launches against one `npx serve` is the load.
+
+- [ ] **Raise the retry to 2, or add a cooldown between suites.** One retry
+  demonstrably is not enough. A short inter-suite pause may beat more retries,
+  since the failure mode is contention, not randomness.
+- [ ] **Fix the three specific flake signatures seen**, all of which look like
+  real failures in the log and are not:
+  - `net::ERR_CONNECTION_RESET` — the local server dropped the connection
+    mid-run. Worth checking whether `http-server` is stable across eight
+    consecutive Chrome launches, or whether the suites should share one browser.
+  - `mobile: total transfer under 700 KB [832 KB]` — a 19% overshoot that
+    passed on retry, so it is a measurement artifact, not a payload regression
+    (no assets changed). §18's per-page cache-disabled context may not be
+    fully isolating under contention.
+  - `deep link #resume: no console/page errors` fails on a **report-only**
+    CSP notice from Google's resume embed (`Framing 'https://drive.google.com/'
+    violates ... frame-ancestors 'self'`). Third-party, non-blocking, and not
+    ours — it belongs on a console allowlist, not counted as an error.
+- [ ] **Print a per-suite roll-up at the end**, so the failing suite survives
+  truncation.
+
+**Lesson (self-inflicted, worth not repeating): never pipe `run-all.js`
+through `tail`.** Doing so cost the identity of run 1's failing suite — the
+per-suite summary scrolled past the window — **and silently masked the exit
+code**, because a pipeline reports the exit status of its *last* command and
+`tail` always succeeds. The run printed "1 suite(s) FAILED — do not push" while
+the shell reported `EXIT=0`. Redirect to a file and read it.
+
+---
+
 ## 26. Analytics — open items (paused 2026-08-04)
 
 Paused mid-flight: **the site works and analytics are collecting.** Everything
