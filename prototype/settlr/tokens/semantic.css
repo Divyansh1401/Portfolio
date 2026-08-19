@@ -143,6 +143,9 @@
 
   /* ---- Screen Footer ---- */
   --screen-footer-bg:     var(--surface-bg);
+  /* Border is transparent at rest and revealed by .is-scrolled once content
+     scrolls underneath the footer (see components/screen-footer.md). */
+  --screen-footer-border-default: transparent;
   --screen-footer-border: var(--border-subtle);
 
   /* ---- Type Chip ---- */

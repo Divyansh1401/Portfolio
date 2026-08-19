@@ -15,7 +15,12 @@
 
   // Per-view state held in a closure-scoped map keyed by root, so multiple
   // in-DOM views never clobber each other.
-  var state = { dirty: false, beforeUnload: null, copyTimer: null, photoDataUrl: null };
+  var state = { dirty: false, beforeUnload: null, copyTimer: null, photoDataUrl: null,
+                handleTimer: null, handleToken: 0, handleOk: false };
+
+  // Default helper line for the Settlr ID editor (also the reset state).
+  var HANDLE_HINT = 'Letters, numbers and underscores · your invite link updates too';
+  var HANDLE_RE = /^[a-z0-9_]{3,20}$/;
 
   function init(root, params) {
     var nameInput = root.querySelector('#input-name');
@@ -89,6 +94,81 @@
       }, 800);
     }
 
+    // ── Settlr ID editor (pencil on the banner → inline editor + live check) ──
+    var editBtn = root.querySelector('#js-edit-id');
+    var editor = root.querySelector('#js-handle-editor');
+    var handleField = root.querySelector('#js-handle-field');
+    var handleInput = root.querySelector('#input-handle');
+    var handleHelper = root.querySelector('#js-handle-helper');
+    var handleSave = root.querySelector('#js-handle-save');
+    var handleCancel = root.querySelector('#js-handle-cancel');
+
+    function currentHandle() {
+      var cur = (window.Store && Store.getCurrentUser && Store.getCurrentUser()) || {};
+      return String(cur.handle || '').replace(/^@/, '').toLowerCase();
+    }
+    function setHandleStatus(msg, isError, ok) {
+      if (handleHelper) handleHelper.textContent = msg;
+      if (handleField) handleField.classList.toggle('input-field--error', !!isError);
+      state.handleOk = !!ok;
+      if (handleSave) handleSave.disabled = !ok;
+    }
+    function closeHandleEditor() {
+      if (editor) editor.hidden = true;
+      if (editBtn) editBtn.setAttribute('aria-expanded', 'false');
+      if (state.handleTimer) { clearTimeout(state.handleTimer); state.handleTimer = null; }
+      state.handleToken++; // invalidate any in-flight availability check
+      setHandleStatus(HANDLE_HINT, false, false);
+    }
+    function openHandleEditor() {
+      if (!editor) return;
+      editor.hidden = false;
+      if (editBtn) editBtn.setAttribute('aria-expanded', 'true');
+      if (handleInput) { handleInput.value = currentHandle(); handleInput.focus(); }
+      setHandleStatus(HANDLE_HINT, false, false);
+    }
+    function checkHandleNow() {
+      var v = handleInput ? handleInput.value.trim() : '';
+      if (!v) { setHandleStatus(HANDLE_HINT, false, false); return; }
+      if (v === currentHandle()) { setHandleStatus('This is your current ID', false, false); return; }
+      if (!HANDLE_RE.test(v)) { setHandleStatus('3–20 characters — lowercase letters, numbers, underscores', true, false); return; }
+      if (!(window.Store && Store.checkHandle)) { setHandleStatus(HANDLE_HINT, false, false); return; }
+      setHandleStatus('Checking availability…', false, false);
+      var token = ++state.handleToken;
+      Store.checkHandle(v).then(function (free) {
+        if (state.handleToken !== token) return; // stale keystroke / editor closed
+        if (free) setHandleStatus('@' + v + ' is available', false, true);
+        else setHandleStatus('That ID is taken or not allowed', true, false);
+      });
+    }
+    function saveHandle() {
+      var v = handleInput ? handleInput.value.trim() : '';
+      if (!state.handleOk || !v || !(window.Store && Store.setHandle)) return;
+      if (handleSave) handleSave.disabled = true;
+      Store.setHandle(v).then(function (okSet) {
+        if (okSet) {
+          var banner = root.querySelector('.id-banner__value');
+          if (banner) banner.textContent = '@' + v;
+          closeHandleEditor();
+        } else {
+          // Raced with someone else claiming it (server rechecks) — stay open.
+          setHandleStatus('That ID just got taken — try another', true, false);
+        }
+      });
+    }
+    if (editBtn) editBtn.addEventListener('click', function () {
+      if (editor && editor.hidden) openHandleEditor(); else closeHandleEditor();
+    });
+    if (handleCancel) handleCancel.addEventListener('click', closeHandleEditor);
+    if (handleSave) handleSave.addEventListener('click', saveHandle);
+    if (handleInput) handleInput.addEventListener('input', function () {
+      // Normalize as they type (lowercase, strip anything but a-z 0-9 _).
+      var clean = handleInput.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      if (clean !== handleInput.value) handleInput.value = clean;
+      if (state.handleTimer) clearTimeout(state.handleTimer);
+      state.handleTimer = setTimeout(checkHandleNow, 350);
+    });
+
     if (nameInput) nameInput.addEventListener('input', onFieldChange);
     if (upiInput) upiInput.addEventListener('input', onFieldChange);
     if (bankInput) bankInput.addEventListener('input', onFieldChange);
@@ -115,9 +195,6 @@
         if (el && val != null) el.value = val;
       };
       setVal('#input-name', u.name);
-      // Phone is read-only ("can't be changed") but must still reflect the real
-      // user — hydrate it so prod users don't see the static seed number.
-      setVal('#input-phone', Store.formatPhone ? Store.formatPhone(u.phone) : u.phone);
       setVal('#input-upi', u.upi);
       setVal('#input-bank-name', u.bank);
       setVal('#input-bio', u.bio);
@@ -145,6 +222,22 @@
       if (ctaLabel) ctaLabel.textContent = 'Save Changes';
       saveCta.disabled = false;
     }
+
+    // Reset the Settlr ID editor to collapsed + pristine on every activation.
+    state.handleToken++; // drop any in-flight availability check
+    state.handleOk = false;
+    var hEditor = root.querySelector('#js-handle-editor');
+    if (hEditor) hEditor.hidden = true;
+    var hEdit = root.querySelector('#js-edit-id');
+    if (hEdit) hEdit.setAttribute('aria-expanded', 'false');
+    var hField = root.querySelector('#js-handle-field');
+    if (hField) hField.classList.remove('input-field--error');
+    var hHelper = root.querySelector('#js-handle-helper');
+    if (hHelper) hHelper.textContent = HANDLE_HINT;
+    var hInput = root.querySelector('#input-handle');
+    if (hInput) hInput.value = '';
+    var hSave = root.querySelector('#js-handle-save');
+    if (hSave) hSave.disabled = true;
     // Warn before leaving with unsaved changes (standalone document only).
     state.beforeUnload = function (e) {
       if (state.dirty) e.returnValue = 'You have unsaved changes.';
@@ -160,6 +253,10 @@
     if (state.copyTimer) {
       clearTimeout(state.copyTimer);
       state.copyTimer = null;
+    }
+    if (state.handleTimer) {
+      clearTimeout(state.handleTimer);
+      state.handleTimer = null;
     }
   }
 

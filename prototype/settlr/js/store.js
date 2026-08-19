@@ -802,12 +802,35 @@ window.Store = (function () {
     }).catch(function (err) { console.error('[Store] email lookup error:', err); return null; });
   }
 
+  /* Handle normalization + local-mode validation, mirroring public.check_handle
+     in supabase/schema.sql: lower/trim/strip a leading '@', then require
+     3-20 [a-z0-9_] and reject the reserved list. The server additionally
+     checks uniqueness against profiles; local mode has no user directory, so
+     it can only enforce the first two rules. Keep this list in sync with the
+     SQL — a handle accepted locally but rejected on the server is exactly the
+     mismatch this pair exists to prevent. */
+  var RESERVED_HANDLES = ['admin', 'settlr', 'support', 'help', 'about', 'root',
+                          'system', 'user', 'me', 'api', 'www', 'mail', 'settle'];
+
+  function _normHandle(handle) {
+    return String(handle || '').trim().replace(/^@/, '').toLowerCase();
+  }
+
+  function _handleValidLocally(norm) {
+    if (!/^[a-z0-9_]{3,20}$/.test(norm)) return false;
+    return RESERVED_HANDLES.indexOf(norm) === -1;
+  }
+
   /** Check whether a handle is available + valid (format 3-20 [a-z0-9_], not
    *  reserved, not taken by someone else). Resolves to true/false. Own handle
-   *  reads as available. supabase mode only (true in local so the UI doesn't block). */
+   *  reads as available.
+   *  In local mode there is no user directory, so this answers the half of the
+   *  question that IS knowable — format + reserved words — rather than a blanket
+   *  true. A blanket true made the editor promise availability for handles that
+   *  setHandle would then refuse. */
   function checkHandle(handle) {
-    if (MODE !== 'supabase' || !_sb) return Promise.resolve(true);
-    var h = String(handle || '').trim().replace(/^@/, '');
+    var h = _normHandle(handle);
+    if (MODE !== 'supabase' || !_sb) return Promise.resolve(_handleValidLocally(h));
     return _sb.rpc('check_handle', { p_handle: h }).then(function (res) {
       if (res && res.error) { console.error('[Store] check_handle error:', res.error); return false; }
       return res && res.data === true;
@@ -816,13 +839,22 @@ window.Store = (function () {
 
   /** Claim a new handle for the current user (validated + unique server-side).
    *  Resolves to true on success, false if invalid/taken. Updates the local
-   *  cache on success. supabase mode only. */
+   *  cache on success.
+   *  In local mode (demo / offline seed data — the embedded portfolio prototype)
+   *  this applies the same validation checkHandle just applied and writes to the
+   *  local store, so the editor completes instead of dead-ending on a "that ID
+   *  just got taken" that no server ever said. */
   function setHandle(handle) {
-    if (MODE !== 'supabase' || !_sb) return Promise.resolve(false);
-    var h = String(handle || '').trim().replace(/^@/, '');
+    var h = _normHandle(handle);
+    if (MODE !== 'supabase' || !_sb) {
+      if (!_handleValidLocally(h)) return Promise.resolve(false);
+      data.currentUser.handle = h;
+      _persist();
+      return Promise.resolve(true);
+    }
     return _sb.rpc('set_handle', { p_handle: h }).then(function (res) {
       if (res && res.error) { console.error('[Store] set_handle error:', res.error); return false; }
-      if (res && res.data === true) { data.currentUser.handle = h.toLowerCase(); _persist(); return true; }
+      if (res && res.data === true) { data.currentUser.handle = h; _persist(); return true; }
       return false;
     }).catch(function (e) { console.error('[Store] set_handle error:', e); return false; });
   }

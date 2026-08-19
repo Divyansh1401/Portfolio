@@ -1,8 +1,11 @@
 /* ============================================
    Settlr Design System — Typography Tokens
-   ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Unbounded:wght@400;600;700;900&display=swap');
+   Font FACES are not loaded here — every page brings its own:
+   app screens link fonts.googleapis.com in their <head>; the
+   playground links the self-hosted assets/fonts/fonts.css.
+   (The old @import here double-loaded the CDN on every page.)
+   ============================================ */
 
 :root {
   /* ---- Font Families ---- */

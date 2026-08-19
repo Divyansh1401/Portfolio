@@ -41,13 +41,26 @@
 /* ── Content scroll clearance — footer screen (fixed .screen-footer dock) ──
    Override the shell's bottom-nav dock clearance. This screen has a fixed
    footer, not a bottom-nav dock; keep the original 120px bottom clearance
-   exactly. (120px has no spacing token — flagged above.) */
+   exactly. (120px has no spacing token — flagged above.)
+
+   The clearance is declared on the VIEW ROOT (matching create-group-members.css)
+   and the content padding uses LONGHANDS, never the `padding` shorthand: the
+   shorthand also sets padding-bottom, which out-specifies app-shell.css's
+   `.view__content { padding-bottom: var(--app-shell-content-pad, …) }` and left
+   the scroller with only 24px of clearance — the last ~56px of the Description
+   field sat permanently under the fixed footer, unreachable at full scroll. */
+[data-view="create-group-name"] {
+  /* NON-TOKEN: 120px footer clearance — matches create-group-members; no
+     spacing token for 120px; kept exact. */
+  --app-shell-content-pad: 120px;
+}
 [data-view="create-group-name"] .view__content {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-32);
-  padding: var(--spacing-24) var(--spacing-24);
-  --app-shell-content-pad: 120px;
+  padding-top: var(--spacing-24);
+  padding-left: var(--spacing-24);
+  padding-right: var(--spacing-24);
 }
 
 /* ── Group Photo Area ──

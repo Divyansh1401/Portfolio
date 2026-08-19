@@ -779,7 +779,7 @@
   }
   .receipt-ticket.settled .rt-scratch-cue { text-decoration: line-through; opacity: 0.4; }
   .rt-scratch-zone {
-    position: relative; height: 62px;
+    position: relative; height: 76px;   /* 62 + the LinkedIn line */
     border: 1.5px dashed rgba(12,12,11,0.35); border-radius: var(--radius-xs); padding: 3px;
   }
   .rt-scratch-under {
@@ -790,6 +790,9 @@
   }
   .rt-scratch-answer { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; white-space: nowrap; }
   .rt-scratch-answer em { font-style: normal; font-weight: 400; color: rgba(12,12,11,0.55); }
+  .rt-scratch-note {
+    font-size: 10px; letter-spacing: 0.01em; color: rgba(12,12,11,0.58); white-space: nowrap;
+  }
   .rt-scratch-redeem {
     font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange);
     opacity: 0; transform: translateY(-2px);
@@ -1043,7 +1046,7 @@
       <p>A college Splitwise study that grew into a <b>full redesign</b>, a <b>41-component design system</b> built with a Figma MCP × Claude workflow, then <b>shipped</b> as a live, multi-user app.</p>
       <div class="post-stats">
         <div class="post-stat"><i>41</i><em>Components</em></div>
-        <div class="post-stat"><i>190<sup>+</sup></i><em>Design tokens</em></div>
+        <div class="post-stat"><i>313</i><em>Design tokens</em></div>
         <div class="post-stat"><i>24</i><em>Screens</em></div>
         <div class="post-stat"><i>AA</i><em>WCAG contrast</em></div>
       </div>
@@ -1112,9 +1115,9 @@
         <h3><span class="num">03</span>Kinko Insurance</h3>
         <span class="ph-tag">NDA</span>
       </div>
-      <p>A <b>45+ component</b>, 300+ variant design system powering a <b>React &amp; React Native</b> codebase. Details on a call.</p>
+      <p>A <b>65 component</b>, 300+ variant design system powering a <b>React &amp; React Native</b> codebase. Details on a call.</p>
       <div class="post-stats">
-        <div class="post-stat"><i>45<sup>+</sup></i><em>Components</em></div>
+        <div class="post-stat"><i>65</i><em>Components</em></div>
         <div class="post-stat"><i>300<sup>+</sup></i><em>Variants</em></div>
         <div class="post-stat"><i>×2</i><em>React &amp; RN</em></div>
         <div class="post-stat"><i>NDA</i><em>On request</em></div>
@@ -1544,8 +1547,10 @@
       <hr class="rt-rule">
       <div class="rt-scratch-cue">scratch to settle the bill</div>
       <div class="rt-scratch-zone" id="rtScratchZone">
-        <a class="rt-scratch-under" href="mailto:divyanshr.iitb@gmail.com?subject=Coffee%2C%20let%27s%20talk" data-email-surface="receipt-scratch">
+        <a class="rt-scratch-under" href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener"
+           aria-label="Total: one coffee, on me. Message me on LinkedIn to plan it.">
           <span class="rt-scratch-answer">one coffee ☕<em>, on me</em></span>
+          <span class="rt-scratch-note">message me on LinkedIn to plan it</span>
           <span class="rt-scratch-redeem">redeem →</span>
         </a>
         <canvas class="rt-scratch-foil" id="rtScratchCanvas" aria-hidden="true"></canvas>

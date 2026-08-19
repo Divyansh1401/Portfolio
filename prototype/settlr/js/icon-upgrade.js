@@ -7,7 +7,9 @@
    - Preserves any non-ph classes on the <i> (e.g. .icon-btn__icon,
      .btn__icon, .detail-row__chevron) so existing sizing rules still apply.
    - If an icon isn't in the map, the original font <i> is left untouched
-     (graceful fallback).
+     (graceful fallback) and a console.warn is logged — once per unique
+     missing icon name, never per element — so a missing icon fails loudly
+     for a developer instead of silently rendering as nothing.
    - Idempotent + observes the DOM so dynamically-rendered icons upgrade too.
 
    Requires js/icons.js to be loaded first.
@@ -15,6 +17,18 @@
 (function () {
   'use strict';
   var WEIGHTS = { 'ph': 1, 'ph-bold': 1, 'ph-fill': 1, 'ph-thin': 1, 'ph-light': 1, 'ph-duotone': 1 };
+
+  /* Tracks icon names we've already warned about, so a screen with many
+     copies of the same missing icon logs once, not once per element. */
+  var warnedMissing = {};
+
+  function warnMissing(name, el) {
+    if (warnedMissing[name]) return;
+    warnedMissing[name] = true;
+    if (window.console && window.console.warn) {
+      window.console.warn('[icons] unknown icon "' + name + '" — <i class="' + el.className + '"> left empty');
+    }
+  }
 
   function iconName(el) {
     var name = null;
@@ -39,7 +53,7 @@
       var name = iconName(el);
       if (!name) return;
       var svg = mapFor(el)[name] || window.SETTLR_ICONS[name];
-      if (!svg) return; // keep font fallback for icons not in the map
+      if (!svg) { warnMissing(name, el); return; } // keep font fallback for icons not in the map
       var keep = [];
       el.classList.forEach(function (c) { if (c.indexOf('ph') !== 0) keep.push(c); });
       var holder = document.createElement('span');

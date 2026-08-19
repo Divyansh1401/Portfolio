@@ -14,9 +14,30 @@
       document.write('<base href="' + p + '">');
     }());
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Self-hosted fonts (2026-08-12). Was three fonts.googleapis.com tags; the
+       portfolio makes zero external requests and this embed sits inside it, so
+       the CDN dependency was the only third-party call on the page.
+       Variable fonts cover every weight the CDN link asked for
+       (Unbounded 400/600/700/900, Plus Jakarta Sans 400/500/600/700).
+       Paths are relative to the <base> above, which resolves to this directory. -->
+  <style>
+    @font-face {
+      font-family: 'Unbounded';
+      src: url('../../fonts/Unbounded/Unbounded-VariableFont_wght.woff2') format('woff2-variations'),
+           url('../../fonts/Unbounded/Unbounded-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      src: url('../../fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2') format('woff2-variations'),
+           url('../../fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
   <link rel="stylesheet" href="tokens/index.css">
   <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="css/screens/home-dashboard.css">
@@ -87,17 +108,6 @@
         </a>
       </div>
     </section>
-
-    <!-- Get-started checklist (hidden once all steps done or dismissed) -->
-    <div id="js-checklist" hidden>
-      <div class="heading">
-        <span class="heading__title text-heading-md">Get started</span>
-        <button type="button" class="btn btn--ghost btn--sm text-title-xs" id="js-checklist-dismiss">
-          <span class="btn__content"><span class="btn__label">Dismiss</span></span>
-        </button>
-      </div>
-      <div class="settings-card" id="js-checklist-card"></div>
-    </div>
 
     <!-- Recent Groups -->
     <div class="heading">
@@ -995,9 +1005,37 @@
         <p class="id-banner__label text-overline-md">Your Settlr ID</p>
         <p class="id-banner__value text-heading-sm">@divyansh</p>
       </div>
+      <button class="id-banner__copy" id="js-edit-id" aria-label="Change your Settlr ID" aria-expanded="false">
+        <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg></span>
+      </button>
       <button class="id-banner__copy" id="js-copy-id" aria-label="Copy ID">
         <span class="icon-holder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></span>
       </button>
+    </div>
+
+    <!-- Settlr ID editor (revealed by the banner pencil; saves instantly via Save ID,
+         independent of the main Save Changes flow) -->
+    <div class="handle-editor" id="js-handle-editor" hidden>
+      <div class="input-field" id="js-handle-field">
+        <label class="input-field__label" for="input-handle">Choose a new ID</label>
+        <div class="input-field__box">
+          <span class="input-field__prefix text-body-sm">@</span>
+          <input
+            id="input-handle"
+            type="text"
+            placeholder="yourname"
+            maxlength="20"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+          >
+        </div>
+        <span class="input-field__helper" id="js-handle-helper">Letters, numbers and underscores · your invite link updates too</span>
+      </div>
+      <div class="handle-editor__actions">
+        <button class="btn btn--secondary btn--sm" id="js-handle-cancel" type="button"><span class="btn__content">Cancel</span></button>
+        <button class="btn btn--primary btn--sm" id="js-handle-save" type="button" disabled><span class="btn__content">Save ID</span></button>
+      </div>
     </div>
 
     <!-- Form Fields -->
@@ -1013,22 +1051,6 @@
             value="Divyansh Rastogi"
             placeholder="Your full name"
             maxlength="50"
-          >
-        </div>
-      </div>
-
-      <!-- Phone (read-only) -->
-      <div class="input-field input-field--disabled">
-        <label class="input-field__label" for="input-phone">
-          Phone Number
-          <span>· can't be changed</span>
-        </label>
-        <div class="input-field__box">
-          <input
-            id="input-phone"
-            type="tel"
-            value="+91 99887 76655"
-            disabled
           >
         </div>
       </div>

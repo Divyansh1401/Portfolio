@@ -55,3 +55,8 @@ dump/
 _section-redesign-test.html
 _explorations/
 _connect-explorations.html
+
+# Session workshop: audit reports, idea lab, before/after comparison, screenshots.
+# Stays on disk — Vercel serves the repo root, so committing it would publish an
+# internal critique of this site at divyanshrastogi.in/audit/.
+audit/

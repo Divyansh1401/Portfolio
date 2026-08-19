@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settlr — component strip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  Component strip for the portfolio case study (index.html §12).
+
+  These are the REAL components: every rule below comes from the same
+  css/*.css files the playground loads via its CSS_PATHS registry, and the
+  class names are the ones each component's registry entry publishes in its
+  `tag` field. Nothing is re-implemented. If a component's CSS changes, this
+  strip changes with it — that is the whole point of the file.
+
+  MIRROR NOTE: this file is portfolio-specific and does NOT exist in the
+  source Settlr repo. The re-sync recipe must re-add it after any rsync
+  from /Desktop/settlr/.
+-->
+<link rel="stylesheet" href="../tokens/index.css">
+<link rel="stylesheet" href="../css/button.css">
+<link rel="stylesheet" href="../css/chip.css">
+<link rel="stylesheet" href="../css/input-field.css">
+<link rel="stylesheet" href="../css/avatar.css">
+<link rel="stylesheet" href="../css/avatar-stack.css">
+<link rel="stylesheet" href="../css/navigation.css">
+<style>
+  /* Strip chrome only — never part of a component. */
+  html, body { margin: 0; padding: 0; background: transparent; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1B1C1A;
+  }
+  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 2px; }
+  .cell { border: 1px solid rgba(27,28,26,0.12); border-radius: 12px; padding: 16px; background: transparent; }
+  .cell-k { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 14px; margin: 0; }
+  .cell-s { font-size: 11px; opacity: .55; margin: 2px 0 0; }
+  .cell-slot {
+    margin-top: 14px; min-height: 60px; display: flex; align-items: center;
+    justify-content: center; gap: 8px; flex-wrap: wrap;
+    background: rgba(27,28,26,0.03); border-radius: 8px; padding: 10px;
+  }
+  .cell-src {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9.5px; opacity: .45; margin: 8px 0 0; word-break: break-all;
+  }
+  @media (max-width: 900px) { .strip { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="strip">
+
+  <div class="cell">
+    <p class="cell-k">Button</p><p class="cell-s">primary · secondary</p>
+    <div class="cell-slot">
+      <button type="button" tabindex="-1" class="btn btn--primary btn--md">Add expense</button>
+      <button type="button" tabindex="-1" class="btn btn--secondary btn--md">Settle up</button>
+    </div>
+    <p class="cell-src">css/button.css</p>
+  </div>
+
+  <div class="cell">
+    <p class="cell-k">Chip</p><p class="cell-s">off · on</p>
+    <div class="cell-slot">
+      <button type="button" tabindex="-1" class="chip chip--md">Food</button>
+      <button type="button" tabindex="-1" class="chip chip--md chip--on">Travel</button>
+    </div>
+    <p class="cell-src">css/chip.css</p>
+  </div>
+
+  <div class="cell">
+    <p class="cell-k">Input field</p><p class="cell-s">rest</p>
+    <div class="cell-slot">
+      <div class="input-field">
+        <div class="input-field__box">
+          <input type="text" tabindex="-1" placeholder="Enter amount" aria-label="Enter amount">
+        </div>
+      </div>
+    </div>
+    <p class="cell-src">css/input-field.css</p>
+  </div>
+
+  <div class="cell">
+    <p class="cell-k">Avatar stack</p><p class="cell-s">overlapping · overflow</p>
+    <div class="cell-slot">
+      <div class="avatar-stack avatar-stack--lg">
+        <div class="avatar-stack__item"><div class="avatar avatar--lg avatar--initials">DR</div></div>
+        <div class="avatar-stack__item"><div class="avatar avatar--lg avatar--initials">RS</div></div>
+        <div class="avatar-stack__item"><div class="avatar avatar--lg avatar--initials">VM</div></div>
+        <div class="avatar-stack__overflow">+3</div>
+      </div>
+    </div>
+    <p class="cell-src">css/avatar-stack.css · css/avatar.css</p>
+  </div>
+
+  <div class="cell">
+    <p class="cell-k">Segment control</p><p class="cell-s">two-up</p>
+    <div class="cell-slot">
+      <div class="segment-control">
+        <button type="button" tabindex="-1" class="segment-item is-active">You owe</button>
+        <button type="button" tabindex="-1" class="segment-item">You are owed</button>
+      </div>
+    </div>
+    <p class="cell-src">css/navigation.css</p>
+  </div>
+
+  <div class="cell">
+    <p class="cell-k">Member pill</p><p class="cell-s">with remove</p>
+    <div class="cell-slot">
+      <div class="member-pill">
+        <span class="member-pill__name">Divyansh</span>
+        <button type="button" tabindex="-1" class="member-pill__remove" aria-label="Remove Divyansh">×</button>
+      </div>
+    </div>
+    <p class="cell-src">css/avatar.css</p>
+  </div>
+
+</div>
+<script>
+  /* Report height to the parent so the iframe can size itself — the strip
+     has no fixed height and reflows at every breakpoint. */
+  function postHeight() {
+    var h = document.documentElement.scrollHeight;
+    parent.postMessage({ settlrStripHeight: h }, '*');
+  }
+  window.addEventListener('load', postHeight);
+  window.addEventListener('resize', postHeight);
+  if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+</script>
+</body>
+</html>

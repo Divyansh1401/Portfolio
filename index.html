@@ -1816,7 +1816,7 @@
 
     .rcpt-scratch-zone {
       position: relative;
-      height: 70px;
+      height: 84px;   /* 70 + the LinkedIn line */
       margin: 3px 0 2px;
       border: 1.5px dashed rgba(42,39,34,0.38);
       border-radius: var(--radius-xs);
@@ -1846,6 +1846,12 @@
       font-style: normal;
       font-weight: 400;
       color: rgba(42,39,34,0.6);
+    }
+    .rcpt-scratch-note {
+      font-size: 10.5px;
+      letter-spacing: 0.01em;
+      color: rgba(42,39,34,0.62);
+      white-space: nowrap;
     }
     .rcpt-scratch-redeem {
       font-size: 10px;
@@ -2258,17 +2264,20 @@
       margin-bottom: calc(72 * var(--u));
     }
     .cs-meta-block { display: flex; flex-direction: column; gap: 0; }
+    /* 2-C — meta rail carries the document's declared hairline + label spec */
     .cs-meta-item {
       padding: calc(14 * var(--u)) 0;
-      border-top: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+      border-top: calc(1 * var(--u)) solid rgba(27,28,26,0.12);
     }
-    .cs-meta-item:last-child { border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.08); }
+    .cs-meta-item:last-child { border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.12); }
+    /* label spec matches .cs-tag so the first component the reader meets is an
+       instance of the system rather than a one-off */
     .cs-meta-label {
       font-size: calc(12 * var(--u));
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 600;
-      opacity: 0.4;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+      opacity: 0.45;
       margin-bottom: calc(4 * var(--u));
     }
     .cs-meta-value { font-size: calc(13 * var(--u)); line-height: 1.5; }
@@ -2292,6 +2301,14 @@
     }
 
     .cs-section { margin-bottom: calc(64 * var(--u)); }
+    /* 1.2-A — the source deck uses card suits as chapter marks. Applied to the
+       four bands the deck actually documents; the rest carry no glyph. */
+    .cs-tag[data-suit]::before {
+      content: attr(data-suit);
+      font-size: calc(14 * var(--u));
+      opacity: 0.35;
+      margin-right: 0.5em;
+    }
     .cs-tag {
       font-size: calc(12 * var(--u));
       text-transform: uppercase;
@@ -3194,6 +3211,39 @@
       transition: width 0.6s ease;
     }
 
+    /* 1.11-C — each baseline links back to the funnel band that produced it, so
+       "every one of them has a baseline earlier on this page" is demonstrable
+       rather than asserted. .overlay-body ships scroll-behavior:smooth, so the
+       jump animates; tests must set it to auto before asserting scrollTop. */
+    .cs-baseline-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: calc(1 * var(--u)) dashed currentColor;
+    }
+    .cs-baseline-link:hover { opacity: 0.75; }
+
+    /* 1.11-A — the closing band gets its own container so the page's structure
+       says "this is the end, and it is different from the beginning".
+       The copy inside is deliberately untouched: the refusal to claim an
+       unverified lift is the strongest thing in this case study. */
+    .cs-closing-plate {
+      background: var(--c-dark);
+      border-radius: calc(28 * var(--u));
+      padding: calc(56 * var(--u)) calc(48 * var(--u));
+      margin-top: calc(24 * var(--u));
+    }
+    .cs-closing-plate .cs-section-title,
+    .cs-closing-plate .cs-rm-title,
+    .cs-closing-plate .cs-rm-num { color: var(--c-light); }
+    .cs-closing-plate .cs-body p,
+    .cs-closing-plate .cs-rm-body { color: rgba(237,236,234,0.72); }
+    .cs-closing-plate .cs-rm-finding { color: rgba(237,236,234,0.85); }
+    /* .cs-rm-finding span:last-child sets its own dark ink, so it must be
+       overridden explicitly or the baseline lines vanish on the plate. */
+    .cs-closing-plate .cs-rm-finding span:last-child { color: rgba(237,236,234,0.75); }
+    .cs-closing-plate .cs-research-method { border-color: rgba(237,236,234,0.18); }
+    .cs-tag--on-dark { color: var(--c-orange); }
+
     .cs-research-methods {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -3447,12 +3497,16 @@
       flex-direction: column;
       gap: calc(10 * var(--u));
     }
+    /* 1.6-D — sequence markers use ONE treatment across this case study.
+       Matches .cs-rm-num above; was Jakarta 12px orange, which made 01/02/03
+       look like a different kind of object in each band. */
     .cs-why-num {
-      font-family: var(--f-body);
-      font-size: calc(12 * var(--u));
-      font-weight: 700;
-      color: var(--c-orange);
-      letter-spacing: 0.083em;
+      font-family: var(--f-heading);
+      font-size: calc(24 * var(--u));
+      font-weight: 800;
+      color: var(--c-blue-deep);
+      letter-spacing: -0.02em;
+      line-height: 1;
     }
     .cs-why-title {
       font-family: var(--f-heading);
@@ -3484,23 +3538,49 @@
       overflow: hidden;
     }
     .cs-decision--big.cs-decision--last { border-bottom: none; }
-    .cs-decision-ghost {
-      font-family: var(--f-heading);
-      font-size: calc(180 * var(--u));
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      line-height: calc(160 * var(--u));
-      color: transparent;
-      -webkit-text-stroke: calc(1 * var(--u)) rgba(27,28,26,0.2);
-      text-stroke: calc(1 * var(--u)) rgba(27,28,26,0.2);
-      user-select: none;
+    /* 1.7-A (2026-08-12) — the five decision screenshots used to exist only as a
+       200px ghost riding the cursor, invisible to keyboard and touch users and to
+       anyone skimming. They are now in the layout. The hollow numeral is replaced
+       by a small solid one inside the content column. */
+    .cs-decision-img {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--c-blue-tint, #f9fbff);
+      border: calc(1 * var(--u)) solid rgba(27,28,26,0.10);
+      align-self: start;
+    }
+    .cs-decision-img img {
       display: block;
+      width: 100%;
+      height: calc(240 * var(--u));
+      /* contain, not cover: rows 02–04 are wide crops of one screen and cover
+         would slice their edges off, making three different regions look like
+         the same picture. */
+      object-fit: contain;
+      background: var(--c-blue-darker, #061529);
+    }
+    .cs-decision-n {
+      font-family: var(--f-heading);
+      font-size: calc(14 * var(--u));
+      font-weight: 800;
+      color: var(--c-blue-deep, #384b6e);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+    .cs-decision--big {
+      display: grid;
+      grid-template-columns: calc(380 * var(--u)) 1fr;
+      gap: calc(32 * var(--u));
+      align-items: center;
     }
     .cs-decision-content {
       display: flex;
       flex-direction: column;
       gap: calc(12 * var(--u));
       padding-right: calc(32 * var(--u));
+    }
+    @media (max-width: 1180px) {
+      .cs-decision--big { grid-template-columns: 1fr; gap: calc(18 * var(--u)); }
     }
     .cs-decision-eyebrow {
       font-size: calc(11 * var(--u));
@@ -3866,6 +3946,43 @@
     }
 
     /* Research methods — 2×2 grid of method cards */
+    /* 16-B — the study's own task artifacts, matted. */
+    .cs-tasks {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: calc(14 * var(--u));
+      margin-top: calc(28 * var(--u));
+    }
+    /* No mat here: these are diagrams, not artifacts needing a frame. The
+       image carries its own corner radius and nothing sits around it. */
+    .cs-task-mat { background: none; border: 0; padding: 0; }
+    .cs-task-mat img {
+      display: block; width: 100%; height: auto;
+      border-radius: var(--radius-sm);
+    }
+    .cs-task figcaption {
+      font-size: calc(11 * var(--u));
+      line-height: 1.45;
+      opacity: 0.6;
+      margin-top: calc(8 * var(--u));
+    }
+    .cs-task figcaption b { font-weight: 700; opacity: 0.85; }
+    @media (max-width: 1200px) { .cs-tasks { grid-template-columns: repeat(3, 1fr); } }
+
+    /* 12-A — frame for the real-component strip. The components themselves
+       are styled entirely by prototype/settlr/css/*.css inside the iframe;
+       nothing about their appearance is defined here, deliberately. */
+    .cs-comp-strip {
+      display: block;
+      width: 100%;
+      border: 0;
+      margin-top: calc(32 * var(--u));
+      min-height: calc(200 * var(--u));
+      background: transparent;
+      color-scheme: normal;
+    }
+    .cs-comp-strip-note { font-size: calc(11 * var(--u)); opacity: 0.5; margin-top: calc(8 * var(--u)); }
+
     .cs-method-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);                    /* Figma: 4-col row */
@@ -4960,12 +5077,16 @@
     }
     .cs-ts-row {
       display: grid;
-      grid-template-columns: 1.6fr calc(110 * var(--u)) calc(52 * var(--u)) calc(60 * var(--u)) calc(78 * var(--u)) calc(82 * var(--u)) 1.4fr;
+      grid-template-columns: 1.15fr calc(152 * var(--u)) calc(56 * var(--u)) calc(64 * var(--u)) calc(72 * var(--u)) calc(84 * var(--u)) 1.5fr;
       align-items: center;
       border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.05);
       background: var(--c-light);
     }
     .cs-ts-row:last-child { border-bottom: none; }
+    /* Token/size/weight/line-height/tracking are single tokens — wrapping them
+       (".text-" / "heading-md") reads as a broken cell, not a long value. */
+    .cs-ts-row > *:nth-child(n+2):nth-child(-n+6),
+    .cs-ts-col-header > *:nth-child(n+2):nth-child(-n+6) { white-space: nowrap; }
     .cs-ts-role { font-size: calc(12 * var(--u)); font-weight: 700; color: var(--c-dark); letter-spacing: 0.04em; }
     .cs-ts-spec { font-family: 'Plus Jakarta Sans', sans-serif; font-size: calc(12 * var(--u)); color: var(--c-mid); }
     .cs-ts-preview {
@@ -4978,7 +5099,7 @@
     }
     .cs-ts-col-header {
       display: grid;
-      grid-template-columns: 1.6fr calc(110 * var(--u)) calc(52 * var(--u)) calc(60 * var(--u)) calc(78 * var(--u)) calc(82 * var(--u)) 1.4fr;
+      grid-template-columns: 1.15fr calc(152 * var(--u)) calc(56 * var(--u)) calc(64 * var(--u)) calc(72 * var(--u)) calc(84 * var(--u)) 1.5fr;
       padding: 0;
       border-bottom: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
       background: #fff;
@@ -4998,10 +5119,18 @@
        instead of five equal blocks competing for attention. */
     .cs-phil-layout {
       display: grid;
-      grid-template-columns: calc(300 * var(--u)) 1fr;
-      gap: calc(48 * var(--u));
-      margin-top: calc(28 * var(--u));
+      grid-template-columns: calc(264 * var(--u)) 1fr;
+      gap: calc(44 * var(--u));
+      margin-top: calc(36 * var(--u));
       align-items: start;
+    }
+    /* 8-A — the lede column emptied below y≈6,400 and stayed empty for the rest
+       of the section. Sticky lets it travel with the five principle rows.
+       .overlay-body is a native scroller, so this behaves normally. */
+    .cs-phil-lede {
+      position: sticky;
+      top: calc(40 * var(--u));
+      align-self: start;
     }
     .cs-phil-lede-title {
       font-family: var(--f-heading);
@@ -5026,8 +5155,8 @@
          text. Sized to the real content, not a guess. */
       grid-template-columns: calc(64 * var(--u)) 1fr calc(180 * var(--u));
       align-items: center;
-      gap: calc(20 * var(--u));
-      padding: calc(22 * var(--u)) 0;
+      gap: calc(28 * var(--u));
+      padding: calc(34 * var(--u)) 0;
       border-top: 1px solid rgba(27,28,26,0.09);
     }
     .cs-phil-row:last-child { border-bottom: 1px solid rgba(27,28,26,0.09); }
@@ -5048,21 +5177,22 @@
       font-size: calc(14.5 * var(--u));
       font-weight: 700;
       color: var(--c-dark);
-      margin: 0 0 calc(4 * var(--u));
+      margin: 0 0 calc(7 * var(--u));
       line-height: 1.3;
     }
     .cs-phil-text-body {
-      font-size: calc(12.5 * var(--u));
-      line-height: 1.55;
+      font-size: calc(13 * var(--u));
+      line-height: 1.65;
       color: var(--c-mid);
       margin: 0;
-      max-width: calc(480 * var(--u));
+      max-width: calc(560 * var(--u));
     }
     .cs-phil-slot { display: flex; justify-content: flex-end; min-width: 0; }
     /* Narrow overlays: stack the lede above the list and drop the mirroring,
        which only reads as rhythm when there's room for three columns. */
     @media (max-width: 1180px) {
       .cs-phil-layout { grid-template-columns: 1fr; gap: calc(24 * var(--u)); }
+      .cs-phil-lede { position: static; }
       .cs-phil-row,
       .cs-phil-row--flip { grid-template-columns: calc(48 * var(--u)) 1fr calc(150 * var(--u)); }
       .cs-phil-row--flip .cs-phil-num { order: 1; text-align: left; }
@@ -5092,24 +5222,24 @@
     .cs-viz-arrow { opacity: 0.4; font-size: 11px; color: var(--c-dark); }
 
     /* Decision-row hover preview: bottom-left corner rides the cursor. */
-    #csHoverPreview {
-      position: fixed; left: 0; top: 0;
-      height: 200px; width: auto; max-width: 320px; object-fit: cover;
-      transform: translate(0, -100%) scale(0.98);
-      transform-origin: bottom left;
-      border-radius: var(--radius-sm); border: 1px solid rgba(27,28,26,0.12);
-      box-shadow: 0 14px 40px rgba(27,28,26,0.22);
-      pointer-events: none; z-index: 810;
-      opacity: 0; visibility: hidden;
-      transition: opacity 0.16s ease, transform 0.16s ease;
-    }
-    #csHoverPreview.on { opacity: 1; visibility: visible; transform: translate(0, -100%) scale(1); }
     @media (prefers-reduced-motion: reduce) {
-      #csHoverPreview { transition: none; }
     }
-    .cs-decision--big[data-hover-img] { cursor: none; }
+    /* cursor:none is gone with the floater it existed for. */
 
     /* ── Tier architecture diagram ───────────────────── */
+    /* 10-B */
+    .cs-flow { margin: calc(28 * var(--u)) 0 0; }
+    .cs-flow svg { width: 100%; height: auto; display: block; }
+    .cs-flow-k { font-family: var(--f-body); font-size: calc(10 * var(--u)); font-weight: 700;
+      letter-spacing: 0.14em; fill: rgba(27,28,26,0.45); }
+    .cs-flow-v { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: calc(14 * var(--u)); fill: var(--c-dark); }
+    .cs-flow-btn { font-family: var(--f-heading); font-size: calc(13 * var(--u));
+      font-weight: 700; fill: #FEF9EE; }
+    .cs-flow-arrow { stroke: var(--c-orange); stroke-width: 1.5; }
+    .cs-flow-head { fill: var(--c-orange); }
+    .cs-flow-note { font-family: var(--f-body); font-size: calc(11 * var(--u)); fill: rgba(27,28,26,0.55); }
+
     .cs-tier-grid {
       display: grid;
       grid-template-columns: 1fr calc(32 * var(--u)) 1fr calc(32 * var(--u)) 1fr;
@@ -5598,33 +5728,24 @@
        black bg now hugs the section's own content; the dwell happens over the
        transparent wrapper space below it. Tune the pin duration via min-height
        (section height ≈ one screen, so the extra ≈ how long it stays pinned). */
+    /* 5-B (2026-08-06): the sticky pin was gated off by @media (max-height:900px),
+       so it never fired on a typical laptop — the page paid 125vh of scroll for a
+       dwell that did not happen. Sticky removed; the band sits in normal flow. */
     .cs-proto-sticky-wrap {
-      min-height: 125vh;   /* short dwell — a brief pin, not a hold */
+      min-height: auto;
     }
     .cs-proto-section--dark {
       background: var(--c-dark);
       border-radius: calc(28 * var(--u));
       padding: calc(64 * var(--u));
       overflow: visible;
-      position: sticky;
-      top: calc(28 * var(--u));
     }
     .cs-proto-section--dark .cs-proto-viewer {
       margin-top: 0;
       align-items: flex-start;   /* heading top aligns with frame top edge */
       gap: calc(56 * var(--u));
     }
-    /* Only pin when the section comfortably fits the viewport — a too-tall
-       pinned card reads as "frozen scroll". Below the threshold (and for
-       reduced-motion users) the section sits in normal flow, no dwell. */
-    @media (max-height: 900px) {
-      .cs-proto-sticky-wrap { min-height: auto; }
-      .cs-proto-section--dark { position: static; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .cs-proto-sticky-wrap { min-height: auto; }
-      .cs-proto-section--dark { position: static; }
-    }
+    /* 5-B: the max-height and reduced-motion gates are gone with the pin itself. */
     /* Phone floats directly on the dark bg — no white card wrapper */
     .cs-proto-section--dark .cs-proto-card {
       flex: 0 0 auto;
@@ -7106,7 +7227,7 @@
             </p>
             <div class="cs2-stats" role="list" aria-label="Project stats">
               <div class="cs2-stat" role="listitem"><i>41</i><em>Components</em></div>
-              <div class="cs2-stat" role="listitem"><i>190<sup>+</sup></i><em>Design tokens</em></div>
+              <div class="cs2-stat" role="listitem"><i>313</i><em>Design tokens</em></div>
               <div class="cs2-stat" role="listitem"><i>24</i><em>Screens</em></div>
               <div class="cs2-stat" role="listitem"><i>AA</i><em>WCAG contrast</em></div>
             </div>
@@ -7202,11 +7323,11 @@
             <p class="cs2-kicker"><b>Confidential</b>&nbsp;·&nbsp;03&nbsp;&nbsp;·&nbsp;&nbsp;Head Digital Works</p>
             <h3 class="cs2-title" id="cs2-kinko-title">Kinko<span class="cs2-stop">.</span></h3>
             <p class="cs2-pitch">
-              A <b>45+ component</b>, 300+ variant design system powering a
+              A <b>65 component</b>, 300+ variant design system powering a
               <b>React &amp; React Native</b> codebase. Details on a call.
             </p>
             <div class="cs2-stats" role="list" aria-label="Project stats">
-              <div class="cs2-stat" role="listitem"><i>45<sup>+</sup></i><em>Components</em></div>
+              <div class="cs2-stat" role="listitem"><i>65</i><em>Components</em></div>
               <div class="cs2-stat" role="listitem"><i>300<sup>+</sup></i><em>Variants</em></div>
               <div class="cs2-stat" role="listitem"><i>×2</i><em>React &amp; RN</em></div>
               <div class="cs2-stat" role="listitem"><i>NDA</i><em>On request</em></div>
@@ -7381,10 +7502,11 @@
                 </div>
                 <div class="rcpt-scratch-zone" id="rcptScratchZone">
                   <a class="rcpt-scratch-under" id="rcptScratchUnder"
-                     href="mailto:divyanshr.iitb@gmail.com?subject=Redeeming%20my%20coffee%20%E2%98%95"
-                     title="Redeem: email Divyansh"
-                     aria-label="Total: one coffee, on me. Click to redeem by email.">
+                     href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener"
+                     title="Redeem: message Divyansh on LinkedIn"
+                     aria-label="Total: one coffee, on me. Message me on LinkedIn to plan it.">
                     <span class="rcpt-scratch-answer">one coffee ☕<em>, on me</em></span>
+                    <span class="rcpt-scratch-note">message me on LinkedIn to plan it</span>
                     <span class="rcpt-scratch-redeem">redeem &rarr;</span>
                   </a>
                   <canvas class="rcpt-scratch-foil" id="rcptScratchCanvas" aria-hidden="true"></canvas>
@@ -7696,10 +7818,11 @@
                   </div>
                   <div class="rcpt-scratch-zone">
                     <a class="rcpt-scratch-under"
-                       href="mailto:divyanshr.iitb@gmail.com?subject=Redeeming%20my%20coffee%20%E2%98%95"
-                       title="Redeem: email Divyansh"
-                       aria-label="Total: one coffee, on me. Click to redeem by email.">
+                       href="https://linkedin.com/in/divyanshriitb" target="_blank" rel="noopener"
+                       title="Redeem: message Divyansh on LinkedIn"
+                       aria-label="Total: one coffee, on me. Message me on LinkedIn to plan it.">
                       <span class="rcpt-scratch-answer">one coffee ☕<em>, on me</em></span>
+                      <span class="rcpt-scratch-note">message me on LinkedIn to plan it</span>
                       <span class="rcpt-scratch-redeem">redeem &rarr;</span>
                     </a>
                     <canvas class="rcpt-scratch-foil" aria-hidden="true"></canvas>
@@ -7769,7 +7892,6 @@
   </div>
 
   <!-- Cursor-anchored hover preview for case-study decision rows -->
-  <img id="csHoverPreview" alt="" aria-hidden="true">
 
   <!-- ── Photography Lightbox ── -->
   <div id="photo-lightbox" class="photo-lightbox">
@@ -8820,7 +8942,14 @@
 
           <div class="cs-divider"></div>
 
-          <!-- STATS BLOCK — 60 / 190+ / 41 / 120 / 24 (per CASE-STUDY-REPORT.md, 18 Jul 2026) -->
+          <!-- STATS BLOCK — 60 / 313 / 51 / 120 / 24.
+               Token count measured from tokens/*.css 2026-08-12 (60 L1 + 51 L2 + 262 L3 = 313 in semantic.css; 468 across all imported token files). 51 components per code-index.json, 48 component CSS files, 43 component specs.
+               24 app screens: screens/ holds 31 HTML files, but 3 are tooling pages
+               (playground, playbook, component-docs) and 4 are auth screens retired
+               when identity moved to email (login, signup, splash, welcome).
+               24 is confirmed independently by js/views/*.js = 24 shipping SPA views,
+               and it is exactly the number of tiles in the gallery below.
+               supersedes CASE-STUDY-REPORT.md L161 ("~40 L2 + ~150 L3"), which had drifted. -->
           <div class="cs-section" style="padding-bottom:0">
             <p class="cs-tag">By the Numbers</p>
             <div class="cs-stat-row-grid">
@@ -8829,11 +8958,11 @@
                 <p class="cs-stat-big-label">color primitives</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">190<span style="font-size:20px;letter-spacing:0">+</span></p>
+                <p class="cs-stat-big-num">313</p>
                 <p class="cs-stat-big-label">design tokens</p>
               </div>
               <div class="cs-stat-grid-item">
-                <p class="cs-stat-big-num">41</p>
+                <p class="cs-stat-big-num">51</p>
                 <p class="cs-stat-big-label">components built</p>
               </div>
               <div class="cs-stat-grid-item">
@@ -9086,7 +9215,7 @@
                   <div class="cp-step" style="background:#EFE4C4"></div>
                   <div class="cp-step" style="background:#E0D0B0"></div>
                   <div class="cp-step" style="background:#BEB48A"></div>
-                  <div class="cp-step" style="background:#9A9070"></div>
+                  <div class="cp-step" style="background:#787057"></div>
                   <div class="cp-step" style="background:#756C55"></div>
                   <div class="cp-step" style="background:#524C3B"></div>
                   <div class="cp-step" style="background:#332F25"></div>
@@ -9166,7 +9295,7 @@
             <p class="cs-tag">Semantic Color</p>
             <h2 class="cs-section-title">Three layers. One change propagates everywhere.</h2>
             <div class="cs-body">
-              <p>60 raw color values. Mapped to meaning. Scoped to components. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">colors.css</code> holds the primitives, the palette above. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">semantic.css</code> handles layers 2 and 3. Change <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">olive-600</code> once, and every primary button, every brand text, every FAB updates.</p>
+              <p>60 raw color values. Mapped to meaning. Scoped to components. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">colors.css</code> holds the primitives, the palette above. <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">semantic.css</code> handles layers 2 and 3. Change <code style="font-size:12px;background:rgba(27,28,26,0.06);padding:2px 6px;border-radius:4px">olive-600</code> once, and every primary button, every brand text, every chip updates.</p>
             </div>
 
             <!-- Tier architecture diagram -->
@@ -9182,21 +9311,43 @@
                 <span class="cs-tier-num">02 · Semantic</span>
                 <p class="cs-tier-name">Meaning-Mapped</p>
                 <p class="cs-tier-body">Primitives get intent. --surface-primary, --text-brand, --expense-owe-fg. The value can change; the role doesn't.</p>
-                <span class="cs-tier-count">~40 semantic tokens</span>
+                <span class="cs-tier-count">51 semantic tokens</span>
               </div>
               <div class="cs-tier-arrow">→</div>
               <div class="cs-tier-col">
                 <span class="cs-tier-num">03 · Component</span>
                 <p class="cs-tier-name">Scoped to UI</p>
-                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --fab-bg, --chip-bg-on. 41 component files, nothing hardcoded.</p>
-                <span class="cs-tier-count">150+ component tokens</span>
+                <p class="cs-tier-body">Tokens assigned to a specific pattern. --btn-primary-bg, --chip-bg-on, --input-border-focused. 48 component files, nothing hardcoded.</p>
+                <span class="cs-tier-count">262 component tokens</span>
               </div>
             </div>
+
+            <!-- 10-B — the three tiers as one figure: a single value travelling
+                 primitive → semantic → component. Orange is used ONLY on the
+                 propagation arrows. Hex read from tokens/colors.css. -->
+            <figure class="cs-flow">
+              <svg viewBox="0 0 880 132" xmlns="http://www.w3.org/2000/svg" role="img"
+                   aria-label="olive-600 becomes --action-primary becomes --btn-primary-bg becomes the Add expense button">
+                <text x="8" y="26" class="cs-flow-k">PRIMITIVE</text>
+                <rect x="8" y="42" width="26" height="26" rx="5" fill="#31401A"/>
+                <text x="44" y="61" class="cs-flow-v">olive-600</text>
+                <line x1="188" y1="55" x2="252" y2="55" class="cs-flow-arrow"/>
+                <polygon points="252,55 245,51 245,59" class="cs-flow-head"/>
+                <text x="286" y="26" class="cs-flow-k">SEMANTIC</text>
+                <text x="286" y="61" class="cs-flow-v">--action-primary</text>
+                <line x1="486" y1="55" x2="550" y2="55" class="cs-flow-arrow"/>
+                <polygon points="550,55 543,51 543,59" class="cs-flow-head"/>
+                <text x="584" y="26" class="cs-flow-k">COMPONENT · --btn-primary-bg</text>
+                <rect x="584" y="38" width="152" height="34" rx="8" fill="#31401A"/>
+                <text x="604" y="60" class="cs-flow-btn">Add expense</text>
+                <text x="8" y="112" class="cs-flow-note">Change the primitive and every layer downstream follows. Component CSS never reads a primitive directly.</text>
+              </svg>
+            </figure>
 
             <!-- Redesigned Token System -->
             <div style="display:flex; justify-content:space-between; margin-top:40px; border-bottom:1px solid rgba(27,28,26,0.06); padding-bottom:8px;">
               <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid);">Semantic layer</span>
-              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">~40 tokens</span>
+              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">51 tokens</span>
             </div>
 
             <div class="cs-sem-grid">
@@ -9222,7 +9373,7 @@
                 <div class="cs-sem-prim">neutral-600</div>
               </div>
               <div class="cs-sem-entry">
-                <div class="cs-sem-swatch" style="background:#9A9070"></div>
+                <div class="cs-sem-swatch" style="background:#787057"></div>
                 <div class="cs-sem-token">--text-tertiary</div>
                 <div class="cs-sem-prim">neutral-500</div>
               </div>
@@ -9242,7 +9393,7 @@
                 <div class="cs-sem-prim">neutral-300</div>
               </div>
 
-              <div class="cs-sem-group-head" style="grid-column: 1 / -1">Expense States</div>
+              <div class="cs-sem-group-head" style="grid-column: 1 / -1">Expense States (component layer)</div>
               <div class="cs-sem-entry">
                 <div class="cs-sem-swatch" style="background:#357A42"></div>
                 <div class="cs-sem-token">--expense-lent-fg</div>
@@ -9265,11 +9416,11 @@
               </div>
             </div>
 
-            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:4px;">+ 8 more: border-subtle, text-on-brand, surface-overlay, interactive, focus, disabled, skeleton, scrim</p>
+            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:4px;">+ 43 more: border-subtle, border-strong, border-emphasis, surface-bg, surface-input, surface-track, text-placeholder, text-strong, text-label, text-faint, action-surface, action-muted, action-mid, action-dark, error-fg, error-surface, success-fg, warning-fg, neutral-surface, disabled-fg …</p>
 
             <div style="display:flex; justify-content:space-between; margin-top:56px; border-bottom:1px solid rgba(27,28,26,0.06); padding-bottom:8px;">
               <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid);">Component layer</span>
-              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">150+ tokens · 41 files</span>
+              <span style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(27,28,26,0.3);">262 tokens · one file</span>
             </div>
 
             <div class="cs-comp-token-card">
@@ -9290,53 +9441,53 @@
                   <div class="cs-comp-spec-swatch" style="background:#31401A"></div>
                   <div>
                     <span class="cs-comp-spec-token">--btn-primary-bg</span>
-                    <span class="cs-comp-spec-chain">--text-brand · olive-600</span>
+                    <span class="cs-comp-spec-chain">--action-primary · olive-600</span>
                   </div>
                 </div>
                 <div class="cs-comp-spec-cell">
-                  <div class="cs-comp-spec-swatch" style="background:#ECEFDF"></div>
+                  <div class="cs-comp-spec-swatch" style="background:#BFCB9A"></div>
                   <div>
                     <span class="cs-comp-spec-token">--btn-secondary-bg</span>
-                    <span class="cs-comp-spec-chain">--surface-brand-subtle · olive-100</span>
+                    <span class="cs-comp-spec-chain">--action-secondary · olive-200</span>
                   </div>
                 </div>
                 
                 <!-- Row 2: Text -->
                 <div class="cs-comp-spec-cell cs-comp-spec-cell--border">
-                  <div class="cs-comp-spec-swatch" style="background:#FEF9EE; border: 1px solid rgba(27,28,26,0.12);"></div>
+                  <div class="cs-comp-spec-swatch" style="background:#FFFFFF; border: 1px solid rgba(27,28,26,0.12);"></div>
                   <div>
-                    <span class="cs-comp-spec-token">--btn-primary-text</span>
+                    <span class="cs-comp-spec-token">--btn-primary-fg</span>
                     <span class="cs-comp-spec-chain">--text-inverse · gray-0</span>
                   </div>
                 </div>
                 <div class="cs-comp-spec-cell">
-                  <div class="cs-comp-spec-swatch" style="background:#31401A"></div>
+                  <div class="cs-comp-spec-swatch" style="background:#243012"></div>
                   <div>
-                    <span class="cs-comp-spec-token">--btn-secondary-text</span>
-                    <span class="cs-comp-spec-chain">--text-brand · olive-600</span>
+                    <span class="cs-comp-spec-token">--btn-secondary-fg</span>
+                    <span class="cs-comp-spec-chain">--action-dark · olive-700</span>
                   </div>
                 </div>
                 
-                <!-- Row 3: Hover -->
+                <!-- Row 3: Pressed -->
                 <div class="cs-comp-spec-cell cs-comp-spec-cell--border" style="border-bottom:none">
-                  <div class="cs-comp-spec-swatch" style="background:#263512"></div>
+                  <div class="cs-comp-spec-swatch" style="background:#243012"></div>
                   <div>
-                    <span class="cs-comp-spec-token">--btn-primary-hover</span>
-                    <span class="cs-comp-spec-chain">--text-brand-hover · olive-700</span>
+                    <span class="cs-comp-spec-token">--btn-primary-bg-pressed</span>
+                    <span class="cs-comp-spec-chain">--action-dark · olive-700</span>
                   </div>
                 </div>
                 <div class="cs-comp-spec-cell" style="border-bottom:none">
-                  <div class="cs-comp-spec-swatch" style="background:#D5DEBC"></div>
+                  <div class="cs-comp-spec-swatch" style="background:#96A96A"></div>
                   <div>
-                    <span class="cs-comp-spec-token">--btn-secondary-hover</span>
-                    <span class="cs-comp-spec-chain">--surface-brand-hover · olive-200</span>
+                    <span class="cs-comp-spec-token">--btn-secondary-bg-pressed</span>
+                    <span class="cs-comp-spec-chain">--action-accent · olive-300</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Summary Footnote -->
-            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">41 components · Primary, secondary, ghost, and destructive variants · 190+ tokens across 41 files</p>
+            <p style="font-size: 12px; color: var(--c-mid); margin-top: 10px; padding-left: 4px;">51 components · Primary, secondary, ghost, and destructive variants · 313 tokens in one file</p>
           </div>
 
           <div class="cs-divider"></div>
@@ -9464,17 +9615,30 @@
           <!-- SECTION 5: Component Showcase -->
           <div class="cs-section">
             <p class="cs-tag">The Components</p>
-            <h2 class="cs-section-title">41 components. Each traceable to a screen.</h2>
+            <h2 class="cs-section-title">51 components. Each traceable to a screen.</h2>
             <div class="cs-body">
               <p>I designed one variant of each style in Figma. Claude generated the full size scale (SM · MD · LG), pressed states, disabled states, and mapped every semantic token. No repetitive work, just review and approve.</p>
             </div>
 
-            <!-- COMPONENT HERO: Real Figma export -->
+            <!-- 12-A — the REAL components, not a re-implementation. This
+                 iframe loads prototype/settlr/screens/component-strip.html,
+                 which links the same css/*.css files the playground loads via
+                 its CSS_PATHS registry, using each component's own published
+                 class contract (.btn, .chip, .input-field, .avatar-stack,
+                 .segment-control, .member-pill). Change a component's CSS and
+                 this strip changes with it. -->
+            <iframe id="settlrComponentStrip" class="cs-comp-strip"
+                    src="prototype/settlr/screens/component-strip.html"
+                    title="Settlr components, rendered from the design system's own CSS"
+                    loading="lazy" scrolling="no" tabindex="-1"></iframe>
+            <p class="cs-caption cs-comp-strip-note">Rendered live from the design system&rsquo;s own component CSS &mdash; the same files the playground loads.</p>
+
+            <!-- COMPONENT HERO: Real Figma export — the source artifact, kept -->
             <div style="background:#1B1C1A; border-radius:16px; padding:0; margin-top:32px; overflow:hidden;">
               <img src="assets/images/settlr/Components.webp" alt="Settlr Component Library" style="width:100%; height:auto; display:block;">
             </div>
 
-            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Designed in Figma · 41 components · Primary / Secondary / Ghost / Destructive · 190+ tokens</p>
+            <p style="font-size:12px; color:var(--c-mid); margin-top:10px; padding-left:2px;">Source artboard · designed in Figma · 51 components · Primary / Secondary / Ghost / Destructive · 313 tokens</p>
 
             <!-- Codebase documentation -->
             <div style="margin-top:40px; display:grid; grid-template-columns:1.1fr 1fr; gap:48px; align-items:center;">
@@ -9483,14 +9647,14 @@
               <div>
                 <p style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--c-mid); margin-bottom:16px;">Every component documented</p>
                 <p style="font-size:18px; font-weight:700; color:var(--c-dark); line-height:1.4; margin-bottom:14px;">Claude wrote the docs.<br>I approved them.</p>
-                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">Each of the 41 components has its own <code style="font-size:12px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file covering tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
+                <p style="font-size:13px; line-height:1.75; color:var(--c-dark); opacity:0.7; margin:0;">43 of the 51 components have their own <code style="font-size:12px; background:rgba(27,28,26,0.06); padding:2px 6px; border-radius:4px;">.md</code> file covering tokens, states, usage rules, and dev notes. I described the pattern once; Claude generated the full documentation structure and mapped every semantic token to its component. No copy-pasting, no drift between design and code.</p>
                 <div style="display:flex; gap:32px; margin-top:28px; padding-top:20px; border-top:1px solid rgba(27,28,26,0.08);">
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">350+</p>
-                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">tokens mapped</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">313</p>
+                    <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">semantic + component tokens</p>
                   </div>
                   <div>
-                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">43</p>
+                    <p style="font-size:24px; font-weight:900; color:var(--c-dark); margin:0; font-family:'Unbounded',sans-serif; letter-spacing:-0.03em;">41</p>
                     <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">coded components</p>
                   </div>
                   <div>
@@ -9498,6 +9662,7 @@
                     <p style="font-size:12px; color:var(--c-mid); margin:4px 0 0;">manual repetitions</p>
                   </div>
                 </div>
+                <p style="font-size:12px; line-height:1.6; color:var(--c-mid); margin:14px 0 0;">Component CSS never references a primitive &mdash; every value resolves through the semantic layer.</p>
               </div>
 
               <!-- Right: folder image -->
@@ -9850,20 +10015,43 @@
               </div>
               <div class="cs-ft-body">
                 <div class="cs-ft-row cs-ft-dir">📁 tokens/</div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">colors.css</span><span class="cs-ft-comment">· 60 color primitives · 6 families · neutral/gray/olive/green/coral/gold</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">semantic.css</span><span class="cs-ft-comment">· 190+ semantic + component tokens · all aliased</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">colors.css</span><span class="cs-ft-comment">· 60 primitives · 6 families · neutral/gray/olive/green/coral/gold</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">semantic.css</span><span class="cs-ft-comment">· 313 tokens · L2 general semantics + L3 component tokens</span></div>
                 <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">typography.css</span><span class="cs-ft-comment">· full type scale · ~20 pre-composed text styles</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">spacing.css</span><span class="cs-ft-comment">· 13 spacing values · 4pt/8pt system</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">radius.css</span><span class="cs-ft-comment">· 11 radius values · 2px → pill</span></div>
-                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-file">index.css</span><span class="cs-ft-comment">· single import · loads everything above</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">spacing.css · radius.css · shadows.css · motion.css</span><span class="cs-ft-comment">· 13 · 11 · 5 tiers · durations + easings</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-file">index.css</span><span class="cs-ft-comment">· single import · loads all 9 token files</span></div>
                 <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 css/</div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">button.css</span><span class="cs-ft-comment">· 4 variants · 3 sizes · pressed + disabled states</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">chip.css · labels.css · input-field.css</span><span class="cs-ft-comment">· ···</span></div>
-                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">+ 37 more component files</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">button.css</span><span class="cs-ft-comment">· 4 variants · 3 sizes · pressed + disabled</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">chip.css · input-field.css · avatar.css · toast.css</span><span class="cs-ft-comment">· one file per component</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">screens/</span><span class="cs-ft-comment">· 24 screen-specific stylesheets</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">48 component stylesheets · none references a primitive</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 components/</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">button.md · avatar-stack.md · chip.md</span><span class="cs-ft-comment">· tokens · states · usage rules · dev notes</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">43 component specs · one per implementation</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 js/</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">router-spa.js · view-registry.js · store.js</span><span class="cs-ft-comment">· SPA shell · routing · seeded local state</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">views/</span><span class="cs-ft-comment">· 24 view modules · one per screen</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">23 modules + 24 views</span></div>
                 <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 screens/</div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">home-dashboard.html</span><span class="cs-ft-comment">· live · references ../tokens/ + ../css/ + ../icons/</span></div>
-                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">group-detail.html · add-split.html · settle-success.html</span><span class="cs-ft-comment">· ···</span></div>
-                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">+ 20 more screens · all functional HTML</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">home-dashboard.html · group-detail.html</span><span class="cs-ft-comment">· functional HTML · references ../tokens/ + ../css/</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">31 files · 24 shipping app screens · 3 tooling pages · 4 retired auth</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 playground/</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">registry.js</span><span class="cs-ft-comment">· every component: markup, controls, states, spec path</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">engine.js · foundations.js</span><span class="cs-ft-comment">· live renderer · token + type documentation</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-muted">12 files · the component browser embedded above</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 .claude/skills/</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">settlr-color-enforcer</span><span class="cs-ft-comment">· blocks raw hex · every colour resolves to a token</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">settlr-spacing-enforcer</span><span class="cs-ft-comment">· blocks arbitrary px · 4pt/8pt scale only</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">settlr-text-style-enforcer</span><span class="cs-ft-comment">· blocks ad-hoc font rules · composed styles only</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-file">settlr-component-enforcer</span><span class="cs-ft-comment">· blocks re-implementation · reuse the component</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 .claude/indexes/</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">code-index.json</span><span class="cs-ft-comment">· machine-readable component index · drives the playground</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-file">screen-manifest.json</span><span class="cs-ft-comment">· screen inventory</span></div>
+                <div class="cs-ft-row cs-ft-dir" style="margin-top:10px;">📁 docs &amp; plans</div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">CLAUDE.md</span><span class="cs-ft-comment">· the operating contract every agent works under</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">design-system.md · conventions.md · THEMING.md</span><span class="cs-ft-comment">· the system, written down</span></div>
+                <div class="cs-ft-row cs-ft-child"><span class="cs-ft-file">PRD-identity-no-otp.md · PLAN-email-identity-invites.md</span><span class="cs-ft-comment">· the security pivot: problem, then plan</span></div>
+                <div class="cs-ft-row cs-ft-child cs-ft-last"><span class="cs-ft-file">MEMORY.md · CASE-STUDY-REPORT.md</span><span class="cs-ft-comment">· running decision log · the system audited end to end</span></div>
               </div>
             </div>
 
@@ -9920,6 +10108,31 @@
               </div>
             </div>
 
+            <!-- 16-B — the five tested tasks, as captured during the study.
+                 Task names from projects/02-settlr/research-data.md. -->
+            <div class="cs-tasks">
+                <figure class="cs-task">
+                  <div class="cs-task-mat"><img src="assets/images/settlr/research/task-1-create-group.webp" alt="T1: Create Group"></div>
+                  <figcaption><b>T1</b> Create Group</figcaption>
+                </figure>
+                <figure class="cs-task">
+                  <div class="cs-task-mat"><img src="assets/images/settlr/research/task-2-edit.webp" alt="T2: Split Unequally"></div>
+                  <figcaption><b>T2</b> Split Unequally</figcaption>
+                </figure>
+                <figure class="cs-task">
+                  <div class="cs-task-mat"><img src="assets/images/settlr/research/task-3-split.webp" alt="T3: Add Expense with Custom Split"></div>
+                  <figcaption><b>T3</b> Add Expense with Custom Split</figcaption>
+                </figure>
+                <figure class="cs-task">
+                  <div class="cs-task-mat"><img src="assets/images/settlr/research/task-4-comment.webp" alt="T4: Add Comment"></div>
+                  <figcaption><b>T4</b> Add Comment</figcaption>
+                </figure>
+                <figure class="cs-task">
+                  <div class="cs-task-mat"><img src="assets/images/settlr/research/task-5-settle-up.webp" alt="T5: Settle Up"></div>
+                  <figcaption><b>T5</b> Settle Up</figcaption>
+                </figure>
+            </div>
+
             <div class="cs-research-imgs">
               <div class="cs-research-img">
                 <img src="assets/images/settlr/research-userflow.webp" alt="Complete user flow used to identify the 5 core flows">
@@ -9942,7 +10155,7 @@
             <p class="cs-tag">Research → Design</p>
             <h2 class="cs-section-title">Research findings that shaped every decision.</h2>
             <div class="cs-body">
-              <p>Five usability failures in Splitwise. Five direct fixes in Settlr. Each design decision traces back to a specific, observed breakdown.</p>
+              <p>Four usability failures in Splitwise. Four direct fixes in Settlr. Each design decision traces back to a specific, observed breakdown.</p>
             </div>
 
             <div class="cs-finding-list">
@@ -10093,6 +10306,10 @@
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/settings.webp" alt="Settings"></div>
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/group-detail.webp" alt="Group Detail"></div>
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/individual-detail.webp" alt="Person Detail"></div>
+                <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/search.webp" alt="Search"></div>
+                <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/notifications.webp" alt="Notifications"></div>
+                <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/edit-profile.webp" alt="Edit Profile"></div>
+                <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/onboarding-welcome.webp" alt="Onboarding"></div>
               </div>
             </div>
 
@@ -10114,6 +10331,7 @@
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/create-group-members.webp" alt="Create Group: Members"></div>
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/edit-group.webp" alt="Edit Group"></div>
                 <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/add-friend.webp" alt="Add Friend"></div>
+                <div class="cs-gallery-tile"><img src="assets/images/settlr/screens/add-group.webp" alt="Add Group"></div>
               </div>
             </div>
 
@@ -10181,12 +10399,12 @@
           <div class="cs-divider"></div>
 
           <div class="cs-section">
-            <p class="cs-tag">The Numbers</p>
+            <p class="cs-tag" data-suit="♣">The Numbers</p>
             <h2 class="cs-section-title">1.2 million monthly users. 2,609 conversions.</h2>
             <div class="cs-body">
               <p>Insights derived from surveys and interviews with 2,000+ users, combined with MAU and CTR analysis over one quarter. The referral funnel told a brutal story.</p>
             </div>
-            <div class="cs-numbers-grid cs-numbers-grid--re">
+            <div class="cs-numbers-grid cs-numbers-grid--re" id="re-funnel">
               <div class="cs-stat-stack cs-stat-stack--re">
                 <div class="cs-stat cs-stat--card">
                   <span class="cs-stat-num">72%</span>
@@ -10225,7 +10443,7 @@
                 <div class="cs-funnel-row cs-funnel-row--re">
                   <div class="cs-funnel-row-top">
                     <span class="cs-funnel-label">Referral Initiated</span>
-                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−83.37%</span><span class="cs-funnel-val">77,381</span></span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−83.39%</span><span class="cs-funnel-val">77,381</span></span>
                   </div>
                   <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:25%"></div></div>
                 </div>
@@ -10239,7 +10457,7 @@
                 <div class="cs-funnel-row cs-funnel-row--re">
                   <div class="cs-funnel-row-top">
                     <span class="cs-funnel-label">Installs</span>
-                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−67.24%</span><span class="cs-funnel-val">14,119</span></span>
+                    <span class="cs-funnel-meta"><span class="cs-funnel-drop">−67.27%</span><span class="cs-funnel-val">14,119</span></span>
                   </div>
                   <div class="cs-funnel-bar"><div class="cs-funnel-bar-fill" style="width:11%"></div></div>
                 </div>
@@ -10264,7 +10482,7 @@
           <div class="cs-divider"></div>
 
           <div class="cs-section">
-            <p class="cs-tag">Research</p>
+            <p class="cs-tag" data-suit="♦">Research</p>
             <h2 class="cs-section-title">Three lenses. One clear diagnosis.</h2>
             <div class="cs-body">
               <p>Why did users see ₹1 Lakh and still not share? Three angles, simultaneously.</p>
@@ -10324,7 +10542,7 @@
           <div class="cs-divider"></div>
 
           <div class="cs-section">
-            <p class="cs-tag">Exploration</p>
+            <p class="cs-tag" data-suit="♠">Exploration</p>
             <h2 class="cs-section-title">Three directions. Two approaches. One decision.</h2>
             <div class="cs-body">
               <p>Three solution directions emerged. We stress-tested two full approaches before committing.</p>
@@ -10368,7 +10586,7 @@
           <div class="cs-divider"></div>
 
           <div class="cs-section">
-            <p class="cs-tag">Iterations</p>
+            <p class="cs-tag" data-suit="♥">Iterations</p>
             <h2 class="cs-section-title">The messy middle.</h2>
             <div class="cs-body">
               <p>The hardest part was the reward explainer: how do you show a 3-step earning structure without losing users to text? We explored five structural approaches before landing on one that worked.</p>
@@ -10415,41 +10633,46 @@
               <p>The final design isn't one big idea; it's five precise interventions that compound. Each decision is traceable back to a specific research finding.</p>
             </div>
             <div class="cs-decision-list cs-decision-list--big">
-              <div class="cs-decision cs-decision--big" data-hover-img="re-banner.webp">
-                <span class="cs-decision-ghost" aria-hidden="true">01</span>
+              <div class="cs-decision cs-decision--big">
+                <div class="cs-decision-img"><img src="assets/images/refer-earn/decision-banner.webp" alt="the banner with its new play button" loading="lazy" decoding="async" style="object-position:center 46%"></div>
                 <div class="cs-decision-content">
+                  <span class="cs-decision-n">01</span>
                   <span class="cs-decision-eyebrow">VISUAL HIERARCHY</span>
                   <p class="cs-decision-title">Banner as video thumbnail</p>
                   <p class="cs-decision-body">Made the video the hero. The most dismissed element became the first thing users see, with an unmissable play button. Directly addresses the 4% video watch rate.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big" data-hover-img="screen-final.webp">
-                <span class="cs-decision-ghost" aria-hidden="true">02</span>
+              <div class="cs-decision cs-decision--big">
+                <div class="cs-decision-img"><img src="assets/images/refer-earn/decision-cta.webp" alt="the WhatsApp invite button, promoted to the primary action" loading="lazy" decoding="async"></div>
                 <div class="cs-decision-content">
+                  <span class="cs-decision-n">02</span>
                   <span class="cs-decision-eyebrow">PRIMARY ACTION</span>
                   <p class="cs-decision-title">WhatsApp Invite as the primary CTA</p>
                   <p class="cs-decision-body">97% of users share via WhatsApp. We merged the copy code + share flow into one primary action and elevated its hierarchy above all other CTAs on the page.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big" data-hover-img="screen-tooltip.webp">
-                <span class="cs-decision-ghost" aria-hidden="true">03</span>
+              <div class="cs-decision cs-decision--big">
+                <div class="cs-decision-img"><img src="assets/images/refer-earn/decision-livecount.webp" alt="the live referral count sitting under the invite button" loading="lazy" decoding="async"></div>
                 <div class="cs-decision-content">
+                  <span class="cs-decision-n">03</span>
                   <span class="cs-decision-eyebrow">TRUST</span>
                   <p class="cs-decision-title">Live stats adjacent to the action zone</p>
                   <p class="cs-decision-body">"25,483 users joined through referrals", not at the top where no one reads it, but placed near the moment of decision to trigger trust at exactly the right point.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big" data-hover-img="screen-referred.webp">
-                <span class="cs-decision-ghost" aria-hidden="true">04</span>
+              <div class="cs-decision cs-decision--big">
+                <div class="cs-decision-img"><img src="assets/images/refer-earn/decision-testimonial.webp" alt="a real user testimonial card" loading="lazy" decoding="async"></div>
                 <div class="cs-decision-content">
+                  <span class="cs-decision-n">04</span>
                   <span class="cs-decision-eyebrow">SOCIAL PROOF</span>
                   <p class="cs-decision-title">Testimonials for social validation</p>
                   <p class="cs-decision-body">Real earnings from real users. Pushed down the scroll once the user has already referred, reducing visual noise for repeat visitors who no longer need the nudge.</p>
                 </div>
               </div>
-              <div class="cs-decision cs-decision--big cs-decision--last" data-hover-img="infographic-v3.webp">
-                <span class="cs-decision-ghost" aria-hidden="true">05</span>
+              <div class="cs-decision cs-decision--big cs-decision--last">
+                <div class="cs-decision-img"><img src="assets/images/refer-earn/decision-ladder.webp" alt="the three-step earn ladder" loading="lazy" decoding="async" style="object-position:center 55%"></div>
                 <div class="cs-decision-content">
+                  <span class="cs-decision-n">05</span>
                   <span class="cs-decision-eyebrow">COMPREHENSION</span>
                   <p class="cs-decision-title">Infographic over text-heavy reward table</p>
                   <p class="cs-decision-body">Converted the dense reward breakdown into a scannable visual table. Addresses the 45% who didn't understand the structure, without requiring them to read a word.</p>
@@ -10531,7 +10754,7 @@
             </div>
 
             <div class="cs-treasure-foot">
-              <span class="cs-treasure-foot-tag">CONCEPT&nbsp;&nbsp;·&nbsp;&nbsp;EXPLORATION&nbsp;&nbsp;·&nbsp;&nbsp;2024</span>
+              <span class="cs-treasure-foot-tag">CONCEPT&nbsp;&nbsp;·&nbsp;&nbsp;EXPLORATION&nbsp;&nbsp;·&nbsp;&nbsp;2025</span>
               <span class="cs-treasure-foot-note">Not yet shipped. Proposed direction for v2.</span>
             </div>
           </div>
@@ -10542,8 +10765,8 @@
                The case study opens on a broken funnel; without this it never
                closes the loop. Each metric below points back at a baseline
                already established earlier in this same case study. -->
-          <div class="cs-section">
-            <p class="cs-tag">What I'd Measure Next</p>
+          <div class="cs-section cs-closing-plate">
+            <p class="cs-tag cs-tag--on-dark">What I'd Measure Next</p>
             <h2 class="cs-section-title">Shipped across three brands. Now I'd prove it worked.</h2>
             <div class="cs-body">
               <p>The redesign went live on A23 Rummy, A23 Poker and Adda52. Post-launch measurement sat outside the project's scope, so I am not going to claim a lift I did not verify. What I can say is exactly which numbers should move, why, and how I would read them, because every one of them has a baseline earlier on this page.</p>
@@ -10557,7 +10780,7 @@
                 </div>
                 <div class="cs-rm-finding">
                   <span class="cs-rm-dot"></span>
-                  <span>Baseline &minus;83.37% · read weekly, split by brand</span>
+                  <span><a class="cs-baseline-link" href="#re-funnel">Baseline &minus;83.39%</a> · read weekly, split by brand</span>
                 </div>
               </div>
               <div class="cs-research-method">
@@ -10568,7 +10791,7 @@
                 </div>
                 <div class="cs-rm-finding">
                   <span class="cs-rm-dot"></span>
-                  <span>Baseline 45% unclear · same instrument, same wording</span>
+                  <span><a class="cs-baseline-link" href="#re-funnel">Baseline 45% unclear</a> · same instrument, same wording</span>
                 </div>
               </div>
               <div class="cs-research-method">
@@ -10579,7 +10802,7 @@
                 </div>
                 <div class="cs-rm-finding">
                   <span class="cs-rm-dot"></span>
-                  <span>Baseline 72% single-referrer · cohorted over 90 days</span>
+                  <span><a class="cs-baseline-link" href="#re-funnel">Baseline 72% single-referrer</a> · cohorted over 90 days</span>
                 </div>
               </div>
             </div>
@@ -10754,6 +10977,32 @@
         f.addEventListener('load', hookEscape);
         if (f.contentDocument && f.contentDocument.readyState !== 'loading') hookEscape();
       });
+      // 12-A: the component strip has no fixed height — it posts its own and
+      // reflows at every breakpoint. Idempotent: openOverlay runs on every
+      // open, so the listener is registered once and keyed by element lookup.
+      if (slug === 'settlr') {
+        const strip = overlayBody.querySelector('#settlrComponentStrip');
+        if (strip && !window.__stripSized) {
+          window.__stripSized = true;
+          window.addEventListener('message', (e) => {
+            const h = e.data && e.data.settlrStripHeight;
+            const el = document.getElementById('settlrComponentStrip');
+            if (h && el) el.style.height = h + 'px';
+          });
+        }
+        // same-origin: size it directly too, in case the message is missed
+        if (strip) {
+          const size = () => {
+            try {
+              const d = strip.contentDocument;
+              if (d) strip.style.height = d.documentElement.scrollHeight + 'px';
+            } catch (err) { /* cross-origin — the postMessage path covers it */ }
+          };
+          strip.addEventListener('load', size);
+          if (strip.contentDocument && strip.contentDocument.readyState === 'complete') size();
+        }
+      }
+
       // For Settlr: paint the prototype iframe body cream once it loads
       if (slug === 'settlr') {
         const iframe = overlayBody.querySelector('#settlrProto');
@@ -10915,37 +11164,18 @@
     });
 
     // ── Decision-row hover preview: image bottom-left anchored to cursor ──
-    (function initDecisionHover() {
-      const floater = document.getElementById('csHoverPreview');
-      if (!floater) return;
-      let showing = false;
-      overlayBody.addEventListener('mousemove', e => {
-        const row = e.target.closest('.cs-decision--big[data-hover-img]');
-        if (!row) {
-          if (showing) { floater.classList.remove('on'); showing = false; }
-          return;
-        }
-        const file = row.dataset.hoverImg;
-        const src = 'assets/images/refer-earn/' + file;
-        if (!floater.src.endsWith(file)) floater.src = src;
-        floater.style.left = e.clientX + 'px';
-        floater.style.top = e.clientY + 'px';
-        if (!showing) { floater.classList.add('on'); showing = true; }
-      }, { passive: true });
-      overlayBody.addEventListener('mouseleave', () => {
-        if (showing) { floater.classList.remove('on'); showing = false; }
-      });
-      // Scrolling can move the row out from under a stationary cursor —
-      // hide rather than let the preview linger.
+    (function initCaseScrollDepth() {
+      // Was initDecisionHover(). 1.7-A promoted the decision screenshots into
+      // the layout, so the cursor floater and its mousemove/mouseleave handlers
+      // are gone. The SCROLL listener stays, and must:
+      //
+      // #overlayBody keeps exactly ONE scroll listener. Read-depth piggy-backs
+      // on it deliberately, and PostHog's scroll_root_selector must NOT be
+      // pointed at '.overlay-body': PostHog takes the first RESOLVING selector
+      // from that array, .overlay-body is always in the DOM (empty and parked),
+      // so it would permanently hijack window-scroll measurement site-wide.
       overlayBody.addEventListener('scroll', () => {
-        // Read-depth piggy-backs THIS listener on purpose. #overlayBody must
-        // keep exactly one scroll listener, and PostHog's scroll_root_selector
-        // must NOT be pointed at '.overlay-body': PostHog takes the first
-        // RESOLVING selector from that array, .overlay-body is always in the
-        // DOM (empty and parked), so it would permanently hijack window-scroll
-        // measurement for the entire site.
         caseProgressTick();
-        if (showing) { floater.classList.remove('on'); showing = false; }
       }, { passive: true });
     })();
 

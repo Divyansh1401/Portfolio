@@ -99,3 +99,16 @@
 .amount-input--stepper .amount-input__field {
   text-align: center;
 }
+
+/* ---- Inactive state ----
+   Participant unchecked (add-split rows, payer sheet): dimmed, field not
+   editable; tapping the row re-activates it. Promoted from a
+   [data-view="add-split"]-scoped rule — the payer sheet is shared with
+   edit-expense, where this state previously had no styling. */
+.amount-input--inactive {
+  opacity: var(--opacity-strong);
+  cursor: pointer;
+}
+.amount-input--inactive .amount-input__field {
+  pointer-events: none;
+}

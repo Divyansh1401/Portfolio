@@ -72,8 +72,6 @@
 [data-view="add-split"] .participant-item--inactive .participant-item__name,
 [data-view="add-split"] .participant-item--inactive .participant-item__share { opacity: 0.5; }
 [data-view="add-split"] .participant-item .checkbox-control { cursor: pointer; }
-[data-view="add-split"] .amount-input--inactive { opacity: 0.5; cursor: pointer; }
-[data-view="add-split"] .amount-input--inactive .amount-input__field { pointer-events: none; }
 [data-view="add-split"] .participant-item__text { flex: 1; display: flex; flex-direction: column; gap: var(--spacing-2); }
 /* name — text style via .text-title-sm in markup; only color overridden */
 [data-view="add-split"] .participant-item__name {

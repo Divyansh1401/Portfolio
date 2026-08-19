@@ -115,3 +115,24 @@
   font-weight: var(--weight-medium);
   color: var(--input-label);
 }
+
+/* ── Settlr ID editor (revealed by the banner pencil) ──
+   Screen-scoped layout (mirrors the id-banner / add-friend __prefix precedent).
+   NOTE: the flex rule below would override the [hidden] attribute — the explicit
+   [hidden] rule keeps the collapsed state real (same trap as .icon-btn). */
+[data-view="edit-profile"] .handle-editor {
+  margin: 0 var(--spacing-16) var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+[data-view="edit-profile"] .handle-editor[hidden] { display: none; }
+[data-view="edit-profile"] .handle-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-8);
+}
+[data-view="edit-profile"] .input-field__prefix {
+  color: var(--text-secondary);
+  font-weight: var(--weight-semibold);
+}

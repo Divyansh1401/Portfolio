@@ -142,19 +142,35 @@ window.Render = (function () {
    * @param {object} group   - { id, name, emoji }
    * @param {object} balance - { amount, direction }
    */
-  function groupCard(group, balance) {
+  /**
+   * @param {object}  group    - { id, name, emoji, photo }
+   * @param {object}  balance  - { amount, direction } from Store.getGroupBalance
+   * @param {boolean} [hasTxns] - false ⇒ the group has NO expenses/settlements yet.
+   *   Store.getGroupBalance() reports direction:'settled' for a brand-new group
+   *   AND for a genuinely settled-up one, so the card claimed "Settled" on a
+   *   group created seconds earlier. Callers that know the difference pass this
+   *   (mirrors Render.groupItem/personItem); omitted ⇒ previous behavior.
+   *   Styling is unchanged either way — a new group uses the neutral (settled)
+   *   look, only the copy differs.
+   */
+  function groupCard(group, balance, hasTxns) {
     const dir    = balance.direction;
+    const isNew  = hasTxns === false;
     const mod    = dir === 'settled' ? '' : ` card-group--${dir}`;
     const infoMod = dir === 'settled' ? '' : ` card-group__info--${dir}`;
-    const subtitle = dir === 'lent'
-      ? 'Overall you lent'
-      : dir === 'owe'
-        ? 'Overall you owe'
-        : 'All settled';
+    const subtitle = isNew
+      ? 'No expenses yet'
+      : dir === 'lent'
+        ? 'Overall you lent'
+        : dir === 'owe'
+          ? 'Overall you owe'
+          : 'All settled';
     const amtMod = dir === 'settled' ? '' : ` card-group__amount--${dir}`;
-    const amtStr = dir === 'settled'
-      ? 'Settled'
-      : Store.formatINR(balance.amount);
+    const amtStr = isNew
+      ? Store.formatINR(0)
+      : dir === 'settled'
+        ? 'Settled'
+        : Store.formatINR(balance.amount);
 
     const photo = _safeUrl(group.photo);
     const imageInner = photo

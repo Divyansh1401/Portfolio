@@ -11,8 +11,4 @@
 @import './shadows.css';
 @import './motion.css';
 
-/* ── Phosphor Icons: NOT imported in this portfolio mirror ──
-   The source app stores the icon fonts in icons/ (37MB), which the
-   mirror deliberately excludes; icons render via the inlined SVG sets
-   in js/icons*.js instead. Re-add these imports only if icons/ is ever
-   synced (see the re-sync recipe in project memory). */
+/* ── Phosphor Icons (stored locally in icons/) ── */
