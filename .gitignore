@@ -60,3 +60,6 @@ _connect-explorations.html
 # Stays on disk — Vercel serves the repo root, so committing it would publish an
 # internal critique of this site at divyanshrastogi.in/audit/.
 audit/
+
+# Local design-exploration test (Refer & Earn numbers section)
+_re-numbers-test.html

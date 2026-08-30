@@ -3081,9 +3081,13 @@
     .cs-overview--re .cs-body p { margin-bottom: calc(12 * var(--u)); }
     .cs-overview--re .cs-highlights { margin-top: calc(20 * var(--u)); }
 
+    /* Three columns: the original screen, the survey stats, the funnel.
+       Widths are designed px at the 1040u reference (228 + 340 + 448 + two
+       12u gaps = 1040); the funnel takes the remainder so the row always
+       closes exactly. */
     .cs-numbers-grid--re {
-      grid-template-columns: 1fr 1fr;
-      gap: calc(40 * var(--u));
+      grid-template-columns: calc(228 * var(--u)) calc(340 * var(--u)) minmax(0, 1fr);
+      gap: calc(12 * var(--u));
       align-items: stretch;
       margin-top: calc(40 * var(--u));
     }
@@ -3132,6 +3136,24 @@
       margin-top: 0;
       opacity: 1;
     }
+
+    /* The original Refer & Earn screen — first column of the numbers grid.
+       Same hairline white card as the stat cards and the funnel. The image is
+       top-aligned at its natural height rather than object-fit: cover, so it
+       is never cropped; at 228u wide it runs ~469u tall inside a ~479u card
+       and the slack sits white-on-white against the card. Uses the
+       status-bar-trimmed crop (1440x2960) — the untrimmed screen-before.webp
+       still feeds the BEFORE/AFTER strip further down this case study. */
+    .cs-re-screen {
+      display: flex;
+      align-items: flex-start;
+      min-width: 0;
+      overflow: hidden;
+      background: #fff;
+      border: calc(1 * var(--u)) solid rgba(27,28,26,0.08);
+      border-radius: calc(12 * var(--u));
+    }
+    .cs-re-screen img { display: block; width: 100%; height: auto; }
 
     .cs-funnel--re {
       background: #fff;
@@ -10405,6 +10427,9 @@
               <p>Insights derived from surveys and interviews with 2,000+ users, combined with MAU and CTR analysis over one quarter. The referral funnel told a brutal story.</p>
             </div>
             <div class="cs-numbers-grid cs-numbers-grid--re" id="re-funnel">
+              <div class="cs-re-screen">
+                <img src="assets/images/refer-earn/screen-before-trim.webp" alt="The original Refer &amp; Earn screen, before the redesign">
+              </div>
               <div class="cs-stat-stack cs-stat-stack--re">
                 <div class="cs-stat cs-stat--card">
                   <span class="cs-stat-num">72%</span>
