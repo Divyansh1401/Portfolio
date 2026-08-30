@@ -3248,6 +3248,14 @@
        says "this is the end, and it is different from the beginning".
        The copy inside is deliberately untouched: the refusal to claim an
        unverified lift is the strongest thing in this case study. */
+    /* HIDDEN 2026-08-30, owner's call — the "What I'd Measure Next" closing
+       plate and the divider that introduces it. The markup is deliberately
+       LEFT IN PLACE rather than deleted; delete this one rule to bring the
+       section back exactly as it was. Hiding the divider too, otherwise the
+       treasure card and the end CTA end up separated by two stacked rules. */
+    .cs-closing-plate,
+    .cs-divider--closing-plate { display: none; }
+
     .cs-closing-plate {
       background: var(--c-dark);
       border-radius: calc(28 * var(--u));
@@ -10784,7 +10792,7 @@
             </div>
           </div>
 
-          <div class="cs-divider"></div>
+          <div class="cs-divider cs-divider--closing-plate"></div>
 
           <!-- SECTION: honest close — what shipped, and what I'd instrument.
                The case study opens on a broken funnel; without this it never
