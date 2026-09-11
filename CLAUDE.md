@@ -45,6 +45,18 @@ Two hand-written documents, no build step:
   `<meta name="viewport">`, so it reads the pre-meta layout viewport. See
   "Deferred" in `.claude/ANALYTICS-PLAN.md`.
 
+## First-paint loader (index.html only, 2026-09-11)
+`assets/js/bouquet-loader.js` + `#bq-loader` as the FIRST child of `<body>`:
+the voxel bouquet from `~/Desktop/Vyomi's Birthday/Experiments/bouquet/` flies
+in (4.2 s, one full turn) while the camera comes around the forming model
+(`yawIn` −180° easing to 0 at landing, so the landed state is the culled one),
+then a scroll-scrubbed dispersal (wheel/touch/keys
+drive q both ways, page never moves) hands off to the hero. Skips on any
+`#hash`, reduced motion, `?noloader`, once per tab (`sessionStorage bq-seen`,
+functional like `vp-hop`), and under webdriver. `?loader` forces it. Bench:
+`_bouquet-loader-test.html` (gitignored). Plan and the two renderer bugs fixed
+on the way: `.claude/BOUQUET-LOADER-PLAN.md`. Not yet on `mobile.html`.
+
 ## Deep links — the hash is the source of truth (index.html)
 `routeHash()` + `hashchange` drive all overlay/world state; UI triggers set
 the hash. Supported: `#settlr` `#refer-earn` `#resume` `#hobbies`
@@ -86,8 +98,9 @@ a synthetic `wheel` event goes through the lerp, so wait for it to settle
   The suites live in `tests/` and are committed — an older note called them
   lost to a session scratchpad, which was wrong: `verify-deeplinks.js` (21)
   and `verify-kbd-meta.js` (22) both run green today. `node tests/run-all.js`
-  runs the whole gate (**206 checks**, ~6–8 min, each suite retried once on
-  failure). Only `fingerprint.js` (computed-style snapshot) is genuinely gone.
+  runs the whole gate (**223 checks**, ~6–8 min, each suite retried once on
+  failure). `verify-bouquet-loader.js` (17) forces the loader with `?loader`;
+  every other suite never sees it because it skips under `navigator.webdriver`. Only `fingerprint.js` (computed-style snapshot) is genuinely gone.
 - The full gate passing + zero console errors is the bar for any interaction
   change.
 

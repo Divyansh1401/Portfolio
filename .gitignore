@@ -63,3 +63,7 @@ audit/
 
 # Local design-exploration test (Refer & Earn numbers section)
 _re-numbers-test.html
+
+# Bouquet loader test bench (the shipping module is assets/js/bouquet-loader.js)
+_bouquet-loader-test.html
+_bouquet-loader.js

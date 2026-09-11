@@ -7131,12 +7131,37 @@
       #custom-cursor, #cursor-ring { display: none !important; }
       .world-seg__thumb { transition: none !important; }
     }
+    /* ── Bouquet loader (assets/js/bouquet-loader.js) ─────────────────────
+       Full-viewport overlay, first child of <body>, so the first paint is the
+       loader and never the hero. The renderer draws on a transparent canvas;
+       ::before is the ground and fades during the scroll-scrubbed exit.
+       Skips itself on any #hash, reduced motion, webdriver, ?noloader and once
+       per tab (sessionStorage bq-seen, a functional key like vp-hop). */
+    html.bq-lock { overflow: hidden; }
+    #bq-loader { position: fixed; inset: 0; z-index: 20000; --bq-ground: 1; }
+    #bq-loader::before { content: ''; position: absolute; inset: 0; background: var(--bg); opacity: var(--bq-ground); }
+    #bq-loader canvas { position: absolute; inset: 0; display: block; }
+    #bq-loader .bq-label { position: absolute; left: 0; right: 0; bottom: 11vh; text-align: center;
+      font-family: 'Unbounded', system-ui, sans-serif; font-weight: 500; font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--text); opacity: 0; pointer-events: none; }
+    #bq-loader .bq-label b { color: var(--orange); font-weight: 500; }
+    #bq-loader .bq-hint { position: absolute; left: 0; right: 0; bottom: 5.5vh; text-align: center;
+      font: 500 11px/1 'Plus Jakarta Sans', system-ui, sans-serif; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--grey); opacity: 0; pointer-events: none; animation: bq-nudge 1.6s ease-in-out infinite; }
+    @keyframes bq-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+    @media (prefers-reduced-motion: reduce) { #bq-loader { display: none; } }
   </style>
 </head>
 <body>
 
-
-
+  <!-- ── Bouquet loader: must stay the FIRST child of body (see the CSS note) ── -->
+  <div id="bq-loader" hidden aria-hidden="true">
+    <canvas></canvas>
+    <div class="bq-label">Divyansh <b>Rastogi</b></div>
+    <div class="bq-hint">scroll</div>
+  </div>
+  <script src="assets/js/bouquet-loader.js"></script>
+  <script>BouquetLoader.run();</script>
 
   <!-- ── Hero Masking Container ── -->
   <div id="custom-cursor"></div>
