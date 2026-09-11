@@ -831,10 +831,15 @@ function mount(canvas){
 // It is worth that once. It is not worth it on a deep link (a recruiter
 // following #settlr wants the case study, not a bouquet), not twice in one
 // tab, and never under reduced motion.
+// KILL SWITCH (owner, 2026-09-11): the animation still has issues, so it is off
+// for visitors until fixed. ?loader still forces it for the bench and the suite.
+const ENABLED = false;
+
 function shouldRun(){
   const sp = new URLSearchParams(location.search);
   if(sp.has('noloader')) return {run:false, why:'?noloader'};
   if(sp.has('loader'))   return {run:true,  why:'?loader forces it'};
+  if(!ENABLED) return {run:false, why:'disabled (ENABLED=false)'};
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return {run:false, why:'prefers-reduced-motion'};
   if(location.hash && location.hash !== '#') return {run:false, why:'deep link ' + location.hash};
   try{ if(sessionStorage.getItem('bq-seen')) return {run:false, why:'already played this tab (sessionStorage bq-seen)'}; }catch(e){}

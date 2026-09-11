@@ -67,3 +67,13 @@ _re-numbers-test.html
 # Bouquet loader test bench (the shipping module is assets/js/bouquet-loader.js)
 _bouquet-loader-test.html
 _bouquet-loader.js
+
+# Bouquet making-of page — LOCAL DRAFT until the design is approved
+# (.claude/BOUQUET-DOC-PLAN.md). index.html also carries an uncommitted
+# a.nav-icon link to it: do not commit index.html's nav change until this
+# block is removed.
+bouquet.html
+assets/bouquet/
+spray.html
+assets/spray/
+tests/verify-bouquet-doc.js

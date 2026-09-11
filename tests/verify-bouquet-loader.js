@@ -48,12 +48,12 @@ const ok = (l, c, d) => { if (!c) failures++; console.log((c ? 'PASS  ' : 'FAIL 
   ok('remembered for this tab', await page.evaluate(() => sessionStorage.getItem('bq-seen') === '1'));
   await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' }); await wait(300);
   const d = await page.evaluate(() => BouquetLoader.shouldRun());
-  ok('second load in the same tab skips', !d.run && /bq-seen/.test(d.why), d.why);
+  ok('second load in the same tab skips', !d.run && /bq-seen|disabled/.test(d.why), d.why);
 
   const skip = async (url, rm) => { const p = await browser.newPage(); if (rm) await p.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]); await p.goto(url, { waitUntil: 'domcontentloaded' }); await wait(300); const gone = await p.evaluate(() => !document.getElementById('bq-loader')); await p.close(); return gone; };
   ok('deep link #settlr skips', await skip(BASE + '/?loader#settlr'));
   ok('reduced motion skips', await skip(BASE + '/?loader', true));
-  ok('plain headless load skips (webdriver) so the other suites are untouched', await skip(BASE + '/'));
+  ok('plain load skips (kill switch / webdriver) so visitors and the other suites never see it', await skip(BASE + '/'));
   ok('zero console errors', errors.length === 0, errors.join(' | ').slice(0, 300));
   await browser.close();
   console.log(failures ? failures + ' FAILED' : 'ALL PASSED');

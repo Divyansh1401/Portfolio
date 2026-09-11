@@ -57,6 +57,12 @@ functional like `vp-hop`), and under webdriver. `?loader` forces it. Bench:
 `_bouquet-loader-test.html` (gitignored). Plan and the two renderer bugs fixed
 on the way: `.claude/BOUQUET-LOADER-PLAN.md`. Not yet on `mobile.html`.
 
+## ⚠️ Uncommitted local draft (2026-09-11): bouquet making-of page
+`bouquet.html` + `assets/bouquet/rig.html` are gitignored drafts, and
+`index.html` has an UNCOMMITTED `a.nav-icon` link to them in the nav. Do not
+push index.html with that link until the page is approved and un-ignored.
+Plan: `.claude/BOUQUET-DOC-PLAN.md`.
+
 ## Deep links — the hash is the source of truth (index.html)
 `routeHash()` + `hashchange` drive all overlay/world state; UI triggers set
 the hash. Supported: `#settlr` `#refer-earn` `#resume` `#hobbies`
