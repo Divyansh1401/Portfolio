@@ -106,7 +106,20 @@
     // So a URL flag is the only mechanism that works on the live site. The
     // router above forwards location.search, so ?nostats=1 survives a hop
     // across the 1024px line.
-    if (location.search.indexOf('nostats') > -1) return;
+    //
+    // The flag is STICKY per browser: ?nostats=1 once writes localStorage
+    // 'nostats' and every later plain visit from that browser is silent;
+    // ?nostats=0 clears it. A functional key like vp-hop, not an analytics
+    // identifier — it exists so the owner can stop counting themselves
+    // without retyping the flag before every rehearsal. Per browser profile:
+    // repeat once on each device, and incognito windows never have it.
+    var ns = /[?&]nostats(?:=([^&#]*))?/.exec(location.search), quiet = false;
+    if (ns) quiet = ns[1] !== '0';
+    try {
+      if (ns) { if (quiet) localStorage.setItem('nostats', '1'); else localStorage.removeItem('nostats'); }
+      else quiet = !!localStorage.getItem('nostats');
+    } catch (e) {}
+    if (quiet) return;
     if (matchMedia('(max-width: 1023.98px)').matches) return;  // this document is being replaced
 
     var s = document.createElement('script');

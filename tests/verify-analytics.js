@@ -708,6 +708,36 @@ const settle   = 1600;   // overlay/blob transitions run 650–900ms; don't race
          reqs.join(' | '));
       await p.close(); await ctx.close();
     }
+    // STICKY — ?nostats=1 once must silence every later plain visit from the
+    // same browser profile, and ?nostats=0 must hand it back. Same context
+    // across the three visits so localStorage persists.
+    {
+      const ctx = await b.createBrowserContext();
+      const p = await ctx.newPage();
+      await p.setViewport(vw);
+      const reqs = [];
+      p.on('request', r => { if (PH_ASSETS.test(r.url())) reqs.push(r.url()); });
+      await p.goto(BASE + path + '?nostats=1', { waitUntil: 'domcontentloaded' });
+      await wait(1500);
+      ok(label + ' sticky: ?nostats=1 writes localStorage nostats',
+         (await p.evaluate(() => { try { return localStorage.getItem('nostats'); } catch (e) { return 'THREW'; } })) === '1');
+      reqs.length = 0;
+      await p.goto(BASE + path, { waitUntil: 'domcontentloaded' });
+      await wait(4000);
+      ok(label + ' sticky: a later plain visit still loads NO posthog',
+         reqs.length === 0 && (await p.evaluate(() => typeof window.posthog)) === 'undefined',
+         reqs.length + ' asset reqs');
+      await p.goto(BASE + path + '?nostats=0', { waitUntil: 'domcontentloaded' });
+      await wait(1500);
+      ok(label + ' sticky: ?nostats=0 clears the key',
+         (await p.evaluate(() => { try { return localStorage.getItem('nostats'); } catch (e) { return 'THREW'; } })) === null);
+      reqs.length = 0;
+      await p.goto(BASE + path, { waitUntil: 'domcontentloaded' });
+      await wait(4000);
+      ok(label + ' sticky: after ?nostats=0 posthog loads again',
+         reqs.length > 0, reqs.length + ' asset reqs');
+      await p.close(); await ctx.close();
+    }
   }
 
   // ── The router must carry the query string, not just the hash ────────────
@@ -753,7 +783,7 @@ const settle   = 1600;   // overlay/blob transitions run 650–900ms; don't race
   //                 Added deliberately 2026-08-04; recorded in the commit.
   // None of these is an analytics identifier and none requires consent. A
   // PostHog key appearing here is a compliance incident, not a test to update.
-  const STORAGE_ALLOWLIST = ['feed-theme', 'vp-hop', 'settlr_data'];
+  const STORAGE_ALLOWLIST = ['feed-theme', 'vp-hop', 'settlr_data', 'nostats'];
 
   for (const [label, path, vw, exercise] of [
     ['desktop', '/', DESKTOP, async p => {

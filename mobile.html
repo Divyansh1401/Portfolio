@@ -66,7 +66,16 @@
   // localhost, and its cohort-based "filter internal users" is structurally
   // inert under cookieless_mode (no persons are ever created), so a URL flag
   // is the only mechanism that excludes the owner on the production domain.
-  if (location.search.indexOf('nostats') > -1) return;
+  // Sticky per browser (localStorage 'nostats', a functional key like
+  // feed-theme): ?nostats=1 once silences every later visit, ?nostats=0
+  // clears it. Mirrors index.html — keep the two in sync.
+  var ns = /[?&]nostats(?:=([^&#]*))?/.exec(location.search), quiet = false;
+  if (ns) quiet = ns[1] !== '0';
+  try {
+    if (ns) { if (quiet) localStorage.setItem('nostats', '1'); else localStorage.removeItem('nostats'); }
+    else quiet = !!localStorage.getItem('nostats');
+  } catch (e) {}
+  if (quiet) return;
   // 1064px, NOT 1024px — must match the router's hysteresis threshold above.
   // Using 1024 here reopens a silent analytics hole across the whole
   // 1024-1063.98px dead band, where this document is the one that renders.

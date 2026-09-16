@@ -209,7 +209,12 @@ script, no request, no globals.
   globals) and survives the viewport redirect. It is the only owner opt-out
   that works on the production domain: cookieless creates no persons, so
   PostHog's cohort-based "filter internal users" is structurally inert, and
-  `internal_or_test_user_hostname` only covers localhost.
+  `internal_or_test_user_hostname` only covers localhost. **Sticky since
+  2026-09-17**: `?nostats=1` once writes localStorage `nostats` and every
+  later plain visit from that browser profile is silent; `?nostats=0` clears
+  it. Per device/profile, never in incognito. Guarded by the "sticky" checks
+  in `tests/verify-analytics.js`; `nostats` is on that suite's storage
+  allowlist next to `vp-hop` / `feed-theme`.
 - **The site is hosted on Vercel, not GitHub Pages** (confirmed 2026-08-04 from
   the live response headers). The old "GitHub Pages is static and cannot
   reverse-proxy" line was wrong on both counts. Ad blockers still drop a share
