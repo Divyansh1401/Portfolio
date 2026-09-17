@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spray Can · Divyansh Rastogi</title>
+    <meta name="robots" content="noindex">   <!-- LOCAL DRAFT -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+    <style>
+        @font-face{font-family:'Unbounded';src:url('fonts/Unbounded/Unbounded-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 900;font-display:swap}
+        @font-face{font-family:'Plus Jakarta Sans';src:url('fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 800;font-display:swap}
+
+        :root {
+            --current-color: #ff00ff;
+            --ease-out: cubic-bezier(.2,.7,.2,1);
+            --spring: cubic-bezier(.34,1.3,.36,1);        /* slight overshoot, Apple-ish */
+
+            /* glass material (dark) */
+            --glass-bg:     rgba(28, 28, 30, .55);
+            --glass-blur:   28px;
+            --glass-sat:    180%;
+            --glass-rim:    rgba(255, 255, 255, .14);      /* 1px edge */
+            --glass-spec:   rgba(255, 255, 255, .42);      /* top-left specular */
+            --glass-shadow: 0 1px 1px rgba(0,0,0,.25), 0 12px 32px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3);
+            --glass-ink:    rgba(255, 255, 255, .78);
+            --glass-hover:  rgba(255, 255, 255, .10);
+            --glass-press:  rgba(255, 255, 255, .18);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            cursor: none;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        /* ───────── Walls ───────── */
+        #wall {
+            position: fixed; inset: 0; z-index: 0;
+            background-color: #050505;
+            background-repeat: repeat;
+        }
+
+        /* screenshot flash */
+        #flash {
+            position: fixed; inset: 0; z-index: 40;
+            background: #fff; opacity: 0; pointer-events: none;
+        }
+        #flash.go { animation: flash .38s ease-out; }
+        @keyframes flash { 0% { opacity: .85; } 100% { opacity: 0; } }
+
+        /* ───────── Paint ───────── */
+        #spray-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity .4s var(--ease-out);
+        }
+        #spray-canvas.is-clearing { opacity: 0; }
+
+        /* ───────── Idle hint ───────── */
+        .instruction {
+            position: fixed;
+            bottom: 60px; left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+        .instruction.visible { opacity: 1; }
+        .instruction kbd {
+            font: inherit; color: rgba(255,255,255,.55);
+        }
+
+        /* ───────── Dock: one floating pill, primaries always visible, hover unfolds the rest ─────────
+           Orientation is one attribute (data-orient="v" | "h"); position is a class. Plain styles for now. */
+        .dock {
+            position: fixed;
+            z-index: 50;
+            display: flex;
+            gap: 2px;
+            padding: 4px;
+            border-radius: 28px;
+            pointer-events: auto;
+            isolation: isolate;
+            /* material */
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+                    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+            box-shadow:
+                inset 0 0 0 1px var(--glass-rim),             /* thin edge */
+                inset 0 1px 0 rgba(255,255,255,.18),          /* top lip catches light */
+                inset 0 -1px 0 rgba(0,0,0,.25),               /* bottom lip in shadow */
+                var(--glass-shadow);
+            transition: box-shadow .25s var(--ease-out);
+        }
+        /* refraction rim: a gradient that lives only on the 1.5px edge, brightest top-left */
+        .dock::before {
+            content: "";
+            position: absolute; inset: 0;
+            border-radius: inherit;
+            padding: 1.5px;
+            background: linear-gradient(135deg,
+                var(--glass-spec) 0%,
+                rgba(255,255,255,.08) 28%,
+                rgba(255,255,255,.02) 55%,
+                rgba(255,255,255,.22) 100%);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            pointer-events: none;
+            z-index: 2;
+        }
+        /* soft internal sheen so the fill isn't flat */
+        .dock::after {
+            content: "";
+            position: absolute; inset: 0;
+            border-radius: inherit;
+            background:
+                radial-gradient(120% 60% at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+                linear-gradient(180deg, rgba(255,255,255,.04), transparent 40%, rgba(0,0,0,.08));
+            pointer-events: none;
+            z-index: -1;
+        }
+        .dock.is-open { box-shadow:
+                inset 0 0 0 1px var(--glass-rim),
+                inset 0 1px 0 rgba(255,255,255,.18),
+                inset 0 -1px 0 rgba(0,0,0,.25),
+                0 1px 1px rgba(0,0,0,.25), 0 24px 48px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.3); }
+        .dock--tl { top: 16px; left: 16px; }
+        .dock--tc { top: 16px; left: 50%; transform: translateX(-50%); }
+        .dock[data-orient="v"] { flex-direction: column; }
+        .dock[data-orient="h"] { flex-direction: row; }
+
+        .dock__primary { display: flex; gap: 2px; }
+        .dock[data-orient="v"] .dock__primary { flex-direction: column; }
+
+        /* the folded part: animates its size via 0fr → 1fr */
+        .dock__more {
+            display: grid;
+            transition: grid-template-rows .32s var(--spring), grid-template-columns .32s var(--spring);
+        }
+        .dock[data-orient="v"] .dock__more { grid-template-rows: 0fr; }
+        .dock[data-orient="h"] .dock__more { grid-template-columns: 0fr; }
+        .dock[data-orient="v"].is-open .dock__more { grid-template-rows: 1fr; }
+        .dock[data-orient="h"].is-open .dock__more { grid-template-columns: 1fr; }
+        .dock__more > div {
+            display: flex; gap: 2px;
+            overflow: hidden;
+            min-height: 0; min-width: 0;
+        }
+        .dock[data-orient="v"] .dock__more > div { flex-direction: column; }
+
+        .dock__item {
+            position: relative;
+            flex: none;
+            width: 40px; height: 40px;
+            border: 0; padding: 0; margin: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--glass-ink);
+            display: grid; place-items: center;
+            cursor: none;
+            transition: background-color .14s, color .14s, transform .22s var(--spring), box-shadow .14s;
+        }
+        .dock__item:hover, .dock__item:focus-visible {
+            background: var(--glass-hover);
+            color: #fff;
+            outline: none;
+            transform: scale(1.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px rgba(255,255,255,.06);
+        }
+        .dock__item:active { transform: scale(.96); background: var(--glass-press); transition-duration: .06s; }
+        .dock__item[aria-pressed="true"] { color: #fff; }
+        .dock__item svg { width: 18px; height: 18px; display: block; }
+        .dock__item svg[hidden] { display: none; }
+
+        /* folded items fade + stagger in behind the size animation */
+        .dock__more .dock__item, .dock__sep {
+            opacity: 0;
+            transition: opacity .16s var(--ease-out);
+            transition-delay: calc(var(--i, 0) * 16ms);
+        }
+        .dock.is-open .dock__more .dock__item, .dock.is-open .dock__sep { opacity: 1; }
+        .dock:not(.is-open) .dock__more .dock__item, .dock:not(.is-open) .dock__sep { transition-delay: 0ms; transition-duration: .1s; }
+
+        .dock__sep {
+            flex: none;
+            background: rgba(255,255,255,.12);
+            margin: 4px auto;
+        }
+        .dock[data-orient="v"] .dock__sep { width: 20px; height: 1px; }
+        .dock[data-orient="h"] .dock__sep { width: 1px; height: 20px; margin: auto 4px; }
+
+        /* keyboard flash */
+        .dock__item.flash { background: var(--glass-press); color: #fff; transition: none; box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 0 0 1px rgba(255,255,255,.12); }
+
+        /* colour cans */
+        .can-top {
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--c);
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,.35), inset 2px 2px 3px rgba(255,255,255,.35);
+            transition: transform .12s var(--ease-out);
+        }
+        .dock__item:hover .can-top, .dock__item[aria-pressed="true"] .can-top { transform: scale(1.15); }
+        /* fill arc around the active can */
+        .dock__item[data-action="color"][aria-pressed="true"]::after {
+            content: "";
+            position: absolute; inset: 6px;
+            border-radius: 50%;
+            background: conic-gradient(var(--c) calc(var(--fill, 1) * 360deg), rgba(255,255,255,.12) 0);
+            -webkit-mask: radial-gradient(circle, transparent 11px, #000 12px);
+                    mask: radial-gradient(circle, transparent 11px, #000 12px);
+        }
+
+        /* shuffle on: the loaded can shows its level, the choice lives on the shuffle button */
+        .dock.is-shuffle .dock__item[data-action="color"][aria-pressed="true"] .can-top { transform: none; }
+        .dock__item[data-action="shuffle"][aria-pressed="true"] { color: #fff; background: var(--glass-hover); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+
+        /* caps: three dots, increasing size */
+        .cap-dot { border-radius: 50%; background: currentColor; }
+        .cap-dot--skinny { width: 5px;  height: 5px; }
+        .cap-dot--fat    { width: 10px; height: 10px; }
+        .cap-dot--flare  { width: 16px; height: 16px; opacity: .55; }
+        .dock__item[aria-pressed="true"] .cap-dot { box-shadow: 0 0 0 3px rgba(20,20,22,.9), 0 0 0 4px rgba(255,255,255,.75); }
+
+        .dock__badge {
+            position: absolute; top: 4px; right: 4px;
+            font-size: 9px; font-weight: 600;
+            color: rgba(255,255,255,.55);
+            font-variant-numeric: tabular-nums;
+        }
+        .dock__badge:empty { display: none; }
+
+        /* tooltip: beside the item (v) or below it (h) */
+        .dock__tip {
+            position: fixed; top: 0; left: 0;
+            padding: 6px 10px;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(20px) saturate(var(--glass-sat));
+                    backdrop-filter: blur(20px) saturate(var(--glass-sat));
+            box-shadow: inset 0 0 0 1px var(--glass-rim), inset 0 1px 0 rgba(255,255,255,.16), 0 8px 24px rgba(0,0,0,.4);
+            border-radius: 9px;
+            color: #fff;
+            font-size: 11px; letter-spacing: .02em;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .12s;
+            z-index: 60;
+        }
+        .dock__tip.visible { opacity: 1; }
+        .dock__tip kbd {
+            display: inline-block; margin-left: 8px;
+            padding: 1px 5px; border-radius: 3px;
+            font: 600 10px/1.4 ui-monospace, Menlo, monospace;
+            color: rgba(255,255,255,.7);
+            background: rgba(255,255,255,.1);
+        }
+
+        /* wall flyout: 2×2 preview on hover, beside the item */
+        .wall-fly {
+            position: absolute; top: 50%; left: calc(100% + 8px);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+            padding: 5px;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(20px) saturate(var(--glass-sat));
+                    backdrop-filter: blur(20px) saturate(var(--glass-sat));
+            box-shadow: inset 0 0 0 1px var(--glass-rim), inset 0 1px 0 rgba(255,255,255,.16), 0 8px 24px rgba(0,0,0,.4);
+            border-radius: 12px;
+            transform: translateY(-50%);
+            opacity: 0; pointer-events: none;
+            transition: opacity .14s;
+        }
+        .dock[data-orient="h"] .wall-fly { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+        .dock__item:hover .wall-fly { opacity: 1; pointer-events: auto; }
+        .wall-fly__label {
+            grid-column: 1 / -1;
+            font-size: 10px; letter-spacing: .04em; color: rgba(255,255,255,.6);
+            padding: 2px 3px 0;
+        }
+        .wall-fly__label kbd {
+            float: right; padding: 0 4px; border-radius: 3px;
+            font: 600 9px/1.5 ui-monospace, Menlo, monospace;
+            color: rgba(255,255,255,.7); background: rgba(255,255,255,.1);
+        }
+        .wall-fly span {
+            width: 26px; height: 26px; border-radius: 6px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), inset 0 1px 0 rgba(255,255,255,.12);
+            transition: transform .18s var(--spring);
+        }
+        .wall-fly span:hover { transform: scale(1.1); }
+        .wall-fly span[data-wall="black"]    { background: #050505; }
+        .wall-fly span[data-wall="concrete"] { background: #3a3a39; }
+        .wall-fly span[data-wall="brick"]    { background: #4a2e27; }
+        .wall-fly span[data-wall="shutter"]  { background: repeating-linear-gradient(180deg,#33363a 0,#3e4247 3px,#1f2225 6px); }
+        .wall-fly span.active { box-shadow: 0 0 0 2px #fff; }
+
+        /* ───────── Spray Can Cursor ───────── */
+        #cursor-container {
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -8px);
+            display: flex;
+            align-items: flex-start;
+            will-change: transform;
+        }
+        #spray-can-wrap {
+            position: relative;
+            width: 50px; height: 120px;
+            transform-origin: 50% 20%;
+            transition: transform .16s var(--ease-out);
+        }
+        /* can put down while over the UI */
+        body.over-ui #spray-can-wrap { transform: rotate(-45deg) translateY(6px); }
+        body.over-ui .shake-container { opacity: 0 !important; }
+        #can-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+        /* Radial Shake Text */
+        .shake-container {
+            position: absolute;
+            top: 8px; left: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .shake-container.visible { opacity: 1; }
+        .shake-text {
+            position: absolute;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 300; font-size: 14px;
+            transform-origin: center;
+            transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot));
+        }
+        .shake-text.white { color: #fff; opacity: 1; }
+        .shake-text.grey  { color: rgba(255, 255, 255, 0.4); }
+        .shake-text.left         { --tx: -65px; --ty: 0px;    --rot: 0deg; }
+        .shake-text.right        { --tx: 65px;  --ty: 0px;    --rot: 0deg; }
+        .shake-text.top-left     { --tx: -48px;  --ty: -40px;  --rot: 30deg; }
+        .shake-text.top-right    { --tx: 48px;   --ty: -40px;  --rot: -30deg; }
+        .shake-text.bottom-left  { --tx: -48px;  --ty: 40px;   --rot: -30deg; }
+        .shake-text.bottom-right { --tx: 48px;   --ty: 40px;   --rot: 30deg; }
+
+        /* ───────── About sheet ───────── */
+        #about {
+            position: fixed; inset: 0; z-index: 100;
+            display: grid; place-items: center;
+            padding: 24px;
+            background: rgba(0,0,0,.55);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+            transition: opacity .22s var(--ease-out);
+        }
+        #about.open { opacity: 1; pointer-events: auto; }
+        .sheet {
+            position: relative;
+            width: min(640px, 100%);
+            max-height: min(84vh, 900px);
+            overflow: auto;
+            padding: 40px 44px 36px;
+            border-radius: 22px;
+            background: rgba(22, 22, 24, .78);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+                    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+            box-shadow:
+                inset 0 0 0 1px var(--glass-rim),
+                inset 0 1px 0 rgba(255,255,255,.18),
+                0 1px 1px rgba(0,0,0,.3), 0 30px 80px rgba(0,0,0,.6);
+            color: rgba(255,255,255,.8);
+            font-size: 15px; line-height: 1.6;
+            transform: translateY(10px) scale(.985);
+            transition: transform .32s var(--spring);
+            scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.18) transparent;
+        }
+        #about.open .sheet { transform: none; }
+        .sheet::-webkit-scrollbar { width: 6px; }
+        .sheet::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 3px; }
+        .sheet h2 {
+            font-family: 'Unbounded', sans-serif; font-weight: 500; font-size: 24px; line-height: 1.2;
+            color: #fff; margin: 0 0 6px; letter-spacing: -.01em;
+        }
+        .sheet__lede { color: rgba(255,255,255,.55); margin: 0 0 28px; font-size: 14px; }
+        .sheet h3 {
+            font-family: 'Unbounded', sans-serif; font-weight: 400; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+            color: var(--current-color); margin: 30px 0 10px;
+        }
+        .sheet p { margin: 0 0 12px; }
+        .sheet p + p { margin-top: 2px; }
+        .sheet em { font-style: italic; color: #fff; }
+        .sheet ul { margin: 0; padding: 0 0 0 18px; }
+        .sheet li { margin: 0 0 6px; }
+        .sheet li::marker { color: rgba(255,255,255,.35); }
+        .timeline { list-style: none; padding: 0; }
+        .timeline li { display: grid; grid-template-columns: 76px 1fr; gap: 14px; margin: 0 0 8px; }
+        .timeline time { color: rgba(255,255,255,.45); font-variant-numeric: tabular-nums; font-size: 13px; padding-top: 2px; }
+        .keys { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 24px; margin: 0; padding: 0; list-style: none; }
+        .keys li { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .keys kbd {
+            flex: none; min-width: 24px; padding: 2px 6px; text-align: center; border-radius: 5px;
+            font: 600 11px/1.5 ui-monospace, Menlo, monospace;
+            color: rgba(255,255,255,.85); background: rgba(255,255,255,.1);
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12);
+        }
+        .sheet__close {
+            position: absolute; top: 16px; right: 16px;
+            width: 36px; height: 36px; border: 0; border-radius: 50%;
+            background: rgba(255,255,255,.06); color: rgba(255,255,255,.7);
+            display: grid; place-items: center; cursor: pointer;
+            transition: background .12s, color .12s, transform .2s var(--spring);
+        }
+        .sheet__close:hover { background: rgba(255,255,255,.12); color: #fff; transform: scale(1.06); }
+        .sheet__close:focus-visible { outline: 2px solid rgba(255,255,255,.6); outline-offset: 2px; }
+        .sheet__close svg { width: 16px; height: 16px; }
+        .sheet__foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); font-size: 13px; color: rgba(255,255,255,.5); }
+        .sheet__foot a { color: rgba(255,255,255,.8); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.25); }
+        .sheet__foot a:hover { color: #fff; border-color: #fff; }
+
+        /* shake tuner — only with ?tune in the URL */
+        #tuner {
+            position: fixed; right: 20px; bottom: 20px; z-index: 90;
+            width: 260px; padding: 14px 16px 12px;
+            border-radius: 14px;
+            background: rgba(22,22,24,.78);
+            -webkit-backdrop-filter: blur(20px) saturate(var(--glass-sat)); backdrop-filter: blur(20px) saturate(var(--glass-sat));
+            box-shadow: inset 0 0 0 1px var(--glass-rim), inset 0 1px 0 rgba(255,255,255,.16), 0 12px 32px rgba(0,0,0,.45);
+            color: rgba(255,255,255,.8); font-size: 12px; line-height: 1.5;
+            cursor: auto;
+        }
+        #tuner[hidden] { display: none; }
+        #tuner label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+        #tuner label b { font-family: ui-monospace, Menlo, monospace; font-weight: 600; color: #fff; font-size: 13px; }
+        #tuner input[type=range] { width: 100%; margin: 0 0 10px; accent-color: var(--current-color); }
+        #tuner .row { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.6); }
+        #tuner .row b { font-family: ui-monospace, Menlo, monospace; font-weight: 600; }
+        #tuner .ok  { color: #39ff14; }
+        #tuner .no  { color: #ff5a5a; }
+        #tuner .hint { margin-top: 8px; font-size: 11px; color: rgba(255,255,255,.4); }
+
+        /* reading mode: real cursor back, can put away, no painting */
+        body.about-open { cursor: auto; }
+        body.about-open #cursor-container { display: none; }
+        body.about-open .instruction { opacity: 0 !important; }
+
+        @media (prefers-reduced-transparency: reduce) {
+            .sheet, #about { -webkit-backdrop-filter: none; backdrop-filter: none; }
+            .sheet { background: rgba(22,22,24,.98); }
+            .dock, .dock__tip, .wall-fly { background: rgba(28,28,30,.96); -webkit-backdrop-filter: none; backdrop-filter: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .dock__more, .dock__item, .dock__sep, .dock__tip, .wall-fly, #spray-can-wrap, #spray-canvas {
+                transition-duration: .01ms !important; transition-delay: 0ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wall" data-wall="black"></div>
+    <div id="flash"></div>
+    <canvas id="spray-canvas"></canvas>
+
+    <div class="instruction" id="hint">Shake to load · Hold to spray · Hold still to drip · Tools top-left</div>
+
+    <!-- DOCK — primaries always visible; hover unfolds the rest (down for v, sideways for h) -->
+    <nav class="dock dock--tl is-open" id="dock" data-orient="v" aria-label="Tools">
+        <div class="dock__primary">
+            <button class="dock__item" data-action="clear" data-label="Clear wall" data-key="C">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 15 9-9a2 2 0 0 1 2.8 0l3.2 3.2a2 2 0 0 1 0 2.8L12 19H8z"/><path d="m9 10 6 6"/><path d="M8 19h12"/></svg>
+            </button>
+            <button class="dock__item" data-action="undo" data-label="Undo" data-key="Z">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+                <span class="dock__badge" id="undo-count"></span>
+            </button>
+            <button class="dock__item" data-action="save" data-label="Screenshot" data-key="S">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V6a2 2 0 0 1 2-2h3"/><path d="M15 4h3a2 2 0 0 1 2 2v3"/><path d="M20 15v3a2 2 0 0 1-2 2h-3"/><path d="M9 20H6a2 2 0 0 1-2-2v-3"/><path d="M4 12h16" stroke-dasharray="1.5 3"/></svg>
+            </button>
+        </div>
+        <div class="dock__more"><div>
+            <div class="dock__sep" style="--i:0"></div>
+            <button class="dock__item" style="--i:1" data-action="shuffle" data-label="Shuffle colour" data-key="X" aria-pressed="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h3.5c1.4 0 2.7.7 3.5 1.8L14 15.2c.8 1.1 2.1 1.8 3.5 1.8H21"/><path d="M3 17h3.5c1.4 0 2.7-.7 3.5-1.8"/><path d="M14 8.8C14.8 7.7 16.1 7 17.5 7H21"/><path d="m18.5 4.5 2.5 2.5-2.5 2.5"/><path d="m18.5 14.5 2.5 2.5-2.5 2.5"/></svg>
+            </button>
+            <!-- colours injected here -->
+            <div class="dock__sep" style="--i:7" id="sep-caps"></div>
+            <button class="dock__item" style="--i:8"  data-action="cap" data-cap="skinny" data-label="Skinny cap" data-key="1" aria-pressed="false"><span class="cap-dot cap-dot--skinny"></span></button>
+            <button class="dock__item" style="--i:9"  data-action="cap" data-cap="fat"    data-label="Fat cap"    data-key="2" aria-pressed="true"><span class="cap-dot cap-dot--fat"></span></button>
+            <button class="dock__item" style="--i:10" data-action="cap" data-cap="flare"  data-label="Flare cap"  data-key="3" aria-pressed="false"><span class="cap-dot cap-dot--flare"></span></button>
+            <div class="dock__sep" style="--i:11"></div>
+            <button class="dock__item" style="--i:12" data-action="wall" data-label="Wall" data-key="W">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M3 10h18M3 15h18M8 5v5M14 5v5M11 10v5M17 10v5M8 15v4M14 15v4"/></svg>
+                <div class="wall-fly" id="wall-fly">
+                    <div class="wall-fly__label">Wall <kbd>W</kbd></div>
+                    <span data-wall="black" class="active"></span>
+                    <span data-wall="concrete"></span>
+                    <span data-wall="brick"></span>
+                    <span data-wall="shutter"></span>
+                </div>
+            </button>
+            <button class="dock__item" style="--i:13" data-action="sound" data-label="Sound" data-key="M" aria-pressed="true">
+                <svg id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4 4V6L7 10z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5"/><path d="M17.5 7a7 7 0 0 1 0 10"/></svg>
+                <svg id="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 10v4h3l4 4V6L7 10z"/><path d="m15 9 5 6M20 9l-5 6"/></svg>
+            </button>
+            <button class="dock__item" style="--i:14" data-action="hint" data-label="About this" data-key="?">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9.5a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.2-1.5 2.4"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg>
+            </button>
+        </div></div>
+    </nav>
+    <div class="dock__tip" id="dock-tip"></div>
+
+    <!-- ABOUT — the "?" in the dock -->
+    <div id="about" role="dialog" aria-modal="true" aria-labelledby="about-title" aria-hidden="true">
+        <article class="sheet" tabindex="-1">
+            <button class="sheet__close" id="about-close" aria-label="Close">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3 3 13"/></svg>
+            </button>
+            <h2 id="about-title">Spray can</h2>
+            <p class="sheet__lede">A lost cursor, a shaken mouse, and a can of paint that didn't belong on the hero.</p>
+
+            <h3>Why this exists</h3>
+            <p>It started with a lost cursor. On a Mac, when you can't find the pointer you shake the mouse and it swells until you can spot it. One day that gesture read as something else entirely: that is exactly how you shake a spray can. The interaction was already in my hand — it just needed a can on the end of it.</p>
+            <p>The first version was going to be the hero of this portfolio. You'd land, shake, and tag the page. It was too much. A hero has one job, and a can of paint fighting the headline for attention was chaos, not delight. So I dropped it from the hero, but not the idea. It became its own room, where the question could be <em>how far can the mechanics go</em> rather than how quietly it can sit.</p>
+
+            <h3>How it works</h3>
+            <p>The can <em>is</em> the cursor. Shakes are counted from fast, short, horizontal reversals of the mouse; five of them load a can. Holding the button stamps a colourised brush along the stroke — one grey brush PNG, tinted through an offscreen canvas, rotated and faded a little differently every time. Three caps change its size, density and drain. Hold still and the paint runs.</p>
+            <p>Underneath is a small physical model of the can. Pressure drops while you hold the nozzle (boiling propellant cools the can) and recovers when you let go. As the paint runs out the jet thins, the nozzle starts to ring at a rising pitch, and the dip tube gargles. That one model drives the sound — every hiss, rattle and click is synthesised in Web Audio, no samples — and the paint, so when the can spits you hear it and see it in the same frame.</p>
+
+            <h3>How it got here</h3>
+            <ul class="timeline">
+                <li><time>Spring</time><span>The cursor experiment: a can for a pointer, a fill level, brush stamps, the radial "shake" hint. It was meant for the hero.</span></li>
+                <li><time>Summer</time><span>Dropped from the hero. Moved into the portfolio as its own page, with the site's type and nothing else — the only way to clear the wall was to reload.</span></li>
+                <li><time>Autumn</time><span>The toolbar, sound and the can model. Two edge rails became one dock. Shuffle replaced a "five shakes changes colour" rule nobody ever discovered. Drips, walls, undo, screenshot.</span></li>
+            </ul>
+
+            <h3>Not built yet</h3>
+            <ul>
+                <li>Distance from the wall on the scroll wheel — closer is tighter and drippier.</li>
+                <li>Stencils, a timelapse replay, a wall that remembers other people's tags.</li>
+                <li>A phone version where you shake the actual phone.</li>
+            </ul>
+
+            <h3>Controls</h3>
+            <ul class="keys">
+                <li><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Skinny · Fat · Flare cap</li>
+                <li><kbd>Q</kbd><kbd>E</kbd> Previous / next colour</li>
+                <li><kbd>X</kbd> Shuffle colour on reload</li>
+                <li><kbd>W</kbd> Change wall</li>
+                <li><kbd>Z</kbd> Undo</li>
+                <li><kbd>C</kbd> Clear wall</li>
+                <li><kbd>S</kbd> Screenshot</li>
+                <li><kbd>M</kbd> Sound on / off</li>
+                <li><kbd>?</kbd> This sheet</li>
+                <li><kbd>Esc</kbd> Close</li>
+            </ul>
+
+            <p class="sheet__foot">Built by <a href="index.html?noloader">Divyansh Rastogi</a>. Desktop only, on purpose — it's a pointer interaction.</p>
+        </article>
+    </div>
+
+    <div id="tuner" hidden>
+        <label>Min shake speed <b id="tune-val"></b></label>
+        <input type="range" id="tune-range" min="100" max="4000" step="50">
+        <div class="row"><span>last stroke</span><b id="tune-last">—</b></div>
+        <div class="row"><span>fastest of last 10</span><b id="tune-max">—</b></div>
+        <div class="row"><span>counted / total</span><b id="tune-count">0 / 0</b></div>
+        <p class="hint">px per second, averaged over one stroke. Saved as you drag; also settable with <code>?shake=NNN</code>.</p>
+    </div>
+
+    <div id="cursor-container">
+        <div id="spray-can-wrap">
+            <canvas id="can-canvas"></canvas>
+        </div>
+        <div class="shake-container" id="shake-indicator">
+            <span class="shake-text white left">Shake</span>
+            <span class="shake-text white right">Shake</span>
+            <span class="shake-text grey top-left">Shake</span>
+            <span class="shake-text grey top-right">Shake</span>
+            <span class="shake-text grey bottom-left">Shake</span>
+            <span class="shake-text grey bottom-right">Shake</span>
+        </div>
+    </div>
+
+    <!-- Hidden img — source for canvas drawing, avoids mask-image CORS issues -->
+    <img id="can-img" src="assets/spray/can.svg" alt=""
+         style="position:absolute;visibility:hidden;pointer-events:none;">
+
+    <script>
+        const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ───────── Sound: everything synthesised, no files ─────────
+           The context is created on the first click/keydown (autoplay policy),
+           so shakes before the first click are silent — expected. */
+        const Snd = (() => {
+            let ctx = null, noiseBuf = null, hiss = null, hissOn = false;
+            function unlock() {
+                if (!ctx) {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    if (!AC) return;
+                    ctx = new AC();
+                    const len = ctx.sampleRate * 2;
+                    noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+                    const d = noiseBuf.getChannelData(0);
+                    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+                }
+                if (ctx.state === 'suspended') ctx.resume();
+            }
+            const ready = () => ctx && ctx.state === 'running' && soundOn;
+
+            // short filtered noise burst
+            function burst({ dur = 0.03, gain = 0.3, type = 'bandpass', freq = 3000, q = 1, attack = 0.002 }) {
+                const t = ctx.currentTime;
+                const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+                src.loop = true; src.loopStart = Math.random();
+                const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.0001, t);
+                g.gain.exponentialRampToValueAtTime(gain, t + attack);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                src.connect(f).connect(g).connect(ctx.destination);
+                src.start(t); src.stop(t + dur + 0.02);
+            }
+            // metallic 'tink'
+            function tink(freq, dur = 0.06, gain = 0.12) {
+                const t = ctx.currentTime;
+                const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = freq;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(gain, t);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                o.connect(g).connect(ctx.destination);
+                o.start(t); o.stop(t + dur + 0.02);
+            }
+
+            return {
+                unlock,
+                // read the live filter state (used by the test suite)
+                probe() { return hiss ? { hp: hiss.hp.frequency.value, lp: hiss.lp.frequency.value, peakF: hiss.peak.frequency.value, peakQ: hiss.peak.Q.value, peakG: hiss.peak.gain.value, rate: hiss.lfo.frequency.value, depth: hiss.lfoG.gain.value, gain: hiss.g.gain.value } : null; },
+                // ball bearing hitting the wall of the can — one per direction reversal
+                rattle() {
+                    if (!ready()) return;
+                    burst({ dur: 0.035, gain: 0.35, type: 'bandpass', freq: 2600 + Math.random() * 1400, q: 0.8 });
+                    tink(1700 + Math.random() * 900, 0.05, 0.08);
+                    // the pea rebounds: a softer second knock
+                    setTimeout(() => ready() && burst({ dur: 0.02, gain: 0.12, type: 'highpass', freq: 3500 }), 28 + Math.random() * 20);
+                },
+                // swapping a cap / picking up a can
+                click() {
+                    if (!ready()) return;
+                    burst({ dur: 0.02, gain: 0.2, type: 'bandpass', freq: 1200, q: 2 });
+                    tink(900, 0.03, 0.05);
+                },
+                // camera shutter: two clicks, mirror up then down
+                shutter() {
+                    if (!ready()) return;
+                    burst({ dur: 0.025, gain: 0.3, type: 'bandpass', freq: 1800, q: 1.5 });
+                    tink(1200, 0.03, 0.06);
+                    setTimeout(() => ready() && (burst({ dur: 0.04, gain: 0.22, type: 'bandpass', freq: 900, q: 1.2 }), tink(600, 0.05, 0.05)), 70);
+                },
+                // pressing the nozzle on an empty can
+                empty() {
+                    if (!ready()) return;
+                    burst({ dur: 0.12, gain: 0.18, type: 'lowpass', freq: 1400, attack: 0.01 });
+                },
+                /* Continuous hiss, modelled rather than sampled.
+                   chain: noise → highpass → lowpass → peaking (nozzle resonance) → tremolo (gargle) → gain
+                   Called every frame while spraying with the Can model's readings. */
+                hiss(on, can = null, cap = null) {
+                    if (!ctx) return;
+                    if (!hiss) {
+                        const src  = ctx.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+                        const hp   = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 800;
+                        const lp   = ctx.createBiquadFilter(); lp.type = 'lowpass';  lp.frequency.value = 8000;
+                        const peak = ctx.createBiquadFilter(); peak.type = 'peaking'; peak.frequency.value = 3000; peak.Q.value = 1; peak.gain.value = 0;
+                        const trem = ctx.createGain(); trem.gain.value = 1;
+                        const lfo  = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 10;
+                        const lfoG = ctx.createGain(); lfoG.gain.value = 0;        // tremolo depth
+                        lfo.connect(lfoG).connect(trem.gain);
+                        const g    = ctx.createGain(); g.gain.value = 0;
+                        src.connect(hp).connect(lp).connect(peak).connect(trem).connect(g).connect(ctx.destination);
+                        src.start(); lfo.start();
+                        hiss = { src, hp, lp, peak, trem, lfo, lfoG, g };
+                    }
+                    const t = ctx.currentTime;
+                    if (on && ready() && can) {
+                        const { fill, pressure, thin, gargle, wheeze, rate } = can;
+                        const baseHp = cap ? cap.hp : 800, baseG = cap ? cap.hiss : 0.22;
+                        // 1. pressure (cooling) → jet velocity → duller + quieter, recovers on release
+                        hiss.lp.frequency.setTargetAtTime(1800 + 7200 * pressure, t, 0.08);
+                        // 2. thinning → the body goes: highpass climbs as paint runs out
+                        hiss.hp.frequency.setTargetAtTime(baseHp * (1 + 2.2 * thin), t, 0.08);
+                        // 3. nozzle resonance → a rising, narrowing peak near the end (the wheeze)
+                        hiss.peak.frequency.setTargetAtTime(2600 + 3200 * wheeze, t, 0.08);
+                        hiss.peak.Q.setTargetAtTime(1 + 7 * wheeze, t, 0.08);
+                        hiss.peak.gain.setTargetAtTime(14 * wheeze, t, 0.08);
+                        // 4. gargle → tremolo depth + rate, ragged
+                        hiss.lfo.frequency.setTargetAtTime(rate, t, 0.05);
+                        hiss.lfoG.gain.setTargetAtTime(gargle * 0.5, t, 0.05);
+                        hiss.trem.gain.setTargetAtTime(1 - gargle * 0.5, t, 0.05);
+                        // overall level: pressure carries most of it, fill the rest; spits are dropouts
+                        let target = baseG * (0.25 + 0.75 * pressure) * (0.55 + 0.45 * fill);
+                        if (can.spit) target *= 0.08;
+                        hiss.g.gain.setTargetAtTime(target, t, hissOn ? 0.03 : 0.012);
+                        hissOn = true;
+                    } else if (hissOn) {
+                        hiss.g.gain.setTargetAtTime(0, t, 0.04);
+                        hissOn = false;
+                    }
+                },
+            };
+        })();
+        window.addEventListener('mousedown', Snd.unlock, { capture: true });
+        window.addEventListener('keydown',   Snd.unlock, { capture: true });
+
+        const cursorContainer = document.getElementById('cursor-container');
+        const canCanvas       = document.getElementById('can-canvas');
+        const canCtx          = canCanvas.getContext('2d');
+        const canImg          = document.getElementById('can-img');
+        const shakeIndicator  = document.getElementById('shake-indicator');
+        const wallEl          = document.getElementById('wall');
+        const hintEl          = document.getElementById('hint');
+
+        // Fat brush stamp image
+        const brushImg = new Image();
+        brushImg.src   = 'assets/spray/brush-fat.png';
+
+        // Offscreen canvas for colorising brush stamps
+        const STAMP_SIZE  = 130;
+        const stampCanvas = document.createElement('canvas');
+        stampCanvas.width = stampCanvas.height = STAMP_SIZE;
+        const stampCtx    = stampCanvas.getContext('2d');
+
+        // Spray canvas — full page, persistent paint
+        const sprayCanvas = document.getElementById('spray-canvas');
+        const sprayCtx    = sprayCanvas.getContext('2d');
+
+        const DPR = window.devicePixelRatio || 1;
+
+        canCanvas.width  = 50 * DPR;
+        canCanvas.height = 120 * DPR;
+
+        function resizeSpray() {
+            const tmp = document.createElement('canvas');
+            tmp.width  = sprayCanvas.width;
+            tmp.height = sprayCanvas.height;
+            tmp.getContext('2d').drawImage(sprayCanvas, 0, 0);
+            sprayCanvas.width  = window.innerWidth  * DPR;
+            sprayCanvas.height = window.innerHeight * DPR;
+            sprayCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            sprayCtx.drawImage(tmp, 0, 0, tmp.width / DPR, tmp.height / DPR);
+        }
+        window.addEventListener('resize', resizeSpray);
+        resizeSpray();
+
+        /* ───────── State ───────── */
+        const CANS = [
+            { name: 'Magenta', hex: '#ff00ff' },
+            { name: 'Yellow',  hex: '#ffff00' },
+            { name: 'Orange',  hex: '#E06B2D' },
+            { name: 'Cyan',    hex: '#00ffff' },
+            { name: 'Lime',    hex: '#39ff14' },
+            { name: 'White',   hex: '#ffffff' },
+        ];
+        const CAPS = {
+            skinny: { scale: 0.38, alpha: 0.42, step: 5,  drain: 0.18, hiss: 0.16, hp: 1600 },
+            fat:    { scale: 1.0,  alpha: 0.20, step: 10, drain: 0.30, hiss: 0.22, hp: 800  },
+            flare:  { scale: 1.9,  alpha: 0.07, step: 16, drain: 0.55, hiss: 0.28, hp: 400  },
+        };
+        // Each wall is a base colour + an optional SVG tile. The same tile paints the page
+        // background and the exported PNG, so the screenshot matches what's on screen.
+        const WALL_DEFS = {
+            black:    { base: '#050505', tile: null },
+            concrete: { base: '#2b2b2a', w: 400, h: 400, tile:
+                "<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .48 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>" },
+            brick:    { base: '#332019', w: 120, h: 72, tile:
+                "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='72'><rect width='120' height='72' fill='#332019'/><g fill='#583a30'><rect x='2' y='2' width='56' height='32' rx='1'/><rect x='62' y='2' width='56' height='32' rx='1' fill='#5e3d32'/><rect x='-28' y='38' width='56' height='32' rx='1' fill='#543629'/><rect x='32' y='38' width='56' height='32' rx='1'/><rect x='92' y='38' width='56' height='32' rx='1' fill='#5a3b2f'/></g></svg>" },
+            shutter:  { base: '#2e3135', w: 8, h: 40, tile:
+                "<svg xmlns='http://www.w3.org/2000/svg' width='8' height='40'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#33363a'/><stop offset='.35' stop-color='#3e4247'/><stop offset='.65' stop-color='#2a2d31'/><stop offset='1' stop-color='#1f2225'/></linearGradient></defs><rect width='8' height='40' fill='url(#g)'/></svg>" },
+        };
+        /* ───────── Can model: what the hiss (and the paint) read each frame ─────────
+           pressure  — 1 at rest; falls while the nozzle is held (propellant boiling cools the can),
+                       recovers while released. Floors higher when the can is full (more liquid = more thermal mass).
+           thin      — 0 full → 1 empty: gas-to-paint ratio; the jet loses body.
+           wheeze    — nozzle resonance, only in the last third, rising toward empty.
+           gargle    — gas/paint alternating in the dip tube: tremolo depth, from ~30% down.
+           rate      — that tremolo's rate in Hz, jittered so it never sounds mechanical.
+           spit      — true on frames where the gargle troughs hard: sound drops out, no stamps land. */
+        const Can = {
+            pressure: 1, thin: 0, wheeze: 0, gargle: 0, rate: 10, fill: 1, spit: false,
+            phase: 0, jitterAt: 0,
+            step(dt, spraying, level) {
+                this.fill = level / 100;
+                const floor = 0.45 + 0.25 * this.fill;
+                if (spraying) this.pressure = Math.max(floor, this.pressure - 0.09 * dt);   // ~6 s to floor
+                else          this.pressure = Math.min(1, this.pressure + 0.22 * dt);       // ~2.5 s to recover
+                this.thin   = 1 - this.fill;
+                this.wheeze = Math.max(0, (0.35 - this.fill) / 0.35);
+                this.gargle = Math.max(0, (0.30 - this.fill) / 0.30);
+                const now = performance.now();
+                if (now > this.jitterAt) { this.rate = 7 + Math.random() * 8; this.jitterAt = now + 250 + Math.random() * 400; }
+                this.phase += this.rate * dt * Math.PI * 2;
+                // visual mirror of the tremolo: trough + enough gargle = a spit
+                const trough = Math.sin(this.phase) < -0.55;
+                this.spit = spraying && this.gargle > 0.15 && trough && Math.random() < this.gargle * 1.4;
+            },
+        };
+        const WALLS = Object.keys(WALL_DEFS);
+        const tileURL = d => d.tile ? 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(d.tile) : null;
+        function applyWall(name) {
+            const d = WALL_DEFS[name];
+            wallEl.style.backgroundColor = d.base;
+            wallEl.style.backgroundImage = d.tile ? `url("${tileURL(d)}")` : 'none';
+            wallEl.style.backgroundSize  = d.tile ? `${d.w}px ${d.h}px` : '';
+        }
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let prevX = mouseX, prevY = mouseY;
+        /* Shake detection: every horizontal direction reversal is one shake stroke — any length, any
+           speed, edge to edge or a 1 cm wiggle. Movement is accumulated per run so it reads the same on
+           a 60 Hz mouse or a 120 Hz trackpad; the only filter is a small jitter floor. */
+        const SHAKE_MIN_RUN = 12;        // px: a run shorter than this is hand tremor, not a jerk
+        // px/s a stroke must average to count as a jerk. ?shake=NNN wins, then the saved tuner value, then the default.
+        const qs = new URLSearchParams(location.search);
+        let SHAKE_MIN_SPEED = +qs.get('shake') || +(localStorage.getItem('spray-shake-speed') || 0) || 600;
+        let runDir = 0, runX = 0, runStart = 0;
+        let isMouseDown = false;
+        let colorLevel = 0;
+        let currentColorIndex = 0;
+        let currentCap = 'fat';
+        let wallIndex = 0;
+        let soundOn = true;
+        let shakeCount = 0;
+        let lastReversalAt = 0;          // shakes must come in quick succession to count
+        let shuffle = true;              // every reload picks a new colour
+        let nextColorIndex = null;       // chosen the moment the can runs dry, previewed while shaking
+        let overUI = false;
+
+        const color = () => CANS[currentColorIndex].hex;
+
+        /* ───────── Dock: markup ───────── */
+        const dock    = document.getElementById('dock');
+        const sepCaps = document.getElementById('sep-caps');
+        CANS.forEach((c, i) => {
+            const b = document.createElement('button');
+            b.className = 'dock__item';
+            b.style.setProperty('--i', i + 2);
+            b.style.setProperty('--c', c.hex);
+            b.dataset.action = 'color';
+            b.dataset.index  = i;
+            b.dataset.label  = c.name;
+            b.dataset.key    = i === 0 ? 'Q / E' : '';
+            b.setAttribute('aria-pressed', i === currentColorIndex ? 'true' : 'false');
+            b.innerHTML = '<span class="can-top"></span>';
+            sepCaps.parentNode.insertBefore(b, sepCaps);
+        });
+        const colorBtns = [...dock.querySelectorAll('[data-action="color"]')];
+        const capBtns   = [...dock.querySelectorAll('[data-action="cap"]')];
+        const undoCount = document.getElementById('undo-count');
+        const wallFly   = document.getElementById('wall-fly');
+        const soundBtn  = dock.querySelector('[data-action="sound"]');
+        const shuffleBtn = dock.querySelector('[data-action="shuffle"]');
+        const byAction  = a => dock.querySelector(`[data-action="${a}"]`);
+
+        function syncRails() {
+            colorBtns.forEach((b, i) => {
+                b.setAttribute('aria-pressed', i === currentColorIndex ? 'true' : 'false');
+                if (i === currentColorIndex) b.style.setProperty('--fill', (colorLevel / 100).toFixed(2));
+            });
+            capBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cap === currentCap ? 'true' : 'false'));
+            wallFly.querySelectorAll('span').forEach(s => s.classList.toggle('active', s.dataset.wall === WALLS[wallIndex]));
+            undoCount.textContent = undoStack.length ? undoStack.length : '';
+            soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+            shuffleBtn.setAttribute('aria-pressed', shuffle ? 'true' : 'false');
+            dock.classList.toggle('is-shuffle', shuffle);
+            document.getElementById('icon-sound-on').hidden  = !soundOn;
+            document.getElementById('icon-sound-off').hidden = soundOn;
+        }
+
+        /* ───────── Dock: pinned open (owner call 2026-09-17). The fold CSS (0fr/1fr on .is-open)
+           is still there — drop the class from the markup and add the hover/leave handlers back to re-enable it. ───────── */
+        function setOverUI(v) {
+            if (overUI === v) return;
+            overUI = v;
+            document.body.classList.toggle('over-ui', v);
+        }
+
+        /* tooltips */
+        const tip = document.getElementById('dock-tip');
+        function showTip(btn) {
+            const label = btn.dataset.label || '';
+            const key = btn.dataset.key ? `<kbd>${btn.dataset.key}</kbd>` : '';
+            tip.innerHTML = label + key;
+            const b = btn.getBoundingClientRect();
+            if (dock.dataset.orient === 'v') {
+                tip.style.top  = (b.top + b.height / 2 - tip.offsetHeight / 2) + 'px';
+                tip.style.left = (b.right + 10) + 'px';
+            } else {
+                tip.style.top  = (b.bottom + 10) + 'px';
+                tip.style.left = (b.left + b.width / 2 - tip.offsetWidth / 2) + 'px';
+            }
+            tip.classList.add('visible');
+        }
+        function hideTip() { tip.classList.remove('visible'); }
+
+        dock.addEventListener('mouseenter', () => setOverUI(true));
+        dock.addEventListener('mouseleave', () => { hideTip(); setOverUI(false); });
+        dock.addEventListener('mouseover', e => {
+            const btn = e.target.closest('.dock__item');
+            if (btn && !btn.querySelector('.wall-fly')) showTip(btn); else hideTip();
+        });
+        dock.addEventListener('click', e => {
+            const sw = e.target.closest('.wall-fly span');
+            if (sw) { setWall(WALLS.indexOf(sw.dataset.wall)); return; }
+            const btn = e.target.closest('.dock__item');
+            if (btn) doAction(btn);
+        });
+
+        /* keyboard flash: the matching item lights for 200ms */
+        function flash(btn) {
+            if (!btn) return;
+            btn.classList.add('flash');
+            setTimeout(() => btn.classList.remove('flash'), 200);
+        }
+
+        /* ───────── Actions ───────── */
+        const undoStack = [];
+        const UNDO_MAX = 8;
+        function snapshot() {
+            const c = document.createElement('canvas');
+            c.width = sprayCanvas.width; c.height = sprayCanvas.height;
+            c.getContext('2d').drawImage(sprayCanvas, 0, 0);
+            undoStack.push(c);
+            if (undoStack.length > UNDO_MAX) undoStack.shift();
+            syncRails();
+        }
+        function undo() {
+            const c = undoStack.pop();
+            if (!c) return;
+            sprayCtx.save();
+            sprayCtx.setTransform(1, 0, 0, 1, 0, 0);
+            sprayCtx.clearRect(0, 0, sprayCanvas.width, sprayCanvas.height);
+            sprayCtx.drawImage(c, 0, 0);
+            sprayCtx.restore();
+            syncRails();
+        }
+        let clearing = false;
+        function buff() {
+            if (clearing) return;
+            clearing = true;
+            snapshot();
+            sprayCanvas.classList.add('is-clearing');
+            setTimeout(() => {
+                sprayCtx.save();
+                sprayCtx.setTransform(1, 0, 0, 1, 0, 0);
+                sprayCtx.clearRect(0, 0, sprayCanvas.width, sprayCanvas.height);
+                sprayCtx.restore();
+                sprayCanvas.classList.remove('is-clearing');
+                clearing = false;
+            }, REDUCED ? 0 : 400);
+        }
+        function setWall(i) {
+            wallIndex = (i + WALLS.length) % WALLS.length;
+            wallEl.dataset.wall = WALLS[wallIndex];
+            applyWall(WALLS[wallIndex]);
+            syncRails();
+        }
+        applyWall(WALLS[wallIndex]);
+        function pickCan(i) {
+            currentColorIndex = (i + CANS.length) % CANS.length;
+            colorLevel = 100;            // a fresh can is a full can
+            shakeCount = 0;
+            nextColorIndex = null;
+            shuffle = false;             // picking a can is choosing; shuffle goes off
+            document.documentElement.style.setProperty('--current-color', color());
+            Snd.click();
+            syncRails();
+        }
+        function setCap(name) { currentCap = name; Snd.click(); syncRails(); }
+        function setShuffle(on) {
+            shuffle = on;
+            if (on && colorLevel <= 0 && nextColorIndex === null) nextColorIndex = randomOther();
+            if (!on) nextColorIndex = null;
+            Snd.click();
+            syncRails();
+        }
+        function randomOther() {
+            let i; do { i = Math.floor(Math.random() * CANS.length); } while (i === currentColorIndex && CANS.length > 1);
+            return i;
+        }
+        // the can just ran dry
+        function onEmpty() {
+            colorLevel = 0;
+            shakeCount = 0;
+            if (shuffle) nextColorIndex = randomOther();
+        }
+        // five real shakes → a full can (a new colour if shuffle is on)
+        function reload() {
+            if (shuffle && nextColorIndex !== null) currentColorIndex = nextColorIndex;
+            nextColorIndex = null;
+            colorLevel = 100;
+            shakeCount = 0;
+            document.documentElement.style.setProperty('--current-color', color());
+            syncRails();
+        }
+        const tileCache = {};
+        function loadTile(name) {
+            const d = WALL_DEFS[name];
+            if (!d.tile) return Promise.resolve(null);
+            if (tileCache[name]) return Promise.resolve(tileCache[name]);
+            return new Promise(res => {
+                const img = new Image();
+                img.onload = () => { tileCache[name] = img; res(img); };
+                img.onerror = () => res(null);
+                img.src = tileURL(d);
+            });
+        }
+        let saving = false;
+        async function savePhoto() {
+            if (saving) return;
+            saving = true;
+            const name = WALLS[wallIndex];
+            const d = WALL_DEFS[name];
+            // shutter feedback first — the encode below can take a beat on a big canvas
+            Snd.shutter();
+            const fl = document.getElementById('flash');
+            fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
+
+            const out = document.createElement('canvas');
+            out.width = sprayCanvas.width; out.height = sprayCanvas.height;
+            const o = out.getContext('2d');
+            // 1. wall — base colour, then the tile at on-screen density
+            o.fillStyle = d.base;
+            o.fillRect(0, 0, out.width, out.height);
+            const tile = await loadTile(name);
+            if (tile) {
+                o.save();
+                o.scale(DPR, DPR);
+                o.fillStyle = o.createPattern(tile, 'repeat');
+                o.fillRect(0, 0, out.width / DPR, out.height / DPR);
+                o.restore();
+            }
+            // 2. paint (already at device resolution)
+            o.drawImage(sprayCanvas, 0, 0);
+            // 3. tag
+            o.font = `500 ${11 * DPR}px "Plus Jakarta Sans", system-ui, sans-serif`;
+            o.fillStyle = 'rgba(255,255,255,.6)';
+            o.textAlign = 'right';
+            o.textBaseline = 'alphabetic';
+            o.fillText('divyanshrastogi.in', out.width - 18 * DPR, out.height - 16 * DPR);
+
+            const stamp = new Date().toISOString().slice(0, 19).replace('T', ' ').replace(/:/g, '.');
+            await new Promise(res => out.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `spray wall ${stamp}.png`;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 4000);
+                res();
+            }, 'image/png'));
+            saving = false;
+        }
+        function showHint(ms = 3200) {
+            hintEl.classList.add('visible');
+            clearTimeout(showHint.t);
+            showHint.t = setTimeout(() => hintEl.classList.remove('visible'), ms);
+        }
+        function doAction(btn) {
+            switch (btn.dataset.action) {
+                case 'color': pickCan(+btn.dataset.index); break;
+                case 'cap':   setCap(btn.dataset.cap); break;
+                case 'undo':  undo(); break;
+                case 'clear': buff(); break;
+                case 'wall':  setWall(wallIndex + 1); break;
+                case 'save':  savePhoto(); break;
+                case 'sound': soundOn = !soundOn; if (!soundOn) Snd.hiss(false); syncRails(); break;
+                case 'hint':  openAbout(); break;
+                case 'shuffle': setShuffle(!shuffle); break;
+            }
+        }
+
+        /* keyboard mirrors every dock item */
+        /* ───────── About sheet ───────── */
+        const about = document.getElementById('about');
+        const sheet = about.querySelector('.sheet');
+        const aboutClose = document.getElementById('about-close');
+        let aboutOpen = false, aboutReturnFocus = null;
+        function openAbout() {
+            if (aboutOpen) return;
+            aboutOpen = true;
+            aboutReturnFocus = document.activeElement;
+            about.classList.add('open');
+            about.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('about-open');
+            Snd.hiss(false);
+            sheet.scrollTop = 0;
+            aboutClose.focus({ preventScroll: true });
+        }
+        function closeAbout() {
+            if (!aboutOpen) return;
+            aboutOpen = false;
+            about.classList.remove('open');
+            about.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('about-open');
+            if (aboutReturnFocus && aboutReturnFocus.focus) aboutReturnFocus.focus({ preventScroll: true });
+        }
+        aboutClose.addEventListener('click', closeAbout);
+        about.addEventListener('click', e => { if (e.target === about) closeAbout(); });   // backdrop (click, so the mousedown never becomes a stroke)
+        // Escape closes; Tab stays inside
+        about.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { e.preventDefault(); closeAbout(); return; }
+            if (e.key !== 'Tab') return;
+            const f = [...sheet.querySelectorAll('button, a[href]')].filter(el => !el.disabled);
+            if (!f.length) return;
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
+
+        window.addEventListener('keydown', e => {
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+            if (aboutOpen) { if (e.key === 'Escape') closeAbout(); return; }   // the sheet owns the keyboard
+            const k = e.key;
+            let btn = null;
+            if (k === '1' || k === '2' || k === '3') {
+                btn = capBtns[+k - 1]; setCap(btn.dataset.cap);
+            } else if (k === 'q' || k === 'Q') {
+                pickCan(currentColorIndex - 1); btn = colorBtns[currentColorIndex];
+            } else if (k === 'e' || k === 'E') {
+                pickCan(currentColorIndex + 1); btn = colorBtns[currentColorIndex];
+            } else if (k === 'z' || k === 'Z') {
+                undo(); btn = byAction('undo');
+            } else if (k === 'c' || k === 'C') {
+                buff(); btn = byAction('clear');
+            } else if (k === 'w' || k === 'W') {
+                setWall(wallIndex + 1); btn = byAction('wall');
+            } else if (k === 's' || k === 'S') {
+                savePhoto(); btn = byAction('save');
+            } else if (k === 'm' || k === 'M') {
+                soundOn = !soundOn; if (!soundOn) Snd.hiss(false); syncRails(); btn = soundBtn;
+            } else if (k === 'x' || k === 'X') {
+                setShuffle(!shuffle); btn = shuffleBtn;
+            } else if (k === '?' || k === '/') {
+                openAbout(); btn = byAction('hint');
+            } else return;
+            e.preventDefault();
+            flash(btn);
+        });
+
+        /* ───────── Idle hint ───────── */
+        let idleTimer = null;
+        function bumpIdle() {
+            hintEl.classList.remove('visible');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => { if (!isMouseDown) showHint(6000); }, 4000);
+        }
+        showHint(4000);
+
+        /* ───────── Shake tuner (?tune) ───────── */
+        const Tuner = (() => {
+            const el = document.getElementById('tuner');
+            if (!qs.has('tune')) return { report() {} };
+            const range = document.getElementById('tune-range'), val = document.getElementById('tune-val');
+            const last = document.getElementById('tune-last'), max = document.getElementById('tune-max'), count = document.getElementById('tune-count');
+            const recent = []; let n = 0, ok = 0;
+            const show = () => { val.textContent = SHAKE_MIN_SPEED + ' px/s'; range.value = SHAKE_MIN_SPEED; };
+            range.addEventListener('input', () => { SHAKE_MIN_SPEED = +range.value; localStorage.setItem('spray-shake-speed', SHAKE_MIN_SPEED); show(); });
+            el.addEventListener('mousedown', e => e.stopPropagation());   // dragging the slider is not a stroke
+            el.hidden = false; show();
+            return {
+                report(speed, counted) {
+                    n++; if (counted) ok++;
+                    recent.push(speed); if (recent.length > 10) recent.shift();
+                    last.textContent = Math.round(speed) + ' px/s';
+                    last.className = counted ? 'ok' : 'no';
+                    max.textContent = Math.round(Math.max(...recent)) + ' px/s';
+                    count.textContent = ok + ' / ' + n;
+                },
+            };
+        })();
+
+        /* ───────── Pointer ───────── */
+        function shakeStroke(now) {
+            if (isMouseDown || aboutOpen) return;      // shakes count anywhere — over the toolbar too
+            lastReversalAt = now;
+            Snd.rattle();
+            if (colorLevel <= 0) {
+                shakeCount++;
+                if (shakeCount >= 5) reload();
+            } else {
+                colorLevel = Math.min(100, colorLevel + 20);       // top up a can that still has paint
+            }
+        }
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            const dx = mouseX - prevX;
+            prevX = mouseX; prevY = mouseY;
+            const now = performance.now();
+
+            if (dx !== 0) {
+                const dir = Math.sign(dx);
+                if (dir === runDir) {
+                    runX += Math.abs(dx);
+                } else {
+                    // direction flipped: the run just finished was a jerk if it was long enough AND fast enough
+                    if (runDir !== 0 && runX >= SHAKE_MIN_RUN) {
+                        const speed = runX / Math.max(8, now - runStart) * 1000;     // px/s over the stroke
+                        const counted = speed >= SHAKE_MIN_SPEED;
+                        if (counted) shakeStroke(now);
+                        Tuner.report(speed, counted);
+                    }
+                    runDir = dir; runX = Math.abs(dx); runStart = now;
+                }
+            }
+
+            bumpIdle();
+        });
+
+        let lastSprayX = mouseX;
+        let lastSprayY = mouseY;
+
+        window.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            if (aboutOpen) return;                           // reading, not painting
+            if (e.target.closest('.dock')) return;          // UI click, not a stroke
+            isMouseDown = true;
+            lastSprayX = e.clientX;
+            lastSprayY = e.clientY;
+            if (colorLevel > 0) snapshot(); else Snd.empty();
+            stillSince = performance.now();
+        });
+        window.addEventListener('mouseup', () => { isMouseDown = false; });
+        window.addEventListener('contextmenu', e => e.preventDefault());
+
+        /* ───────── Drips: paint runs when you dwell ───────── */
+        const drips = [];
+        const DWELL_DRIP = 250, DRIP_EVERY = 140, DRIP_MAX = 48;
+        let stillSince = 0, lastDripAt = 0;
+        function spawnDrip(cap) {
+            if (drips.length >= DRIP_MAX) return;
+            const spread = 18 * cap.scale;
+            drips.push({
+                x: mouseX + (Math.random() - 0.5) * spread,
+                y: mouseY + Math.random() * 10 * cap.scale,
+                len: (40 + Math.random() * 120) * Math.min(cap.scale, 1.3),
+                w: 2.2 + Math.random() * 3 * cap.scale,
+                v: 0.6 + Math.random() * 0.6,
+                t: 0, col: color(),
+            });
+        }
+        function stepDrips() {
+            for (let i = drips.length - 1; i >= 0; i--) {
+                const d = drips[i];
+                const prev = d.t;
+                d.v += 0.06;                          // gravity
+                d.t = Math.min(d.len, d.t + d.v);
+                const k = 1 - d.t / d.len;            // thins as it runs
+                sprayCtx.save();
+                sprayCtx.strokeStyle = d.col;
+                sprayCtx.globalAlpha = 0.7;
+                sprayCtx.lineCap = 'round';
+                sprayCtx.lineWidth = d.w * (0.4 + 0.6 * k);
+                sprayCtx.beginPath();
+                sprayCtx.moveTo(d.x, d.y + prev);
+                sprayCtx.lineTo(d.x, d.y + d.t);
+                sprayCtx.stroke();
+                if (d.t >= d.len) {                   // bead at the end
+                    sprayCtx.fillStyle = d.col;
+                    sprayCtx.globalAlpha = 0.7;
+                    sprayCtx.beginPath();
+                    sprayCtx.arc(d.x, d.y + d.t, d.w * 0.9, 0, Math.PI * 2);
+                    sprayCtx.fill();
+                    drips.splice(i, 1);
+                }
+                sprayCtx.restore();
+            }
+        }
+
+        /* ───────── Paint ───────── */
+        function drawSpray(x, y, col) {
+            if (!brushImg.complete || brushImg.naturalWidth === 0) return;
+            const cap = CAPS[currentCap];
+
+            stampCtx.clearRect(0, 0, STAMP_SIZE, STAMP_SIZE);
+            stampCtx.globalCompositeOperation = 'source-over';
+            stampCtx.fillStyle = col;
+            stampCtx.fillRect(0, 0, STAMP_SIZE, STAMP_SIZE);
+            stampCtx.globalCompositeOperation = 'destination-in';
+            stampCtx.drawImage(brushImg, 0, 0, STAMP_SIZE, STAMP_SIZE);
+            stampCtx.globalCompositeOperation = 'source-over';
+
+            const s = STAMP_SIZE * cap.scale;
+            sprayCtx.save();
+            sprayCtx.translate(x, y);
+            sprayCtx.rotate((Math.random() - 0.5) * 0.25);
+            sprayCtx.globalAlpha = Math.random() * cap.alpha + cap.alpha * 0.6;
+            sprayCtx.drawImage(stampCanvas, -s / 2, -s * 0.38, s, s);
+            sprayCtx.restore();
+            sprayCtx.globalAlpha = 1;
+        }
+
+        function drawCan() {
+            const cw = canCanvas.width;
+            const ch = canCanvas.height;
+            canCtx.clearRect(0, 0, cw, ch);
+            if (!canImg.complete || canImg.naturalWidth === 0) return;
+
+            canCtx.globalCompositeOperation = 'source-over';
+            canCtx.globalAlpha = 1;
+            canCtx.drawImage(canImg, 0, 0, cw, ch);
+
+            let fillFrac, fillAlpha, fillColor = color();
+            if (colorLevel <= 0) {
+                shakeCount = Math.min(shakeCount, 5);
+                fillFrac  = shakeCount / 5;
+                fillAlpha = 0.45;
+                if (shuffle && nextColorIndex !== null) fillColor = CANS[nextColorIndex].hex;   // preview what's coming
+            } else {
+                fillFrac  = colorLevel / 100;
+                fillAlpha = 1;
+            }
+            const fillY = ch * (1 - fillFrac);
+            canCtx.globalCompositeOperation = 'source-atop';
+            canCtx.globalAlpha = fillAlpha;
+            canCtx.fillStyle = fillColor;
+            canCtx.fillRect(0, fillY, cw, ch - fillY);
+            canCtx.globalCompositeOperation = 'source-over';
+            canCtx.globalAlpha = 1;
+        }
+
+        const shakeTextLeft   = document.querySelector('.shake-text.left');
+        const shakeTextRight  = document.querySelector('.shake-text.right');
+        const shakeTextGreys  = document.querySelectorAll('.shake-text.grey');
+
+        let lastLevelSync = -1, lastFrame = performance.now();
+        function update() {
+            const nowT = performance.now();
+            const dt = Math.min(0.05, (nowT - lastFrame) / 1000);
+            lastFrame = nowT;
+            Can.step(dt, isMouseDown && !overUI && colorLevel > 0, colorLevel);
+            cursorContainer.style.left = mouseX + 'px';
+            cursorContainer.style.top  = mouseY + 'px';
+
+            if (colorLevel > 0) {
+                if (isMouseDown && !overUI) {
+                    const cap = CAPS[currentCap];
+                    const dx = mouseX - lastSprayX;
+                    const dy = mouseY - lastSprayY;
+                    const dist = Math.hypot(dx, dy);
+                    const now = performance.now();
+                    const sputter = Can.spit;                                   // low can spits, in time with the gargle
+                    // dwell → drips
+                    if (dist > 2) stillSince = now;
+                    else if (!REDUCED && colorLevel > 15 && now - stillSince > DWELL_DRIP && now - lastDripAt > DRIP_EVERY) {
+                        spawnDrip(cap); lastDripAt = now;
+                    }
+                    Snd.hiss(true, Can, cap);
+                    if (sputter) { /* skip this frame's stamps */ }
+                    else if (dist > cap.step) {
+                        const steps = Math.floor(dist / cap.step);
+                        for (let i = 1; i <= steps; i++) {
+                            const t = i / steps;
+                            drawSpray(lastSprayX + dx * t, lastSprayY + dy * t, color());
+                        }
+                    } else {
+                        drawSpray(mouseX, mouseY, color());
+                    }
+                    lastSprayX = mouseX;
+                    lastSprayY = mouseY;
+                    colorLevel -= cap.drain;
+                    if (colorLevel <= 0) onEmpty();
+                    shakeIndicator.classList.remove('visible');
+                } else {
+                    Snd.hiss(false);
+                    colorLevel -= 0.05;                                   // a loaded can slowly settles
+                    if (colorLevel <= 0) onEmpty();
+                    shakeIndicator.classList.add('visible');
+                }
+
+                if (shakeTextLeft.textContent !== 'Click') {
+                    shakeTextLeft.textContent = 'Click';
+                    shakeTextRight.textContent = 'Hold';
+                    shakeTextGreys.forEach(el => el.textContent = 'Spray');
+                }
+            } else {
+                Snd.hiss(false);
+                shakeIndicator.classList.add('visible');
+                if (shakeTextLeft.textContent !== 'Shake') {
+                    shakeTextLeft.textContent = 'Shake';
+                    shakeTextRight.textContent = 'Shake';
+                    shakeTextGreys.forEach(el => el.textContent = 'Shake');
+                }
+            }
+
+            // keep the fill arc on the active can fresh (cheap: only when it moved a percent)
+            const lv = Math.round(colorLevel);
+            if (lv !== lastLevelSync) {
+                lastLevelSync = lv;
+                colorBtns[currentColorIndex].style.setProperty('--fill', (colorLevel / 100).toFixed(2));
+            }
+
+            stepDrips();
+            drawCan();
+            requestAnimationFrame(update);
+        }
+
+        nextColorIndex = Math.floor(Math.random() * CANS.length);   // the first can is a surprise too
+        syncRails();
+        if (canImg.complete && canImg.naturalWidth > 0) update();
+        else canImg.onload = update;
+    </script>
+</body>
+</html>

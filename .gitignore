@@ -74,6 +74,4 @@ _bouquet-loader.js
 # block is removed.
 bouquet.html
 assets/bouquet/
-spray.html
-assets/spray/
 tests/verify-bouquet-doc.js
