@@ -6497,9 +6497,11 @@
     }
     .card-stack__slot { display: contents; }
     .card-stack__slot:not(:last-child) .card-stack__panel { margin-bottom: 30vh; }
-    /* The trailing .card-stack__end spacer makes the LAST slot match :not(:last-child) too (gotcha 9);
-       it must not carry the 30vh — that plus the spacer was a 630px runway before "More work" (owner, 2026-09-18). */
-    .card-stack__slot:nth-last-child(2) .card-stack__panel { margin-bottom: 0; }
+    /* The trailing .card-stack__end spacer makes the LAST slot match :not(:last-child) too (gotcha 9), so
+       the last panel ALSO carries the 30vh. Keep it: every panel's sticky release point is its bottom edge +
+       its own margin, so unequal margins release the deck out of order (2026-09-18: zeroing the last one made
+       Refer & Earn un-pin 240px before Kinko finished receding). The dead space that margin leaves under the
+       deck is cancelled by initCardStack instead (negative margin on the stack, measured at runtime). */
 
     .card-stack__panel {
       position: sticky;
@@ -8051,6 +8053,17 @@
       }
       const endEl = stackEl.querySelector('.card-stack__end');
 
+      // The last panel's slot margin (30vh, see the CSS note) is dead space under
+      // the released deck. Cancel it on the stack itself — margins are outside the
+      // sticky constraint box, so this moves the next section up without touching
+      // any pin or release point. Measured, not hardcoded (it is a vh value).
+      function cancelTrailingMargin() {
+        const last = panels[panels.length - 1];
+        const m = parseFloat(getComputedStyle(last).marginBottom) || 0;
+        stackEl.style.marginBottom = (-m) + 'px';
+      }
+      cancelTrailingMargin();
+
       // ── ScrollStack (React Bits) properties — identical for every stack
       //    (Featured + Film) so both interactions match exactly. ──────────
       const BASE_SCALE          = 0.85;  // back/first card eases to 0.85
@@ -8128,6 +8141,7 @@
       window.addEventListener('resize', () => {
         vh = window.innerHeight;
         panels.forEach((p, i) => { p.style.top = (basePinTop + ITEM_STACK_DISTANCE * i) + 'px'; });
+        cancelTrailingMargin();
         onScroll();
       }, { passive: true });
 

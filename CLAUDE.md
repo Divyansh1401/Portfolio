@@ -187,7 +187,12 @@ a synthetic `wheel` event goes through the lerp, so wait for it to settle
    `:not(:last-child)`, so the LAST panel also inherits the 30vh slot
    margin — and sticky pin/release points shift by that margin (margins
    shrink the sticky constraint box). `initCardStack` measures it at runtime;
-   don't hardcode it.
+   don't hardcode it. **And don't zero it on the last panel** (tried
+   2026-09-18 to shorten the gap before "More work"): every panel releases at
+   its own bottom + its own margin, so unequal margins release the deck OUT
+   OF ORDER — Refer & Earn un-pinned 240px before Kinko finished receding.
+   The dead space is cancelled with a negative margin on the stack instead
+   (`cancelTrailingMargin()`), which lives outside the sticky box.
 
 ## Analytics (PostHog, cookieless)
 Both documents carry an inert PostHog loader in `<head>`, immediately **below**
