@@ -626,6 +626,12 @@
     .world-seg__thumb { position: absolute; top: 0; bottom: 0; left: 0; width: 0; transform: translateX(0); background: var(--text); pointer-events: none; }
     .world-seg__thumb.is-ready { transition: transform 320ms cubic-bezier(0.34, 1.3, 0.64, 1), width 320ms cubic-bezier(0.34, 1.3, 0.64, 1); }
     #main-nav.is-dark .world-seg { border-color: rgba(237,236,234,0.35); }
+    /* ── Nav icon: link to the bouquet making-of page (LOCAL DRAFT, see .claude/BOUQUET-DOC-PLAN.md) ── */
+    .nav-icon { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; margin-right: 4px; color: var(--text); opacity: 0.72; transition: opacity 200ms ease, color 200ms ease; }
+    .nav-icon:hover, .nav-icon:focus-visible { opacity: 1; color: var(--orange); }
+    .nav-icon + .world-seg { margin-left: 10px; }
+    #main-nav.is-dark .nav-icon { color: #EDECEA; }
+    #main-nav.is-dark .nav-icon:hover { color: var(--orange); }
     #main-nav.is-dark .world-seg__opt { color: #EDECEA; }
     #main-nav.is-dark .world-seg__opt.is-on { color: #0D0E0C; }
     #main-nav.is-dark .world-seg__thumb { background: #EDECEA; }
@@ -1216,7 +1222,7 @@
     /* ─── Smaller Projects Grid ──────────────────────── */
     .projects-small {
       padding: clamp(32px, 4vw, 80px) var(--pad-page) var(--pad-section);
-      background: var(--c-light);
+      background: var(--bg); /* one page colour (owner, 2026-09-18): was --c-light */
     }
 
     .section-header {
@@ -5938,8 +5944,7 @@
     /* Art & More */
     .art-section { border-top: 1px solid var(--c-dim); padding-top: 120px; padding-bottom: var(--pad-section); }
     .art-section-header { text-align: center; padding: 0 var(--pad-page) 64px; }
-    .art-section-title { font-family: var(--f-heading); font-size: clamp(28px, 3.5vw, 48px); font-weight: 800; letter-spacing: -0.025em; color: var(--c-text); margin-bottom: 10px; }
-    .art-section-sub { font-size: 15px; color: var(--c-muted); font-style: italic; }
+    .art-section-title { font-family: var(--f-heading); font-size: clamp(28px, 3.5vw, 48px); font-weight: 800; letter-spacing: -0.025em; color: var(--c-text); margin-bottom: 0; }
     .art-layout { display: grid; grid-template-columns: 65fr 35fr; height: 75vh; }
     .art-preview { position: relative; overflow: hidden; background: var(--c-bg2); }
     .art-frame { position: absolute; inset: 0; opacity: 0; transition: opacity 350ms ease-in-out; }
@@ -5966,7 +5971,7 @@
     .film-section {
       background-color: #080808; /* Almost black */
       border-top: 1px solid var(--c-dim);
-      padding: 120px 0;
+      padding: 120px 0 60px; /* bottom halved (owner, 2026-09-18): the stack's settle runway + 120px read as dead space before Photography */
       position: relative;
       /* overflow MUST stay visible: an overflow:hidden/auto ancestor captures
          the sticky context and stops .card-stack__panel from pinning (same
@@ -6479,23 +6484,6 @@
       line-height: 1.02;
       color: var(--text);
     }
-    .cs2-masthead-title sup {
-      font-size: 0.36em;
-      font-weight: 500;
-      color: var(--c-orange);
-      vertical-align: super;
-      letter-spacing: 0.06em;
-      margin-left: 10px;
-    }
-    .cs2-masthead-note {
-      text-align: right;
-      font-size: 13px;
-      font-family: var(--f-body);
-      color: var(--grey);
-      line-height: 1.6;
-      padding-bottom: 6px;
-      flex-shrink: 0;
-    }
 
     /* ── .card-stack — generic sticky-stacking shell (reusable) ───────── */
     .card-stack {
@@ -6509,6 +6497,9 @@
     }
     .card-stack__slot { display: contents; }
     .card-stack__slot:not(:last-child) .card-stack__panel { margin-bottom: 30vh; }
+    /* The trailing .card-stack__end spacer makes the LAST slot match :not(:last-child) too (gotcha 9);
+       it must not carry the 30vh — that plus the spacer was a 630px runway before "More work" (owner, 2026-09-18). */
+    .card-stack__slot:nth-last-child(2) .card-stack__panel { margin-bottom: 0; }
 
     .card-stack__panel {
       position: sticky;
@@ -6619,7 +6610,6 @@
       transform: rotate(45deg);
       flex-shrink: 0;
     }
-    .cs2-kicker b { color: var(--cs2-strong); font-weight: 500; }
 
     .cs2-title {
       font-family: var(--f-heading);
@@ -7173,7 +7163,7 @@
   <!-- ── Bouquet loader: must stay the FIRST child of body (see the CSS note) ── -->
   <div id="bq-loader" hidden aria-hidden="true">
     <canvas></canvas>
-    <div class="bq-label">Hi, welcome to <b>the portfolio</b></div>
+    <div class="bq-label">Hi, welcome to <b>my portfolio</b></div>
     <div class="bq-hint">scroll</div>
   </div>
   <script src="assets/js/bouquet-loader.js"></script>
@@ -7193,6 +7183,20 @@
       </div>
     </div>
     <div class="nav-buttons">
+      <a class="nav-icon" href="bouquet.html" target="_blank" rel="noopener" aria-label="The making of the bouquet loader, opens in a new tab" title="The making of the bouquet (new tab)">
+        <!-- three isometric cubes: a bloom on its stem, drawn in currentColor -->
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+          <path d="M12 3l4 2.3v4.6L12 12.2 8 9.9V5.3z"/><path d="M8 5.3l4 2.3 4-2.3M12 7.6v4.6"/>
+          <path d="M6 9.5l4 2.3v4.6L6 18.7 2 16.4v-4.6z"/><path d="M2 11.8l4 2.3 4-2.3M6 14.1v4.6"/>
+          <path d="M18 9.5l4 2.3v4.6L18 18.7l-4-2.3v-4.6z"/><path d="M14 11.8l4 2.3 4-2.3M18 14.1v4.6"/>
+          <path d="M12 12.2v9"/>
+        </svg>
+      </a>
+      <a class="nav-icon" href="spray.html" target="_blank" rel="noopener" aria-label="Spray can: a paint interaction, opens in a new tab" title="Spray can (new tab)">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="7" y="9" width="10" height="13" rx="1.5"/><path d="M9.5 9V6.5h5V9M12 2.5v2M8.5 4l-1-1M15.5 4l1-1M12 13v6M9.5 15.5h5"/>
+        </svg>
+      </a>
       <div class="world-seg" role="group" aria-label="Choose world" data-world-toggle>
         <span class="world-seg__thumb" aria-hidden="true"></span>
         <button type="button" class="world-seg__opt world-seg__opt--work is-on flip-trigger-btn" aria-pressed="true">Work</button>
@@ -7277,8 +7281,7 @@
     <!-- Editorial masthead (approved Stack Spotlight design) -->
     <div class="cs2-masthead reveal">
       <div class="cs2-masthead-inner">
-        <h2 class="cs2-masthead-title">Featured Work<sup>(03)</sup></h2>
-        <p class="cs2-masthead-note">Selected product &amp; systems work.<br>Scroll — each project stacks over the last.</p>
+        <h2 class="cs2-masthead-title">Featured Work</h2>
       </div>
     </div>
 
@@ -7289,7 +7292,7 @@
       <div class="card-stack__slot">
         <article class="card-stack__panel cs2-panel cs2-panel--settlr case-link" data-project="settlr" aria-labelledby="cs2-settlr-title">
           <div class="cs2-text">
-            <p class="cs2-kicker"><b>Flagship</b>&nbsp;·&nbsp;01&nbsp;&nbsp;·&nbsp;&nbsp;UX Audit &amp; Redesign, solo</p>
+            <p class="cs2-kicker">01&nbsp;&nbsp;·&nbsp;&nbsp;UX Audit &amp; Redesign, solo</p>
             <h3 class="cs2-title" id="cs2-settlr-title">Settlr<span class="cs2-stop">.</span></h3>
             <p class="cs2-pitch">
               A college Splitwise study that grew into a <b>full redesign</b>, a
@@ -7346,7 +7349,7 @@
             <span class="suit suit--red" style="--s:100px; --r:-16deg; top:80%;  left:64%;">&#9829;&#xFE0E;</span>
           </div>
           <div class="cs2-text">
-            <p class="cs2-kicker"><b>Shipped</b>&nbsp;·&nbsp;02&nbsp;&nbsp;·&nbsp;&nbsp;Head Digital Works&nbsp;/&nbsp;A23</p>
+            <p class="cs2-kicker">02&nbsp;&nbsp;·&nbsp;&nbsp;Head Digital Works&nbsp;/&nbsp;A23</p>
             <h3 class="cs2-title" id="cs2-refer-title">Refer <span class="cs2-amp">&amp;</span> Earn<span class="cs2-stop">.</span></h3>
             <p class="cs2-pitch">
               A referral feature rebuilt for <b>clarity</b> and sharper <b>hierarchy</b>,
@@ -7354,9 +7357,9 @@
             </p>
             <div class="cs2-stats" role="list" aria-label="Project stats">
               <div class="cs2-stat" role="listitem"><i>03</i><em>Brands shipped</em></div>
-              <div class="cs2-stat" role="listitem"><i><span class="suit suit--red">&#9830;&#xFE0E;</span> <span class="suit">&#9827;&#xFE0E;</span> <span class="suit">&#9824;&#xFE0E;</span></i><em>Game brands</em></div>
+              <div class="cs2-stat" role="listitem"><i>New</i><em>Treasure referrals</em></div>
               <div class="cs2-stat" role="listitem"><i>A23</i><em>Head Digital</em></div>
-              <div class="cs2-stat" role="listitem"><i>Live</i><em>In production</em></div>
+              <div class="cs2-stat" role="listitem"><i>UX</i><em>Case study</em></div>
             </div>
             <div class="cs2-tags" aria-label="Brands and disciplines">
               <span class="cs2-tag">Product Design</span>
@@ -7391,7 +7394,7 @@
       <div class="card-stack__slot">
         <article class="card-stack__panel cs2-panel cs2-panel--kinko" aria-labelledby="cs2-kinko-title">
           <div class="cs2-text">
-            <p class="cs2-kicker"><b>Confidential</b>&nbsp;·&nbsp;03&nbsp;&nbsp;·&nbsp;&nbsp;Head Digital Works</p>
+            <p class="cs2-kicker">03&nbsp;&nbsp;·&nbsp;&nbsp;Head Digital Works</p>
             <h3 class="cs2-title" id="cs2-kinko-title">Kinko<span class="cs2-stop">.</span></h3>
             <p class="cs2-pitch">
               A <b>65 component</b>, 300+ variant design system powering a
@@ -7771,8 +7774,7 @@
     <section class="art-section" id="art">
       <div class="art-section-header reveal">
         <h2 class="art-section-title">Art &amp; More</h2>
-        <p class="art-section-sub">My motivation for art</p>
-      </div>
+              </div>
       <div class="art-layout">
         <div class="art-preview" id="artPreview">
           <div class="art-frame active" id="artFrameA"><div class="art-fill" id="artFillA"></div></div>
@@ -8043,7 +8045,7 @@
       if (!stackEl.querySelector('.card-stack__end')) {
         const end = document.createElement('div');
         end.className = 'card-stack__end';
-        end.style.height = '40vh';
+        end.style.height = '35vh';   // was 40vh; with the last panel's inherited margin removed this halves the settle runway
         end.setAttribute('aria-hidden', 'true');
         stackEl.appendChild(end);
       }
@@ -12179,6 +12181,28 @@
         });
       });
     })();
+
+    // ── Bouquet loader hand-off: while the loader plays, the nav title starts
+    //    empty and the typewriter types it once the dispersal passes 90%
+    //    (bq-loader:reveal). If the loader skipped itself, #bq-loader is
+    //    already gone and the title stays static as before. ──
+    (function () {
+      if (!document.getElementById('bq-loader')) return;
+      const parts = getNavTitleNode();
+      if (!parts) return;
+      parts.textNode.nodeValue = '';
+      const type = () => typeNavTitle(alterEgoMode ? 'not just a product designer' : 'Product Designer', true);
+      if (document.getElementById('bq-loader').dataset.revealed) type();
+      else addEventListener('bq-loader:reveal', type, { once: true });
+    })();
+
+    // ── Tool icons in the nav (bouquet making-of, spray can): both open in a
+    //    new tab, so the click is the only signal this page ever gets. ──
+    document.querySelectorAll('.nav-icon[href]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('tool_opened', { tool: /spray/.test(a.getAttribute('href')) ? 'spray' : 'bouquet' });
+      });
+    });
 
     // ── Hash router: initial route (after every init above has run) ──
     routeHash(true);

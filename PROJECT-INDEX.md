@@ -13,6 +13,8 @@ repo `Divyansh1401/Portfolio`, branch `main`).
 |---|---|---|
 | `index.html` | Desktop, viewport ≥ 1024px | The whole desktop site: light world + dark "alter ego" world + all overlays, one file. |
 | `mobile.html` | Phones/tablets, < 1024px | The "pocket feed". Separate document, same design language. |
+| `bouquet.html` | Desktop tool page (new tab from the nav icon; no router) | The making of the voxel bouquet: hero = the loader module + bench, then nine scroll-scrubbed beats (`assets/js/bouquet-explainer.js` + `assets/js/beats/`). See CLAUDE.md "The two tool pages". |
+| `spray.html` | Desktop tool page (new tab from the nav icon; no router) | The spray-can toy. Owner-built; dock ends with "Back to portfolio". |
 
 Each page's first `<head>` script `location.replace`s to the other across the
 1024px line (debounced resize, mutually exclusive — no loop) **and forwards
@@ -57,7 +59,10 @@ the hero actions and `#hobbies` / `#photo-N` to the after-hours feed
 
 | Path | What |
 |---|---|
-| `assets/images/…` | All imagery (hero, settlr, refer-earn, kinko, small-cards, photography, Cyanotype, hydrone, watch, og-image.png) |
+| `assets/images/…` | All imagery (hero, settlr, refer-earn, kinko, small-cards, photography, Cyanotype, hydrone, watch, og-image.png, og-bouquet.jpg, og-spray.jpg) |
+| `assets/js/bouquet-loader.js` | The voxel-bouquet renderer + first-paint loader (`mount()`, `run()`, explainer hooks — API block at the top of the file) |
+| `assets/js/bouquet-explainer.js`, `assets/js/beats/` | The explainer harness and one file per beat on `bouquet.html` |
+| `docs/` | **Local-only** working notes (gitignored — Vercel serves the repo root) |
 | `fonts/` | Unbounded + Plus Jakarta Sans (woff2 + ttf) |
 | `prototype/settlr/` | Offline mirror of the Settlr SPA (seed-data mode; icons/ deliberately excluded — phosphor imports removed from `tokens/index.css`) |
 | `projects/`, `.claude/`, `kinko-design-system-report.md` | **Local-only** (gitignored, scrubbed from git history 2026-07-16) |
@@ -65,11 +70,11 @@ the hero actions and `#hobbies` / `#photo-N` to the after-hours feed
 
 ## Verification
 
-Headless Puppeteer scripts (require from `/Desktop/settlr/node_modules`) —
-see session scratchpads / project memory: `verify-deeplinks.js` (20 checks),
-`verify-kbd-meta.js` (16 checks), `fingerprint.js` (computed-style snapshot
-across light/dark/overlay states). The in-app browser pane throttles rAF and
-cannot drive this site — always verify headless.
+Headless Puppeteer suites in `tests/` (require from `/Desktop/settlr/node_modules`);
+`node tests/run-all.js` runs all of them (~15 min). Per-page: `verify-bouquet-loader.js`
+(the loader, forced with `?loader`), `verify-bouquet-doc.js` (bouquet hero/bench, nav
+icons, spray smoke), `verify-bouquet-explainer.js` (harness + `tests/beats/*.test.js`).
+The in-app browser pane throttles rAF and cannot drive this site — always verify headless.
 
 ## Deployment
 

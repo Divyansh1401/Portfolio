@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Making of the Voxel Bouquet · Divyansh Rastogi</title>
+  <meta name="description" content="How the voxel-cube bouquet that opens divyanshrastogi.in was built: 3,014 cubes, one canvas, no libraries, every decision measured.">
+  <!-- PostHog (cookieless) — a copy of index.html's loader, same key, same
+       before_send filter, minus the viewport-router re-check (this page has no
+       router). doc_surface = 'bouquet'. The rationale for every option lives in
+       index.html's copy; keep the two diffable. -->
+  <script>
+  (function () {
+    var PH_KEY  = 'phc_p8UCDF8rzqra2ABqJCQoNZyiBAYcGNz8gGK7vzdsvJti';                              // ← project API key (publishable)
+    var PH_HOST = 'https://eu.i.posthog.com';      // EU residency; US: https://us.i.posthog.com
+    var PH_CDN  = 'https://eu-assets.i.posthog.com'; // must match the host region
+    // ⚠️ PINNED ON PURPOSE — do not switch back to /static/array.js and do
+    // not bump this in a "keep deps current" sweep. The unversioned path is a
+    // rolling "latest" served with only max-age=14400, so $lib_version
+    // drifted across six releases in nine days and every behaviour change
+    // reached production unannounced. The versioned path is served immutable
+    // (max-age=31536000).
+    // This pins array.js ONLY. Measured on 1.410.5 the SDK still lazy-loads
+    // /static/web-vitals.js?v=1.410.5 and
+    // /static/dead-clicks-autocapture.js?v=1.410.5 from the ROLLING path
+    // (?v= is a cache-buster, not a path segment), and /array/<token>/config.js
+    // is never version-scoped. The SDK ships strict_script_versioning:false by
+    // default; adding strict_script_versioning:true to the init config below
+    // would pin the chunks too, but that is UNTESTED here — do not add it
+    // casually.
+    // Verified: 200, 237,247 bytes raw / 77.0 KB brotli.
+    var PH_VER  = '1.410.5';
+
+    // BUFFER — do not restore the no-op. Measured: a /#settlr deep-link
+    // arrival fires case_study_opened at ~1.2-2.1s, but the real wrapper
+    // below only installs at ~1.9-4.3s, so the single most valuable event on
+    // the site was being silently thrown away. Queue instead, flush after
+    // posthog.init. Push-drops when full (never shift): if PostHog never
+    // loads, the EARLY events are the ones worth keeping. Safe with an empty
+    // PH_KEY and safe if an ad blocker eats the script — the queue simply
+    // grows to 50 and is discarded. It never throws, so all ~11 call sites
+    // stay safe to invoke at any time. q is closure-scoped, not a global.
+    var q = [];
+    window.track = function (name, props) {
+      if (q.length < 50) q.push([name, props, new Date()]);
+    };
+    if (!PH_KEY) return;
+    // Owner bypass. PostHog ships internal_or_test_user_hostname (auto-enabled
+    // by defaults >= '2026-01-30'), but it only excludes localhost/127.0.0.1 —
+    // it cannot exclude the owner browsing the PRODUCTION domain. And
+    // PostHog's cohort-based "filter internal users" is structurally inert
+    // under cookieless_mode: no persons are ever created to put in a cohort.
+    // So a URL flag is the only mechanism that works on the live site. The
+    // router above forwards location.search, so ?nostats=1 survives a hop
+    // across the 1024px line.
+    //
+    // The flag is STICKY per browser: ?nostats=1 once writes localStorage
+    // 'nostats' and every later plain visit from that browser is silent;
+    // ?nostats=0 clears it. A functional key like vp-hop, not an analytics
+    // identifier — it exists so the owner can stop counting themselves
+    // without retyping the flag before every rehearsal. Per browser profile:
+    // repeat once on each device, and incognito windows never have it.
+    var ns = /[?&]nostats(?:=([^&#]*))?/.exec(location.search), quiet = false;
+    if (ns) quiet = ns[1] !== '0';
+    try {
+      if (ns) { if (quiet) localStorage.setItem('nostats', '1'); else localStorage.removeItem('nostats'); }
+      else quiet = !!localStorage.getItem('nostats');
+    } catch (e) {}
+    if (quiet) return;
+
+    var s = document.createElement('script');
+    s.src = PH_CDN + '/static/' + PH_VER + '/array.js';
+    s.async = true;
+    s.onload = function () {
+      posthog.init(PH_KEY, {
+        api_host: PH_HOST,
+        cookieless_mode: 'always',
+        // ⛔ DO NOT BUMP THIS DATE. It is a bundle of behaviour flags, not a
+        // version number, and it is NOT a dependency to keep current.
+        // At '2026-06-25' or later, PostHog auto-enables
+        // disable_capture_url_hashes, which SILENTLY strips the fragment from
+        // $current_url. Every case study on this site is a hash route
+        // (#settlr, #refer-earn, #hobbies), so that single flag collapses all
+        // of them into one indistinguishable "/" pageview and destroys the
+        // only record of which work a recruiter actually opened. There is no
+        // error and no warning — the data just goes flat. Leave it at
+        // 2026-05-30. If it must ever move, verify $current_url still carries
+        // the hash BEFORE shipping.
+        defaults: '2026-05-30',
+        capture_pageview: true,
+        autocapture: true,
+        disable_session_recording: true,
+        // Feature flags are unused here, and the flags call is a network
+        // round-trip on every single pageview. Off.
+        advanced_disable_feature_flags: true,
+        disable_web_experiments: true,
+        // Kept deliberately: real-user Core Web Vitals (3 KB) is the only way
+        // to know whether the perf work actually helps visitors on real
+        // devices, and dead-click capture (7 KB) surfaces people clicking
+        // decorative elements expecting them to do something — a real risk on
+        // a site with this much hover-reactive art.
+        capture_performance: true,
+        capture_dead_clicks: true,
+        // Use before_send, NOT sanitize_properties. The shipped bundle logs
+        // "sanitize_properties is deprecated. Use before_send instead".
+        // Never add both.
+        before_send: function (event) {
+          if (!event) return null;
+          // Leftover manual test events from the analytics bring-up.
+          if (event.event === 'direct_probe' ||
+              event.event === 'probe_AFTER_SETTING') return null;
+          // Headless-crawler signature: 7 of 18 sessions matched it. Real
+          // browser chrome always costs 50-130px of height, so a viewport
+          // whose HEIGHT equals the screen height is the discriminator. The
+          // width comparison alone also matches legitimate maximised windows,
+          // so do NOT "simplify" this to a single condition. Kept identical
+          // in mobile.html even though it can rarely fire there, so the two
+          // files stay diffable.
+          try {
+            if (innerWidth >= 1024 &&
+                innerWidth === screen.width &&
+                innerHeight === screen.height) return null;
+          } catch (e) {}
+          return event;
+        }
+      });
+      // $device_type is UA-derived while the router is viewport-derived, and
+      // the two already disagree — so record which document actually
+      // rendered. Keep this value in sync with the file it lives in.
+      // The very first $pageview fires inside init() and predates this call;
+      // that one stays attributable via $current_url ("/" vs "/mobile.html").
+      // Wrapped: an ad-blocker surrogate that defines init but not register
+      // would otherwise throw here, leaving window.track stuck as the buffer
+      // forever and tripping the suite's no-console-errors assertion.
+      // ⚠️ NAMED doc_surface, NOT surface. `surface` collided: email_clicked
+      // emits its OWN surface property (connect | case_end | receipt_barcode |
+      // scratch_coffee), and an event property overrides a super-property — so
+      // every email_clicked lost the desktop/mobile split, which is the one
+      // thing this registration exists to provide. Caught live 2026-08-04.
+      // Do not rename it back, and do not add a `surface` key to any event.
+      try { posthog.register({ doc_surface: 'bouquet' }); } catch (e) {}
+      window.track = function (name, props) {
+        try { posthog.capture(name, props || {}); } catch (e) {}
+      };
+      // Flush the buffer, preserving each call's ORIGINAL timestamp so a
+      // deep-link event is not restamped seconds late and reordered after
+      // the events it actually preceded.
+      for (var i = 0; i < q.length; i++) {
+        try { posthog.capture(q[i][0], q[i][1] || {}, { timestamp: q[i][2] }); } catch (e) {}
+      }
+      q.length = 0;
+    };
+    document.head.appendChild(s);
+  })();
+  </script>
+  <link rel="canonical" href="https://www.divyanshrastogi.in/bouquet.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Divyansh Rastogi">
+  <meta property="og:url" content="https://www.divyanshrastogi.in/bouquet.html">
+  <meta property="og:title" content="The Making of the Voxel Bouquet · Divyansh Rastogi">
+  <meta property="og:description" content="How the voxel-cube bouquet that opens divyanshrastogi.in was built: 3,014 cubes, one canvas, no libraries — nine scroll-driven beats.">
+  <meta property="og:image" content="https://www.divyanshrastogi.in/assets/images/og-bouquet.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The voxel bouquet, landed: pink and cream cubes on a beige ground.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="fonts/Unbounded/Unbounded-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face{font-family:'Unbounded';src:url('fonts/Unbounded/Unbounded-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 900;font-display:swap}
+    @font-face{font-family:'Plus Jakarta Sans';src:url('fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 800;font-display:swap}
+    @font-face{font-family:'Plus Jakarta Sans';src:url('fonts/Plus_Jakarta_Sans/PlusJakartaSans-Italic-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 800;font-style:italic;font-display:swap}
+    :root{ --bg:#F5F3EE; --text:#0C0C0B; --orange:#E06B2D; --grey:#6E6E6C; --rule:rgba(12,12,11,.14); --tint:rgba(224,107,45,.10); --surface:#FFFFFF;
+            --f-heading:'Unbounded',system-ui,sans-serif; --f-body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:ui-monospace,SFMono-Regular,Menlo,monospace; --pad-page:clamp(20px,4vw,56px); }
+    *{box-sizing:border-box}
+    html{background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+    body{margin:0;font:17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+    a{color:var(--text);text-decoration-color:var(--orange);text-underline-offset:3px}
+    a:hover{color:var(--orange)}
+    :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+
+    /* nav: same bar as the site, reduced to what this page needs */
+    .top{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad-page);z-index:50;
+      backdrop-filter:blur(18px) saturate(115%) brightness(92%);-webkit-backdrop-filter:blur(18px) saturate(115%) brightness(92%);background:rgba(255,255,255,.42);border-bottom:1px solid rgba(0,0,0,.06)}
+    .top .nm{font:600 13px/1 var(--f-heading);letter-spacing:.02em;text-decoration:none}
+    .top .back{font:600 11px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border:1px solid rgba(12,12,11,.35)}
+    .top .back:hover{background:var(--text);color:var(--bg)}
+
+    /* hero: the site's own loader module, mounted here as a player */
+    /* hero: the site's loader module as a player, PINNED while page scroll drives
+       the burst (the birthday page's technique: q from scrollY, never a hijacked
+       wheel). --range is the px of scroll the burst takes; 0 in timed/fade modes. */
+    .hero-wrap{height:calc(100vh + var(--range,800px));height:calc(100dvh + var(--range,800px))}
+    .hero{position:sticky;top:0;height:100vh;height:100dvh;min-height:560px;overflow:hidden;touch-action:pan-y}
+    .hero canvas{position:absolute;inset:0;display:block}
+    .hero-title{position:absolute;left:var(--pad-page);right:var(--pad-page);bottom:64px;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .9s ease,transform .9s ease}
+    .hero-title.is-in{opacity:1;transform:none}
+    .hero-title h1{margin:0}
+    .scroll-hint{position:absolute;left:0;right:0;bottom:26px;text-align:center;font:500 11px/1 var(--f-body);letter-spacing:.3em;text-transform:uppercase;color:var(--grey);opacity:0;transition:opacity .6s ease;animation:nudge 1.6s ease-in-out infinite;pointer-events:none}
+    .scroll-hint.is-in{opacity:1}
+    @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+    @media (prefers-reduced-motion:reduce){.scroll-hint{animation:none}.hero-title{transition:none}}
+    @media (max-width:720px){.hero-title{bottom:128px}}
+
+    /* ---- loader bench: the same panel as the test bench, driving this hero ---- */
+    #bench{position:absolute;right:var(--pad-page);top:80px;bottom:24px;z-index:5;width:336px;display:flex;flex-direction:column;
+      background:rgba(250,249,246,.94);backdrop-filter:blur(14px) saturate(120%);-webkit-backdrop-filter:blur(14px) saturate(120%);
+      border:1px solid rgba(12,12,11,.10);border-radius:14px;box-shadow:0 18px 40px -18px rgba(12,12,11,.28),0 2px 6px -2px rgba(12,12,11,.08);
+      font:12px/1.4 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+    #bench *{box-sizing:border-box}
+    #bench .hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
+    #bench .hd h3{margin:0;font:600 12px/1 'Unbounded',system-ui,sans-serif;letter-spacing:.01em;flex:1}
+    #bench .fold{appearance:none;border:0;background:transparent;width:28px;height:28px;padding:0;margin:0;border-radius:8px;cursor:pointer;color:var(--grey);display:grid;place-items:center;line-height:0}
+    #bench .fold:hover{background:rgba(12,12,11,.06);color:var(--text)}
+    #bench .fold svg{display:block;transition:transform .2s ease}
+    #bench.min .fold svg{transform:rotate(180deg)}
+    #bench .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px}
+    #bench .actions .pri{grid-column:1 / -1}
+    #bench .btn{appearance:none;font:600 10.5px/1 'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:11px 14px;border:1.5px solid var(--text);background:transparent;color:var(--text);cursor:pointer;transition:background .15s,color .15s}
+    #bench .btn:hover{background:var(--text);color:var(--bg)}
+    #bench .btn.pri{background:var(--text);color:var(--bg)}
+    #bench .btn.pri:hover{background:#222}
+    #bench .btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+    /* tabs, in the site's segmented-switch language */
+    #bench .tabs{display:flex;margin:0 16px;border:1px solid rgba(12,12,11,.35)}
+    #bench .tab{flex:1;appearance:none;border:0;background:none;padding:0 4px;height:34px;font:700 10px/1 'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.55;cursor:pointer;transition:opacity .15s}
+    #bench .tab:hover{opacity:.85}
+    #bench .tab[aria-selected=true]{background:var(--text);color:var(--bg);opacity:1}
+    #bench .tab:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+    #bench .panes{flex:1;min-height:0;overflow:auto;padding:6px 16px 8px;overscroll-behavior:contain}
+    #bench .pane[hidden]{display:none}
+    #bench .grp{padding:10px 0 4px}
+    #bench .grp + .grp{border-top:1px solid rgba(12,12,11,.08)}
+    #bench .grp h4{margin:0 0 6px;font:600 10px/1 'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+    #bench .hint{margin:-2px 0 8px;color:var(--grey);font-size:11px;line-height:1.45}
+    /* a control: name and value on one line, the slider underneath */
+    #bench .c{display:block;padding:6px 0 7px;cursor:default}
+    #bench .c .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+    #bench .c .n{font-weight:500}
+    #bench .c .v{font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--grey)}
+    #bench .c .v b{font-weight:600;color:var(--text)}
+    #bench input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--orange);height:18px;cursor:pointer}
+    #bench .two{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+    #bench .sel{display:flex;flex-direction:column;gap:6px;padding:6px 0 7px}
+    #bench .sel .n{font-weight:500}
+    #bench select{appearance:none;width:100%;font:500 12px/1.2 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);background:#fff;border:1px solid rgba(12,12,11,.18);padding:9px 30px 9px 10px;border-radius:0;cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230C0C0B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    #bench select:focus-visible,#bench input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+    #bench .checks{display:flex;flex-wrap:wrap;gap:6px 16px;padding:6px 0}
+    #bench .chk{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:500}
+    #bench .chk input,#bench .rad input{accent-color:var(--text);width:15px;height:15px;margin:0}
+    #bench .seg{display:flex;gap:0;border:1px solid rgba(12,12,11,.35);margin:6px 0 2px}
+    #bench .rad{flex:1;display:flex;justify-content:center;align-items:center;height:32px;font:600 10px/1 'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;opacity:.6}
+    #bench .rad input{position:absolute;opacity:0;pointer-events:none}
+    #bench .rad:has(input:checked){background:var(--text);color:var(--bg);opacity:1}
+    #bench .ft{border-top:1px solid rgba(12,12,11,.08);padding:10px 16px 14px;display:flex;gap:8px;align-items:center}
+    #bench .ft .btn{padding:9px 12px;font-size:10px}
+    #bench .ft .sp{flex:1}
+    #bench .out{white-space:pre-wrap;font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--grey);background:rgba(12,12,11,.04);padding:8px 10px;border-radius:8px;margin:8px 0 4px;min-height:1.5em}
+    #bench .why{color:#C41E5A}
+    #bench.min{bottom:auto} #bench.min > :not(.hd):not(.actions){display:none}   /* collapsed: header + Replay, anchored top, same place */
+    #bench.min .actions{padding-bottom:14px} #bench.min .actions > :not(.pri){display:none}
+    @media (max-width:760px){#bench{left:10px;right:10px;width:auto;top:auto;bottom:10px;max-height:56vh}}
+    #bench.min{bottom:auto}
+
+    .eyebrow{font:500 11px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin:0}
+    h1{font:800 clamp(2rem,5.2vw,3.6rem)/1.02 var(--f-heading);letter-spacing:-.02em;margin:14px 0 10px}
+    h2{font:700 clamp(1.25rem,2.6vw,1.7rem)/1.15 var(--f-heading);letter-spacing:-.01em;margin:64px 0 16px;padding-top:22px;border-top:1px solid var(--rule)}
+    h3{font:700 .95rem/1.3 var(--f-body);letter-spacing:.02em;margin:28px 0 8px}
+    .sub{margin:0 0 26px;color:var(--grey);font-size:1.1rem}
+    p{margin:0 0 15px}
+    code{font-family:var(--mono);font-size:.86em}
+    code{background:var(--tint);padding:.06em .32em;border-radius:3px}
+    .note{font-size:.92rem;color:var(--grey)}
+
+    .bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:12px 0 0;font:.86rem/1.4 var(--mono);color:var(--grey)}
+    button{font:600 11px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--text);background:transparent;color:var(--text);padding:12px 18px;cursor:pointer}
+    button:hover,button.solid{background:var(--text);color:var(--bg)}
+
+    /* ── explainer ── */
+    .explainer{max-width:1100px;margin:0 auto;padding:72px var(--pad-page) 0}
+    .beat + .beat{margin-top:64px}
+    .beat__pin{position:sticky;top:var(--pin-top,64px);padding-top:16px}
+    .beat:last-child{padding-bottom:96px}
+    .beat__head{max-width:72ch}
+    .beat__head .eyebrow{margin:0}
+    .beat__title{font:700 clamp(1.25rem,2.4vw,1.6rem)/1.2 var(--f-heading);letter-spacing:-.01em;margin:10px 0 14px;padding-top:0;border-top:0}
+    .beat__prose{max-width:72ch;color:var(--text);margin:0}
+    .beat__stage{position:relative;width:100%;margin:24px auto 0;background:var(--surface);border:1px solid var(--rule);border-radius:12px;aspect-ratio:16/10;max-height:calc(100dvh - var(--pin-top,64px) - 250px);min-height:300px;padding:24px;overflow:hidden}
+    .beat__stage canvas{position:absolute;inset:24px;width:calc(100% - 48px);height:calc(100% - 48px);display:block}
+    .beat__stage.is-split{display:flex;gap:16px;padding:24px}
+    .beat__stage.is-split canvas{position:static;width:100%;height:100%}
+    .beat__half{position:relative;flex:1;min-width:0;margin:0;display:flex;flex-direction:column;gap:8px}
+    .beat__half figcaption{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:center}
+    .beat__half.is-ghost canvas{filter:grayscale(1) opacity(.45)}
+    .beat__counters{position:absolute;left:24px;bottom:20px;display:flex;gap:22px;font:500 11px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--grey);pointer-events:none}
+    .beat__counters .counter b{display:block;font:700 1.35rem/1.1 var(--f-heading);color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+    .beat__counters .counter b.is-hot{color:var(--orange)}
+    .beat__replay{position:absolute;top:20px;right:20px;padding:9px 14px;font-size:10px}
+    @media (max-width:600px){
+      /* phones: the head scrolls away and only the stage pins (see bouquet-explainer.js `lead()`) */
+      .beat__pin{display:contents}
+      .beat__stage{position:sticky;top:calc(var(--pin-top,64px) + 12px);aspect-ratio:auto;height:calc(100dvh - var(--pin-top,64px) - 12px - 88px)} .beat__prose{font-size:15px} .beat__head .eyebrow{font-size:10px}
+      /* stacked halves: counters drop into flow under them so the halves shrink to what's left */
+      .beat__stage.is-split{flex-direction:column;gap:10px}
+      .beat__half{min-height:0} .beat__stage.is-split canvas{min-height:0}
+      .beat__stage.is-split .beat__counters{position:static;flex:none;flex-wrap:wrap;gap:8px 18px;padding-top:4px}
+      .beat__stage.is-split .beat__counters .counter b{font-size:1.1rem}
+    }
+    @media (prefers-reduced-motion:reduce){ .beat__counters{transition:none} }
+    .explainer-end{min-height:calc(100vh + 64px);min-height:calc(100dvh + 64px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px var(--pad-page);gap:18px}
+    .explainer-end .back{font:600 11px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border:1px solid rgba(12,12,11,.35);margin-top:10px}
+    .explainer-end .back:hover{background:var(--text);color:var(--bg)}
+    /* ── /explainer ── */
+
+    @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+    @media (max-width:600px){ body{font-size:16px} .top .back span{display:none} }
+  </style>
+</head>
+<body>
+
+<nav class="top" aria-label="Site">
+  <a class="nm" href="index.html">Divyansh Rastogi</a>
+  <a class="back" href="index.html?noloader" title="Back to the portfolio">← <span>Back to work</span></a>
+</nav>
+
+<div class="hero-wrap" id="heroWrap">
+<section class="hero" aria-label="The bouquet, assembling">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-title" id="heroTitle"><h1>The making of</h1></div>
+  <div class="scroll-hint" id="scrollHint" aria-hidden="true">scroll</div>
+<div id="bench" role="region" aria-label="Loader bench">
+  <div class="hd">
+    <h3 id="rigtitle">Loader bench</h3>
+    <button class="fold" id="fold" type="button" aria-label="Expand the panel" aria-expanded="false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
+  </div>
+  <div class="actions">
+    <button class="btn pri" id="replay" type="button">Replay</button>
+    <button class="btn" id="preset-measured" type="button" title="1 turn, 4.2 s">Default</button>
+    <button class="btn" id="preset-quick" type="button" title="0.3 turn, 2.6 s">Quick</button>
+    <button class="btn" id="preset-full" type="button" title="1 turn, 5 s">Slow</button>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="play" type="button">Play</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="build" type="button">Assembly</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="exit" type="button">Exit</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="scrub" type="button">Scrub</button>
+  </div>
+  <div class="panes">
+
+    <div class="pane" data-pane="play">
+      <div class="grp">
+        <label class="c"><span class="t"><span class="n">Duration</span><span class="v"><b id="flyv">4200</b> ms</span></span><input id="fly" type="range" min="1200" max="6000" step="100" value="4200"></label>
+        <label class="c"><span class="t"><span class="n">Spin per cube</span><span class="v"><b id="turnsv">1.00</b> turns</span></span><input id="turns" type="range" min="0" max="1.5" step="0.05" value="1"></label>
+        <label class="c"><span class="t"><span class="n">Camera sweep</span><span class="v"><b id="yawinv">-540</b>° to front</span></span><input id="yawin" type="range" min="-720" max="720" step="5" value="-540"></label>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Size</span><span class="v"><b id="fillv">0.69</b> of view</span></span><input id="fill" type="range" min="0.25" max="0.8" step="0.01" value="0.69"></label>
+          <label class="c"><span class="t"><span class="n">Pause</span><span class="v"><b id="holdv">420</b> ms</span></span><input id="hold" type="range" min="0" max="1500" step="20" value="420"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="build" hidden>
+      <div class="grp">
+        <h4>Order</h4>
+        <label class="sel"><span class="n">Build order</span><select id="f_order">
+          <option value="stem,ribbon,paper,leaf,bloom">Stems, ribbon, paper, leaves, blooms</option>
+          <option value="stem,paper,leaf,bloom,ribbon">Stems, paper, leaves, blooms, ribbon</option>
+          <option value="stem,paper,ribbon,leaf,bloom">Stems, paper, ribbon, leaves, blooms</option>
+          <option value="ribbon,stem,paper,leaf,bloom">Ribbon first</option>
+          <option value="bloom,leaf,paper,stem,ribbon">Blooms first, top down</option>
+        </select></label>
+        <label class="sel"><span class="n">Within each part</span><select id="f_within">
+          <option value="height">Bottom up</option>
+          <option value="depth">Back to front</option>
+          <option value="radial">Centre out</option>
+          <option value="random">Scattered</option>
+        </select></label>
+      </div>
+      <div class="grp">
+        <h4>Timing</h4>
+        <p class="hint">Launch spread is the share of the duration over which cubes set off; flight is how long each is in the air. Together they should stay near 0.98.</p>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Launch spread</span><span class="v"><b id="f_staggerv">0.29</b></span></span><input id="f_stagger" type="range" min="0" max="0.6" step="0.01" value="0.29"></label>
+          <label class="c"><span class="t"><span class="n">Flight</span><span class="v"><b id="f_flightv">0.69</b></span></span><input id="f_flight" type="range" min="0.3" max="1" step="0.01" value="0.69"></label>
+        </div>
+      </div>
+      <div class="grp">
+        <h4>Swirl</h4>
+        <p class="hint">Whip is how much of the spin happens near arrival. Lower spreads the swirl along the whole path.</p>
+        <label class="c"><span class="t"><span class="n">Whip</span><span class="v"><b id="f_rationalv">0.55</b></span></span><input id="f_rational" type="range" min="0" max="1" step="0.05" value="0.55"></label>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Whip floor</span><span class="v"><b id="f_rhoMinv">0.06</b></span></span><input id="f_rhoMin" type="range" min="0.01" max="0.5" step="0.01" value="0.06"></label>
+          <label class="c"><span class="t"><span class="n">Whip ceiling</span><span class="v"><b id="f_rhoMaxv">0.50</b></span></span><input id="f_rhoMax" type="range" min="0.05" max="1" step="0.05" value="0.5"></label>
+        </div>
+        <label class="c"><span class="t"><span class="n">Orbit flatness</span><span class="v"><b id="f_vwinv">0.25</b></span></span><input id="f_vwin" type="range" min="0" max="0.9" step="0.05" value="0.25"></label>
+        <label class="c"><span class="t"><span class="n">Spin variation</span><span class="v"><b id="f_angJitv">0.12</b> turn</span></span><input id="f_angJit" type="range" min="0" max="0.6" step="0.02" value="0.12"></label>
+      </div>
+      <div class="grp">
+        <h4>Where cubes start</h4>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Start near own row</span><span class="v"><b id="f_yMixv">0.55</b></span></span><input id="f_yMix" type="range" min="0" max="1" step="0.05" value="0.55"></label>
+          <label class="c"><span class="t"><span class="n">Height scatter</span><span class="v"><b id="f_yFreev">26</b> u</span></span><input id="f_yFree" type="range" min="0" max="80" step="2" value="26"></label>
+        </div>
+        <label class="c"><span class="t"><span class="n">Distance variation</span><span class="v"><b id="f_jitterv">0.20</b></span></span><input id="f_jitter" type="range" min="0" max="1.5" step="0.05" value="0.2"></label>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="exit" hidden>
+      <div class="grp">
+        <h4>How it leaves</h4>
+        <div class="seg">
+          <label class="rad"><input type="radio" name="mode" value="scroll" checked>Scroll</label>
+          <label class="rad"><input type="radio" name="mode" value="disperse">Timed</label>
+          <label class="rad"><input type="radio" name="mode" value="fade">Fade</label>
+        </div>
+        <p class="hint">Scroll: after landing, the page's own scroll drives the burst both ways (the hero stays pinned for that distance); side-scroll or drag turns the camera. Timed and Fade play on their own and loop.</p>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Scroll distance</span><span class="v"><b id="rangev">800</b> px</span></span><input id="range" type="range" min="300" max="2000" step="50" value="800"></label>
+          <label class="c"><span class="t"><span class="n">Timed length</span><span class="v"><b id="exitv">1850</b> ms</span></span><input id="exit" type="range" min="300" max="2500" step="50" value="1850"></label>
+        </div>
+      </div>
+      <div class="grp">
+        <h4>Burst</h4>
+        <label class="c"><span class="t"><span class="n">Spread</span><span class="v"><b id="d_outKv">3.4</b> × half width</span></span><input id="d_outK" type="range" min="0.5" max="6" step="0.1" value="3.4"></label>
+        <div class="two">
+          <label class="c"><span class="t"><span class="n">Rise</span><span class="v"><b id="d_upKv">1.30</b> × height</span></span><input id="d_upK" type="range" min="0.5" max="3" step="0.05" value="1.3"></label>
+          <label class="c"><span class="t"><span class="n">Top releases first</span><span class="v"><b id="d_staggerv">0.30</b></span></span><input id="d_stagger" type="range" min="0" max="1" step="0.05" value="0.3"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="scrub" hidden>
+      <div class="grp">
+        <p class="hint">Scrubbing pauses the sequence and shows one exact frame.</p>
+        <label class="c"><span class="t"><span class="n">Assembly</span><span class="v"><b id="pv">1.000</b></span></span><input id="p" type="range" min="0" max="1000" value="1000"></label>
+        <label class="c"><span class="t"><span class="n">Camera</span><span class="v"><b id="yawv">0</b>°</span></span><input id="yaw" type="range" min="-180" max="180" value="0"></label>
+        <label class="c"><span class="t"><span class="n">Burst</span><span class="v"><b id="qv">0.000</b></span></span><input id="q" type="range" min="0" max="1000" value="0"></label>
+      </div>
+      <div class="grp">
+        <button class="btn" id="measure" type="button">Measure frame cost</button>
+        <p class="hint" style="margin-top:8px">120 frames, flushed timing. The real number, not submission time.</p>
+        <div class="out" id="benchOut">—</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ft">
+    <button class="btn" id="copy" type="button">Copy settings</button>
+    <button class="btn" id="fdefaults" type="button">Reset shape</button>
+    <span class="sp"></span>
+  </div>
+</div>
+</section>
+</div>
+
+<!-- ══ EXPLAINER: twelve scroll-scrubbed beats (assets/js/beats/beat-N.js each). ══ -->
+<div class="explainer" id="explainer">
+<section class="beat" id="beat-1" data-beat="1">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">1 / 9</p>
+    <h2 class="beat__title">Every cube is the same size, and every cube sits on a grid.</h2>
+    <p class="beat__prose">The whole bouquet is built from one size of cube, placed on whole-number grid positions. Because every cube is identical and aligned, the renderer always knows how any two cubes stack — that is what keeps the drawing simple and correct.</p>
+  </header>
+  <div class="beat__stage" aria-label="Twelve mismatched squares snapping onto a grid, then tilting into a stack of interlocking isometric cubes">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-2" data-beat="2">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">2 / 9</p>
+    <h2 class="beat__title">A cube is drawn as its three visible faces, each in its own shade.</h2>
+    <p class="beat__prose">From the camera’s angle you can only ever see a cube’s top and two sides, so those three faces are all that is drawn — the three faces behind are skipped. Each visible face gets its own shade, and the shade comes from the light’s angle.</p>
+  </header>
+  <div class="beat__stage" aria-label="A cube's three visible faces sliding apart to show they are flat shapes, then the three faces never drawn ghosting in behind them before it reassembles">
+    <svg viewBox="-260 -220 520 440" role="img" aria-hidden="true">
+      <g id="b2-hidden" opacity="0">
+        <path d="M0,100 L-86.60,50 L0,0 L86.60,50 Z" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="4 3" stroke-linejoin="round"></path>
+        <path d="M86.60,50 L0,0 L0,-100 L86.60,-50 Z" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="4 3" stroke-linejoin="round"></path>
+        <path d="M0,0 L-86.60,50 L-86.60,-50 L0,-100 Z" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="4 3" stroke-linejoin="round"></path>
+      </g>
+      <text id="b2-lbl-never" x="0" y="128" text-anchor="middle" opacity="0" style="font:500 11px/1 var(--mono);letter-spacing:.12em;fill:var(--grey)">NEVER DRAWN</text>
+      <path data-face="z" id="b2-z" d="M-86.60,-50 L0,0 L0,100 L-86.60,50 Z" fill="#8D3E52" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round" transform="translate(0,0)"></path>
+      <path data-face="x" id="b2-x" d="M0,0 L86.60,-50 L86.60,50 L0,100 Z" fill="#C45772" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round" transform="translate(0,0)"></path>
+      <path data-face="top" id="b2-top" d="M0,-100 L86.60,-50 L0,0 L-86.60,-50 Z" fill="#FB6F92" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round" transform="translate(0,0)"></path>
+      <text id="b2-lbl-top" x="0" y="-165" text-anchor="middle" opacity="0" style="font:500 11px/1 var(--mono);letter-spacing:.12em;fill:var(--grey)">TOP · 1.00</text>
+      <text id="b2-lbl-x" x="140" y="51" text-anchor="start" opacity="0" style="font:500 11px/1 var(--mono);letter-spacing:.12em;fill:var(--grey)">SIDE · 0.78</text>
+      <text id="b2-lbl-z" x="-140" y="51" text-anchor="end" opacity="0" style="font:500 11px/1 var(--mono);letter-spacing:.12em;fill:var(--grey)">SIDE · 0.56</text>
+    </svg>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-3" data-beat="3">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">3 / 9</p>
+    <h2 class="beat__title">Cubes are drawn from the farthest to the nearest.</h2>
+    <p class="beat__prose">There is no depth buffer. The cubes are sorted by distance from the camera and drawn in that order, far to near, so a nearer cube always paints over a farther one. While the cubes are flying in, the order is kept fixed for the whole flight so nothing flickers.</p>
+  </header>
+  <div class="beat__stage" aria-label="The bouquet's cubes stamping in far to near in a tilted view, with the cube being painted right now glowing orange">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-5" data-beat="5">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">4 / 9</p>
+    <h2 class="beat__title">Only the cubes the camera can see are drawn.</h2>
+    <p class="beat__prose">The model has 3,014 cubes. 1,495 of them are fully enclosed by neighbours and can never be seen, so they are never drawn. From the front, another 809 sit exactly behind the cube in front of them, so they are skipped too. 710 cubes make the picture.</p>
+  </header>
+  <div class="beat__stage" aria-label="The bouquet's buried and hidden cubes lighting up in turn, then the camera turning to reveal the gaps they leave">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-6" data-beat="6">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">5 / 9</p>
+    <h2 class="beat__title">Every face gets one of five shades, and the light moves with the camera.</h2>
+    <p class="beat__prose">Every cube face points one of five ways, so the shade for each direction is worked out once per frame from the light's angle, and every cube reuses those five numbers; the light is attached to the camera, so when the camera goes around, a face's shade changes smoothly and no cube is ever recoloured.</p>
+  </header>
+  <div class="beat__stage is-split" aria-label="A single cube whose two side faces recolour as the light's angle changes with the camera, next to the whole bouquet turning through the same angle">
+    <figure class="beat__half">
+      <svg class="beat-6__cube" viewBox="-85 -95 170 190" aria-hidden="true" focusable="false">
+        <path data-face="top" d="M0,-90 L77.94,-45 L0,0 L-77.94,-45 Z" fill="#FB6F92" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round"/>
+        <path data-face="x" d="M0,0 L77.94,-45 L77.94,45 L0,90 Z" fill="#C45772" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round"/>
+        <path data-face="z" d="M-77.94,-45 L0,0 L0,90 L-77.94,45 Z" fill="#8D3E52" stroke="rgba(12,12,11,.18)" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M0,0 L-77.94,45 L-77.94,-45 L0,-90 Z" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3,3"/>
+        <path d="M77.94,45 L0,0 L0,-90 L77.94,-45 Z" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3,3"/>
+        <text data-label="top" x="0" y="-48" text-anchor="middle" style="font:500 11px/1.2 var(--mono);fill:var(--text)">top 1.00</text>
+        <text data-label="x" x="44" y="8" text-anchor="middle" fill="var(--text)" style="font:500 11px/1.2 var(--mono)">+x 0.78</text>
+        <text data-label="z" x="-44" y="8" text-anchor="middle" fill="var(--text)" style="font:500 11px/1.2 var(--mono)">+z 0.56</text>
+      </svg>
+      <svg class="beat-6__diagram" viewBox="0 -46 460 92" aria-hidden="true" focusable="false">
+        <circle cx="62" cy="0" r="26" fill="none" stroke="var(--grey)" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="62" y1="0" x2="96" y2="0" stroke="var(--text)" stroke-width="1.5"/>
+        <text x="104" y="4" style="font:500 10px/1 var(--mono);fill:var(--text)">+x</text>
+        <line x1="62" y1="0" x2="62" y2="26" stroke="var(--text)" stroke-width="1.5"/>
+        <text x="62" y="40" text-anchor="middle" style="font:500 10px/1 var(--mono);fill:var(--text)">+z</text>
+        <line data-el="light-line" x1="85.37" y1="11.41" x2="62" y2="0" stroke="var(--orange)" stroke-width="1.5"/>
+        <circle data-el="light-dot" cx="85.37" cy="11.41" r="4" fill="var(--orange)"/>
+        <text data-el="table-visible" x="150" y="-14" style="font:500 11px/1.4 var(--mono);fill:var(--text)">top 1.00 · +x 0.78 · +z 0.56</text>
+        <text data-el="table-hidden" x="150" y="4" style="font:500 11px/1.4 var(--mono);fill:var(--grey)">−x −0.08 · −z 0.14</text>
+        <text x="150" y="22" style="font:500 9.5px/1.3 var(--mono);letter-spacing:.03em;text-transform:uppercase;fill:var(--grey)">5 values per frame, every cube reuses them</text>
+      </svg>
+      <figcaption>one cube · light moves with the camera</figcaption>
+    </figure>
+    <figure class="beat__half"><canvas></canvas><figcaption>the whole bouquet · same light</figcaption></figure>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-tp" data-beat="tp">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">6 / 9</p>
+    <h2 class="beat__title">The bouquet never moves. The camera and its light go around it.</h2>
+    <p class="beat__prose">From out here the bouquet sits still on its axis while the cubes fly in and, later, scatter. What looks like the bouquet turning on the main page is the camera circling it with the light attached, so every face keeps its shade.</p>
+  </header>
+  <div class="beat__stage" aria-label="A fixed outside view: three grid planes, the bouquet assembling and scattering in place, and markers for the main camera and its light circling it">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-7" data-beat="7">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">7 / 9</p>
+    <h2 class="beat__title">The bouquet is generated from about forty numbers.</h2>
+    <p class="beat__prose">No cube is placed by hand. A generator builds it part by part — stems, paper, greenery, blooms, ribbon — from about forty parameters. Change one and the whole bouquet regenerates.</p>
+  </header>
+  <div class="beat__stage" aria-label="The bouquet growing part by part from about forty numbers, then two of those numbers dialled live">
+    <canvas></canvas>
+    <div class="beat__chips"></div>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-8" data-beat="8">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">8 / 9</p>
+    <h2 class="beat__title">Every cube’s position during the fly-in is a formula of one number, p.</h2>
+    <p class="beat__prose">The assembly is not a recording. Every cube’s position is computed from a single progress value, p, so dragging p back and forth always gives the same picture. Nothing is random: every jitter comes from the cube’s own index, which is why it replays exactly.</p>
+  </header>
+  <div class="beat__stage" aria-label="The bouquet flying in, driven by a slider p — the cubes enter from the frame edges and land in place">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <input type="range" class="beat__dial" min="0" max="1" step="0.001" value="0" aria-label="p">
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+
+<section class="beat" id="beat-10" data-beat="10">
+<div class="beat__pin">
+  <header class="beat__head">
+    <p class="eyebrow">9 / 9</p>
+    <h2 class="beat__title">Scrolling sets a second number, q, that scatters the cubes.</h2>
+    <p class="beat__prose">The dispersal works the same way: q goes from 0 to 1 with your scroll, and every cube’s scattered position is a formula of q. Scroll back and q falls, so the bouquet reassembles.</p>
+  </header>
+  <div class="beat__stage" aria-label="The bouquet opening as you scroll down, and closing again as you scroll back up">
+    <canvas></canvas>
+    <div class="beat__counters"></div>
+    <button class="beat__replay" type="button" hidden>replay</button>
+  </div>
+</div>
+</section>
+</div>
+
+
+<footer class="explainer-end" aria-label="End">
+  <p class="eyebrow">That's the bouquet</p>
+  <a class="back" href="index.html?noloader">← Back to the portfolio</a>
+</footer>
+
+<script src="assets/js/bouquet-loader.js"></script>
+<script src="assets/js/bouquet-explainer.js"></script>
+<script src="assets/js/beats/beat-10.js"></script>
+<script src="assets/js/beats/beat-5.js"></script>
+<script src="assets/js/beats/beat-8.js"></script>
+<script src="assets/js/beats/beat-7.js"></script>
+<script src="assets/js/beats/beat-3.js"></script>
+<script src="assets/js/beats/beat-6.js"></script>
+<script src="assets/js/beats/beat-2.js"></script>
+<script src="assets/js/beats/beat-1.js"></script>
+<script src="assets/js/beats/beat-tp.js"></script>
+<!-- beat-scripts -->
+<script>
+const $ = s => document.querySelector(s);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FLY_MS = 5000;                      // the rig's fly-in; measured, see "The fly-in"
+
+/* ── Hero: the shipping module, mounted as a player, driven by the bench ──
+   Defaults are index.html's loader numbers. The panel is the test bench's,
+   verbatim in markup; here it drives this canvas instead of an overlay. */
+const heroCv = $('#heroCanvas');
+const hero = BouquetLoader.mount(heroCv); window.hero = hero;   // for the doc suite
+const num = id => +$('#' + id).value;
+const FKEYS = ['stagger','flight','rational','rhoMin','rhoMax','vwin','yMix','yFree','jitter','angJit'];
+const FDEF = {stagger:0.29,flight:0.69,rational:0.55,rhoMin:0.06,rhoMax:0.5,vwin:0.25,yMix:0.55,yFree:26,jitter:0.2,angJit:0.12};
+const fvals = () => Object.assign(Object.fromEntries(FKEYS.map(k => [k, +$('#f_' + k).value])), { order: $('#f_order').value, within: $('#f_within').value });
+const dvals = () => ({ outK: +$('#d_outK').value, upK: +$('#d_upK').value, stagger: +$('#d_stagger').value });
+const mode  = () => document.querySelector('input[name=mode]:checked').value;
+const title = $('#heroTitle'), hint = $('#scrollHint'), wrap = $('#heroWrap');
+const out = (t) => { $('#benchOut').textContent = t; };
+
+function applyTune(){ hero.tune({ turns: num('turns'), ms: num('fly') }); hero.fit(num('fill')); hero.ftune(fvals()); hero.dtune(dvals()); }
+function applyRange(){ wrap.style.setProperty('--range', (mode() === 'scroll' && !REDUCED ? num('range') : 0) + 'px'); }
+applyTune(); applyRange();
+
+// one sequence at a time: a newer run cancels the older loop
+let gen = 0, landed = false, yawUser = 0, yawSweep = 0, qScroll = 0;
+function setYaw(){ hero.setYaw(yawSweep + yawUser); }
+function play(){
+  const g = ++gen; landed = false; yawUser = 0; heroCv.style.opacity = '';
+  title.classList.remove('is-in'); hint.classList.remove('is-in');
+  if (REDUCED){ yawSweep = 0; setYaw(); hero.setP(1); title.classList.add('is-in'); landed = true; return; }
+  const T = num('fly'), HOLD = num('hold'), EXIT = num('exit'), YAW0 = num('yawin');
+  const t0 = performance.now();
+  (function fly(){
+    if (g !== gen) return;
+    const p = Math.min(1, (performance.now() - t0) / T);
+    yawSweep = YAW0 * (1 - p); setYaw(); hero.setP(p); hero.setQ(qScroll);
+    if (p > 0.62) title.classList.add('is-in');
+    if (p < 1) return requestAnimationFrame(fly);
+    landed = true; yawSweep = 0; setYaw();
+    if (mode() === 'scroll'){ hint.classList.add('is-in'); onScroll(); return; }
+    // timed / fade: play the exit after the pause, then loop
+    setTimeout(() => {
+      if (g !== gen) return;
+      const e0 = performance.now();
+      (function exit(){
+        if (g !== gen) return;
+        const x = Math.min(1, (performance.now() - e0) / EXIT);
+        if (mode() === 'fade'){ heroCv.style.opacity = String(1 - x*x); }
+        else { hero.setQ(x*x*(3-2*x)); }
+        title.style.opacity = String(1 - Math.min(1, x / 0.4));
+        if (x < 1) return requestAnimationFrame(exit);
+        setTimeout(() => { if (g !== gen) return; hero.setQ(0); heroCv.style.opacity = ''; title.style.opacity = ''; play(); }, 900);
+      })();
+    }, HOLD);
+  })();
+}
+
+// scroll mode: q comes from how far the page has scrolled over the pinned hero,
+// both ways — scroll back up and it reassembles. Beyond 1 the cubes keep going.
+function onScroll(){
+  if (mode() !== 'scroll' || REDUCED) return;
+  const y = Math.max(0, scrollY - wrap.offsetTop);
+  qScroll = Math.min(1.6, y / num('range'));
+  if (landed){ hero.setQ(qScroll); }
+  title.style.opacity = String(1 - Math.min(1, qScroll / 0.3));
+  hint.style.opacity  = qScroll > 0.15 ? '0' : '';
+}
+addEventListener('scroll', onScroll, { passive: true });
+
+// side-scroll or a horizontal drag revolves the camera around the bouquet;
+// vertical stays native (page scroll). Same split as the birthday page.
+const heroEl = $('.hero');
+heroEl.addEventListener('wheel', e => { if (!landed || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; e.preventDefault(); yawUser += e.deltaX * 0.30; setYaw(); }, { passive: false });
+let drag = null;
+heroEl.addEventListener('pointerdown', e => { if (!landed || e.target.closest('#bench')) return; drag = { x: e.clientX, y: e.clientY, y0: yawUser, axis: null }; });
+addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (drag.axis === null){ if (Math.hypot(dx, dy) < 12) return; drag.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; }
+  if (drag.axis === 'x'){ yawUser = drag.y0 + dx * 0.42; setYaw(); } });
+addEventListener('pointerup', () => { drag = null; }); addEventListener('pointercancel', () => { drag = null; });
+
+// ── the panel ──
+for (const id of ['fly','turns','fill','hold','exit','range','yawin']) {
+  const el = $('#' + id), o = $('#' + id + 'v');
+  el.addEventListener('input', () => { o.textContent = id === 'turns' || id === 'fill' ? (+el.value).toFixed(2) : el.value; if (id === 'fill'){ hero.fit(num('fill')); } if (id === 'range') applyRange(); });
+}
+for (const k of FKEYS) { const el = $('#f_' + k); el.addEventListener('input', () => { $('#f_' + k + 'v').textContent = k === 'yFree' ? el.value : (+el.value).toFixed(2); hero.ftune(fvals()); }); }
+for (const k of ['outK','upK','stagger']) { const el = $('#d_' + k); el.addEventListener('input', () => { $('#d_' + k + 'v').textContent = k === 'outK' ? (+el.value).toFixed(1) : (+el.value).toFixed(2); hero.dtune(dvals()); }); }
+$('#f_order').addEventListener('change', () => hero.ftune(fvals()));
+$('#f_within').addEventListener('change', () => hero.ftune(fvals()));
+for (const r of document.querySelectorAll('input[name=mode]')) r.addEventListener('change', () => { applyRange(); hero.setQ(0); heroCv.style.opacity = ''; title.style.opacity = ''; if (landed && mode() !== 'scroll') play(); });
+$('#fdefaults').addEventListener('click', () => { for (const k of FKEYS) { $('#f_' + k).value = FDEF[k]; $('#f_' + k + 'v').textContent = k === 'yFree' ? FDEF[k] : FDEF[k].toFixed(2); } hero.ftune(FDEF); });
+$('#copy').addEventListener('click', async () => { const all = Object.assign({ turns:num('turns'), flyMs:num('fly'), fill:num('fill'), holdMs:num('hold'), scrollRange:num('range'), yawIn:num('yawin'), exit: mode() }, { flight: fvals(), burst: dvals() }); const txt = JSON.stringify(all, null, 1); try { await navigator.clipboard.writeText(txt); } catch(e) {} out('copied:\n' + txt); });
+const replay = () => { applyTune(); hero.setQ(0); play(); try { track('bouquet_replay', {}); } catch (e) {} };
+$('#replay').addEventListener('click', replay);
+// did anyone touch the bench? one event per control change (not per keystroke)
+$('#bench').addEventListener('change', e => { const c = e.target; if (c && c.id) { try { track('bouquet_bench_changed', { control: c.id }); } catch (err) {} } });
+const preset = (turns, ms) => () => { $('#turns').value = turns; $('#fly').value = ms; $('#turnsv').textContent = (+turns).toFixed(2); $('#flyv').textContent = ms; replay(); };
+$('#preset-measured').addEventListener('click', preset(1, 4200));
+$('#preset-quick').addEventListener('click', preset(0.3, 2600));
+$('#preset-full').addEventListener('click', preset(1, 5000));
+// scrub: stops the sequence and shows one exact frame
+function scrub(){ gen++; landed = true; heroCv.style.opacity = ''; title.classList.add('is-in'); title.style.opacity = '';
+  hero.setP(num('p') / 1000); hero.setQ(num('q') / 1000); hero.setYaw(num('yaw'));
+  $('#pv').textContent = (num('p') / 1000).toFixed(3); $('#qv').textContent = (num('q') / 1000).toFixed(3); $('#yawv').textContent = num('yaw'); }
+for (const id of ['p','q','yaw']) $('#' + id).addEventListener('input', scrub);
+$('#measure').addEventListener('click', async () => { out('measuring…'); const b = await hero.bench(120); out(`${b.drawn} drawn · ${b.w}×${b.h} @ dpr ${b.dpr}\nflushed med ${b.flushedMed.toFixed(2)} ms · p99 ${b.flushedP99.toFixed(2)} ms\nrAF gap med ${b.gapMed.toFixed(1)} ms · dropped ${b.dropped}/${b.frames}`); });
+const toggleBench = () => { const min = $('#bench').classList.toggle('min'); $('#fold').setAttribute('aria-expanded', String(!min)); $('#fold').setAttribute('aria-label', min ? 'Expand the panel' : 'Collapse the panel'); };
+$('#fold').addEventListener('click', toggleBench);
+$('#rigtitle').addEventListener('click', toggleBench);
+for (const tab of document.querySelectorAll('#bench .tab')) tab.addEventListener('click', () => {
+  for (const t of document.querySelectorAll('#bench .tab')) t.setAttribute('aria-selected', t === tab);
+  for (const pane of document.querySelectorAll('#bench .pane')) pane.hidden = pane.dataset.pane !== tab.dataset.tab;
+});
+
+hero.setP(0);
+let playedOnce = false;
+new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting && !playedOnce){ playedOnce = true; play(); } }, { threshold: .5 }).observe(heroEl);
+addEventListener('resize', () => hero.resize());
+
+</script>
+</body>
+</html>

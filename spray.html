@@ -4,7 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spray Can · Divyansh Rastogi</title>
-    <meta name="robots" content="noindex">   <!-- LOCAL DRAFT -->
+    <meta name="description" content="A spray-paint toy by Divyansh Rastogi: shake the can, hold to paint, pick caps and walls. Desktop only, on purpose.">
+  <!-- PostHog (cookieless) — a copy of index.html's loader, same key, same
+       before_send filter, minus the viewport-router re-check (this page has no
+       router). doc_surface = 'spray'. The rationale for every option lives in
+       index.html's copy; keep the two diffable. -->
+  <script>
+  (function () {
+    var PH_KEY  = 'phc_p8UCDF8rzqra2ABqJCQoNZyiBAYcGNz8gGK7vzdsvJti';                              // ← project API key (publishable)
+    var PH_HOST = 'https://eu.i.posthog.com';      // EU residency; US: https://us.i.posthog.com
+    var PH_CDN  = 'https://eu-assets.i.posthog.com'; // must match the host region
+    // ⚠️ PINNED ON PURPOSE — do not switch back to /static/array.js and do
+    // not bump this in a "keep deps current" sweep. The unversioned path is a
+    // rolling "latest" served with only max-age=14400, so $lib_version
+    // drifted across six releases in nine days and every behaviour change
+    // reached production unannounced. The versioned path is served immutable
+    // (max-age=31536000).
+    // This pins array.js ONLY. Measured on 1.410.5 the SDK still lazy-loads
+    // /static/web-vitals.js?v=1.410.5 and
+    // /static/dead-clicks-autocapture.js?v=1.410.5 from the ROLLING path
+    // (?v= is a cache-buster, not a path segment), and /array/<token>/config.js
+    // is never version-scoped. The SDK ships strict_script_versioning:false by
+    // default; adding strict_script_versioning:true to the init config below
+    // would pin the chunks too, but that is UNTESTED here — do not add it
+    // casually.
+    // Verified: 200, 237,247 bytes raw / 77.0 KB brotli.
+    var PH_VER  = '1.410.5';
+
+    // BUFFER — do not restore the no-op. Measured: a /#settlr deep-link
+    // arrival fires case_study_opened at ~1.2-2.1s, but the real wrapper
+    // below only installs at ~1.9-4.3s, so the single most valuable event on
+    // the site was being silently thrown away. Queue instead, flush after
+    // posthog.init. Push-drops when full (never shift): if PostHog never
+    // loads, the EARLY events are the ones worth keeping. Safe with an empty
+    // PH_KEY and safe if an ad blocker eats the script — the queue simply
+    // grows to 50 and is discarded. It never throws, so all ~11 call sites
+    // stay safe to invoke at any time. q is closure-scoped, not a global.
+    var q = [];
+    window.track = function (name, props) {
+      if (q.length < 50) q.push([name, props, new Date()]);
+    };
+    if (!PH_KEY) return;
+    // Owner bypass. PostHog ships internal_or_test_user_hostname (auto-enabled
+    // by defaults >= '2026-01-30'), but it only excludes localhost/127.0.0.1 —
+    // it cannot exclude the owner browsing the PRODUCTION domain. And
+    // PostHog's cohort-based "filter internal users" is structurally inert
+    // under cookieless_mode: no persons are ever created to put in a cohort.
+    // So a URL flag is the only mechanism that works on the live site. The
+    // router above forwards location.search, so ?nostats=1 survives a hop
+    // across the 1024px line.
+    //
+    // The flag is STICKY per browser: ?nostats=1 once writes localStorage
+    // 'nostats' and every later plain visit from that browser is silent;
+    // ?nostats=0 clears it. A functional key like vp-hop, not an analytics
+    // identifier — it exists so the owner can stop counting themselves
+    // without retyping the flag before every rehearsal. Per browser profile:
+    // repeat once on each device, and incognito windows never have it.
+    var ns = /[?&]nostats(?:=([^&#]*))?/.exec(location.search), quiet = false;
+    if (ns) quiet = ns[1] !== '0';
+    try {
+      if (ns) { if (quiet) localStorage.setItem('nostats', '1'); else localStorage.removeItem('nostats'); }
+      else quiet = !!localStorage.getItem('nostats');
+    } catch (e) {}
+    if (quiet) return;
+
+    var s = document.createElement('script');
+    s.src = PH_CDN + '/static/' + PH_VER + '/array.js';
+    s.async = true;
+    s.onload = function () {
+      posthog.init(PH_KEY, {
+        api_host: PH_HOST,
+        cookieless_mode: 'always',
+        // ⛔ DO NOT BUMP THIS DATE. It is a bundle of behaviour flags, not a
+        // version number, and it is NOT a dependency to keep current.
+        // At '2026-06-25' or later, PostHog auto-enables
+        // disable_capture_url_hashes, which SILENTLY strips the fragment from
+        // $current_url. Every case study on this site is a hash route
+        // (#settlr, #refer-earn, #hobbies), so that single flag collapses all
+        // of them into one indistinguishable "/" pageview and destroys the
+        // only record of which work a recruiter actually opened. There is no
+        // error and no warning — the data just goes flat. Leave it at
+        // 2026-05-30. If it must ever move, verify $current_url still carries
+        // the hash BEFORE shipping.
+        defaults: '2026-05-30',
+        capture_pageview: true,
+        autocapture: true,
+        disable_session_recording: true,
+        // Feature flags are unused here, and the flags call is a network
+        // round-trip on every single pageview. Off.
+        advanced_disable_feature_flags: true,
+        disable_web_experiments: true,
+        // Kept deliberately: real-user Core Web Vitals (3 KB) is the only way
+        // to know whether the perf work actually helps visitors on real
+        // devices, and dead-click capture (7 KB) surfaces people clicking
+        // decorative elements expecting them to do something — a real risk on
+        // a site with this much hover-reactive art.
+        capture_performance: true,
+        capture_dead_clicks: true,
+        // Use before_send, NOT sanitize_properties. The shipped bundle logs
+        // "sanitize_properties is deprecated. Use before_send instead".
+        // Never add both.
+        before_send: function (event) {
+          if (!event) return null;
+          // Leftover manual test events from the analytics bring-up.
+          if (event.event === 'direct_probe' ||
+              event.event === 'probe_AFTER_SETTING') return null;
+          // Headless-crawler signature: 7 of 18 sessions matched it. Real
+          // browser chrome always costs 50-130px of height, so a viewport
+          // whose HEIGHT equals the screen height is the discriminator. The
+          // width comparison alone also matches legitimate maximised windows,
+          // so do NOT "simplify" this to a single condition. Kept identical
+          // in mobile.html even though it can rarely fire there, so the two
+          // files stay diffable.
+          try {
+            if (innerWidth >= 1024 &&
+                innerWidth === screen.width &&
+                innerHeight === screen.height) return null;
+          } catch (e) {}
+          return event;
+        }
+      });
+      // $device_type is UA-derived while the router is viewport-derived, and
+      // the two already disagree — so record which document actually
+      // rendered. Keep this value in sync with the file it lives in.
+      // The very first $pageview fires inside init() and predates this call;
+      // that one stays attributable via $current_url ("/" vs "/mobile.html").
+      // Wrapped: an ad-blocker surrogate that defines init but not register
+      // would otherwise throw here, leaving window.track stuck as the buffer
+      // forever and tripping the suite's no-console-errors assertion.
+      // ⚠️ NAMED doc_surface, NOT surface. `surface` collided: email_clicked
+      // emits its OWN surface property (connect | case_end | receipt_barcode |
+      // scratch_coffee), and an event property overrides a super-property — so
+      // every email_clicked lost the desktop/mobile split, which is the one
+      // thing this registration exists to provide. Caught live 2026-08-04.
+      // Do not rename it back, and do not add a `surface` key to any event.
+      try { posthog.register({ doc_surface: 'spray' }); } catch (e) {}
+      window.track = function (name, props) {
+        try { posthog.capture(name, props || {}); } catch (e) {}
+      };
+      // Flush the buffer, preserving each call's ORIGINAL timestamp so a
+      // deep-link event is not restamped seconds late and reordered after
+      // the events it actually preceded.
+      for (var i = 0; i < q.length; i++) {
+        try { posthog.capture(q[i][0], q[i][1] || {}, { timestamp: q[i][2] }); } catch (e) {}
+      }
+      q.length = 0;
+    };
+    document.head.appendChild(s);
+  })();
+  </script>
+    <link rel="canonical" href="https://www.divyanshrastogi.in/spray.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Divyansh Rastogi">
+    <meta property="og:url" content="https://www.divyanshrastogi.in/spray.html">
+    <meta property="og:title" content="Spray Can · Divyansh Rastogi">
+    <meta property="og:description" content="A spray-paint toy: shake the can, hold to paint, pick caps and walls. Desktop only, on purpose.">
+    <meta property="og:image" content="https://www.divyanshrastogi.in/assets/images/og-spray.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Magenta spray-paint strokes on a black wall.">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230C0C0B'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='18' font-weight='700' fill='%23E06B2D' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
     <style>
         @font-face{font-family:'Unbounded';src:url('fonts/Unbounded/Unbounded-VariableFont_wght.woff2') format('woff2-variations');font-weight:200 900;font-display:swap}
@@ -517,6 +676,10 @@
             <button class="dock__item" style="--i:14" data-action="hint" data-label="About this" data-key="?">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9.5a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.2-1.5 2.4"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg>
             </button>
+            <div class="dock__sep" style="--i:15"></div>
+            <a class="dock__item" style="--i:16" href="index.html?noloader" data-label="Back to portfolio" aria-label="Back to portfolio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg>
+            </a>
         </div></div>
     </nav>
     <div class="dock__tip" id="dock-tip"></div>
@@ -1077,6 +1240,7 @@
             showHint.t = setTimeout(() => hintEl.classList.remove('visible'), ms);
         }
         function doAction(btn) {
+            try { track('spray_action', { action: btn.dataset.action || (btn.tagName === 'A' ? 'back' : 'unknown') }); } catch (err) {}
             switch (btn.dataset.action) {
                 case 'color': pickCan(+btn.dataset.index); break;
                 case 'cap':   setCap(btn.dataset.cap); break;
@@ -1236,6 +1400,7 @@
             if (e.button !== 0) return;
             if (aboutOpen) return;                           // reading, not painting
             if (e.target.closest('.dock')) return;          // UI click, not a stroke
+            if (!window.__sprayFirstStroke) { window.__sprayFirstStroke = true; try { track('spray_first_stroke', { seconds: Math.round(performance.now() / 100) / 10 }); } catch (err) {} }
             isMouseDown = true;
             lastSprayX = e.clientX;
             lastSprayY = e.clientY;

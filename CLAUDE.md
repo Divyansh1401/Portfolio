@@ -45,23 +45,55 @@ Two hand-written documents, no build step:
   `<meta name="viewport">`, so it reads the pre-meta layout viewport. See
   "Deferred" in `.claude/ANALYTICS-PLAN.md`.
 
-## First-paint loader (index.html only, 2026-09-11)
+## First-paint loader (index.html only)
 `assets/js/bouquet-loader.js` + `#bq-loader` as the FIRST child of `<body>`:
 the voxel bouquet from `~/Desktop/Vyomi's Birthday/Experiments/bouquet/` flies
-in (4.2 s, one full turn) while the camera comes around the forming model
-(`yawIn` −180° easing to 0 at landing, so the landed state is the culled one),
-then a scroll-scrubbed dispersal (wheel/touch/keys
-drive q both ways, page never moves) hands off to the hero. Skips on any
-`#hash`, reduced motion, `?noloader`, once per tab (`sessionStorage bq-seen`,
-functional like `vp-hop`), and under webdriver. `?loader` forces it. Bench:
-`_bouquet-loader-test.html` (gitignored). Plan and the two renderer bugs fixed
-on the way: `.claude/BOUQUET-LOADER-PLAN.md`. Not yet on `mobile.html`.
+in (4.2 s, **turns 1**, camera sweep `yawIn` −540° → 0, landing culled), then a
+scroll-scrubbed dispersal (wheel/touch/keys drive q both ways, page never
+moves) hands off to the hero. **ON for visitors since 2026-09-18**
+(`ENABLED = true`). Skips on any `#hash`, reduced motion, `?noloader`, under
+webdriver, and **once per browser** (`localStorage bq-seen`, sessionStorage
+fallback — functional like `vp-hop`; the owner's "once the site is cached, no
+loader"). `?loader` forces it. `run()`'s `turns` fallback is **1** — it was 0
+until 2026-09-18, which is why the live loader looked flatter and slower than
+`bouquet.html`'s hero (proved byte-identical at equal p after the change; the
+old 0 dated from when TURNS was a *minimum*). Events: `loader_shown`,
+`loader_done {exit, seconds}`, `loader_skipped {why}`. Bench:
+`_bouquet-loader-test.html` (gitignored) and the "Loader bench" panel on
+`bouquet.html`'s hero (open by default, owner's call). Plan and the renderer
+bugs fixed on the way: `.claude/BOUQUET-LOADER-PLAN.md`. Not on `mobile.html`.
 
-## ⚠️ Uncommitted local draft (2026-09-11): bouquet making-of page
-`bouquet.html` + `assets/bouquet/rig.html` are gitignored drafts, and
-`index.html` has an UNCOMMITTED `a.nav-icon` link to them in the nav. Do not
-push index.html with that link until the page is approved and un-ignored.
-Plan: `.claude/BOUQUET-DOC-PLAN.md`.
+## The two tool pages (live 2026-09-18, desktop-only by design)
+Both open from `a.nav-icon` links in `index.html`'s nav (**new tab**,
+`tool_opened {tool}`), neither is linked from `mobile.html` (pointer/wheel
+interactions; owner decision 2026-09-11). Both carry a copy of the PostHog
+loader (`doc_surface: bouquet | spray`) and the standard OG/canonical set with
+stills at `assets/images/og-bouquet.jpg` / `og-spray.jpg`. Both are in
+`verify-payload.js`'s budget.
+
+- **`bouquet.html` — the making-of explainer.** Hero = the shipping loader
+  module with the bench panel; then **nine scroll-scrubbed "beats"** (ids
+  `beat-1 2 3 5 6 tp 7 8 10`, eyebrows renumbered 1–9; four were cut on
+  2026-09-17 as history-not-mechanism), each a `.beat` card driven by
+  `assets/js/bouquet-explainer.js` (harness: `scrub`, `mountBeat`, `split`,
+  `diff`, `seek`) and its own `assets/js/beats/beat-N.js`. The plain-register
+  copy rules, colour roles and the **pinned mapping** (card sticky under the
+  nav; on phones only the STAGE pins and the head scrolls away) are in
+  `.claude/BOUQUET-EXPLAINER-PLAN.md` §1 — read it before touching a beat.
+  The renderer exposes explainer hooks (`cells sets show tint alpha drawLimit
+  sortInFlight params path order rank legacy project basis`, documented in the
+  loader's API block); every hook defaults to today's frame byte-for-byte.
+  Gotchas: `onLeave` fires once at load for below-fold sections (re-assert
+  constants in `onEnter`); `cells()` order ≠ paint order at yaw ≠ 0; the
+  stage's `aspect-ratio` + height clamp would shrink its WIDTH and sit left —
+  it is `width:100%` on purpose. Events: `bouquet_beat_reached {beat, index}`,
+  `bouquet_bench_changed {control}`, `bouquet_replay`. Suites:
+  `verify-bouquet-doc.js` (hero, bench, nav icons, spray smoke) and
+  `verify-bouquet-explainer.js` (harness + `tests/beats/beat-N.test.js`,
+  auto-discovered, one fresh page each; ~5 min).
+- **`spray.html` — the spray can.** Owner-built; the dock's last item is
+  "Back to portfolio" (`index.html?noloader`). Events: `spray_first_stroke
+  {seconds}`, `spray_action {action}`.
 
 ## Deep links — the hash is the source of truth (index.html)
 `routeHash()` + `hashchange` drive all overlay/world state; UI triggers set
@@ -104,8 +136,8 @@ a synthetic `wheel` event goes through the lerp, so wait for it to settle
   The suites live in `tests/` and are committed — an older note called them
   lost to a session scratchpad, which was wrong: `verify-deeplinks.js` (21)
   and `verify-kbd-meta.js` (22) both run green today. `node tests/run-all.js`
-  runs the whole gate (**223 checks**, ~6–8 min, each suite retried once on
-  failure). `verify-bouquet-loader.js` (17) forces the loader with `?loader`;
+  runs the whole gate (13 suites incl. the two bouquet suites, ~15 min, each
+  suite retried once on failure). `verify-bouquet-loader.js` (21) forces the loader with `?loader`;
   every other suite never sees it because it skips under `navigator.webdriver`. Only `fingerprint.js` (computed-style snapshot) is genuinely gone.
 - The full gate passing + zero console errors is the bar for any interaction
   change.
@@ -196,6 +228,9 @@ script, no request, no globals.
   on the other form factor and wrecks the desktop/mobile split.
 - Case studies are hash routes, invisible to autocapture — hence explicit
   `track()` calls. Events: `case_study_opened` `case_study_progress`
+  `loader_shown` `loader_done` `loader_skipped` `tool_opened`
+  `bouquet_beat_reached` `bouquet_bench_changed` `bouquet_replay`
+  `spray_first_stroke` `spray_action`
   `case_study_closed` `resume_opened` `resume_downloaded` `world_flipped`
   `photo_opened` `email_clicked` `outbound_clicked` `work_viewed` (mobile only)
   `desktop_case_study_copied`.

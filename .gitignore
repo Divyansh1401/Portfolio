@@ -66,12 +66,13 @@ _re-numbers-test.html
 
 # Bouquet loader test bench (the shipping module is assets/js/bouquet-loader.js)
 _bouquet-loader-test.html
-_bouquet-loader.js
 
-# Bouquet making-of page — LOCAL DRAFT until the design is approved
-# (.claude/BOUQUET-DOC-PLAN.md). index.html also carries an uncommitted
-# a.nav-icon link to it: do not commit index.html's nav change until this
-# block is removed.
-bouquet.html
-assets/bouquet/
-tests/verify-bouquet-doc.js
+# (bouquet.html went live 2026-09-18; assets/bouquet/ — the old rig copy — is gone)
+
+# Heart-field module bench + the legacy fixture the parity test regenerates
+# from the birthday app on every run (never commit either)
+_heartfield-test.html
+tests/fixtures/
+
+# Working notes, not site content (Vercel serves the repo root)
+docs/
