@@ -44,6 +44,13 @@ Two hand-written documents, no build step:
   Root cause is only partly addressed: the router still runs **before**
   `<meta name="viewport">`, so it reads the pre-meta layout viewport. See
   "Deferred" in `.claude/ANALYTICS-PLAN.md`.
+- **Crawlers never redirect (2026-09-21).** Both routers `return` early on a
+  bot UA (`/bot|crawl|spider|…/i`). Google indexes mobile-first (~412px
+  viewport), so `/` was JS-redirecting Googlebot to `/mobile.html`, whose
+  canonical points back to `/` — Search Console reported "Page with
+  redirect" and indexed nothing. `index.html` also carries
+  `<link rel="alternate" media="only screen and (max-width: 1023px)">` to
+  `mobile.html` (Google's separate-URLs pattern). Keep both.
 
 ## First-paint loader (index.html only)
 `assets/js/bouquet-loader.js` + `#bq-loader` as the FIRST child of `<body>`:

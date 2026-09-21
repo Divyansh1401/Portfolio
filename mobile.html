@@ -24,7 +24,7 @@
      like the feed-theme key this document already writes — PostHog itself
      still stores nothing and the cookieless, no-consent-banner posture is
      unchanged. Storage is read only after the media query already matched. -->
-<script>(function(){var t,K='vp-hop';function go(){if(!matchMedia('(min-width: 1064px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('index.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+<script>(function(){var t,K='vp-hop';function go(){if(/bot|crawl|spider|slurp|facebookexternalhit|linkedinbot|twitterbot|whatsapp|telegrambot|discordbot/i.test(navigator.userAgent))return;if(!matchMedia('(min-width: 1064px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('index.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
 <!-- ── Analytics: PostHog, cookieless ──────────────────────────────────────
      Keep PH_KEY / PH_HOST / PH_CDN identical to index.html or the two
      documents report into different projects. Empty key = fully inert.

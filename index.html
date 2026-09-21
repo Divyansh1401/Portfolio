@@ -30,7 +30,7 @@
        no-consent-banner posture is unchanged. If sessionStorage throws
        (locked-down Safari), the catch falls through to the redirect, i.e.
        it degrades to exactly today's behaviour. -->
-  <script>(function(){var t,K='vp-hop';function go(){if(!matchMedia('(max-width: 1023.98px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('mobile.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
+  <script>(function(){var t,K='vp-hop';function go(){if(/bot|crawl|spider|slurp|facebookexternalhit|linkedinbot|twitterbot|whatsapp|telegrambot|discordbot/i.test(navigator.userAgent))return;if(!matchMedia('(max-width: 1023.98px)').matches)return;try{if(Date.now()-(+sessionStorage.getItem(K)||0)<8000)return;sessionStorage.setItem(K,Date.now());}catch(e){}location.replace('mobile.html'+location.search+location.hash);}go();addEventListener('resize',function(){clearTimeout(t);t=setTimeout(go,250);});})();</script>
   <!-- ── Analytics: PostHog, cookieless ────────────────────────────────────
        Paste the project key into PH_KEY to switch it on. Empty = fully inert:
        no script fetched, no requests, no globals. Safe to ship unset.
@@ -217,6 +217,7 @@
   <link rel="preload" href="fonts/Unbounded/Unbounded-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://www.divyanshrastogi.in/">
+  <link rel="alternate" media="only screen and (max-width: 1023px)" href="https://www.divyanshrastogi.in/mobile.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Divyansh Rastogi">
   <meta property="og:url" content="https://www.divyanshrastogi.in/">
