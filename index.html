@@ -359,7 +359,7 @@
       background: var(--c-orange);
       border-radius: 50%;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 20010;   /* above #bq-loader (20000): the loader would otherwise paint over the only pointer the page has */
       transform: translate(-50%, -50%);
       transition: opacity 0.25s ease;
     }
@@ -370,7 +370,7 @@
       border: 1.5px solid rgba(234, 118, 35, 0.65);
       border-radius: 50%;
       pointer-events: none;
-      z-index: 9998;
+      z-index: 20009;
       transform: translate(-50%, -50%);
       opacity: 0.6;
       transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, opacity 0.25s ease;
@@ -381,6 +381,9 @@
       border-color: rgba(234, 118, 35, 0.9);
       opacity: 0.85;
     }
+    /* Body SHIPS with .cursor-out: the dot/ring carry no left/top until the
+       first mousemove, so without it they park half off the top-left corner.
+       initCursor drops the class on that first move. */
     body.cursor-out #custom-cursor,
     body.cursor-out #cursor-ring {
       opacity: 0 !important;
@@ -7161,7 +7164,7 @@
     @media (prefers-reduced-motion: reduce) { #bq-loader { display: none; } }
   </style>
 </head>
-<body>
+<body class="cursor-out">
 
   <!-- ── Bouquet loader: must stay the FIRST child of body (see the CSS note) ── -->
   <div id="bq-loader" hidden aria-hidden="true">
@@ -7995,11 +7998,20 @@
       let mX = window.innerWidth / 2, mY = window.innerHeight / 2;
       let rX = mX, rY = mY;
 
+      let firstMove = true;
       window.addEventListener('mousemove', e => {
         mX = e.clientX;
         mY = e.clientY;
         dot.style.left = mX + 'px';
         dot.style.top  = mY + 'px';
+        // First real move is where the ring snaps — otherwise it fades in at
+        // the viewport centre and lerps across the screen to meet the pointer.
+        if (firstMove) {
+          firstMove = false;
+          rX = mX; rY = mY;
+          ring.style.left = rX + 'px';
+          ring.style.top  = rY + 'px';
+        }
         document.body.classList.remove('cursor-out');
       }, { passive: true });
 

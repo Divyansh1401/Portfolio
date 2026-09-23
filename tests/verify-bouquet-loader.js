@@ -27,13 +27,29 @@ const ok = (l, c, d) => { if (!c) failures++; console.log((c ? 'PASS  ' : 'FAIL 
   ok('overlay is the first child of body', await page.evaluate(() => document.body.firstElementChild.id === 'bq-loader'));
   ok('overlay visible', await page.evaluate(() => !document.getElementById('bq-loader').hidden));
   ok('scroll locked', await page.evaluate(() => document.documentElement.classList.contains('bq-lock')));
-  ok('overlay above the nav and cursor', await page.evaluate(() => +getComputedStyle(document.getElementById('bq-loader')).zIndex > Math.max(...[...document.querySelectorAll('#main-nav,#custom-cursor,#cursor-ring')].map(e => +getComputedStyle(e).zIndex || 0))));
+  ok('overlay above the nav', await page.evaluate(() => +getComputedStyle(document.getElementById('bq-loader')).zIndex > (+getComputedStyle(document.getElementById('main-nav')).zIndex || 0)));
+  // ...but NOT above the cursor: body is cursor:none from the first paint, so
+  // the loader covering the dot/ring left the page with no visible pointer.
+  ok('cursor above the overlay', await page.evaluate(() => {
+    const loader = +getComputedStyle(document.getElementById('bq-loader')).zIndex;
+    return ['custom-cursor', 'cursor-ring'].every(id => +getComputedStyle(document.getElementById(id)).zIndex > loader);
+  }));
+  ok('cursor hidden until the first mousemove', await page.evaluate(() =>
+    document.body.classList.contains('cursor-out') && getComputedStyle(document.getElementById('custom-cursor')).opacity === '0'));
   await page.waitForFunction(() => document.getElementById('bq-loader').__state().phase === 'scroll', { timeout: 8000 });
   ok('lands and waits for scroll', true);
   await wait(1200);
   ok('does not leave on its own', await page.evaluate(() => !!document.getElementById('bq-loader')));
   const st = () => page.evaluate(() => document.getElementById('bq-loader').__state());
   await page.mouse.move(700, 450);
+  await wait(300);   // #custom-cursor fades in over 0.25s once .cursor-out drops
+  ok('cursor shows and snaps to the pointer over the loader', await page.evaluate(() => {
+    const c = el => { const r = el.getBoundingClientRect(); return [Math.round(r.x + r.width / 2), Math.round(r.y + r.height / 2)]; };
+    const dot = document.getElementById('custom-cursor'), ring = document.getElementById('cursor-ring');
+    const at = ([x, y]) => Math.abs(x - 700) < 2 && Math.abs(y - 450) < 2;
+    return !document.body.classList.contains('cursor-out')
+        && getComputedStyle(dot).opacity === '1' && at(c(dot)) && at(c(ring));
+  }));
   for (let i = 0; i < 4; i++) { await page.mouse.wheel({ deltaX: 120, deltaY: 0 }); await wait(40); }
   const sy = await st(); ok('side-scroll revolves the camera (yaw), not the dispersal', sy.yaw > 30 && sy.qShown === 0, 'yaw ' + sy.yaw.toFixed(1) + ' q ' + sy.qShown);
   await page.mouse.move(600, 450); await page.mouse.down(); await page.mouse.move(760, 455, { steps: 8 }); await page.mouse.up();
