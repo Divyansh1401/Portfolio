@@ -90,3 +90,68 @@ that expected the reference's full explainer API from this package (there is
 none inside `apps/bouquet`; the portfolio's own `bouquet-explainer.js` reads
 `assets/js/bouquet-loader.js` directly, not this package) will not find it
 here.
+
+## 6. 11th material slot (ribbon), `model.setPalette()`, `palette.js`, `shapes.js` (task L1b)
+
+New product surface for `mode` colour presets and `shape` variants (the
+"create" app's colour picker / bouquet-shape picker). None of this exists in
+the reference loader; none of it changes a single byte of the parity op
+stream when the palette is left at its default.
+
+- **11th material slot.** `PALETTE`/`RAMP`/`COL` now always hold 11 entries
+  internally: materials 0-9 are unchanged, and slot 10 is the ribbon
+  band/bow/tails material (previously hardcoded to reuse slot 0, the crimson
+  petal colour). `build()`'s ribbon-band and bow/tails cells now write
+  palette index 10 (`10 | (PART.RIBBON<<4)`) instead of `0`. `createModel`'s
+  `palette` option accepts either 10 triples (materials 0-9; slot 10 is set
+  to an exact copy of slot 0, the same rule the reference always implicitly
+  followed) or 11 (materials 0-9 plus an explicit ribbon colour) — a 10-triple
+  palette therefore paints byte-identically to before this change, which is
+  what keeps `test/parity.test.mjs` green (the reference and the default
+  `DEFAULT_PALETTE` never distinguished ribbon from petal colour). Every
+  place that iterated `PALETTE.length`/`RAMP` (prewarm, `frame()`'s per-frame
+  `COL` fill, `toneFor`) already scaled off the palette's own length, so no
+  fixed "10" was hardcoded anywhere that needed changing beyond `build()`'s
+  ribbon writes.
+- **`model.setPalette(triples)`** (10 or 11 triples, same validation/padding
+  as construction) swaps colour only: it never touches `SRC`/`VOL`/`SURFACE`
+  or the `AX/AY/AZ/APAL/APART/ACULL` geometry, so a caller can recolour a
+  landed (or mid-flight) bouquet without rebuilding it. It mutates
+  `PALETTE`/`RAMP`/`COL` **in place** (`.length = 0` then re-push) rather
+  than reassigning those `const` bindings, specifically so the `toneFor`
+  closure created once in `makeToneFor(RAMP, TONE_CACHE)` keeps seeing the
+  new values with no re-wiring; it clears `TONE_CACHE` (stale shade-quantised
+  entries from the old palette) and re-prewarms every `(material, shade)`
+  pair, same as construction. Callers must not call it mid-paint (mid a
+  `frame()`/`paint()` pair) — it is meant to be called between frames, e.g.
+  once per rAF tick with `mixPalettes(from, to, easedT)` while animating a
+  mode change.
+- **`src/palette.js`** (new file, zero imports): `mixPalettes(a, b, t)`
+  per-channel RGB-lerps two same-shaped palettes (10 or 11 triples each);
+  `mixHex(a, b, t)` is the single-colour primitive it's built from. Output is
+  uppercase `#RRGGBB` (matching `packages/modes/modes.js`'s `triple()`
+  convention) so `mixPalettes(a, b, 0)`/`mixPalettes(a, b, 1)` round-trip to
+  the exact input strings, not merely the same colour.
+- **`src/shapes.js`** (new file, zero imports): `SHAPES = {full, posy, stem}`,
+  `SHAPE_IDS = ['full', 'posy', 'stem']`, `DEFAULT_SHAPE = 'full'`. Each value
+  is a partial `params()` override in the same shape `createModel({params})`
+  already accepts (CONTRACT.md §1.2) — `full` is `{}` (today's default
+  geometry, byte-identical). `posy` scales the bloom count and every
+  canopy/collar/handle radius down together (~60% of `full`'s surface cube
+  count) for a smaller, rounder hand-tied bunch. `stem` drops to 3 blooms on
+  a tall dome (`domeCY` raised well above the default) with a tiny paper
+  collar and **`underfill: false`**: the reference generator's underfill
+  pass fills every gridpoint between the collar top and the canopy underside
+  with greenery for ANY gap, and on a stem this tall that pass draws a solid
+  green pillar instead of a visible stem, so it has to be turned off rather
+  than merely shrunk. All three were checked visually (not just
+  geometrically): `test/out/render-shapes.mjs` (gitignored, run manually)
+  bundles `src/index.js`, renders each shape landed at 390×844@1.5 in
+  headless Chromium, and screenshots the canvas — `posy` reads as a smaller
+  round bunch and `stem` reads as one-to-three blooms on a tall stem with a
+  small wrap and bow.
+- `src/index.js` does NOT re-export `palette.js` / `shapes.js`: doing so
+  pushed the bundle to 8072 B gzip, past `scripts/size.mjs`'s 8000 B budget
+  (Gate L1 fix). Import them directly from `src/palette.js` and
+  `src/shapes.js` (the server already does). With the ribbon slot and
+  `setPalette`, `src/index.js` measures 7533 B gzip.

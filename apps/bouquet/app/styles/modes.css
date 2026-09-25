@@ -1,0 +1,71 @@
+/**
+ * GENERATED FILE — do not edit by hand.
+ * Produced by scripts/build-mode-css.mjs from packages/modes/modes.js.
+ * Re-run `node scripts/build-mode-css.mjs` after changing a mode.
+ */
+
+:root {
+  --ground: #FBF1F3;
+  --surface: #F6E4E8;
+  --ink: #3A1320;
+  --muted: #6E4450;
+  --accent: #C41E5A;
+  --on-accent: #FFFFFF;
+  --focus: #C41E5A;
+  --border: #E4CBD1;
+}
+
+html[data-mode="rose"] {
+  --ground: #FBF1F3;
+  --surface: #F6E4E8;
+  --ink: #3A1320;
+  --muted: #6E4450;
+  --accent: #C41E5A;
+  --on-accent: #FFFFFF;
+  --focus: #C41E5A;
+  --border: #E4CBD1;
+}
+
+html[data-mode="sunflower"] {
+  --ground: #FFF8E1;
+  --surface: #FBEFC6;
+  --ink: #2E2106;
+  --muted: #5C4A16;
+  --accent: #8A5A00;
+  --on-accent: #FFFFFF;
+  --focus: #8A5A00;
+  --border: #E9D9A0;
+}
+
+html[data-mode="lavender"] {
+  --ground: #F5F1FB;
+  --surface: #E9E0F5;
+  --ink: #241A36;
+  --muted: #4F3D6E;
+  --accent: #6B4AA8;
+  --on-accent: #FFFFFF;
+  --focus: #6B4AA8;
+  --border: #D8CBEC;
+}
+
+html[data-mode="marigold"] {
+  --ground: #FFF3E6;
+  --surface: #FBE2C8;
+  --ink: #33190A;
+  --muted: #6B3616;
+  --accent: #C4530F;
+  --on-accent: #FFFFFF;
+  --focus: #C4530F;
+  --border: #EFCFA9;
+}
+
+html[data-mode="hydrangea"] {
+  --ground: #F0F5FC;
+  --surface: #DDE9F8;
+  --ink: #14233D;
+  --muted: #3C5478;
+  --accent: #2F5FA8;
+  --on-accent: #FFFFFF;
+  --focus: #2F5FA8;
+  --border: #C4D6ED;
+}

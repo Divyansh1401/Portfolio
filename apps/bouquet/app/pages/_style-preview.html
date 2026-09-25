@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-mode="rose">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Style preview — bouquet design system</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="/styles/modes.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <style>
+    .preview-switcher {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: var(--space-3) 0;
+      background: var(--ground);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-5);
+    }
+    .preview-section {
+      margin-bottom: var(--space-7);
+    }
+    .preview-section h2 {
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-3);
+    }
+    .swatch-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .swatch {
+      width: 72px;
+    }
+    .swatch__block {
+      height: 44px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .swatch__label {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      margin-top: var(--space-1);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <nav class="preview-switcher" role="group" aria-label="Preview mode">
+      <button type="button" class="chip" data-preview-mode="rose" aria-pressed="true">
+        <span class="chip__dot"></span>Rose
+      </button>
+      <button type="button" class="chip" data-preview-mode="sunflower" aria-pressed="false">
+        <span class="chip__dot"></span>Sunflower
+      </button>
+      <button type="button" class="chip" data-preview-mode="lavender" aria-pressed="false">
+        <span class="chip__dot"></span>Lavender
+      </button>
+      <button type="button" class="chip" data-preview-mode="marigold" aria-pressed="false">
+        <span class="chip__dot"></span>Marigold
+      </button>
+      <button type="button" class="chip" data-preview-mode="hydrangea" aria-pressed="false">
+        <span class="chip__dot"></span>Hydrangea
+      </button>
+    </nav>
+
+    <h1>Bouquet design system</h1>
+    <p style="color: var(--muted); margin-bottom: var(--space-6);">
+      Every component below reads its colour from the current
+      <code>html[data-mode]</code>. Switch modes with the chips above.
+    </p>
+
+    <section class="preview-section">
+      <h2>Tokens</h2>
+      <div class="swatch-row">
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--ground)"></div>
+          <div class="swatch__label">ground</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--surface)"></div>
+          <div class="swatch__label">surface</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--ink)"></div>
+          <div class="swatch__label">ink</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--muted)"></div>
+          <div class="swatch__label">muted</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--accent)"></div>
+          <div class="swatch__label">accent</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--on-accent); border-color: var(--ink);"></div>
+          <div class="swatch__label">on-accent</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--focus)"></div>
+          <div class="swatch__label">focus</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch__block" style="background: var(--border)"></div>
+          <div class="swatch__label">border</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Buttons</h2>
+      <div class="chip-row">
+        <button type="button" class="btn btn-primary">Send bouquet</button>
+        <button type="button" class="btn btn-ghost">Cancel</button>
+        <button type="button" class="btn btn-primary" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Chips (shape picker)</h2>
+      <div class="chip-row" role="radiogroup" aria-label="Shape">
+        <button type="button" class="chip" role="radio" aria-checked="true">
+          <span class="chip__dot"></span>Full
+        </button>
+        <button type="button" class="chip" role="radio" aria-checked="false">
+          <span class="chip__dot"></span>Posy
+        </button>
+        <button type="button" class="chip" role="radio" aria-checked="false">
+          <span class="chip__dot"></span>Stem
+        </button>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Form field</h2>
+      <div class="field">
+        <label for="preview-message">Message</label>
+        <textarea id="preview-message" rows="3" placeholder="Write something kind...">Happy birthday! Hope your day is as lovely as you are.</textarea>
+        <span class="field__hint">Up to 280 characters</span>
+      </div>
+      <div class="field">
+        <label for="preview-name">From</label>
+        <input id="preview-name" type="text" value="Divyansh" />
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Card</h2>
+      <div class="card">
+        <p style="margin: 0;">A plain card — used for framing, previews, and summaries.</p>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Note (message reveal)</h2>
+      <div class="note">
+        Happy birthday! Hope your day is as lovely as you are.
+        <div class="note__from">— Divyansh</div>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Sticky action bar</h2>
+      <div class="action-bar">
+        <button type="button" class="btn btn-ghost">Back</button>
+        <button type="button" class="btn btn-primary">Continue</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll('[data-preview-mode]');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var mode = btn.getAttribute('data-preview-mode');
+          document.documentElement.setAttribute('data-mode', mode);
+          buttons.forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b === btn));
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

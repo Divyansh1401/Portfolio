@@ -1,0 +1,127 @@
+/**
+ * Styles for /b/:id — the recipient reveal page. Layered on modes.css
+ * (colour tokens) and base.css (component primitives). No raw colours here.
+ */
+
+.bq-body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.bq-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Stage — full-viewport (100svh, 100vh fallback) canvas + hint + Open    */
+/* ---------------------------------------------------------------------- */
+
+.bq-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  background: var(--ground);
+}
+
+.bq-stage.is-revealed {
+  touch-action: auto;
+}
+
+.bq-hint[hidden],
+.bq-open[hidden] {
+  display: none;
+}
+
+.bq-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bq-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--space-8) + var(--touch-min) + var(--space-3));
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.bq-hint--coarse {
+  display: none;
+}
+
+.bq-hint--fine {
+  display: inline;
+}
+
+@media (pointer: coarse) {
+  .bq-hint--coarse {
+    display: inline;
+  }
+  .bq-hint--fine {
+    display: none;
+  }
+}
+
+.bq-open {
+  /* Centred without transform: .btn:active sets transform: scale(), which
+     would drop a translateX(-50%) and jump the button 80px sideways
+     mid-press, so the pointerup lands on the canvas and the click is lost
+     (review-gate fix). */
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  bottom: var(--space-6);
+  min-width: 160px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Message card — revealed to hidden -> visible                          */
+/* ---------------------------------------------------------------------- */
+
+.bq-message {
+  margin: var(--space-6) var(--space-4) 0;
+}
+
+.bq-message__text {
+  white-space: pre-line;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Post-reveal actions                                                    */
+/* ---------------------------------------------------------------------- */
+
+.bq-after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-6) var(--space-4) 0;
+  text-align: center;
+}
+
+.bq-after .btn {
+  width: 100%;
+  max-width: 320px;
+}
+
+.bq-make-own {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-mode="{{MODE}}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>This bouquet has wilted</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="/styles/modes.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <style>
+    .wilted {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .wilted h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .wilted p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 32ch;
+    }
+  </style>
+</head>
+<body>
+  <main class="wilted">
+    <h1>This bouquet has wilted</h1>
+    <p>It isn&rsquo;t here anymore &mdash; the link may be old or mistyped.</p>
+    <a class="btn btn-primary" href="/">Make your own</a>
+  </main>
+</body>
+</html>

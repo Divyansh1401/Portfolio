@@ -6,10 +6,13 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test \"packages/renderer/test/**/*.test.mjs\"",
+    "test": "node --test \"packages/**/test/**/*.test.mjs\" \"app/test/**/*.test.mjs\"",
     "goldens": "node packages/renderer/scripts/capture-goldens.mjs",
     "secrets": "node scripts/check-secrets.mjs",
-    "size": "node packages/renderer/scripts/size.mjs"
+    "size": "node packages/renderer/scripts/size.mjs",
+    "build:css": "node scripts/build-mode-css.mjs",
+    "build:client": "node scripts/build-client.mjs",
+    "dev": "npm run build:css && npm run build:client && node app/server/index.js"
   },
   "devDependencies": {
     "playwright-core": "1.56.1",

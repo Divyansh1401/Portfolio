@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-mode="{{MODE}}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your bouquet is ready</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/styles/modes.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/sent.css" />
+</head>
+<body>
+  <script type="application/json" id="bouquet-data">{{DATA_JSON}}</script>
+
+  <main class="container sent">
+    <h1 class="sent__title">Your bouquet is ready</h1>
+    <p class="sent__subtitle">Send the link below &mdash; they&rsquo;ll get the full reveal.</p>
+
+    <div class="sent__still card" aria-hidden="true">
+      <canvas id="sent-still" width="320" height="320"></canvas>
+    </div>
+
+    <div class="field">
+      <label for="sent-link">Link</label>
+      <input id="sent-link" type="text" readonly aria-describedby="sent-copy-status" />
+    </div>
+
+    <div class="chip-row sent__actions">
+      <button type="button" id="sent-copy" class="btn btn-primary">Copy link</button>
+      <button type="button" id="sent-share" class="btn btn-ghost" hidden>Share</button>
+      <a id="sent-whatsapp" class="btn btn-ghost" href="#" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+
+    <p id="sent-copy-status" class="sent__status" role="status" aria-live="polite"></p>
+
+    <p class="sent__opened-line" id="sent-opened-line" role="status" aria-live="polite">
+      Not opened yet
+    </p>
+
+    <div class="stack sent__links">
+      <a id="sent-open-yourself" href="#">Open it yourself</a>
+      <a href="/">Make another</a>
+    </div>
+  </main>
+
+  <script type="module" src="/assets/sent.js"></script>
+</body>
+</html>

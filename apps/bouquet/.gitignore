@@ -7,6 +7,8 @@ dist/
 coverage/
 test-results/
 packages/renderer/test/out/
+app/.data/
+app/dist/
 
 # The root .gitignore ignores any components/ or docs/ folder at any depth;
 # re-include them here since this app needs to track its own.

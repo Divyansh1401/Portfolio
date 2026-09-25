@@ -38,9 +38,14 @@ const HEX6_RE = /^#[0-9a-fA-F]{6}$/;
 
 function clonePalette(p){ return p.map(function(t){ return t.slice(); }); }
 
+// Accepts exactly 10 (materials 0-9) or 11 (materials 0-9 plus 10 = ribbon)
+// triples. Slot 10 is the ribbon band/bow/tails material (CONTRACT wave-2,
+// 11th material slot). Returns a fresh 11-entry palette: when given 10, slot
+// 10 is a copy of slot 0, which is what keeps the default output (and any
+// 10-triple caller) byte-identical to the pre-ribbon-slot op stream.
 function validatePalette(palette){
-  if(!Array.isArray(palette) || palette.length !== 10){
-    throw new TypeError('bouquet: palette must have exactly 10 entries');
+  if(!Array.isArray(palette) || (palette.length !== 10 && palette.length !== 11)){
+    throw new TypeError('bouquet: palette must have 10 or 11 entries');
   }
   for(const t of palette){
     if(!Array.isArray(t) || t.length !== 3){
@@ -52,7 +57,9 @@ function validatePalette(palette){
       }
     }
   }
-  return clonePalette(palette);
+  const out = clonePalette(palette);
+  if(out.length === 10) out.push(out[0].slice());
+  return out;
 }
 
 // Per-material ramp anchored on the reference's own three colours, with a
@@ -282,7 +289,7 @@ function build(P){
     for(let x=-lim; x<=lim; x++) for(let z=-lim; z<=lim; z++){
       const d = Math.hypot(x,z);
       if(d > P.ribR+0.5 || d < P.ribR-1.2) continue;
-      cells.set(key(x,y,z), 0 | (PART.RIBBON<<4));
+      cells.set(key(x,y,z), 10 | (PART.RIBBON<<4));
     }
   }
 
@@ -299,26 +306,26 @@ function build(P){
     const OUT = P.bowOut;
 
     // knot — small and tight, 3 wide x 2 tall x 2 deep
-    for(let a=-1;a<=1;a++) for(let b=0;b<=1;b++) for(let c=OUT;c<=OUT+1;c++) put(a,b,c,0);
+    for(let a=-1;a<=1;a++) for(let b=0;b<=1;b++) for(let c=OUT;c<=OUT+1;c++) put(a,b,c,10);
 
     // loop ring: 4 wide x 4 tall with a 2x2 hole through the middle
     const RING = [        [-1, 2],[0, 2],
                   [-2, 1],                [1, 1],
                   [-2, 0],                [1, 0],
                           [-1,-1],[0,-1]        ];
-    for(const L of RING) put(-P.bowSpread + L[0], 2 + L[1], OUT, 0);
-    for(const L of RING) put( P.bowSpread + L[0], 2 + L[1], OUT, 0);
-    put(-2, 1, OUT, 0); put(-2, 2, OUT, 0);
-    put( 2, 1, OUT, 0); put( 2, 2, OUT, 0);
+    for(const L of RING) put(-P.bowSpread + L[0], 2 + L[1], OUT, 10);
+    for(const L of RING) put( P.bowSpread + L[0], 2 + L[1], OUT, 10);
+    put(-2, 1, OUT, 10); put(-2, 2, OUT, 10);
+    put( 2, 1, OUT, 10); put( 2, 2, OUT, 10);
 
     // tails — hang from under the knot, one cube wide, drifting apart.
     for(const sg of [-1, 1]){
       const len = sg < 0 ? P.tailLen : P.tailLen - 2;
       let a = sg, b = -1;
-      put(a, b, OUT, 0);
+      put(a, b, OUT, 10);
       for(let i=0;i<len;i++){
-        b -= 1;                       put(a, b, OUT, 0);
-        if(i % 3 === 2){ a += sg;     put(a, b, OUT, 0); }
+        b -= 1;                       put(a, b, OUT, 10);
+        if(i % 3 === 2){ a += sg;     put(a, b, OUT, 10); }
       }
     }
   }
@@ -404,7 +411,7 @@ function applyParamsPatch(P, P_ORIG, o){
  * @param {{params?:object, palette?:Array, turns?:number, ms?:number, fill?:number}} [opts]
  */
 export function createModel(opts = {}){
-  const PALETTE = opts.palette !== undefined ? validatePalette(opts.palette) : clonePalette(DEFAULT_PALETTE);
+  const PALETTE = validatePalette(opts.palette !== undefined ? opts.palette : DEFAULT_PALETTE);
   const RAMP = buildRamp(PALETTE);
   const TONE_CACHE = new Map();
   const toneFor = makeToneFor(RAMP, TONE_CACHE);
@@ -803,8 +810,33 @@ export function createModel(opts = {}){
     return Object.assign({}, F, { order: PART_ORDER.slice(), fillHollow: HOLLOW_FILLED });
   }
 
+  // setPalette(triples) — swap the 10- or 11-triple material palette in
+  // place (10 -> slot 10 := copy of slot 0, same rule as construction).
+  // Geometry (SRC/VOL/SURFACE/AX/AY/AZ/APAL/APART/ACULL) is untouched: only
+  // colour derives from the palette, so this never rebuilds the model. It
+  // mutates PALETTE/RAMP/COL in place (never reassigns those `const`
+  // bindings) so the existing `toneFor` closure — created once over these
+  // same array/Map objects — keeps seeing the new values with no re-wiring.
+  // Must not be called mid-paint: it clears TONE_CACHE (so `frame()` calls
+  // still in flight would recompute stale-vs-fresh entries) and callers are
+  // expected to call it between frames, then re-call `frame()`/`paint()`.
+  function setPalette(triples){
+    const next = validatePalette(triples);
+    PALETTE.length = 0;
+    for(const t of next) PALETTE.push(t);
+    const nextRamp = buildRamp(PALETTE);
+    RAMP.length = 0;
+    for(const r of nextRamp) RAMP.push(r);
+    TONE_CACHE.clear();
+    COL.length = 0;
+    for(let i=0;i<PALETTE.length;i++) COL.push(['#fff','#fff','#fff']);
+    for(let i=0;i<PALETTE.length;i++) for(let q=0;q<=160;q++) toneFor(i, q/128);
+    return clonePalette(PALETTE);
+  }
+
   return {
     layout, relayout, setDpr, landed,
     set, frame, state, sets, project, basis, params, tune, fit, dtune, ftune,
+    setPalette,
   };
 }

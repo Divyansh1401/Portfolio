@@ -1,0 +1,58 @@
+/**
+ * Styles for /b/:id/sent — layered on modes.css (colour tokens) and
+ * base.css (component primitives). No raw colours here.
+ */
+
+.sent {
+  text-align: center;
+}
+
+.sent__title {
+  font-size: var(--text-2xl);
+}
+
+.sent__subtitle {
+  color: var(--muted);
+  margin-bottom: var(--space-6);
+}
+
+.sent__still {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.sent__still canvas {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+.sent__actions {
+  margin-bottom: var(--space-4);
+  justify-content: center;
+}
+
+.sent__status {
+  min-height: 1.25em;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin: 0 0 var(--space-5);
+}
+
+.sent__opened-line {
+  font-weight: 600;
+  margin-bottom: var(--space-6);
+}
+
+.sent__links {
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sent__links a {
+  font-size: var(--text-sm);
+}
