@@ -18,7 +18,7 @@ summary. Updated 2026-09-25.
 1. **One design per flower.** Remove the Full / Posy / Single stem choice from the renderer, pages, API and database.
 2. **Gifts, countdown, secret question.** Photos (6), link, gift card, ticket/file; date lock with countdown and calendar link; secret question; security tests.
 3. **Four new flowers.** One bloom design each, approved on a contact sheet.
-4. **Pay-what-you-want with a pretend checkout.** Paid-flower badges, a sheet with ₹30 / ₹50 / ₹100 / ₹150 (every amount unlocks the same), one payment per message checked on the server, draft → paid → live, "Send it as Rose, free".
+4. **Pricing phases + pay-what-you-want with a pretend checkout.** Phase setting on the server (first 100 messages free → Rose free, four flowers paid → all paid, ₹30 minimum). Paid-flower badges, a sheet with ₹30 / ₹50 / ₹100 / ₹150 (every amount unlocks the same), one payment per message checked on the server, draft → paid → live, "Send it as Rose, free".
 5. **Local polish and sign-off.** Recipient layout after the scatter, final colours, 5-friend phone test.
 6. **Move to Cloudflare.** Workers + D1 + R2, domain, link-preview images, email gate if wanted.
 7. **Real payments.** Razorpay (India) and Stripe (elsewhere), webhooks, receipts, legal pages.
