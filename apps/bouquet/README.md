@@ -135,18 +135,38 @@ Marigold, and Tulip or Hydrangea).
   "Make it fail" buttons; Razorpay/Stripe replace it later.
 - While Rose is free, a paid-flower draft can also be sent as Rose, free.
 
-## Gifts, open-on-date and secret question
+## The recipient page
 
-- Up to 8 gifts: up to 6 photos (re-encoded to JPEG in the browser, ≤5 MB),
-  https links, gift codes (hidden until tapped), and a ticket/file (PDF or
-  image, ≤10 MB). Uploads are identified by their bytes, not their name.
-- **Open on a date:** the recipient sees a countdown (server clock) with an
-  "Add to calendar" file; the note and gifts are not sent to the browser
-  until the time has passed.
-- **Secret question:** the answer is stored only as a salted scrypt hash;
-  capitals and spaces don't matter; 5 wrong tries lock it for 10 minutes.
-  Gift files then need a short-lived signed token.
-- Drafts and unused uploads older than a day are swept hourly.
+`/b/:id` is a port of the owner's birthday page
+([`reference/birthday/`](reference/birthday/README.md)): a white gate with an
+**open** pill, the 5 s fly-in, then one long scroll. The bouquet holds, then
+disperses; the flower's light petal colour swells up as a dome; the note
+arrives **one word per scroll**, then "from <name>"; the countdown ("until
+<occasion>") runs, and at zero it hands over to a **scratch-foil card** with
+the gift under it (tilt on hover, confetti at half scratched). Horizontal
+drag or wheel turns the bouquet. The font is TAN Mon Cheri when its licensed
+file is installed (see [`app/fonts/README.md`](app/fonts/README.md)), Georgia
+otherwise.
+
+What is locked, decided by the server:
+
+- **Quiz** (secret question): sits on the gate. The note and gifts are not in
+  the page until it is answered. The answer is stored only as a salted
+  scrypt hash; capitals and spaces don't matter; 5 wrong tries lock it for
+  10 minutes. Gift files then need a short-lived signed token.
+- **Countdown**: locks **only the gifts**. The bouquet and the note are the
+  entry point and are always open. The gifts are not sent to the browser
+  until the time has passed; the page fetches them when the clock hits zero.
+
+Gifts: up to 8 (up to 6 photos, re-encoded to JPEG in the browser, ≤5 MB),
+https links, gift codes, and a ticket/file (PDF or image, ≤10 MB). Uploads
+are identified by their bytes, not their name. The first gift is on the
+card; "see all N gifts" opens the rest. Drafts and unused uploads older than
+a day are swept hourly.
+
+The create page's **Preview** shows this same page in a full-screen frame
+(`/preview`, filled over postMessage; nothing is saved), with a "skip
+countdown" button.
 
 ## Screenshots
 

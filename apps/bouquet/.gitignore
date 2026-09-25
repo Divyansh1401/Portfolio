@@ -17,3 +17,9 @@ app/dist/
 # The root .gitignore also ignores any reference/ folder; the pinned renderer
 # reference copy (packages/renderer/reference/) must be tracked.
 !reference/
+
+# licensed font files (see app/fonts/README.md)
+app/fonts/*.woff2
+app/fonts/*.woff
+app/fonts/*.otf
+app/fonts/*.ttf

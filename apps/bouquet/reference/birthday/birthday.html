@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Order Receipt</title>
+<!-- Deliberate decoy metadata. This is what WhatsApp / iMessage / Instagram
+     scrape into the link-preview card, and what shows in the browser tab.
+     It must NOT describe the real contents. Do not "fix" it to match. -->
+<meta name="description" content="View your order summary and delivery details.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Order Receipt #4471">
+<meta property="og:description" content="View your order summary and delivery details.">
+<meta property="og:site_name" content="Orders">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Order Receipt #4471">
+<meta name="twitter:description" content="View your order summary and delivery details.">
+<style>
+/* ===========================================================================
+   TAN MON CHERI — TAN Type Foundry. Self-hosted; not a Google font.
+   Measured: digit advances span 23.8 -> 96.5 at 100px (75.3%) and the face
+   carries NO tnum feature, so font-variant-numeric:tabular-nums is inert.
+   Every countdown digit therefore sits in a fixed .965em cell (see .dig).
+   =========================================================================== */
+@font-face{
+  font-family:'Mon Cheri';
+  src:url('birthday/fonts/TAN-MONCHERI.woff2') format('woff2'),
+      url('birthday/fonts/TAN-MONCHERI.otf') format('opentype');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+
+:root{
+  /* sampled from the reference — see NOTES.md in the source repo */
+  --crimson:#C41E5A;      /* bloom centres + the ribbon */
+  --blush:#FFB3C6;        /* light tone — sampled, per NOTES.md */
+  --cream:#F1E6D6;
+  --paper:#ffffff;
+  --ink:#C41E5A;          /* crimson ON blush: light-on-light would vanish.
+                             measured 3.40:1 on --blush — clears WCAG large
+                             text (3.0), which is what the 120px words are. */
+  --gate-ms:620ms;
+  --ink-strong:#8E1140;   /* measured 5.43:1 — for anything at label size,
+                             where 3.40 would fail the 4.5 normal-text bar */
+}
+
+*{box-sizing:border-box}
+html{
+  /* the page owns the vertical gesture; nothing else may claim it */
+  overscroll-behavior-y:none;
+  -webkit-text-size-adjust:100%;
+}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Mon Cheri',Georgia,serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+
+/* --- the scroll track: the only thing that is actually tall ------------- */
+#track{ height:var(--track,980vh); pointer-events:none }
+
+/* --- everything visible lives in one fixed layer ------------------------ */
+/* touch-action:pan-y is the axis split. The browser keeps the vertical
+   gesture — native scroll, native momentum, native rubber-band — and hands us
+   the horizontal one for yaw. This is the exact constraint v5 fights (its
+   comments explain why pan-y broke ITS vertical drag); here it is the whole
+   point, because we WANT the browser to own vertical. */
+#stage{ position:fixed; inset:0; overflow:hidden; z-index:1; touch-action:pan-y }
+
+/* --- v4 bouquet, embedded verbatim -------------------------------------
+   pointer-events:none is load-bearing: v4 binds wheel + pointerdown on its
+   canvas with {passive:false} and preventDefault, which would swallow the
+   page's scroll entirely. Making the frame transparent to hit-testing means
+   those handlers never fire and the browser keeps native scroll + momentum.
+   Hiding the debug rig used to be a clip against a fixed 132px reserve. v6
+   changed that: the canvas is now position:fixed inset:0 (it IS the viewport)
+   and the rig is a floating #hudbar pinned to the frame's own bottom, so no
+   fixed reserve exists to clip against. fitFrame() measures the bar at
+   runtime and oversizes the frame by 2x its height, offsetting by half — which
+   pushes the bar below the fold AND keeps the canvas centre on the viewport
+   centre. Measured, so a taller bar cannot silently reappear. */
+#bqclip{ position:absolute; inset:0; overflow:hidden }
+#bq{
+  position:absolute; left:0; top:0; width:100%; height:100vh;
+  border:0; display:block; pointer-events:none;
+}
+
+/* --- the gate: nothing moves until she opens it -------------------------- */
+html.locked, html.locked body{ overflow:hidden; height:100% }
+#gate{
+  position:fixed; inset:0; z-index:5; display:grid; place-items:center;
+  background:var(--paper);
+  transition:opacity var(--gate-ms) cubic-bezier(.32,0,.24,1);
+}
+#gate.go{ opacity:0; pointer-events:none }
+#open{
+  font:inherit; color:var(--ink); background:transparent;
+  font-size:clamp(.9rem,3.2vw,1.15rem);
+  text-transform:uppercase; letter-spacing:.34em; text-indent:.34em;
+  border:1px solid currentColor; border-radius:999px;
+  padding:1.05em 2.6em; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  /* feedback on press, not on release */
+  transition:transform 150ms ease-out, background-color 260ms ease-out;
+}
+#open:hover{ background:#FFB3C63d }
+#open:active{ transform:scale(.968) }
+#open:focus-visible{ outline:2px solid var(--ink-strong); outline-offset:4px }
+
+/* --- the scroll hint ---------------------------------------------------- */
+#hint{
+  position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
+  opacity:0;
+  font-size:12px; letter-spacing:.42em; text-indent:.42em;
+  color:#00000055; text-transform:uppercase; white-space:nowrap;
+}
+#hint i{
+  display:block; width:1px; height:26px; margin:12px auto 0;
+  background:linear-gradient(#00000038,#0000);
+}
+
+/* --- the pink dome, swelling up out of the bottom edge -------------------
+   border-radius 50%/100% on a bottom-anchored box makes the top edge one
+   smooth semi-ellipse across the full width. scaleY then squashes that
+   ellipse: at 0.05 it is a wide shallow swell, at 1 a full dome. Driving it
+   with scaleY (not height) keeps it on the compositor — animating height
+   would relayout every frame.
+   Width is 200vw so the shoulders sit well off-screen and only the gentle
+   middle of the arc is ever visible — that is what makes it read as a soft
+   hill rather than a dome. At 140vw the arc was noticeably rounder than the
+   reference.
+   Coverage is aspect-INDEPENDENT: the top corner is inside when
+   (0.5vw/1.0vw)^2 + (1.0vh/(1.6vh*u))^2 <= 1, i.e. 0.25 + (0.625/u)^2 <= 1,
+   i.e. u >= 0.722 — both terms normalise by the viewport, so it holds on any
+   screen shape. */
+#bulge{
+  position:absolute; left:50%; bottom:0;
+  width:200vw; margin-left:-100vw; height:160vh;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:var(--blush);
+  transform-origin:50% 100%;
+  transform:scaleY(0); will-change:transform;
+}
+
+/* --- the wish, one word at a time --------------------------------------- */
+#words{ position:absolute; inset:0; display:grid; place-items:center }
+#words b{
+  grid-area:1/1; opacity:0; will-change:transform,opacity;
+  font-weight:400; text-transform:uppercase; white-space:nowrap;
+  /* caps want POSITIVE tracking; the negative-tracking rule is a mixed-case
+     rule and inverts here. Mon Cheri is high-contrast, so it wants air. */
+  letter-spacing:.11em; text-indent:.11em; line-height:1;
+  /* size is measured, not guessed — see fitWords(). The fallback only ever
+     shows for the instant before the font resolves. */
+  font-size:var(--wordSize, clamp(2rem, 11vw, 9rem));
+}
+
+/* --- the day: the clock runs out and hands over ------------------------ */
+/* No separate three-two-one. The clock already ends on 03, 02, 01 in its own
+   face and its own size — a second countdown stacked on top of the first would
+   be the page saying the same thing twice, louder. */
+
+/* The 330px floor is not taste. The QR is 0.82 of the card's short side, and
+   a decoder stopped reading this code off a simulated camera capture below
+   about 300px of QR — 280 would have put the floor under that. */
+/* perspective lives here and the rotation lives on #qcard — the same split
+   TiltedCard makes between its <figure> and its inner div. It also keeps the
+   two transforms from fighting: render() owns this element's translate every
+   frame, the tilt owns the child's rotation. */
+#cardWrap{
+  position:absolute; left:50%; top:50%;
+  width:clamp(330px,46vmin,420px); aspect-ratio:.74;
+  transform:translate(-50%,-50%); opacity:0; perspective:800px;
+  will-change:transform,opacity; pointer-events:none;
+}
+#cardWrap.live{ pointer-events:auto }
+#qcard{
+  position:absolute; inset:0; border-radius:22px; overflow:hidden;
+  background:var(--paper); display:grid; place-items:center;
+  transform-style:preserve-3d; will-change:transform;
+  box-shadow:0 2px 4px rgba(142,17,64,.10),
+             0 12px 24px rgba(142,17,64,.14),
+             0 34px 70px rgba(142,17,64,.22);
+}
+/* a hairline keyline, inset — a printed card edge rather than a CSS border */
+#qcard::after{
+  content:""; position:absolute; inset:11px; border-radius:13px;
+  border:1px solid rgba(142,17,64,.16); pointer-events:none; z-index:3;
+}
+.qsvg{ display:block }
+/* Balances .qcap at the other end of the card. Hidden until the foil is off —
+   it is the thing under the scratch, not a label on the scratch. */
+.qtop{
+  position:absolute; left:0; right:0; top:26px; text-align:center; z-index:2;
+  font-size:clamp(.72rem,2vmin,.92rem); letter-spacing:.26em; text-indent:.26em;
+  text-transform:uppercase; color:var(--ink); opacity:0;
+  transition:opacity .6s linear .35s;
+}
+#cardWrap.done .qtop{ opacity:1 }
+/* Above the card and the whole stage, and never in the way of a pointer. */
+#confetti{
+  position:fixed; inset:0; z-index:40; pointer-events:none; display:none;
+}
+.qcap{
+  position:absolute; left:0; right:0; bottom:26px; text-align:center; z-index:2;
+  font-size:clamp(.56rem,1.5vmin,.7rem); letter-spacing:.3em; text-indent:.3em;
+  text-transform:uppercase; color:var(--ink-strong); opacity:.72;
+}
+#scratch{
+  position:absolute; inset:0; width:100%; height:100%; z-index:4;
+  border-radius:22px; cursor:grab; touch-action:none;
+  transition:opacity .55s linear;
+}
+#scratch.done{ opacity:0; pointer-events:none }
+#scratch:active{ cursor:grabbing }
+
+/* --- countdown ---------------------------------------------------------- */
+#cd{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:clamp(22px,5vh,54px);
+  opacity:0; will-change:transform,opacity; padding:24px;
+}
+#cd h1{
+  margin:0; font-weight:400; text-transform:uppercase; text-align:center;
+  letter-spacing:.15em; text-indent:.15em; line-height:1.12;
+  font-size:clamp(1.5rem, 6.2vw, 3.4rem);
+}
+#clock{ display:flex; flex-wrap:wrap; justify-content:center; gap:clamp(12px,4vw,44px) }
+.unit{ display:flex; flex-direction:column; align-items:center; gap:.55em }
+.num{ display:flex; line-height:1; font-size:clamp(2.3rem, 11vw, 6rem) }
+/* fixed cell per digit — the only reason the clock does not lurch each tick */
+.dig{ display:inline-block; width:.965em; text-align:center }
+.cap{
+  font-size:clamp(.6rem,2.4vw,.82rem); letter-spacing:.34em; text-indent:.34em;
+  color:var(--ink-strong); text-transform:uppercase;
+}
+
+/* On a phone all four units on one line are illegibly small, and letting them
+   wrap naturally orphans SECONDS on its own row (3+1). Force an even 2x2. */
+@media (max-width:560px){
+  #clock{ display:grid; grid-template-columns:1fr 1fr; row-gap:clamp(16px,3.4vh,30px) }
+}
+
+@media (prefers-reduced-motion: reduce){
+  #bulge{ transition:none }
+  #words b, #cd{ will-change:auto }
+}
+</style>
+</head>
+<body>
+
+<div id="track"></div>
+
+<div id="gate">
+  <button id="open" type="button">open</button>
+</div>
+
+<div id="stage">
+  <div id="bqclip"><iframe id="bq" src="birthday/bouquet-v6.html" title="" scrolling="no" tabindex="-1" aria-hidden="true"></iframe></div>
+
+  <div id="hint">scroll<i></i></div>
+
+  <div id="bulge"></div>
+
+  <div id="words" aria-label="Happy birthday to the love of my life"></div>
+
+  <div id="cd">
+    <h1 id="cdTitle"></h1>
+    <div id="clock"></div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <div id="cardWrap">
+    <div id="qcard">
+      <!-- Generated offline and inlined: no library at runtime and no network
+           request, so it renders with the laptop offline. 29x29 at ECC L with
+           rounded data modules — measured against a decoder under simulated
+           camera blur, that combination read better than the denser 33x33,
+           because bigger modules beat more error correction when defocused.
+           The three finder squares stay square: detection keys off them. -->
+      <svg class="qsvg" viewBox="-4 -4 37 37" shape-rendering="geometricPrecision"
+           role="img" aria-label="QR code">
+        <!-- QR code path removed from this reference copy: this repo is public and the code pointed at a private destination. The original page is unchanged. --><rect x="0" y="0" width="29" height="29" fill="none" stroke="#2A0E19"/>
+      </svg>
+      <span class="qtop">happy birthday</span>
+      <span class="qcap">scan with your camera</span>
+      <canvas id="scratch"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===========================================================================
+// CONFIG — the two things that must be set before this goes out.
+// ===========================================================================
+// The +05:30 offset is the whole trick. An ISO string WITHOUT an offset is
+// parsed in the VIEWER's local zone, so the same page would count to a
+// different instant on her phone than on yours. With the offset it names one
+// absolute moment on the timeline; every device on earth agrees on it and
+// just renders the remaining gap. The only thing that could still be wrong is
+// her device clock itself, and phones keep that NTP-synced.
+const BIRTHDAY = '2026-09-07T00:00:00+05:30';   // midnight IST, 7 Sept
+const WISH     = ['happy','birthday','to','the','love','of','my','life'];
+const TITLE_BEFORE = 'until the day';
+
+// v4 ships T_TOTAL=3000 with TURNS=1. Experiments/bouquet/NOTES.md measured that exact
+// config at p90 1.61 cube-widths/frame with 446/710 blocks over the 1.0
+// ceiling — they read as separate stamps, not a streak. 5000ms measured 0.97
+// with 48/710 over. Set from outside via v4's own public TUNE(); the file
+// itself is untouched (v6, md5 811cfd11cc2cb60fc7bd01c7f4d5d6b3).
+const FLY_MS = 5000;
+
+// --- scroll timeline, in viewport-heights -----------------------------------
+const T = {
+  holdEnd:   0.70,   // bouquet sits still
+  dispEnd:   1.90,   // Q 0 -> 1, cubes leave the frame entirely
+  bulgeIn:   1.78,   // the dome starts swelling just before the last cube goes
+  bulgeEnd:  3.40,   // 1.6 viewports of scroll for the swell — deliberately slow
+  wordStart: 3.40,
+  wordSpan:  0.75,   // per word, also deliberately slow
+};
+T.wordEnd = T.wordStart + WISH.length * T.wordSpan;   // 7.40
+T.cdIn    = T.wordEnd + 0.55;
+const TRACK = T.cdIn + 1.30;                          // scrollable viewports
+
+const $  = s => document.querySelector(s);
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const seg = (t,a,b) => clamp01((t-a)/(b-a));
+const easeOut  = u => 1 - Math.pow(1-u, 3);
+// sine in-out: gentlest of the standard curves, no abrupt shoulder at either
+// end. This is what "slow and soft" actually means as a function.
+const soft     = u => 0.5 - 0.5*Math.cos(Math.PI*u);
+const lerp = (a,b,u) => a + (b-a)*u;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// The clock can run out while she is watching it — that is the entire point of
+// the night. DAY is the latch tickClock flips; HAND is how far the handover
+// from clock to card has run, 0 to 1. The card takes the same beat the clock
+// is already in rather than a further scroll: what ends the countdown should
+// be the countdown ending, not her deciding to scroll again.
+let DAY = false, HAND = 0, clockBooted = false;
+document.documentElement.style.setProperty('--track', (TRACK + 1) * 100 + 'vh');
+
+// --- build the words --------------------------------------------------------
+const wordEls = WISH.map(w => {
+  const b = document.createElement('b');
+  b.textContent = w;
+  $('#words').appendChild(b);
+  return b;
+});
+
+// --- size the words to the LONGEST one --------------------------------------
+// A fixed vw size cannot know how wide "BIRTHDAY" is in Mon Cheri, and at
+// 375px a 15vw guess overflowed both edges. Measure at a known size, then
+// scale linearly (text advance is linear in font-size) so the widest word
+// fits with air to spare. All words share one size — uniform type is calmer
+// than letting each word fill the width, which would make TO enormous.
+function fitWords(){
+  const BASE = 100, AIR = 0.86, MAX_H = 0.22;
+  const root = document.documentElement.style;
+  root.setProperty('--wordSize', BASE + 'px');
+  let maxW = 0;
+  for(const el of wordEls) maxW = Math.max(maxW, el.scrollWidth);
+  if(!maxW) return;
+  const size = Math.min(BASE * (innerWidth * AIR) / maxW, innerHeight * MAX_H, 176);
+  root.setProperty('--wordSize', size.toFixed(1) + 'px');
+}
+document.fonts.ready.then(fitWords);
+fitWords();
+
+// --- build the clock --------------------------------------------------------
+const UNITS = [['days',2],['hours',2],['minutes',2],['seconds',2]];
+const cells = UNITS.map(([name,width]) => {
+  const u = document.createElement('div'); u.className = 'unit';
+  const n = document.createElement('div'); n.className = 'num';
+  const digs = Array.from({length:width}, () => {
+    const d = document.createElement('span'); d.className = 'dig';
+    n.appendChild(d); return d;
+  });
+  const c = document.createElement('div'); c.className = 'cap'; c.textContent = name;
+  u.append(n,c); $('#clock').appendChild(u);
+  return digs;
+});
+
+function tickClock(){
+  const ms = new Date(BIRTHDAY).getTime() - Date.now();
+  const day = ms <= 0;
+  if (day !== DAY){
+    DAY = day;
+    /* Nothing is display:none'd any more. The clock is not hidden, it is
+       handed over: it has just finished saying 03, 02, 01 and those digits
+       earned the moment, so they cross-fade into the card rather than being
+       cut. handOver() owns that; render() reads HAND.
+
+       Which of the two runs depends on whether this is the first pass. A flip
+       on a later tick means she is watching it happen — animate. A flip on the
+       very first tick only means the page was opened after midnight, and
+       animating there would be the page performing a moment she never had.
+
+       The first-pass branch is deferred a tick for a duller reason: tickClock
+       runs its first pass further up this file than the card's own consts, so
+       touching them inline throws a temporal-dead-zone ReferenceError — on
+       every load on the day itself, the one day it must not throw. */
+    if (!day){ HAND = 0; render(); }
+    else if (clockBooted) handOver();
+    else setTimeout(handAlready, 0);
+  }
+  if (!day) $('#cdTitle').textContent = TITLE_BEFORE;
+  const s = Math.max(0, Math.floor(ms/1000));
+  const v = [Math.floor(s/86400), Math.floor(s/3600)%24, Math.floor(s/60)%60, s%60];
+  cells.forEach((digs,i) => {
+    const str = String(v[i]).padStart(digs.length,'0');
+    // write per digit, and only on change — avoids re-layout every second
+    digs.forEach((d,j) => { if(d.textContent !== str[j]) d.textContent = str[j]; });
+  });
+}
+tickClock(); clockBooted = true; setInterval(tickClock, 250);
+
+// --- the day: three, two, one, then the card -------------------------------
+/* The clock can run out while she is watching it, which is the whole point of
+   the night, so none of this can be decided once at load. tickClock flips DAY
+   and calls in here; a page opened later in the day gets the same beat rather
+   than landing cold on the card. */
+const wrapEl = $('#cardWrap');
+const cvEl = $('#scratch');
+const cctx = cvEl.getContext('2d', { willReadFrequently: true });
+let revealed = false, painting = false, lastPt = null;
+
+/* the bouquet's own heart, so the foil carries the same mark as the page */
+const HEART = new Path2D("M50 86 C26 68 10 53 10 36 C10 21 21 12 32 12 C41 12 " +
+  "47 17 50 24 C53 17 59 12 68 12 C79 12 90 21 90 36 C90 53 74 68 50 86 Z");
+
+function sizeQR(){
+  const r = $('#qcard').getBoundingClientRect();
+  if (!r.width) return;
+  const side = Math.min(r.width, r.height) * 0.82;
+  const q = $('.qsvg');
+  q.style.width = side + 'px'; q.style.height = side + 'px';
+}
+
+function paintCoat(){
+  const r = $('#qcard').getBoundingClientRect();
+  const w = r.width, h = r.height;
+  if (!w || !h) return;
+  const dpr = Math.min(devicePixelRatio || 1, 3);
+  cvEl.width = Math.round(w * dpr); cvEl.height = Math.round(h * dpr);
+  cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cctx.globalCompositeOperation = 'source-over';
+  cctx.clearRect(0, 0, w, h);
+
+  const g = cctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0,'#D64C7C'); g.addColorStop(.34,'#C41E5A');
+  g.addColorStop(.52,'#A81547'); g.addColorStop(.72,'#C41E5A');
+  g.addColorStop(1,'#8E1140');
+  cctx.fillStyle = g; cctx.fillRect(0, 0, w, h);
+
+  const step = w / 3.6;                       // hearts, tiled and barely there
+  cctx.save(); cctx.globalAlpha = .085; cctx.fillStyle = '#FFF1F5';
+  for (let row = -1, i = 0; row * step < h + step; row++, i++){
+    for (let col = -1; col * step < w + step; col++){
+      cctx.save();
+      cctx.translate(col * step + (i % 2 ? step / 2 : 0), row * step);
+      cctx.translate(step * .33, step * .30);
+      cctx.scale(step * .34 / 100, step * .34 / 100);
+      cctx.fill(HEART); cctx.restore();
+    }
+  }
+  cctx.restore();
+
+  const sh = cctx.createLinearGradient(0, h, w, 0);   // one soft sheen band
+  sh.addColorStop(.36,'rgba(255,255,255,0)');
+  sh.addColorStop(.50,'rgba(255,255,255,.17)');
+  sh.addColorStop(.64,'rgba(255,255,255,0)');
+  cctx.fillStyle = sh; cctx.fillRect(0, 0, w, h);
+
+  for (let i = 0; i < 1800; i++){                     // tooth, so it reads as foil
+    cctx.fillStyle = 'rgba(255,255,255,' + (Math.random() * .05).toFixed(3) + ')';
+    cctx.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5);
+  }
+
+  cctx.textAlign = 'center'; cctx.textBaseline = 'middle';
+  cctx.fillStyle = 'rgba(255,241,245,.94)';
+  const fs = Math.max(13, w * .052);
+  cctx.font = fs + "px 'Mon Cheri', Georgia, serif";
+  cctx.letterSpacing = (fs * .3) + 'px';              // ignored where unsupported
+  cctx.fillText('SCRATCH ME', w / 2 + fs * .15, h / 2 + fs * 1.5);
+  cctx.save();
+  cctx.translate(w / 2 - (w * .085) / 2, h / 2 - w * .10);
+  cctx.scale(w * .085 / 100, w * .085 / 100);
+  cctx.fill(HEART); cctx.restore();
+
+  painting = false; lastPt = null;
+}
+
+function scratchAt(x, y){
+  const c = $('#qcard');
+  cctx.globalCompositeOperation = 'destination-out';
+  cctx.lineCap = cctx.lineJoin = 'round';
+  cctx.lineWidth = Math.max(30, Math.min(c.clientWidth, c.clientHeight) * .17);
+  cctx.beginPath();
+  if (lastPt) cctx.moveTo(lastPt.x, lastPt.y); else cctx.moveTo(x - .1, y - .1);
+  cctx.lineTo(x, y); cctx.stroke();
+  lastPt = { x, y };
+}
+
+/* Coarse grid: reading every pixel on every pointermove is what makes a
+   scratch feel laggy. */
+function clearedFraction(){
+  const w = cvEl.width, h = cvEl.height;
+  if (!w) return 0;
+  const d = cctx.getImageData(0, 0, w, h).data;
+  let clear = 0, seen = 0;
+  for (let y = 0; y < h; y += 8)
+    for (let x = 0; x < w; x += 8){
+      if (d[(y * w + x) * 4 + 3] < 24) clear++;
+      seen++;
+    }
+  return clear / seen;
+}
+
+/* Where on the card is the cursor, given the card is leaning away from it?
+
+   getBoundingClientRect is no help: it reports the axis-aligned box, which on
+   a leaning card is measurably bigger than the card — 22px wider at only 5deg
+   — so every stroke lands offset. The earlier version dodged this by freezing
+   the card flat on press. This does the arithmetic instead, so it can keep
+   leaning while she scratches.
+
+   The card is a plane, so the whole 4x4 chain — the parent's perspective, then
+   rotateX, rotateY, scale — collapses to a 3x3 homography on z=0. Rows 1, 2
+   and 4 of the composed matrix are that homography; inverting it maps screen
+   back to card. Exact, not an approximation. */
+function cardHomography(){
+  const P = new DOMMatrix(); P.m34 = -1 / 800;          // the parent's perspective
+  const M = P.multiply(new DOMMatrix()
+    .rotateAxisAngle(1, 0, 0, tilt.rx)
+    .rotateAxisAngle(0, 1, 0, tilt.ry)
+    .scale(tilt.sc));
+  return [M.m11, M.m21, M.m41,
+          M.m12, M.m22, M.m42,
+          M.m14, M.m24, M.m44];
+}
+function inv3(m){
+  const [a,b,c,d,e,f,g,h,i] = m;
+  const A = (e*i - f*h), B = -(d*i - f*g), C = (d*h - e*g);
+  const det = a*A + b*B + c*C;
+  if (!det) return null;
+  const s = 1 / det;
+  return [A*s, -(b*i - c*h)*s,  (b*f - c*e)*s,
+          B*s,  (a*i - c*g)*s, -(a*f - c*d)*s,
+          C*s, -(a*h - b*g)*s,  (a*e - b*d)*s];
+}
+const ptOf = e => {
+  const r = wrapEl.getBoundingClientRect();   // wrap is only ever 2D-translated
+  const W = r.width, H = r.height;
+  // relative to the transform origin — the centre, which is also where the
+  // parent puts its perspective origin, so the two coincide
+  const sx = e.clientX - r.left - W / 2;
+  const sy = e.clientY - r.top  - H / 2;
+  const inv = inv3(cardHomography());
+  if (!inv) return { x: sx + W / 2, y: sy + H / 2 };
+  const w = inv[6] * sx + inv[7] * sy + inv[8];
+  return {
+    x: (inv[0] * sx + inv[1] * sy + inv[2]) / w + W / 2,
+    y: (inv[3] * sx + inv[4] * sy + inv[5]) / w + H / 2,
+  };
+};
+cvEl.addEventListener('pointerdown', e => {
+  if (revealed) return;
+  painting = true; lastPt = null;
+  cvEl.setPointerCapture(e.pointerId);
+  const q = ptOf(e); scratchAt(q.x, q.y);
+});
+cvEl.addEventListener('pointermove', e => {
+  if (!painting || revealed) return;
+  const q = ptOf(e); scratchAt(q.x, q.y);
+});
+/* ── confetti ────────────────────────────────────────────────────────────
+   Fired once, at half-scratched, and it is what takes the rest of the foil:
+   the burst covers the moment the remaining coating dissolves, so the card
+   does not simply blink clean. Own canvas, viewport-sized, above everything
+   and pointer-transparent — the QR underneath must stay reachable.
+
+   Colours are the page's, not a rainbow: crimson, blush, deep and cream. */
+const conf = $('#confetti');
+const cctx2 = conf.getContext('2d');
+const CONF_COLS = ['#C41E5A', '#FFB3C6', '#8E1140', '#F1E6D6', '#FFFFFF'];
+let confBits = [], confRaf = 0, confLast = 0;
+
+function confettiBurst(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  conf.style.display = 'block';
+  conf.width = Math.round(innerWidth * dpr);
+  conf.height = Math.round(innerHeight * dpr);
+  cctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // thrown from the card itself, so the burst has a source she was looking at
+  const r = wrapEl.getBoundingClientRect();
+  const ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+  confBits = [];
+  for (let i = 0; i < 150; i++){
+    const a = Math.random() * Math.PI * 2;
+    const sp = 260 + Math.random() * 620;
+    confBits.push({
+      x: ox + (Math.random() - .5) * r.width * .8,
+      y: oy + (Math.random() - .5) * r.height * .5,
+      vx: Math.cos(a) * sp * .55,
+      vy: Math.sin(a) * sp - 260,          // biased upward, so it falls back
+      w: 5 + Math.random() * 7, h: 8 + Math.random() * 10,
+      rot: Math.random() * Math.PI, vr: (Math.random() - .5) * 12,
+      col: CONF_COLS[(Math.random() * CONF_COLS.length) | 0],
+      life: 1,
+    });
+  }
+  confLast = performance.now();
+  if (!confRaf) confRaf = requestAnimationFrame(confStep);
+}
+
+function confStep(now){
+  const dt = Math.min(0.032, (now - confLast) / 1000) || 0.016;
+  confLast = now;
+  cctx2.clearRect(0, 0, innerWidth, innerHeight);
+  let alive = 0;
+  for (const b of confBits){
+    b.vy += 1350 * dt;                       // gravity
+    b.vx *= 0.988; b.vy *= 0.992;            // drag
+    b.x += b.vx * dt; b.y += b.vy * dt;
+    b.rot += b.vr * dt;
+    if (b.y > innerHeight + 40) b.life = 0;
+    else b.life = Math.max(0, b.life - dt * 0.28);
+    if (b.life <= 0) continue;
+    alive++;
+    cctx2.save();
+    cctx2.translate(b.x, b.y); cctx2.rotate(b.rot);
+    cctx2.globalAlpha = Math.min(1, b.life * 1.6);
+    cctx2.fillStyle = b.col;
+    // scaleY by cos() so each piece reads as a flake turning over, not a brick
+    cctx2.fillRect(-b.w / 2, -b.h / 2 * Math.abs(Math.cos(b.rot * 1.7)), b.w,
+                   b.h * Math.abs(Math.cos(b.rot * 1.7)));
+    cctx2.restore();
+  }
+  if (alive){ confRaf = requestAnimationFrame(confStep); }
+  else { confRaf = 0; conf.style.display = 'none'; cctx2.clearRect(0,0,innerWidth,innerHeight); }
+}
+
+cvEl.addEventListener('pointerup', () => {
+  painting = false; lastPt = null;
+  if (revealed) return;
+  /* Half is the mark. Past it, nobody enjoys chasing the last flecks of foil,
+     and the code wants a clean field to be read against — so the confetti
+     takes the remainder rather than leaving her to. */
+  if (clearedFraction() >= .5){
+    revealed = true;
+    if (!REDUCED) confettiBurst();
+    cvEl.classList.add('done');
+    wrapEl.classList.add('done');
+  }
+});
+
+/* The handover. Driven by the clock, not by scroll: the countdown reaching
+   zero is the event, and she should not have to do anything to be shown what
+   it was counting to.
+
+   Animated in JS rather than by a CSS transition because render() already
+   writes these two elements' opacity every frame from the scroll position —
+   a transition on the same property would fight it and lose. HAND is just a
+   second input to the same expression. */
+const HAND_MS = 1100;
+let handT0 = 0;
+function handOver(){
+  sizeQR(); paintCoat();                       // ready before it is ever shown
+  wrapEl.classList.add('live');
+  handT0 = performance.now();
+  (function step(){
+    const e = performance.now() - handT0;
+    HAND = soft(Math.min(1, e / HAND_MS));
+    render();
+    if (e < HAND_MS) requestAnimationFrame(step);
+  })();
+}
+
+/* Opened after midnight, the handover has already happened — there is nothing
+   to watch, so it is simply already done. Animating it here would be the page
+   pretending she caught a moment she missed. */
+function handAlready(){
+  sizeQR(); paintCoat();
+  wrapEl.classList.add('live');
+  HAND = 1; render();
+}
+
+/* ── tilt ────────────────────────────────────────────────────────────────
+   Ported from React Bits' TiltedCard rather than installed. That component is
+   React + motion; this page is one file with no dependencies and no network
+   request, and it has to render on a laptop that may well be offline. What is
+   actually wanted is forty lines of spring maths, so here they are, with
+   motion's own constants (stiffness 100, damping 30, mass 2) so the feel is
+   the same rather than merely similar.
+
+   Dropped from the original: the mobile warning (this is a laptop beat) and
+   the cursor-following figcaption, because the card already carries a caption
+   in that exact spot and two would fight. */
+const TILT = { amp: 10, hoverScale: 1.05, k: 100, c: 30, m: 2 };
+const tilt = { rx:0, ry:0, sc:1, vx:0, vy:0, vs:0, tx:0, ty:0, ts:1 };
+let tiltRaf = 0, tiltLast = 0;
+
+function tiltStep(now){
+  const dt = Math.min(0.032, (now - tiltLast) / 1000) || 0.016;
+  tiltLast = now;
+  // substepped so a dropped frame cannot make the spring explode
+  const steps = Math.max(1, Math.ceil(dt / 0.008));
+  const h = dt / steps;
+  for (let i = 0; i < steps; i++){
+    for (const [pos, vel, target] of [['rx','vx','tx'], ['ry','vy','ty'], ['sc','vs','ts']]){
+      const a = (-TILT.k * (tilt[pos] - tilt[target]) - TILT.c * tilt[vel]) / TILT.m;
+      tilt[vel] += a * h;
+      tilt[pos] += tilt[vel] * h;
+    }
+  }
+  $('#qcard').style.transform =
+    'rotateX(' + tilt.rx.toFixed(3) + 'deg) rotateY(' + tilt.ry.toFixed(3) +
+    'deg) scale(' + tilt.sc.toFixed(4) + ')';
+
+  const settled = Math.abs(tilt.rx - tilt.tx) < .01 && Math.abs(tilt.ry - tilt.ty) < .01
+               && Math.abs(tilt.sc - tilt.ts) < .0005 && Math.abs(tilt.vx) < .01
+               && Math.abs(tilt.vy) < .01 && Math.abs(tilt.vs) < .001;
+  tiltRaf = settled ? 0 : requestAnimationFrame(tiltStep);
+}
+function tiltWake(){ if (!tiltRaf){ tiltLast = performance.now(); tiltRaf = requestAnimationFrame(tiltStep); } }
+function tiltTo(rx, ry, sc){ tilt.tx = rx; tilt.ty = ry; tilt.ts = sc; tiltWake(); }
+
+if (!REDUCED){
+  wrapEl.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const r = wrapEl.getBoundingClientRect();
+    const ox = e.clientX - r.left - r.width / 2;
+    const oy = e.clientY - r.top - r.height / 2;
+    tiltTo((oy / (r.height / 2)) * -TILT.amp,
+           (ox / (r.width / 2)) * TILT.amp, TILT.hoverScale);
+  });
+  wrapEl.addEventListener('pointerenter', e => {
+    if (e.pointerType === 'mouse') tiltTo(tilt.tx, tilt.ty, TILT.hoverScale);
+  });
+  wrapEl.addEventListener('pointerleave', () => tiltTo(0, 0, 1));
+}
+
+addEventListener('resize', () => { sizeQR(); if (!revealed) paintCoat(); });
+
+// --- the bouquet frame ------------------------------------------------------
+const bq = $('#bq');
+let api = null;                 // v4's window, once it is up
+let flyDone = REDUCED;
+
+let ready = false, opened = false;
+
+bq.addEventListener('load', () => {
+  try{
+    api = bq.contentWindow;
+    api.TUNE({turns:1, ms:FLY_MS});
+    api.setP(0); api.setQ(0);      // p=0 draws nothing at all (NOTES: 0 visible)
+    fitFrame();
+    ready = true;
+    if(opened) startFly();         // she beat the frame to it
+  }catch(err){
+    // cross-origin: happens on file:// where each file is its own opaque
+    // origin. Serve over http and this goes away. Fail visible, not silent.
+    console.error('bouquet frame unreachable — serve over http, not file://', err);
+    document.body.dataset.bqerror = '1';
+  }
+});
+
+// --- frame fit --------------------------------------------------------------
+// The rig floats at the frame's bottom, so it can only be hidden by pushing it
+// past the clip. Oversize by 2*barHeight and offset by barHeight: the bar lands
+// below the visible edge, and the canvas centre still coincides with the
+// viewport centre (centre sits at H/2 = 50vh + bar + 8, minus the same offset).
+function fitFrame(){
+  let bar = 0;
+  try{ bar = api.document.getElementById('hudbar').getBoundingClientRect().height; }
+  catch(e){ return; }
+  const off = Math.ceil(bar) + 8;
+  bq.style.height = 'calc(100vh + ' + (off * 2) + 'px)';
+  bq.style.top    = (-off) + 'px';
+  try{ api.dispatchEvent(new Event('resize')); }catch(e){}   // make it re-fit
+}
+
+// --- how much of q is actually visible --------------------------------------
+// v6 clears blocks at the CANVAS edge, and the canvas is taller than the
+// viewport (it has to be, to push the rig below the fold). So everything has
+// already left the screen before q reaches 1, and the remaining scroll does
+// nothing — measured 0 visible pixels from q = 0.80 at 375x812, i.e. a fifth
+// of the dispersal was dead.
+// The clear point depends on viewport size and rig height, so it is measured
+// here rather than hardcoded: binary search for the smallest q with no ink
+// left in the visible band, sampling through a small offscreen canvas so the
+// readback stays cheap (a cube is ~15px and survives the downscale).
+let QMAX = 1;
+
+function measureClearQ(){
+  if(!api) return;
+  try{
+    const cv = api.document.getElementById('c');
+    const ctx = cv.getContext('2d');
+    const dpr = cv.width / api.innerWidth;
+    const offTop = Math.round(-bq.getBoundingClientRect().top);
+    const sy = Math.round(offTop * dpr), sh = Math.round(innerHeight * dpr);
+    if(sh <= 0) return;
+
+    const SW = 120, SH = 260;
+    const off = document.createElement('canvas');
+    off.width = SW; off.height = SH;
+    const octx = off.getContext('2d', {willReadFrequently:true});
+
+    const clearAt = q => {
+      api.setQ(q);
+      octx.clearRect(0,0,SW,SH);
+      octx.drawImage(cv, 0, sy, cv.width, sh, 0, 0, SW, SH);
+      const d = octx.getImageData(0,0,SW,SH).data;
+      for(let i=0;i<d.length;i+=4)
+        if(d[i+3] > 8 && (d[i] < 248 || d[i+1] < 248 || d[i+2] < 248)) return false;
+      return true;
+    };
+
+    if(!clearAt(1)){ QMAX = 1; api.setQ(0); return; }   // never clears: use it all
+    let lo = 0, hi = 1;
+    for(let i=0;i<7;i++){ const mid=(lo+hi)/2; if(clearAt(mid)) hi=mid; else lo=mid; }
+    QMAX = Math.min(1, hi + 0.02);            // a hair past, so nothing lingers
+    api.setQ(0);
+    lastQ = -1;
+  }catch(e){ QMAX = 1; }
+}
+
+// --- the gate ---------------------------------------------------------------
+// Scroll stays locked through the gate AND the assembly: the fly-in is the
+// reveal, and letting her scroll past it would disperse a bouquet she never
+// saw arrive. It unlocks the frame it lands.
+const gate = $('#gate');
+document.documentElement.classList.add('locked');
+
+function unlock(){
+  document.documentElement.classList.remove('locked');
+  flyDone = true;
+  render();
+}
+
+function startFly(){
+  if(!api){ return; }
+  if(REDUCED){ api.setP(1); measureClearQ(); unlock(); return; }
+  const t0 = performance.now();
+  (function fly(){
+    const e = performance.now() - t0;
+    api.setP(e / FLY_MS);
+    if(e < FLY_MS) requestAnimationFrame(fly);
+    else { api.setP(1); measureClearQ(); unlock(); }
+  })();
+}
+
+$('#open').addEventListener('click', () => {
+  if(opened) return;
+  opened = true;
+  gate.classList.add('go');
+  // wait for the fade to finish before the first cube moves, so the two
+  // never overlap — the page should read as one thing handing off to another
+  const wait = parseFloat(getComputedStyle(document.documentElement)
+                 .getPropertyValue('--gate-ms')) || 620;
+  setTimeout(() => { if(ready) startFly(); }, wait);
+});
+
+// --- scroll -> state --------------------------------------------------------
+let raf = 0, lastQ = -1, hidden = false;
+
+function render(){
+  raf = 0;
+  const t = window.scrollY / window.innerHeight;    // in viewport-heights
+
+  // 1. dispersal
+  const q = seg(t, T.holdEnd, T.dispEnd) * QMAX;
+  if(api && Math.abs(q - lastQ) > 0.0005){
+    try{ api.setQ(q); }catch(e){}
+    lastQ = q;
+  }
+
+  // 2. hint fades the moment she starts
+  $('#hint').style.opacity = flyDone ? (1 - seg(t, 0.04, 0.30)).toFixed(3) : '0';
+
+  // 3. the bulge
+  const bu = soft(seg(t, T.bulgeIn, T.bulgeEnd));
+  $('#bulge').style.transform = 'scaleY(' + bu.toFixed(4) + ')';
+
+  // the dome provably covers the viewport from u = 0.722 (derivation in the
+  // #bulge rule); 0.78 is that with margin. Past it the canvas is dead weight.
+  const shouldHide = bu >= 0.78;
+  if(shouldHide !== hidden){
+    hidden = shouldHide;
+    $('#bqclip').style.visibility = hidden ? 'hidden' : 'visible';
+  }
+
+  // 4. the wish, one word per scroll
+  for(let i=0;i<wordEls.length;i++){
+    const a = T.wordStart + i*T.wordSpan;
+    const u = seg(t, a, a + T.wordSpan);
+    const inU  = seg(u, 0, 0.34);
+    const outU = seg(u, 0.66, 1);
+    const el = wordEls[i];
+    if(u <= 0 || u >= 1){ if(el.style.opacity !== '0') el.style.opacity = '0'; continue; }
+    el.style.opacity = (soft(inU) * (1 - soft(outU))).toFixed(3);
+    if(!REDUCED){
+      const y = lerp(30, -30, soft(u));
+      const s = lerp(0.978, 1.022, u);
+      el.style.transform = 'translateY(' + y.toFixed(1) + 'px) scale(' + s.toFixed(3) + ')';
+    }
+  }
+
+  // 5. countdown arrives on scroll, and leaves on the clock. Two independent
+  //    inputs multiplied: `cd` is where she is, HAND is what time it is. The
+  //    clock cannot appear before she scrolls to it, and cannot survive the
+  //    moment it was counting to.
+  const cd = soft(seg(t, T.cdIn - 0.55, T.cdIn));
+  const el = $('#cd');
+  el.style.opacity = (cd * (1 - HAND)).toFixed(3);
+  if(!REDUCED) el.style.transform = 'translateY(' + lerp(26, 0, cd).toFixed(1) + 'px)';
+
+  // 6. the card takes the beat the clock just left. It rises the last few
+  //    pixels as it arrives, so the swap reads as a hand-off and not a
+  //    dissolve between two things sitting in the same spot.
+  const cw = $('#cardWrap');       // not `q` — that is the dispersal scalar above
+  const show = cd * HAND;
+  cw.style.opacity = show.toFixed(3);
+  cw.style.pointerEvents = show > 0.9 ? 'auto' : 'none';
+  if(!REDUCED)
+    cw.style.transform = 'translate(-50%,-50%) translateY(' +
+      lerp(18, 0, HAND).toFixed(1) + 'px)';
+}
+
+// --- yaw: the page drives v5's setYaw, v5 never sees the gesture -----------
+// v5 binds its own pointer/wheel handlers with preventDefault on BOTH axes,
+// which would swallow page scroll whole. The frame is pointer-events:none so
+// none of that fires; we re-raise only the horizontal half here and call its
+// public setYaw(). v5's rendering and yaw maths are untouched.
+//
+// NOTE (Experiments/bouquet/NOTES.md, v5): rotation voids the diagonal cull — 710 drawn
+// becomes 1,519, measured 4.50 -> 7.90 ms flushed, and 40-63 ms on mid-tier.
+// It is the most expensive state in the piece and the one a user can sit in
+// indefinitely, so it is gated to before the dome covers.
+let YAW = 0, ydrag = null;
+const YAW_PER_PX = 0.42, LOCK_PX = 12;
+const stage = $('#stage');
+
+function yawTo(v){ YAW = v; try{ api && api.setYaw(YAW); }catch(e){} }
+
+stage.addEventListener('pointerdown', e => {
+  if(hidden || !api || !flyDone) return;
+  ydrag = {x:e.clientX, y:e.clientY, yaw0:YAW, axis:null};
+});
+stage.addEventListener('pointermove', e => {
+  if(!ydrag) return;
+  const dx = e.clientX - ydrag.x, dy = e.clientY - ydrag.y;
+  if(ydrag.axis === null){
+    if(Math.hypot(dx, dy) < LOCK_PX) return;      // hysteresis before committing
+    ydrag.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
+  if(ydrag.axis !== 'x') return;                  // vertical belongs to scroll
+  e.preventDefault();
+  yawTo(ydrag.yaw0 + dx * YAW_PER_PX);
+}, {passive:false});
+const endYaw = () => { ydrag = null; };
+stage.addEventListener('pointerup', endYaw);
+stage.addEventListener('pointercancel', endYaw);
+
+stage.addEventListener('wheel', e => {
+  if(hidden || !api || !flyDone) return;
+  if(Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;   // vertical -> scroll
+  e.preventDefault();
+  yawTo(YAW + e.deltaX * 0.25);
+}, {passive:false});
+
+addEventListener('scroll', () => { if(!raf) raf = requestAnimationFrame(render); }, {passive:true});
+addEventListener('resize', () => {
+  lastQ = -1; fitFrame(); fitWords();
+  if(flyDone) measureClearQ();
+  render();
+});
+render();
+</script>
+</body>
+</html>

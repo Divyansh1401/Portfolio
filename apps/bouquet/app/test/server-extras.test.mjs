@@ -170,14 +170,14 @@ test('gifts: validated on create; a used upload key cannot be reused', async () 
   }
 });
 
-test('open-on-date: nothing locked is in the page; unlock is 425 until the time, then 200', async () => {
+test('countdown: the note is open from the start; the gifts stay out of the page and the API until the time', async () => {
   const s = await start();
   try {
     const up = await upload(s.base, PNG, 'a.png');
     const until = s.clock.t + 3600;
     const r = await post(s.base, '/api/bouquet', {
       mode: 'rose',
-      message: 'TOP-SECRET-NOTE',
+      message: 'OPEN-NOTE',
       unlock_at: until,
       unlock_label: 'Your birthday; party, cake',
       gifts: [{ kind: 'code', code: 'CODE-XYZ' }, { kind: 'photo', upload_key: up.body.key }],
@@ -186,17 +186,23 @@ test('open-on-date: nothing locked is in the page; unlock is 425 until the time,
     const id = r.body.id;
 
     const html = await (await fetch(`${s.base}/b/${id}`)).text();
-    assert.equal(html.includes('TOP-SECRET-NOTE'), false, 'the note must not be in a locked page');
-    assert.equal(html.includes('CODE-XYZ'), false, 'gift codes must not be in a locked page');
+    assert.match(html, /OPEN-NOTE/, 'the bouquet and the note are the entry point: never locked by the countdown');
+    assert.equal(html.includes('CODE-XYZ'), false, 'gift codes must not be in the page before the time');
+    assert.match(html, /"gift_count":2/, 'the page knows there is a gift waiting');
+    assert.match(html, /Your birthday; party, cake/, 'the occasion is shown with the countdown');
 
     const early = await post(s.base, `/api/bouquet/${id}/unlock`);
-    assert.equal(early.status, 425);
+    assert.equal(early.status, 200);
+    assert.equal(early.body.content.message, 'OPEN-NOTE');
+    assert.equal(early.body.content.gifts, null, 'no gifts before the time');
     assert.equal(early.body.until, until);
-    assert.equal(early.headers.get('retry-after'), '3600');
-    assert.equal((await post(s.base, `/api/open/${id}`, { kind: 'input' })).status, 204);
-    assert.equal((await (await fetch(`${s.base}/api/bouquet/${id}/status`)).json()).opened_at, null, 'opening early is not counted');
 
-    assert.match(html, /Your birthday; party, cake/, 'the occasion is shown with the countdown');
+    const photoId = (await (await fetch(`${s.base}/api/bouquet/${id}/status`)).json()).gift_count;
+    assert.equal(photoId, 2);
+
+    assert.equal((await post(s.base, `/api/open/${id}`, { kind: 'input' })).status, 204);
+    assert.notEqual((await (await fetch(`${s.base}/api/bouquet/${id}/status`)).json()).opened_at, null, 'opening the bouquet counts, even before the gift is due');
+
     const ics = await fetch(`${s.base}/b/${id}/calendar.ics`);
     assert.match(ics.headers.get('content-type') || '', /text\/calendar/);
     assert.match(await ics.text(), /SUMMARY:Open your bouquet: Your birthday\\; party\\, cake/, 'ICS text is escaped');
@@ -209,11 +215,42 @@ test('open-on-date: nothing locked is in the page; unlock is 425 until the time,
     s.clock.t = until;
     const open = await post(s.base, `/api/bouquet/${id}/unlock`);
     assert.equal(open.status, 200);
-    assert.equal(open.body.content.message, 'TOP-SECRET-NOTE');
+    assert.equal(open.body.until, null);
     const photo = open.body.content.gifts.find((g) => g.kind === 'photo');
     const img = await fetch(`${s.base}${photo.src}`);
-    assert.equal(img.status, 200, 'no secret, so after the date the photo needs no token');
+    assert.equal(img.status, 200, 'no quiz, so after the date the photo needs no token');
     assert.equal(img.headers.get('x-content-type-options'), 'nosniff');
+    const after = await (await fetch(`${s.base}/b/${id}`)).text();
+    assert.match(after, /CODE-XYZ/, 'after the time the gifts are in the page');
+  } finally {
+    await s.stop();
+  }
+});
+
+test('countdown + quiz: the right answer before the time opens the note but not the gifts; photo files stay 404', async () => {
+  const s = await start();
+  try {
+    const up = await upload(s.base, PNG, 'a.png');
+    const until = s.clock.t + 600;
+    const r = await post(s.base, '/api/bouquet', {
+      mode: 'rose',
+      message: 'QUIZ-NOTE',
+      unlock_at: until,
+      secret: { question: 'Our city?', answer: 'Pune' },
+      gifts: [{ kind: 'photo', upload_key: up.body.key }],
+    });
+    const id = r.body.id;
+    const html = await (await fetch(`${s.base}/b/${id}`)).text();
+    assert.equal(html.includes('QUIZ-NOTE'), false, 'a quiz keeps the note out of the page');
+    const early = await post(s.base, `/api/bouquet/${id}/unlock`, { answer: 'pune' });
+    assert.equal(early.body.content.message, 'QUIZ-NOTE');
+    assert.equal(early.body.content.gifts, null);
+    assert.equal(early.body.content.token, null, 'no file token before the time');
+    s.clock.t = until;
+    const later = await post(s.base, `/api/bouquet/${id}/unlock`, { answer: 'pune' });
+    const src = later.body.content.gifts[0].src;
+    assert.equal((await fetch(`${s.base}${src}`)).status, 404, 'still needs the token');
+    assert.equal((await fetch(`${s.base}${src}?t=${encodeURIComponent(later.body.content.token)}`)).status, 200);
   } finally {
     await s.stop();
   }

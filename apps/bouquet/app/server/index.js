@@ -31,6 +31,7 @@ const APP_DIR = path.resolve(__dirname, '..');
 const PAGES_DIR = path.join(APP_DIR, 'pages');
 const DIST_DIR = path.join(APP_DIR, 'dist');
 const STYLES_DIR = path.join(APP_DIR, 'styles');
+const FONTS_DIR = path.join(APP_DIR, 'fonts');
 const DEFAULT_DB_PATH = path.join(APP_DIR, '.data', 'bouquet.sqlite');
 const DEFAULT_UPLOAD_DIR = path.join(APP_DIR, '.data', 'uploads');
 
@@ -46,6 +47,10 @@ const CONTENT_TYPES = {
   '.map': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.otf': 'font/otf',
+  '.ttf': 'font/ttf',
 };
 
 /**
@@ -188,33 +193,39 @@ function clientIp(req) {
 }
 
 /**
- * The recipient-safe view of a bouquet. While locked (by date or by a
- * secret question) the note and gifts are NOT included at all.
+ * The recipient-safe view of a bouquet. A quiz keeps the note and gifts
+ * out of the page; a countdown keeps only the gifts out.
  * @param {object} row
  * @param {object[]} gifts
- * @param {{unlocked: boolean, token?: string|null, now: number}} opts
+ * @param {{now: number}} opts
  */
-function publicData(row, gifts, { unlocked, token = null, now }) {
+function publicData(row, gifts, { now }) {
+  // The bouquet and the note are open to anyone with the link. The quiz
+  // (secret question) gates the note and the gifts; the countdown gates only
+  // the gifts. Whatever is gated is never put in the page.
+  const tl = timeLocked(row, now);
   return {
     id: row.id,
     mode: row.mode,
     from_name: row.from_name,
     reply_of: row.reply_of,
     locked: {
-      until: row.unlock_at && now < row.unlock_at ? row.unlock_at : null,
-      label: row.unlock_at && now < row.unlock_at ? row.unlock_label || null : null,
+      until: tl ? row.unlock_at : null,
+      label: tl ? row.unlock_label || null : null,
       secret: row.secret_q || null,
     },
+    gift_count: gifts.length,
     server_now: now,
-    content: unlocked ? contentOf(row, gifts, token) : null,
+    content: row.secret_q ? null : contentOf(row, tl ? null : gifts, null),
   };
 }
 
+/** @param {Array<object>|null} gifts null while the countdown still runs */
 function contentOf(row, gifts, token) {
   return {
     message: row.message,
     token,
-    gifts: gifts.map((g) => {
+    gifts: gifts === null ? null : gifts.map((g) => {
       const out = { id: g.id, kind: g.kind, label: g.label };
       if (g.kind === 'link') out.url = g.url;
       if (g.kind === 'code') {
@@ -297,6 +308,45 @@ export function createServer(opts = {}) {
         const buf = await readFile(filePath);
         res.writeHead(200, { 'content-type': contentTypeFor(filePath), 'content-length': buf.length });
         return res.end(buf);
+      }
+
+      // GET /styles/fonts.css — declares Mon Cheri only when the licensed file
+      // is actually present, so a checkout without it never 404s a font.
+      if (method === 'GET' && pathname === '/styles/fonts.css') {
+        const faces = [];
+        const woff2 = existsSync(path.join(FONTS_DIR, 'TAN-MONCHERI.woff2'));
+        const otf = existsSync(path.join(FONTS_DIR, 'TAN-MONCHERI.otf'));
+        if (woff2 || otf) {
+          const src = [
+            woff2 ? "url('/fonts/TAN-MONCHERI.woff2') format('woff2')" : null,
+            otf ? "url('/fonts/TAN-MONCHERI.otf') format('opentype')" : null,
+          ].filter(Boolean).join(', ');
+          faces.push(`@font-face{font-family:'Mon Cheri';src:${src};font-weight:400;font-style:normal;font-display:swap}`);
+        }
+        const css = faces.join('\n') || '/* Mon Cheri not installed: see app/fonts/README.md */';
+        res.writeHead(200, { 'content-type': 'text/css; charset=utf-8', 'cache-control': 'no-cache' });
+        return res.end(css);
+      }
+
+      // GET /fonts/*  -> app/fonts/* (self-hosted faces; see app/fonts/README.md)
+      if (method === 'GET' && pathname.startsWith('/fonts/')) {
+        const rel = pathname.slice('/fonts'.length);
+        const filePath = safeJoin(FONTS_DIR, rel);
+        if (!filePath || !existsSync(filePath)) return sendHtml(res, 404, 'not found');
+        const buf = await readFile(filePath);
+        res.writeHead(200, {
+          'content-type': contentTypeFor(filePath),
+          'content-length': buf.length,
+          'cache-control': 'public, max-age=31536000, immutable',
+        });
+        return res.end(buf);
+      }
+
+      // GET /preview — the recipient page, filled by the create page's
+      // preview over postMessage (nothing is saved).
+      if (method === 'GET' && pathname === '/preview') {
+        const html = await renderPage('bouquet', { mode: 'rose', data: { preview: true } });
+        return sendHtml(res, 200, html);
       }
 
       // GET /styles/*
@@ -503,14 +553,13 @@ export function createServer(opts = {}) {
       }
 
       // POST /api/bouquet/:id/unlock  {answer?}
+      // Answers the quiz (if any) and returns what is open right now: the
+      // note, and the gifts once the countdown is over (else gifts: null and
+      // `until`). Called again when the countdown ends to fetch the gifts.
       m = pathname.match(/^\/api\/bouquet\/([^/]+)\/unlock$/);
       if (method === 'POST' && m) {
         const row = getLive(db, m[1], now);
         if (!row) return sendJson(res, 404, { error: 'not found' });
-        if (timeLocked(row, now)) {
-          res.setHeader('retry-after', String(row.unlock_at - now));
-          return sendJson(res, 425, { error: 'not yet', until: row.unlock_at, server_now: now });
-        }
         let body;
         try {
           body = await readJsonBody(req);
@@ -531,8 +580,14 @@ export function createServer(opts = {}) {
             return sendJson(res, 200, { wrong: true });
           }
         }
-        const token = tokens.issue(row.id, now);
-        return sendJson(res, 200, { content: contentOf(row, getGifts(db, row.id), token) });
+        const tl = timeLocked(row, now);
+        const token = row.secret_q && !tl ? tokens.issue(row.id, now) : null;
+        return sendJson(res, 200, {
+          content: contentOf(row, tl ? null : getGifts(db, row.id), token),
+          until: tl ? row.unlock_at : null,
+          label: tl ? row.unlock_label || null : null,
+          server_now: now,
+        });
       }
 
       // GET /api/bouquet/:id/gift/:giftId
@@ -567,7 +622,7 @@ export function createServer(opts = {}) {
           // Body is ignored beyond parsing; malformed body still 204s.
         }
         const row = getLive(db, m[1], now);
-        if (row && !timeLocked(row, now)) markOpened(db, m[1], now);
+        if (row) markOpened(db, m[1], now);
         res.writeHead(204);
         return res.end();
       }
@@ -609,8 +664,7 @@ export function createServer(opts = {}) {
         const row = getLive(db, m[1], now);
         if (!row) return sendWilted(res, 404);
         const mode = getMode(row.mode).id;
-        const unlocked = !timeLocked(row, now) && !row.secret_q;
-        const data = publicData(row, unlocked ? getGifts(db, row.id) : [], { unlocked, now });
+        const data = publicData(row, getGifts(db, row.id), { now });
         const html = await renderPage('bouquet', { mode, data });
         return sendHtml(res, 200, html);
       }

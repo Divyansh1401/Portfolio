@@ -403,98 +403,43 @@ test('preview dialog: focus trap, Escape closes it, and focus is restored to the
 // Keyboard reveal on /b/:id
 // ---------------------------------------------------------------------
 
-test('keyboard reveal on /b/:id: Tab reaches Open first, one Enter reveals, the live region then holds the message', async () => {
+test('keyboard open on /b/:id: Tab reaches Open first, Enter opens, and the whole note is there for screen readers', async () => {
   const page = await browser.newPage();
-  const consoleErrors = [];
-  page.on('pageerror', (err) => consoleErrors.push(String(err)));
   try {
     await page.goto(`${base}/b/${bouquetId}`, { waitUntil: 'load' });
-
     await page.keyboard.press('Tab');
     const first = await focused(page);
-    assert.ok(
-      first.tag === 'BUTTON' || (first.dataset && 'revealOpen' in first.dataset),
-      'the first Tab stop on the recipient page should be the Open button',
-    );
-    const isOpenButton = await page.evaluate(() => document.activeElement.hasAttribute('data-reveal-open'));
-    assert.ok(isOpenButton, 'the first focusable control should be [data-reveal-open]');
-
+    assert.equal(first.id, 'open', 'the first Tab stop is the Open button on the gate');
     await page.keyboard.press('Enter');
-    // The burst animation runs ~600ms; give it real time to land.
-    await page.waitForFunction(
-      () => {
-        const box = document.getElementById('bq-message');
-        return box && !box.hidden;
-      },
-      { timeout: 3000 },
-    );
-
-    const messageBox = await page.evaluate(() => ({
-      role: document.getElementById('bq-message').getAttribute('role'),
-      live: document.getElementById('bq-message').getAttribute('aria-live'),
-      text: document.getElementById('bq-message-text').textContent,
-    }));
-    assert.equal(messageBox.role, 'status', 'the message container should be a live status region');
-    assert.equal(messageBox.live, 'polite', 'the message region should be aria-live="polite"');
-    assert.equal(messageBox.text, bouquetMessage, 'the live region should contain the actual message once revealed');
-
-    assert.deepEqual(consoleErrors, [], 'no uncaught page errors during the keyboard reveal');
+    await page.waitForSelector('#note-sr:not([hidden])', { state: 'attached' });
+    const note = await page.textContent('#note-sr');
+    assert.ok(note.includes(bouquetMessage), 'the full note is in one readable region, not only one word at a time');
+    assert.ok(note.includes(`From ${bouquetFrom}`));
+    assert.equal(await page.getAttribute('#words', 'aria-hidden'), 'true', 'the one-word-per-scroll display is decorative');
+    await page.waitForFunction(() => document.getElementById('gate').hasAttribute('hidden'), null, { timeout: 5000 });
   } finally {
     await page.close();
   }
 });
 
-// ---------------------------------------------------------------------
-// Reduced motion
-// ---------------------------------------------------------------------
-
-test('reduced motion: /b/:id lands still (no fly-in) and Open still works', async () => {
-  const page = await browser.newPage();
-  const consoleErrors = [];
-  page.on('pageerror', (err) => consoleErrors.push(String(err)));
+test('reduced motion: /b/:id skips the fly-in and scroll unlocks straight away', async () => {
+  const page = await browser.newPage({ reducedMotion: 'reduce' });
   try {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(`${base}/b/${reducedMotionBouquetId}`, { waitUntil: 'load' });
-
-    // Give the initial paint a moment, then confirm the canvas has real
-    // pixel content (a still bouquet, not a blank/broken canvas) and that
-    // the page did not error out building it.
-    await page.waitForTimeout(150);
-    const hasContent = await page.evaluate(() => {
-      const canvas = document.querySelector('[data-reveal-canvas]');
-      if (!canvas || !canvas.width || !canvas.height) return false;
-      const ctx = canvas.getContext('2d');
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      for (let i = 3; i < data.length; i += 4) {
-        if (data[i] !== 0) return true; // any non-transparent pixel
-      }
-      return false;
+    await page.click('#open');
+    await page.waitForFunction(() => !document.documentElement.classList.contains('locked'), null, { timeout: 1500 });
+    await page.evaluate(() => window.scrollTo(0, (3.4 + 0.375) * innerHeight)); // middle of the first word
+    await page.waitForTimeout(200);
+    const word = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll('#words b')].find((b) => parseFloat(b.style.opacity) > 0.5);
+      return shown ? { text: shown.textContent, transform: shown.style.transform } : null;
     });
-    assert.ok(hasContent, 'the canvas should show a painted still bouquet under reduced motion');
-
-    // Open should still work: a plain click reveals the message.
-    await page.click('[data-reveal-open]');
-    await page.waitForFunction(
-      () => {
-        const box = document.getElementById('bq-message');
-        return box && !box.hidden;
-      },
-      { timeout: 3000 },
-    );
-    const revealedText = await page.evaluate(
-      () => document.getElementById('bq-message-text').textContent,
-    );
-    assert.equal(revealedText, bouquetMessage, 'Open should reveal the message under reduced motion too');
-
-    assert.deepEqual(consoleErrors, [], 'no uncaught page errors under reduced motion');
+    assert.ok(word, 'a word of the note is showing');
+    assert.equal(word.transform, '', 'words do not drift under reduced motion');
   } finally {
     await page.close();
   }
 });
-
-// ---------------------------------------------------------------------
-// Contrast: ink/ground and primary-button text/background, all 5 modes
-// ---------------------------------------------------------------------
 
 test('contrast: ink/ground and primary-button text/background pass 4.5:1 in every mode (computed styles)', async () => {
   // Reduced motion turns the 300ms theme colour transition off, so the

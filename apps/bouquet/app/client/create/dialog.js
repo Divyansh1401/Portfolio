@@ -12,6 +12,7 @@ const FOCUSABLE_SELECTOR = [
   'textarea:not([disabled])',
   'input:not([disabled])',
   'select:not([disabled])',
+  'iframe',
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
@@ -25,8 +26,10 @@ export function createFocusTrap(root, opts) {
   let lastFocused = null;
 
   function focusables() {
+    // data-trap-skip: a sentinel that only exists to catch focus leaving a
+    // frame; it is never a wrap target itself.
     return Array.from(root.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
-      (el) => el.offsetParent !== null || el === document.activeElement,
+      (el) => !el.hasAttribute('data-trap-skip') && (el.offsetParent !== null || el === document.activeElement),
     );
   }
 

@@ -10,15 +10,12 @@
 
 import { MODES, DEFAULT_MODE, MODE_IDS } from '../../packages/modes/modes.js';
 import { FREE_FLOWER, AMOUNTS } from '../../packages/pricing/pricing.js';
-import { mountReveal } from './reveal.js';
 import { createHero } from './create/hero.js';
 import { createFocusTrap } from './create/dialog.js';
 import { loadDraft, saveDraft } from './create/draft.js';
 import { reencodeImage, checkFile, uploadBlob } from './gifts/media.js';
 import { validateLink, validateCode, localDateTimeToUnix } from './gifts/validate.js';
-import { collapseStage } from './stage-collapse.js';
 import { paintStill } from './still.js';
-import { renderGifts } from './gifts/view.js';
 import {
   fetchPricing, startCheckout, pretendConfirm, sendAsRose, detectCurrency, saveCurrency, formatAmount,
 } from './pay/pay.js';
@@ -712,29 +709,29 @@ function main() {
     };
   }
 
-  // ---- preview ---------------------------------------------------------------
+  // ---- preview: the real recipient page, in a frame ---------------------------
+  // /preview is bouquet.html in preview mode: it waits for the draft over
+  // postMessage, so nothing is saved. Photo blob: URLs work across the frame
+  // because it is the same origin.
   const previewDialog = document.getElementById('preview-dialog');
-  const previewRoot = document.getElementById('preview-root');
-  const previewMessageBox = document.getElementById('preview-message');
-  const previewMessageText = document.getElementById('preview-message-text');
-  const previewMessageFrom = document.getElementById('preview-message-from');
-  const previewGifts = document.getElementById('preview-gifts');
+  const previewFrameBox = document.getElementById('preview-frame-box');
   const previewNote = document.getElementById('preview-note');
-  let previewReveal = null;
   let previewTrap = null;
-  let cancelFold = null;
+  let previewFrame = null;
 
   function closePreview() {
-    if (previewReveal) previewReveal.destroy();
-    previewReveal = null;
-    if (cancelFold) cancelFold();
-    cancelFold = null;
+    if (previewFrame) {
+      try {
+        previewFrame.contentWindow.postMessage({ type: 'bq-preview-close' }, location.origin);
+      } catch {
+        // already gone
+      }
+      previewFrame.remove();
+      previewFrame = null;
+    }
     previewDialog.hidden = true;
-    previewMessageBox.hidden = true;
-    previewGifts.textContent = '';
-    const stage = previewRoot.querySelector('[data-reveal-stage]');
-    stage.classList.remove('is-revealed');
-    for (const n of previewRoot.querySelectorAll('.preview-hint, [data-reveal-open]')) n.hidden = false;
+    document.documentElement.classList.remove('is-previewing');
+    for (const n of behindPreview) n.inert = false;
     if (previewTrap) previewTrap.close();
   }
 
@@ -747,27 +744,55 @@ function main() {
         src: g.upload_key ? localSrc.get(g.upload_key) : undefined,
         url: g.url && validateLink(g.url).ok ? validateLink(g.url).url : undefined,
       }))
-      .filter((g) => g.kind !== 'link' || g.url);
+      .filter((g) => g.kind !== 'link' || g.url)
+      .filter((g) => g.kind !== 'code' || (g.code || '').trim());
   }
 
+  function previewPayload() {
+    const nowS = Math.floor(Date.now() / 1000);
+    const t = unlockSeconds();
+    const until = draft.unlock.on && t && t > nowS ? t : null;
+    return {
+      id: null,
+      mode: draft.mode,
+      from_name: draft.from_name || null,
+      locked: { until, label: until ? (draft.unlock.label || '').trim() || null : null, secret: null },
+      server_now: nowS,
+      content: {
+        message: draft.message.trim() || 'Your note will appear here, one word at a time.',
+        token: null,
+        gifts: previewGiftData(),
+      },
+    };
+  }
+
+  function onPreviewMessage(e) {
+    if (e.origin !== location.origin || !previewFrame || e.source !== previewFrame.contentWindow) return;
+    if (e.data && e.data.type === 'bq-preview-ready') {
+      previewFrame.contentWindow.postMessage({ type: 'bq-preview', payload: previewPayload() }, location.origin);
+    } else if (e.data && e.data.type === 'bq-preview-escape') {
+      closePreview();
+    }
+  }
+  addEventListener('message', onPreviewMessage);
+
+  const behindPreview = [document.getElementById('create-root'), document.getElementById('pay-sheet')].filter(Boolean);
+  document.getElementById('preview-sentinel').addEventListener('focus', () => {
+    document.getElementById('preview-close').focus();
+  });
+
   function openPreview() {
+    for (const n of behindPreview) n.inert = true;
     previewDialog.hidden = false;
-    previewNote.hidden = !(draft.unlock.on || draft.secret.on);
+    document.documentElement.classList.add('is-previewing');
+    previewNote.hidden = !draft.secret.on;
+    previewFrame = document.createElement('iframe');
+    previewFrame.className = 'preview-frame';
+    previewFrame.title = 'Preview of your bouquet';
+    previewFrame.src = '/preview';
+    previewFrameBox.append(previewFrame);
     if (!previewTrap) previewTrap = createFocusTrap(previewDialog, { onClose: closePreview });
     previewTrap.open();
-    previewReveal = mountReveal(previewRoot, { mode: draft.mode }, {
-      preview: true,
-      onEvent(name) {
-        if (name !== 'revealed') return;
-        previewMessageText.textContent = draft.message;
-        previewMessageFrom.textContent = draft.from_name ? `— ${draft.from_name}` : '';
-        previewMessageFrom.hidden = !draft.from_name;
-        previewMessageBox.hidden = false;
-        renderGifts(previewGifts, previewGiftData());
-        for (const n of previewRoot.querySelectorAll('.preview-hint, [data-reveal-open]')) n.hidden = true;
-        cancelFold = collapseStage(previewRoot.querySelector('[data-reveal-stage]'), previewReveal);
-      },
-    });
   }
 
   document.getElementById('preview-btn').addEventListener('click', openPreview);

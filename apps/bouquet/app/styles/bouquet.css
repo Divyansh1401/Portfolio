@@ -1,181 +1,694 @@
 /**
- * Styles for /b/:id — the recipient reveal page. Layered on modes.css
- * (colour tokens) and base.css (component primitives). No raw colours here.
+ * /b/:id — the recipient page. A port of the owner's birthday page
+ * (reference/birthday/birthday.html): the same gate, fly-in, scroll-scrubbed
+ * dispersal, swelling dome, one-word-per-scroll note, countdown and
+ * scratch-foil card, with the sender's content in place of the fixed text.
+ *
+ * Colours: the birthday page's crimson/blush pair becomes per-flower values
+ * set on :root by bouquet.page.js (it measures contrast before choosing
+ * --ink / --ink-strong). The defaults below are Rose, which IS the birthday
+ * page's palette.
  */
 
+:root {
+  --crimson: #C41E5A;   /* the foil and the confetti's deep tone */
+  --blush: #FFB3C6;     /* the dome */
+  --cream: #F1E6D6;
+  --paper: #ffffff;
+  --ink: #C41E5A;       /* the huge words: >= 3:1 on --blush (large text) */
+  --ink-strong: #8E1140; /* label-size text: >= 4.5:1 on --blush */
+  --shadow-rgb: 142, 17, 64;
+  --gate-ms: 620ms;
+  --mon-cheri: 'Mon Cheri', Georgia, serif;
+}
+
+html {
+  /* the page owns the vertical gesture; nothing else may claim it */
+  overscroll-behavior-y: none;
+}
+
 .bq-body {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.bq-page {
-  max-width: 640px;
-  margin: 0 auto;
-  padding-bottom: var(--space-7);
-}
-
-/* ---------------------------------------------------------------------- */
-/* Stage — full-viewport (100svh, 100vh fallback) canvas + hint + Open    */
-/* ---------------------------------------------------------------------- */
-
-.bq-stage {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  touch-action: none;
-  background: var(--ground);
-}
-
-.bq-stage[hidden] {
-  display: none;
-}
-
-.bq-stage.is-revealed {
-  touch-action: auto;
-}
-
-.bq-hint[hidden],
-.bq-open[hidden] {
-  display: none;
-}
-
-.bq-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.bq-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--space-8) + var(--touch-min) + var(--space-3));
   margin: 0;
-  text-align: center;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--muted);
+  padding: 0;
+  min-height: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mon-cheri);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* --- the scroll track: the only thing that is actually tall ------------- */
+#track {
+  height: var(--track, 980vh);
   pointer-events: none;
 }
 
-.bq-hint--coarse {
-  display: none;
+/* --- everything visible lives in one fixed layer ------------------------ */
+/* touch-action: pan-y: the browser keeps vertical (native scroll, momentum,
+   rubber-band) and hands us horizontal for yaw. */
+#stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+  touch-action: pan-y;
 }
 
-.bq-hint--fine {
-  display: inline;
-}
-
-@media (pointer: coarse) {
-  .bq-hint--coarse {
-    display: inline;
-  }
-  .bq-hint--fine {
-    display: none;
-  }
-}
-
-.bq-open {
-  /* Centred without transform: .btn:active sets transform: scale(), which
-     would drop a translateX(-50%) and jump the button 80px sideways
-     mid-press, so the pointerup lands on the canvas and the click is lost
-     (review-gate fix). */
+#bqclip {
   position: absolute;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  width: max-content;
-  bottom: var(--space-6);
-  min-width: 160px;
+  inset: 0;
+  overflow: hidden;
 }
 
-/* ---------------------------------------------------------------------- */
-/* Message card — revealed to hidden -> visible                          */
-/* ---------------------------------------------------------------------- */
-
-.bq-message {
-  margin: var(--space-6) var(--space-4) 0;
-  white-space: normal;
+#bq {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 
-.bq-message__text {
-  white-space: pre-line;
-  margin: 0;
+/* --- the gate: nothing moves until they open it ------------------------- */
+html.locked,
+html.locked body {
+  overflow: hidden;
+  height: 100%;
 }
 
-/* ---------------------------------------------------------------------- */
-/* Post-reveal actions                                                    */
-/* ---------------------------------------------------------------------- */
+#gate {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--paper);
+  transition: opacity var(--gate-ms) cubic-bezier(.32, 0, .24, 1);
+}
 
-.bq-after {
+#gate.go {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gate__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  margin: var(--space-6) var(--space-4) 0;
+  gap: 28px;
+  width: 100%;
+  max-width: 460px;
   text-align: center;
 }
 
-.bq-after .btn {
+.gate__from {
+  margin: 0;
+  font-size: clamp(.72rem, 2.6vw, .9rem);
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+
+.gate__from[hidden] {
+  display: none;
+}
+
+#open,
+.pill {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  font-size: clamp(.9rem, 3.2vw, 1.15rem);
+  text-transform: uppercase;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  text-decoration: none;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 1.05em 2.6em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  /* feedback on press, not on release */
+  transition: transform 150ms ease-out, background-color 260ms ease-out;
+}
+
+#open:hover,
+.pill:hover {
+  background: color-mix(in srgb, var(--blush) 24%, transparent);
+}
+
+#open:active,
+.pill:active {
+  transform: scale(.968);
+}
+
+#open:focus-visible,
+.pill:focus-visible,
+.qcap:focus-visible,
+.face :focus-visible {
+  outline: 2px solid var(--ink-strong);
+  outline-offset: 4px;
+}
+
+#open:disabled {
+  opacity: .5;
+  cursor: progress;
+}
+
+.pill--small {
+  font-size: clamp(.64rem, 2.2vw, .78rem);
+  padding: .9em 1.9em;
+}
+
+/* --- the quiz, on the gate ---------------------------------------------- */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
   width: 100%;
-  max-width: 320px;
 }
 
-.bq-make-own {
-  font-size: var(--text-sm);
-  color: var(--muted);
+.quiz[hidden] {
+  display: none;
 }
 
-/* ---------------------------------------------------------------------- */
-/* Gate — countdown to the open date, then the secret question            */
-/* ---------------------------------------------------------------------- */
+.quiz__q {
+  font-size: clamp(1.2rem, 5vw, 1.9rem);
+  line-height: 1.25;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
 
-.bq-gate {
-  min-height: 100vh;
-  min-height: 100svh;
+.quiz__input {
+  width: 100%;
+  font: inherit;
+  font-size: 1.1rem;
+  text-align: center;
+  letter-spacing: .08em;
+  color: var(--ink-strong);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 10px 4px;
+  min-height: 44px;
+}
+
+.quiz__input:focus {
+  outline: none;
+  border-bottom-width: 2px;
+}
+
+.quiz__error {
+  margin: 0;
+  min-height: 1.3em;
+  font-size: .8rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+
+.quiz.is-wrong .quiz__input {
+  animation: bq-shake 360ms ease-in-out;
+}
+
+@keyframes bq-shake {
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+
+/* --- the scroll hint ---------------------------------------------------- */
+#hint {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  opacity: 0;
+  font-size: 12px;
+  letter-spacing: .42em;
+  text-indent: .42em;
+  color: #00000055;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#hint i {
+  display: block;
+  width: 1px;
+  height: 26px;
+  margin: 12px auto 0;
+  background: linear-gradient(#00000038, #0000);
+}
+
+/* --- the dome, swelling up out of the bottom edge -----------------------
+   200vw wide so only the gentle middle of the arc shows; scaleY keeps it on
+   the compositor. Covers the viewport from scaleY 0.722 on any aspect. */
+#bulge {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 200vw;
+  margin-left: -100vw;
+  height: 160vh;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: var(--blush);
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+  will-change: transform;
+}
+
+/* --- the note, one word at a time --------------------------------------- */
+#words {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+#words b {
+  grid-area: 1 / 1;
+  opacity: 0;
+  will-change: transform, opacity;
+  font-weight: 400;
+  text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: .11em;
+  text-indent: .11em;
+  line-height: 1;
+  font-size: var(--wordSize, clamp(2rem, 11vw, 9rem));
+}
+
+/* --- the card ------------------------------------------------------------ */
+#cardWrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(300px, 46vmin, 420px);
+  max-width: calc(100vw - 32px);
+  aspect-ratio: .74;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  perspective: 800px;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+#qcard {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow:
+    0 2px 4px rgba(var(--shadow-rgb), .10),
+    0 12px 24px rgba(var(--shadow-rgb), .14),
+    0 34px 70px rgba(var(--shadow-rgb), .22);
+}
+
+/* a hairline keyline, inset — a printed card edge rather than a CSS border */
+#qcard::after {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border-radius: 13px;
+  border: 1px solid rgba(var(--shadow-rgb), .16);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.qtop {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;
+  text-align: center;
+  z-index: 2;
+  font-size: clamp(.72rem, 2vmin, .92rem);
+  letter-spacing: .26em;
+  text-indent: .26em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity .6s linear .35s;
+}
+
+#cardWrap.done .qtop {
+  opacity: 1;
+}
+
+.qcap {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 2;
+  font: inherit;
+  font-size: clamp(.6rem, 1.6vmin, .74rem);
+  letter-spacing: .3em;
+  text-indent: .3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-strong);
+  background: var(--paper);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: .9em 1.6em;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.qcap[hidden] {
+  display: none;
+}
+
+#scratch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  border-radius: 22px;
+  cursor: grab;
+  touch-action: none;
+  transition: opacity .55s linear;
+}
+
+#scratch.done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#scratch:active {
+  cursor: grabbing;
+}
+
+/* --- what is under the foil: the first gift ----------------------------- */
+.face {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
-  padding: var(--space-6) var(--space-4);
+  gap: 14px;
+  padding: 64px 28px 76px;
   text-align: center;
+  color: var(--ink-strong);
 }
 
-.bq-gate[hidden],
-.bq-gate .countdown[hidden],
-.bq-gate #bq-secret[hidden] {
+.face--photo {
+  padding: 0;
+}
+
+.face__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face--photo ~ .qtop {
+  top: 22px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  padding: .5em 1.2em;
+  border-radius: 999px;
+  background: var(--paper);
+}
+
+.face__kicker {
+  margin: 0;
+  font-size: clamp(.62rem, 1.7vmin, .76rem);
+  letter-spacing: .3em;
+  text-indent: .3em;
+  text-transform: uppercase;
+}
+
+.face__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 5.4vmin, 2.1rem);
+  line-height: 1.15;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.face__meta {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: .82rem;
+  opacity: .8;
+  overflow-wrap: anywhere;
+}
+
+.face__code {
+  display: block;
+  max-width: 100%;
+  padding: 12px 16px;
+  border: 1px dashed var(--ink);
+  border-radius: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(1rem, 4.2vmin, 1.4rem);
+  letter-spacing: .1em;
+  color: var(--ink-strong);
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.face__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.face__status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+/* confetti: above the card and the whole stage, never in a pointer's way */
+#confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
   display: none;
 }
 
-.bq-gate__from {
+/* --- countdown ---------------------------------------------------------- */
+#cd {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 5vh, 54px);
+  opacity: 0;
+  will-change: transform, opacity;
+  padding: 24px;
+  pointer-events: none;
+}
+
+#cd.live {
+  pointer-events: auto;
+}
+
+#cd h2 {
   margin: 0;
-  font-weight: 600;
-  color: var(--accent-strong);
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: .15em;
+  text-indent: .15em;
+  line-height: 1.12;
+  font-size: clamp(1.5rem, 6.2vw, 3.4rem);
+  overflow-wrap: anywhere;
 }
 
-.bq-gate__title {
-  font-size: var(--text-2xl);
-  margin: 0 0 var(--space-3);
+#clock {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(12px, 4vw, 44px);
 }
 
-.bq-gate #bq-secret {
-  width: 100%;
-  text-align: left;
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .55em;
 }
 
-.bq-gate__status {
-  min-height: 1.25em;
+.num {
+  display: flex;
+  line-height: 1;
+  font-size: clamp(2.3rem, 11vw, 6rem);
+}
+
+/* Mon Cheri carries no tnum feature: a fixed cell per digit is the only
+   reason the clock does not lurch each tick. */
+.dig {
+  display: inline-block;
+  width: .965em;
+  text-align: center;
+}
+
+.cap {
+  font-size: clamp(.6rem, 2.4vw, .82rem);
+  letter-spacing: .34em;
+  text-indent: .34em;
+  color: var(--ink-strong);
+  text-transform: uppercase;
+}
+
+#cal {
+  color: var(--ink-strong);
+}
+
+/* On a phone four units in a row are illegibly small, and a natural wrap
+   orphans SECONDS (3+1): force an even 2x2. */
+@media (max-width: 560px) {
+  #clock {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: clamp(16px, 3.4vh, 30px);
+  }
+}
+
+/* --- the end: send one back ---------------------------------------------- */
+#end {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+#end.centre {
+  top: 0;
+  bottom: 0;
+  justify-content: center;
+}
+
+#end.live {
+  pointer-events: auto;
+}
+
+#send-back {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.end__small {
+  font-size: .72rem;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+  padding: 12px;
+}
+
+/* --- all the gifts, in a sheet ------------------------------------------ */
+.gift-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-y: auto;
+  background: var(--paper);
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+.gift-sheet[hidden] {
+  display: none;
+}
+
+.gift-sheet__panel {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) 16px 48px;
+}
+
+.gift-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.gift-sheet__title {
   margin: 0;
-  color: var(--muted);
-  font-size: var(--text-sm);
+  font-family: var(--mon-cheri);
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
 }
 
-.bq-gifts {
-  margin: var(--space-5) var(--space-4) 0;
+.gift-sheet .gifts__title {
+  display: none;
+}
+
+/* --- preview ribbon (create page preview only) -------------------------- */
+.preview-bar {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: 12px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .72rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+
+.preview-bar[hidden],
+.preview-bar [hidden] {
+  display: none;
+}
+
+.preview-bar .pill--small {
+  padding: .9em 1.4em;
+  background: var(--paper);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bulge {
+    transition: none;
+  }
+  #words b,
+  #cd {
+    will-change: auto;
+  }
+  .quiz.is-wrong .quiz__input {
+    animation: none;
+  }
 }

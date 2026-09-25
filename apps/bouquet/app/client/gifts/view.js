@@ -1,12 +1,9 @@
 /**
- * @file Recipient-side views: the gifts inside a bouquet (photo album with
- * a full-screen viewer, link cards, a gift-code card that is revealed on
- * tap, ticket/file cards), the open-on-date countdown and the secret
- * question. Framework-free; every piece of user text goes in via
+ * @file The gifts inside a bouquet: photo album with a full-screen viewer,
+ * link cards, a gift-code card revealed on tap, ticket/file cards. Used by
+ * the recipient page's "see all gifts" sheet. Framework-free; every piece of user text goes in via
  * textContent, and links are only ever https (checked by the server).
  */
-
-import { formatCountdown } from './validate.js';
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -208,109 +205,4 @@ export function renderGifts(container, gifts, { token = null } = {}) {
       container.append(card);
     }
   }
-}
-
-/**
- * Live countdown to `until` using the server's clock (so a wrong phone
- * clock can't open it early or late). Screen readers get a minute-level
- * update, not every second.
- * @param {HTMLElement} container
- * @param {{until:number, serverNow:number, icsHref?:string, label?:string|null, onDone:() => void}} opts
- * @returns {{destroy: () => void}}
- */
-export function renderCountdown(container, { until, serverNow, icsHref, label = null, onDone }) {
-  container.textContent = '';
-  const offset = serverNow * 1000 - Date.now();
-  const opens = new Date(until * 1000);
-  if (label) {
-    container.append(el('p', 'countdown__kicker', 'Counting down to'), el('p', 'countdown__label-big', label));
-  } else {
-    container.append(el('p', 'countdown__kicker', 'Opens in'));
-  }
-  const clock = el('div', 'countdown__clock');
-  clock.setAttribute('aria-hidden', 'true');
-  const units = ['days', 'hours', 'minutes', 'seconds'].map((name) => {
-    const box = el('div', 'countdown__unit');
-    const num = el('span', 'countdown__num', '0');
-    box.append(num, el('span', 'countdown__label', name));
-    clock.append(box);
-    return num;
-  });
-  const live = el('p', 'visually-hidden');
-  live.setAttribute('aria-live', 'polite');
-  const when = el(
-    'p',
-    'countdown__when',
-    opens.toLocaleString(undefined, { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }),
-  );
-  container.append(clock, live, when);
-  if (icsHref) {
-    const cal = el('a', 'btn btn-ghost countdown__cal', 'Add to calendar');
-    cal.href = icsHref;
-    container.append(cal);
-  }
-  let lastLabel = '';
-  let finished = false;
-  function tick() {
-    const left = until - (Date.now() + offset) / 1000;
-    const f = formatCountdown(left);
-    [f.d, f.h, f.m, f.s].forEach((v, k) => {
-      units[k].textContent = String(v).padStart(k === 0 ? 1 : 2, '0');
-    });
-    if (f.label !== lastLabel) {
-      lastLabel = f.label;
-      live.textContent = `Opens in ${f.label}`;
-    }
-    if (left <= 0 && !finished) {
-      finished = true;
-      clearInterval(timer);
-      onDone();
-    }
-  }
-  const timer = setInterval(tick, 1000);
-  tick();
-  return { destroy: () => clearInterval(timer) };
-}
-
-/**
- * @param {HTMLElement} container
- * @param {{question:string, onSubmit:(answer:string) => Promise<{ok:boolean, error?:string}>}} opts
- */
-export function renderSecret(container, { question, onSubmit }) {
-  container.textContent = '';
-  const form = el('form', 'secret');
-  form.noValidate = true;
-  form.append(el('p', 'secret__kicker', 'One question first'));
-  const label = el('label', 'secret__question', question);
-  label.htmlFor = 'secret-answer';
-  const input = el('input', 'secret__input');
-  input.id = 'secret-answer';
-  input.type = 'text';
-  input.autocomplete = 'off';
-  input.setAttribute('aria-describedby', 'secret-error');
-  const error = el('p', 'secret__error');
-  error.id = 'secret-error';
-  error.setAttribute('role', 'alert');
-  const btn = el('button', 'btn btn-primary', 'Open');
-  btn.type = 'submit';
-  form.append(label, input, error, btn);
-  container.append(form);
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!input.value.trim()) {
-      error.textContent = 'Type your answer.';
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
-      return;
-    }
-    btn.disabled = true;
-    const r = await onSubmit(input.value);
-    btn.disabled = false;
-    if (!r.ok) {
-      error.textContent = r.error || 'Not quite. Try again.';
-      input.setAttribute('aria-invalid', 'true');
-      input.select();
-    }
-  });
-  input.focus();
 }

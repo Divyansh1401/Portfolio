@@ -4,17 +4,20 @@
  * (`dbPath: ':memory:'`).
  *
  * Covers (CONTRACT.md §§3, 5, 6):
- *  - the sender flow on / (pick a mode, write a note, create a link) at
- *    390x844 (hasTouch, isMobile) finishing with a synthetic HOLD gesture
- *    on the recipient stage, and again at 1440x900 finishing with wheel;
+ *  - the sender flow on / (pick a mode, write a note, pay if needed, create
+ *    a link) at 390x844 (hasTouch, isMobile) and at 1440x900;
+ *  - the recipient page (a port of the owner's birthday page): the Open
+ *    gate, the fly-in, then scrolling the whole timeline (script scroll on
+ *    the phone, the mouse wheel on desktop) down to "send one back";
  *  - the recipient always opens the link in a FRESH browser context (no
  *    sender-side storage/session carries over);
- *  - the revealed message text + from-name, the reply link's href, and
+ *  - the note shown one word per scroll + from-name, the reply link's href, and
  *    that following it preselects the replied-to bouquet's mode on /;
  *  - GET /api/bouquet/:id/summary never includes the message;
  *  - zero console errors / page errors on every page visited;
- *  - for each of the 5 modes, html[data-mode] and the computed body
- *    background match that mode's ui.ground.
+ *  - for each of the 5 modes, html[data-mode] and the dome colour match the
+ *    flower, with the page's ink readable on both the dome and white;
+ *  - a gift under the scratch foil (keyboard reveal).
  *
  * Builds app/dist (esbuild bundles) and app/styles/modes.css first if
  * either is missing, the same way `npm run dev` would.
@@ -47,18 +50,6 @@ let base;
 let browser;
 
 /**
- * @param {string} hex '#rrggbb'
- * @returns {string} the CSS `rgb(r, g, b)` string a browser normalises to
- */
-function hexToRgb(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  const r = (n >> 16) & 255;
-  const g = (n >> 8) & 255;
-  const b = n & 255;
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-/**
  * Collects console-error and uncaught page-error messages for `page`.
  * @param {import('playwright-core').Page} page
  * @returns {string[]}
@@ -74,19 +65,49 @@ function trackErrors(page) {
   return errors;
 }
 
+/** WCAG contrast of two #rrggbb colours. */
+function contrastHex(a, b) {
+  const lum = (hex) => {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+      .map((v) => v / 255)
+      .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+      .reduce((acc, v, i) => acc + v * [0.2126, 0.7152, 0.0722][i], 0);
+  };
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+}
+
 /**
- * Waits for the recipient page's message card to be shown (i.e. the reveal
- * machine has crossed q >= 1 and reveal.js has un-hidden #bq-message).
+ * Opens the recipient gate and waits for the fly-in to land (scroll unlocks).
  * @param {import('playwright-core').Page} page
  */
-async function waitForRevealed(page) {
-  await page.waitForFunction(
-    () => {
-      const box = document.getElementById('bq-message');
-      return !!box && !box.hidden;
-    },
-    { timeout: 8000 },
-  );
+async function openBouquet(page) {
+  await page.click('#open');
+  await page.waitForFunction(() => !document.documentElement.classList.contains('locked'), null, { timeout: 12000 });
+}
+
+/**
+ * Scrolls the recipient timeline and collects every word that became
+ * visible, in order.
+ * @param {import('playwright-core').Page} page
+ * @param {'script'|'wheel'} how
+ */
+async function scrollThrough(page, how) {
+  const seen = [];
+  const total = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+  const vh = await page.evaluate(() => innerHeight);
+  for (let y = 0; y <= total + vh; y += Math.round(vh * 0.25)) {
+    if (how === 'wheel') await page.mouse.wheel(0, Math.round(vh * 0.25));
+    else await page.evaluate((top) => window.scrollTo(0, top), y);
+    await page.waitForTimeout(40);
+    const w = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#words b')].find((x) => parseFloat(x.style.opacity) > 0.5);
+      return b ? b.textContent : null;
+    });
+    if (w && seen[seen.length - 1] !== w) seen.push(w);
+  }
+  return seen;
 }
 
 before(async () => {
@@ -147,7 +168,7 @@ async function createLive(payload) {
 /**
  * Runs the full sender -> recipient -> reply loop once, at a given viewport
  * and reveal method.
- * @param {{viewport: {width:number, height:number}, hasTouch?: boolean, isMobile?: boolean, revealMethod: 'hold'|'wheel', mode: string, message: string, fromName: string}} opts
+ * @param {{viewport: {width:number, height:number}, hasTouch?: boolean, isMobile?: boolean, revealMethod: 'script'|'wheel', mode: string, message: string, fromName: string}} opts
  */
 async function runFullLoop(opts) {
   const { viewport, hasTouch = false, isMobile = false, revealMethod, mode, message, fromName } = opts;
@@ -195,45 +216,20 @@ async function runFullLoop(opts) {
   const recipientErrors = trackErrors(recipientPage);
 
   await recipientPage.goto(`${base}/b/${id}`);
-  await recipientPage.waitForSelector('[data-reveal-stage]');
-
-  const box = await recipientPage.locator('[data-reveal-stage]').boundingBox();
-  assert.ok(box, 'the reveal stage has a bounding box');
-  const cx = box.x + box.width / 2;
-  const cy = box.y + box.height / 2;
-  await recipientPage.mouse.move(cx, cy);
-
-  if (revealMethod === 'hold') {
-    // Any input during the fly-in only skips it (the machine explicitly
-    // does not also start a hold from that same event) — so the first
-    // down/up just lands the bouquet, and a SECOND press is the real hold.
-    await recipientPage.mouse.down();
-    await recipientPage.mouse.up();
-    await recipientPage.mouse.down();
-    await recipientPage.waitForTimeout(1200);
-    await waitForRevealed(recipientPage);
-    await recipientPage.mouse.up();
-  } else if (revealMethod === 'wheel') {
-    // The first wheel tick during the fly-in only skips it too; the
-    // following ticks are the ones that actually fill q (WHEEL_DIVISOR
-    // = 240px of dy per full q, so a handful of 250px notches clears it).
-    await recipientPage.mouse.wheel(0, 50);
-    for (let i = 0; i < 6; i++) {
-      // eslint-disable-next-line no-await-in-loop
-      await recipientPage.mouse.wheel(0, 250);
-    }
-    await waitForRevealed(recipientPage);
-  } else {
-    throw new Error(`unknown revealMethod: ${revealMethod}`);
+  await recipientPage.waitForSelector('#open');
+  assert.match(await recipientPage.textContent('#gate-from'), new RegExp(fromName, 'i'));
+  await openBouquet(recipientPage);
+  if (revealMethod === 'wheel') {
+    const box = await recipientPage.evaluate(() => [innerWidth / 2, innerHeight / 2]);
+    await recipientPage.mouse.move(box[0], box[1]);
   }
+  const seen = await scrollThrough(recipientPage, revealMethod);
+  const expected = [...message.split(/\s+/), 'from', ...fromName.split(/\s+/)];
+  assert.deepEqual(seen, expected, 'every word of the note shows, in order, one per scroll beat');
 
-  const revealedText = (await recipientPage.textContent('#bq-message-text')) || '';
-  assert.equal(revealedText.trim(), message);
-
-  const revealedFrom = (await recipientPage.textContent('#bq-message-from')) || '';
-  assert.equal(revealedFrom.trim(), `— ${fromName}`);
-
-  const replyHref = await recipientPage.getAttribute('#bq-send-back', 'href');
+  // No countdown and no gifts: the page ends on "send one back".
+  await recipientPage.waitForFunction(() => document.getElementById('end').classList.contains('live'), null, { timeout: 5000 });
+  const replyHref = await recipientPage.getAttribute('#send-back', 'href');
   assert.equal(replyHref, `/?reply=${encodeURIComponent(id)}`);
 
   assert.deepEqual(
@@ -243,7 +239,7 @@ async function runFullLoop(opts) {
   );
 
   // ---- follow "Send one back" and assert the reply preselect on / ----
-  await recipientPage.click('#bq-send-back');
+  await recipientPage.click('#send-back');
   await recipientPage.waitForURL(/\/\?reply=/, { timeout: 10000 });
   await recipientPage.waitForFunction(
     (expectedMode) => document.documentElement.dataset.mode === expectedMode,
@@ -263,14 +259,14 @@ async function runFullLoop(opts) {
 }
 
 test(
-  'full loop: 390x844 touch device, HOLD to reveal',
-  { timeout: 30000 },
+  'full loop: 390x844 touch device, open then scroll',
+  { timeout: 60000 },
   async () => {
     await runFullLoop({
       viewport: { width: 390, height: 844 },
       hasTouch: true,
       isMobile: true,
-      revealMethod: 'hold',
+      revealMethod: 'script',
       mode: 'sunflower',
       message: 'Thinking of you today, sending flowers.',
       fromName: 'Ada',
@@ -279,8 +275,8 @@ test(
 );
 
 test(
-  'full loop: 1440x900 desktop, wheel to reveal',
-  { timeout: 30000 },
+  'full loop: 1440x900 desktop, open then mouse wheel',
+  { timeout: 60000 },
   async () => {
     await runFullLoop({
       viewport: { width: 1440, height: 900 },
@@ -294,7 +290,7 @@ test(
   },
 );
 
-test('every mode: html[data-mode] and body background match ui.ground', { timeout: 30000 }, async () => {
+test('every mode: html[data-mode] and the dome match the flower; the ink reads on the dome and on white', { timeout: 30000 }, async () => {
   for (const mode of MODES) {
     // Created directly through the API — this loop is about the mode's
     // rendered colors, not the create form (already exercised above).
@@ -312,19 +308,48 @@ test('every mode: html[data-mode] and body background match ui.ground', { timeou
     // eslint-disable-next-line no-await-in-loop
     await page.goto(`${base}/b/${id}`);
     // eslint-disable-next-line no-await-in-loop
-    await page.waitForSelector('[data-reveal-stage]');
+    await page.waitForSelector('#open');
 
     // eslint-disable-next-line no-await-in-loop
     const dataMode = await page.getAttribute('html', 'data-mode');
     assert.equal(dataMode, mode.id);
 
     // eslint-disable-next-line no-await-in-loop
-    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    assert.equal(bg, hexToRgb(mode.ui.ground), `body background for mode "${mode.id}"`);
+    const c = await page.evaluate(() => {
+      const cs = getComputedStyle(document.documentElement);
+      return { blush: cs.getPropertyValue('--blush').trim(), ink: cs.getPropertyValue('--ink').trim(), strong: cs.getPropertyValue('--ink-strong').trim() };
+    });
+    assert.equal(c.blush.toLowerCase(), mode.bouquet.petals[2].toLowerCase(), `the dome is ${mode.id}'s light petal colour`);
+    for (const bg of [c.blush, '#ffffff']) {
+      assert.ok(contrastHex(c.ink, bg) >= 3, `${mode.id}: word ink ${c.ink} on ${bg} is ${contrastHex(c.ink, bg).toFixed(2)} (need 3 for large text)`);
+      assert.ok(contrastHex(c.strong, bg) >= 4.5, `${mode.id}: label ink ${c.strong} on ${bg} is ${contrastHex(c.strong, bg).toFixed(2)} (need 4.5)`);
+    }
 
     assert.deepEqual(errors, [], `console/page errors for mode "${mode.id}":\n${errors.join('\n')}`);
 
     // eslint-disable-next-line no-await-in-loop
     await context.close();
   }
+});
+
+test('a gift: the card waits under the foil at the end, and a key takes the foil off', { timeout: 60000 }, async () => {
+  const id = await createLive({
+    mode: 'rose',
+    message: 'For you',
+    gifts: [{ kind: 'code', label: 'Book voucher', code: 'READ-4471' }],
+  });
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  const errors = trackErrors(page);
+  await page.goto(`${base}/b/${id}`);
+  await openBouquet(page);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForFunction(() => parseFloat(document.getElementById('cardWrap').style.opacity) > 0.95, null, { timeout: 5000 });
+  assert.equal(await page.$eval('#scratch', (el) => el.classList.contains('done')), false, 'the foil is on');
+  await page.focus('#scratch');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.getElementById('end').classList.contains('live'), null, { timeout: 5000 });
+  assert.equal(await page.textContent('.face__code'), 'READ-4471');
+  assert.deepEqual(errors, [], errors.join('\n'));
+  await context.close();
 });

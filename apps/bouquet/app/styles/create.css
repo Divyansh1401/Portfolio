@@ -169,116 +169,60 @@
 }
 
 /* ---------------------------------------------------------------------- */
-/* Preview dialog — full-screen overlay                                   */
+/* Preview: the real recipient page in a full-screen frame                */
 /* ---------------------------------------------------------------------- */
 
 .preview-dialog {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--ground);
-  overflow-y: auto;
+  background: #ffffff;
 }
 
 .preview-dialog[hidden] {
   display: none;
 }
 
-.preview-dialog__panel {
-  max-width: 640px;
-  margin: 0 auto;
-  min-height: 100%;
-  padding: var(--space-4) 0 var(--space-7);
+html.is-previewing,
+html.is-previewing body {
+  overflow: hidden;
+}
+
+.preview-dialog__frame,
+.preview-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.preview-dialog__bar {
+  position: absolute;
+  top: max(var(--space-3), env(safe-area-inset-top));
+  left: var(--space-3);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .preview-dialog__close {
-  margin: var(--space-4);
+  background: var(--ground);
+  box-shadow: var(--shadow-card);
 }
 
-.preview-stage {
-  padding: 0 var(--space-4);
-}
-
-.preview-stage__inner {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: none;
-}
-
-.preview-stage__inner.is-revealed {
-  touch-action: auto;
-}
-
-.preview-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.preview-hint[hidden],
-.preview-open[hidden] {
-  display: none;
-}
-
-.preview-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--space-6) + var(--touch-min) + var(--space-3));
+.preview-dialog__note {
   margin: 0;
-  text-align: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--ground);
   font-size: var(--text-sm);
-  font-weight: 600;
   color: var(--muted);
-  pointer-events: none;
 }
 
-.preview-hint--coarse {
+.preview-dialog__note[hidden] {
   display: none;
-}
-
-.preview-hint--fine {
-  display: inline;
-}
-
-@media (pointer: coarse) {
-  .preview-hint--coarse {
-    display: inline;
-  }
-  .preview-hint--fine {
-    display: none;
-  }
-}
-
-.preview-open {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  width: max-content;
-  bottom: var(--space-5);
-  min-width: 160px;
-}
-
-.preview-message {
-  margin: var(--space-5) 0 0;
-  white-space: normal;
-}
-
-.preview-stage__inner[hidden] {
-  display: none;
-}
-
-.preview-message__text {
-  white-space: pre-line;
-  margin: 0;
 }
 
 /* A selected flower chip keeps its petal-colour dot, which can match the

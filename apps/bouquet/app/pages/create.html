@@ -158,27 +158,14 @@
   </main>
 
   <div class="preview-dialog" id="preview-dialog" role="dialog" aria-modal="true" aria-label="Preview your bouquet" hidden>
-    <div class="preview-dialog__panel">
+    <div class="preview-dialog__bar">
       <button type="button" class="btn btn-ghost preview-dialog__close" id="preview-close">Close preview</button>
-      <p class="create__hint preview-dialog__note" id="preview-note" hidden>Preview: the countdown and secret question are skipped.</p>
-
-      <div class="preview-stage" id="preview-root">
-        <div class="preview-stage__inner" data-reveal-stage>
-          <canvas class="preview-canvas" data-reveal-canvas aria-hidden="true"></canvas>
-          <p class="preview-hint" aria-hidden="true">
-            <span class="preview-hint--coarse">Hold to open</span>
-            <span class="preview-hint--fine">Scroll to open</span>
-          </p>
-          <button type="button" class="btn btn-primary preview-open" data-reveal-open>Open</button>
-        </div>
-
-        <div class="preview-message note" id="preview-message" role="status" aria-live="polite" dir="auto" hidden>
-          <p class="preview-message__text" id="preview-message-text"></p>
-          <p class="note__from" id="preview-message-from" hidden></p>
-        </div>
-        <div class="gifts" id="preview-gifts"></div>
-      </div>
+      <p class="preview-dialog__note" id="preview-note" hidden>The quiz is skipped in the preview.</p>
     </div>
+    <div class="preview-dialog__frame" id="preview-frame-box"></div>
+    <!-- Tabbing past the last control inside the frame lands here and wraps
+         back to Close, so focus never leaves the preview. -->
+    <span class="visually-hidden" tabindex="0" id="preview-sentinel" data-trap-skip></span>
   </div>
 
   <div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-labelledby="pay-title" hidden>

@@ -2,61 +2,89 @@
 <html lang="en" data-mode="{{MODE}}">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
   <title>A bouquet for you</title>
   <meta name="robots" content="noindex" />
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="/styles/modes.css" />
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/gifts.css" />
+  <link rel="stylesheet" href="/styles/fonts.css" />
   <link rel="stylesheet" href="/styles/bouquet.css" />
 </head>
 <body class="bq-body">
   <script type="application/json" id="bq-data">{{DATA_JSON}}</script>
 
-  <main class="bq-page" id="bq-root">
-    <h1 class="visually-hidden">A bouquet for you</h1>
+  <h1 class="visually-hidden" id="bq-title">A bouquet for you</h1>
 
-    <section class="bq-gate" id="bq-gate" aria-labelledby="bq-gate-title" hidden>
-      <p class="bq-gate__from" id="bq-gate-from"></p>
-      <h2 class="bq-gate__title" id="bq-gate-title">A bouquet is waiting for you</h2>
-      <div class="countdown" id="bq-countdown" hidden></div>
-      <div id="bq-secret" hidden></div>
-      <p class="bq-gate__status" id="bq-gate-status" role="status" aria-live="polite"></p>
-    </section>
+  <!-- The page's structure, timings, type and motion follow the owner's
+       birthday page (reference/birthday/birthday.html). The scroll track is
+       the only tall thing; everything visible lives in one fixed #stage. -->
+  <div id="track"></div>
 
-    <div class="bq-stage" data-reveal-stage id="bq-stage" hidden>
-      <canvas class="bq-canvas" data-reveal-canvas aria-hidden="true"></canvas>
+  <div id="gate">
+    <div class="gate__inner">
+      <p class="gate__from" id="gate-from" hidden></p>
+      <form class="quiz" id="quiz" novalidate hidden>
+        <label class="quiz__q" for="quiz-answer" id="quiz-q"></label>
+        <input class="quiz__input" id="quiz-answer" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="quiz-error" />
+        <p class="quiz__error" id="quiz-error" role="alert"></p>
+      </form>
+      <button id="open" type="button">open</button>
+    </div>
+  </div>
 
-      <p class="bq-hint" aria-hidden="true">
-        <span class="bq-hint--coarse">Hold to open</span>
-        <span class="bq-hint--fine">Scroll to open</span>
-      </p>
+  <div id="stage">
+    <div id="bqclip"><canvas id="bq" aria-hidden="true"></canvas></div>
 
-      <button type="button" class="btn btn-primary bq-open" data-reveal-open>
-        Open
-      </button>
+    <div id="hint" aria-hidden="true">scroll<i></i></div>
+
+    <div id="bulge"></div>
+
+    <div id="words" aria-hidden="true"></div>
+
+    <div id="cd">
+      <h2 id="cdTitle"></h2>
+      <div id="clock" aria-hidden="true"></div>
+      <p class="visually-hidden" id="cd-live" aria-live="polite"></p>
+      <a id="cal" class="pill pill--small" href="#">add to calendar</a>
     </div>
 
-    <div
-      class="bq-message note"
-      id="bq-message"
-      role="status"
-      aria-live="polite"
-      dir="auto"
-      hidden
-    >
-      <p class="bq-message__text" id="bq-message-text"></p>
-      <p class="note__from" id="bq-message-from" hidden></p>
+    <canvas id="confetti"></canvas>
+
+    <div id="cardWrap">
+      <div id="qcard">
+        <div class="face" id="face"></div>
+        <span class="qtop" id="qtop"></span>
+        <button type="button" class="qcap" id="qcap" hidden></button>
+        <canvas id="scratch" aria-label="Scratch to reveal your gift" role="img"></canvas>
+      </div>
     </div>
 
-    <div class="gifts bq-gifts" id="bq-gifts"></div>
-
-    <div class="bq-after" id="bq-after" hidden>
-      <a class="btn btn-primary" id="bq-send-back" href="/">Send one back</a>
-      <a class="bq-make-own" href="/">Make your own</a>
+    <div id="end">
+      <a id="send-back" class="pill" href="/">send one back</a>
+      <a id="make-own" class="end__small" href="/">make your own</a>
     </div>
-  </main>
+  </div>
+
+  <!-- Screen readers get the whole note at once; the one-word-per-scroll
+       display is decorative. -->
+  <section class="visually-hidden" id="note-sr" aria-label="Their note" hidden></section>
+
+  <div class="gift-sheet" id="gift-sheet" role="dialog" aria-modal="true" aria-labelledby="gift-sheet-title" hidden>
+    <div class="gift-sheet__panel">
+      <div class="gift-sheet__head">
+        <h2 class="gift-sheet__title" id="gift-sheet-title">your gifts</h2>
+        <button type="button" class="pill pill--small" id="gift-sheet-close">close</button>
+      </div>
+      <div class="gifts" id="gift-sheet-body"></div>
+    </div>
+  </div>
+
+  <div class="preview-bar" id="preview-bar" hidden>
+    <button type="button" class="pill pill--small" id="skip-cd" hidden>skip countdown</button>
+  </div>
 
   <script type="module" src="/assets/bouquet.js"></script>
 </body>
