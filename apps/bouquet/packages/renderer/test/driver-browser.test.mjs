@@ -15,7 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
-const CHROMIUM_EXECUTABLE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+import { chromiumTarget } from '../../../scripts/chromium.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 // packages/renderer — driver-page.html lives at <root>/test/browser/driver-page.html
@@ -70,7 +70,7 @@ test('createPlayer(), run to completion, lands on the same pixels as compat.moun
   const pageUrl = `http://127.0.0.1:${port}/test/browser/driver-page.html`;
 
   const browser = await chromium.launch({
-    executablePath: CHROMIUM_EXECUTABLE,
+    ...chromiumTarget(),
     args: ['--disable-gpu', '--no-sandbox'],
   });
 

@@ -19,7 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
-const CHROMIUM_EXECUTABLE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+import { chromiumTarget } from '../../../../scripts/chromium.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 // packages/renderer — the static server's document root. pixel-page.html
@@ -150,7 +150,7 @@ export async function pixelDiff({ candidate }) {
   const pageUrl = `http://127.0.0.1:${port}/test/browser/pixel-page.html`;
 
   const browser = await chromium.launch({
-    executablePath: CHROMIUM_EXECUTABLE,
+    ...chromiumTarget(),
     args: ['--disable-gpu', '--no-sandbox'],
   });
 

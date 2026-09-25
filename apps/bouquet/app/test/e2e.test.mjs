@@ -34,7 +34,7 @@ import { chromium } from 'playwright-core';
 import { createServer } from '../server/index.js';
 import { MODES } from '../../packages/modes/modes.js';
 
-const CHROMIUM_EXECUTABLE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+import { chromiumTarget } from '../../scripts/chromium.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_DIR = path.resolve(__dirname, '..');
@@ -134,7 +134,7 @@ before(async () => {
   base = `http://127.0.0.1:${address.port}`;
 
   browser = await chromium.launch({
-    executablePath: CHROMIUM_EXECUTABLE,
+    ...chromiumTarget(),
     args: ['--disable-gpu', '--no-sandbox'],
   });
 });

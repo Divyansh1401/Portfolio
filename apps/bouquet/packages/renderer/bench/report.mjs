@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { measure as measureSize } from '../scripts/size.mjs';
 
-const CHROMIUM_EXECUTABLE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+import { chromiumTarget } from '../../../scripts/chromium.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 // packages/renderer — same document root throttle.mjs uses, so
@@ -205,7 +205,7 @@ async function runBenchMatrix() {
   const pageUrl = `http://127.0.0.1:${port}/bench/pages/report-page.html`;
 
   const browser = await chromium.launch({
-    executablePath: CHROMIUM_EXECUTABLE,
+    ...chromiumTarget(),
     args: ['--disable-gpu', '--no-sandbox'],
   });
 
