@@ -1,0 +1,318 @@
+/**
+ * Gifts, countdown and secret question — shared by the recipient page and
+ * the create page's preview. Rendered by client/gifts/view.js. Tokens only
+ * (modes.css + base.css), 44px targets, no horizontal scroll.
+ */
+
+/* ---------------------------------------------------------------------- */
+/* Gifts container                                                        */
+/* ---------------------------------------------------------------------- */
+
+.gifts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.gifts:empty {
+  display: none;
+}
+
+.gifts__title {
+  font-size: var(--text-lg);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Photo album                                                            */
+/* ---------------------------------------------------------------------- */
+
+.gift-album {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gift-album--1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gift-album--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gift-album__item {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface);
+  aspect-ratio: 1 / 1;
+  cursor: zoom-in;
+}
+
+.gift-album--1 .gift-album__item {
+  aspect-ratio: 4 / 3;
+}
+
+.gift-album__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Lightbox                                                               */
+/* ---------------------------------------------------------------------- */
+
+.gift-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--ground);
+  touch-action: pan-y;
+}
+
+.gift-lightbox__img {
+  max-width: 100%;
+  max-height: calc(100dvh - 2 * var(--touch-min) - 4 * var(--space-4));
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gift-lightbox__close {
+  position: absolute;
+  top: max(var(--space-4), env(safe-area-inset-top));
+  right: var(--space-4);
+}
+
+.gift-lightbox__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.gift-lightbox__count {
+  margin: 0;
+  min-width: 5em;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Cards: link, gift code, file                                           */
+/* ---------------------------------------------------------------------- */
+
+.gift-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+a.gift-card:hover {
+  border-color: var(--accent-strong);
+}
+
+.gift-card__kicker {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gift-card__title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.gift-card__meta {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.gift-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.gift-card__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  font-weight: 600;
+}
+
+.gift-code {
+  margin-top: var(--space-3);
+}
+
+.gift-code__cover {
+  width: 100%;
+  min-height: calc(var(--touch-min) + var(--space-4));
+  border: 1px dashed var(--accent-strong);
+  border-radius: var(--radius-sm);
+  background: var(--ground);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gift-code__cover[hidden],
+.gift-code__value[hidden],
+.gift-code__copy[hidden] {
+  display: none;
+}
+
+.gift-code__value {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--ground);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--text-lg);
+  letter-spacing: 0.08em;
+  text-align: center;
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.gift-code__copy {
+  margin-top: var(--space-3);
+  align-self: flex-start;
+}
+
+.gift-code__status {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  min-height: 1.25em;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Countdown                                                              */
+/* ---------------------------------------------------------------------- */
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+}
+
+.countdown__kicker {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.countdown__clock {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 360px;
+}
+
+.countdown__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.countdown__num {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.countdown__label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.countdown__when {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Secret question                                                        */
+/* ---------------------------------------------------------------------- */
+
+.secret {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.secret__kicker {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.secret__question {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.secret__input {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  min-height: var(--touch-min);
+}
+
+.secret__input:focus {
+  outline: none;
+  border-color: var(--focus);
+}
+
+.secret__error {
+  margin: 0;
+  min-height: 1.25em;
+  font-size: var(--text-sm);
+  color: var(--accent-strong);
+}

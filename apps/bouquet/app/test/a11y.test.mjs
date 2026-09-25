@@ -63,7 +63,6 @@ before(async () => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         mode: 'rose',
-        shape: 'full',
         message: bouquetMessage,
         from_name: bouquetFrom,
         reply_of: null,
@@ -161,7 +160,8 @@ test('/ (create.html): title, lang, one h1, labelled controls', async () => {
         const hasFor = id && document.querySelector(`label[for="${CSS.escape(id)}"]`);
         const hasAriaLabel = el.getAttribute('aria-label');
         const hasAriaLabelledby = el.getAttribute('aria-labelledby');
-        if (!hasFor && !hasAriaLabel && !hasAriaLabelledby) {
+        const wrapped = el.closest('label') && el.closest('label').textContent.trim();
+        if (!hasFor && !hasAriaLabel && !hasAriaLabelledby && !wrapped) {
           bad.push(el.id || el.outerHTML.slice(0, 60));
         }
       }
@@ -259,7 +259,7 @@ test('visible focus: :focus-visible outline appears on a real keyboard tab stop'
 // Keyboard-only create flow
 // ---------------------------------------------------------------------
 
-test('keyboard-only create flow: tab order is theme radios -> shape radios -> note -> from -> Preview -> Create link', async () => {
+test('keyboard-only create flow: tab order is flower radios -> note -> from -> extras -> Preview -> Create link', async () => {
   const page = await browser.newPage();
   try {
     await page.goto(`${base}/`, { waitUntil: 'load' });
@@ -271,24 +271,21 @@ test('keyboard-only create flow: tab order is theme radios -> shape radios -> no
     }
 
     const modeStops = stops.filter((s) => 'modeId' in s.dataset);
-    const shapeStops = stops.filter((s) => 'shapeId' in s.dataset);
     assert.equal(modeStops.length, 5, 'all 5 flower chips should be reachable by Tab');
-    assert.equal(shapeStops.length, 3, 'all 3 shape chips should be reachable by Tab');
-
-    const firstModeIdx = stops.findIndex((s) => 'modeId' in s.dataset);
     const lastModeIdx = stops.map((s) => 'modeId' in s.dataset).lastIndexOf(true);
-    const firstShapeIdx = stops.findIndex((s) => 'shapeId' in s.dataset);
-    const lastShapeIdx = stops.map((s) => 'shapeId' in s.dataset).lastIndexOf(true);
-    assert.ok(lastModeIdx < firstShapeIdx, 'every mode chip should come before the shape chips');
-    assert.ok(lastShapeIdx < stops.findIndex((s) => s.id === 'message-field'), 'shape chips should come before the note field');
 
-    const order = stops.map((s) => s.id || s.dataset.modeId || s.dataset.shapeId).filter(Boolean);
+    const order = stops.map((s) => s.id || s.dataset.modeId).filter(Boolean);
     const messageIdx = order.indexOf('message-field');
     const fromIdx = order.indexOf('from-field');
+    const giftIdx = order.indexOf('gift-toggle');
+    const dateIdx = order.indexOf('date-toggle');
+    const secretIdx = order.indexOf('secret-toggle');
     const previewIdx = order.indexOf('preview-btn');
     const createIdx = order.indexOf('create-btn');
+    assert.ok(lastModeIdx < stops.findIndex((s) => s.id === 'message-field'), 'flower chips should come before the note field');
     assert.ok(messageIdx >= 0 && fromIdx > messageIdx, 'note field should come before the from field');
-    assert.ok(previewIdx > fromIdx, 'Preview should come after the from field');
+    assert.ok(giftIdx > fromIdx && dateIdx > giftIdx && secretIdx > dateIdx, 'the three extras follow the from field, in order');
+    assert.ok(previewIdx > secretIdx, 'Preview should come after the extras');
     assert.ok(createIdx > previewIdx, 'Create link should come after Preview');
   } finally {
     await page.close();
@@ -323,21 +320,18 @@ test('keyboard-only create flow: arrow keys move selection within the flower rad
   }
 });
 
-test('keyboard-only create flow: arrow keys move selection within the shape radiogroup', async () => {
+test('extras: each toggle is a disclosure button (aria-expanded + aria-controls) that shows its panel', async () => {
   const page = await browser.newPage();
   try {
     await page.goto(`${base}/`, { waitUntil: 'load' });
-    for (let i = 0; i < 6; i++) await page.keyboard.press('Tab'); // past the 5 mode chips, onto the 1st shape chip
-    const first = await focused(page);
-    assert.equal(first.dataset.shapeId, 'full', 'the first shape chip should be "full" (DEFAULT_SHAPE)');
-
-    await page.keyboard.press('ArrowRight');
-    const afterArrow = await focused(page);
-    assert.notEqual(
-      afterArrow.dataset.shapeId,
-      first.dataset.shapeId,
-      'ArrowRight inside the shape radiogroup should move focus to the next shape chip — currently unimplemented, see docs/A11Y.md finding #1',
-    );
+    for (const [toggle, panel] of [['gift-toggle', 'gift-panel'], ['date-toggle', 'date-panel'], ['secret-toggle', 'secret-panel']]) {
+      assert.equal(await page.getAttribute(`#${toggle}`, 'aria-controls'), panel);
+      assert.equal(await page.getAttribute(`#${toggle}`, 'aria-expanded'), 'false');
+      await page.focus(`#${toggle}`);
+      await page.keyboard.press('Enter');
+      assert.equal(await page.getAttribute(`#${toggle}`, 'aria-expanded'), 'true');
+      assert.equal(await page.$eval(`#${panel}`, (el) => el.hidden), false, `${panel} should be shown`);
+    }
   } finally {
     await page.close();
   }

@@ -4,16 +4,16 @@
  * /api/bouquet/:id/status while the tab is visible, stopping once opened.
  */
 
+import { formatAmount } from '../../packages/pricing/pricing.js';
 import { createModel } from '../../packages/renderer/src/core.js';
 import { paint } from '../../packages/renderer/src/painter-canvas.js';
 import { paletteFor } from '../../packages/modes/modes.js';
-import { SHAPES, DEFAULT_SHAPE } from '../../packages/renderer/src/shapes.js';
 
 /** Default poll interval while the tab is visible and unopened. */
 const DEFAULT_POLL_MS = 15000;
 
 /**
- * @returns {{id:string, mode:string, shape:string, from_name:string|null, url:string}}
+ * @returns {{id:string, mode:string, from_name:string|null, url:string}}
  */
 function readData() {
   const el = document.getElementById('bouquet-data');
@@ -28,14 +28,12 @@ function readData() {
  * Paint a single landed (p=1, q=0, yaw=0) still of the bouquet onto `canvas`.
  * @param {HTMLCanvasElement} canvas
  * @param {string} mode
- * @param {string} shape
  */
-function paintStill(canvas, mode, shape) {
+function paintStill(canvas, mode) {
   const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) return;
   const palette = paletteFor(mode);
-  const params = SHAPES[shape] || SHAPES[DEFAULT_SHAPE] || {};
-  const model = createModel({ palette, params });
+  const model = createModel({ palette });
   const dpr = window.devicePixelRatio || 1;
   const cssW = canvas.parentNode ? canvas.parentNode.clientWidth || canvas.width : canvas.width;
   const cssH = cssW;
@@ -80,6 +78,39 @@ async function copyText(text) {
   }
 }
 
+const DATE_FMT = { day: 'numeric', month: 'long', year: 'numeric' };
+const DATE_TIME_FMT = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' };
+
+/**
+ * The sender's receipt: what is inside, any lock, what they paid and how
+ * long the link lasts. Built from /status, never from the page data.
+ * @param {HTMLElement|null} dl
+ * @param {{unlock_at?:number|null, has_secret?:boolean, gift_count?:number,
+ *   expires_at?:number|null, paid?:number|boolean, payment?:{amount:number, currency:string}|null}} s
+ */
+function renderDetails(dl, s) {
+  if (!dl) return;
+  const rows = [];
+  if (s.gift_count) rows.push(['Inside', `${s.gift_count} gift${s.gift_count === 1 ? '' : 's'}`]);
+  if (s.unlock_at) rows.push(['Opens', new Date(s.unlock_at * 1000).toLocaleString(undefined, DATE_TIME_FMT)]);
+  if (s.has_secret) rows.push(['Secret question', "On. Make sure they'll know the answer."]);
+  if (s.payment) rows.push(['Paid', `${formatAmount(s.payment.currency, s.payment.amount)} (test payment)`]);
+  else rows.push(['Paid', 'Free']);
+  if (s.expires_at) rows.push(['Link works until', new Date(s.expires_at * 1000).toLocaleDateString(undefined, DATE_FMT)]);
+  dl.textContent = '';
+  for (const [k, v] of rows) {
+    const row = document.createElement('div');
+    row.className = 'sent__detail';
+    const dt = document.createElement('dt');
+    dt.textContent = k;
+    const dd = document.createElement('dd');
+    dd.textContent = v;
+    row.append(dt, dd);
+    dl.append(row);
+  }
+  dl.hidden = false;
+}
+
 function main() {
   const data = readData();
   const fullUrl = data.url ? new URL(data.url, location.origin).toString() : location.href;
@@ -87,7 +118,7 @@ function main() {
   const canvas = document.getElementById('sent-still');
   if (canvas) {
     try {
-      paintStill(canvas, data.mode || 'rose', data.shape || DEFAULT_SHAPE);
+      paintStill(canvas, data.mode || 'rose');
     } catch {
       // Rendering the still is decorative; the page still works without it.
     }
@@ -136,6 +167,7 @@ function main() {
 
     let stopped = false;
     let timer = null;
+    let detailsShown = false;
 
     async function checkStatus() {
       if (stopped) return;
@@ -143,6 +175,10 @@ function main() {
         const res = await fetch(`/api/bouquet/${encodeURIComponent(data.id)}/status`);
         if (res.ok) {
           const body = await res.json();
+          if (!detailsShown) {
+            detailsShown = true;
+            renderDetails(document.getElementById('sent-details'), body);
+          }
           if (body.opened_at) {
             openedLine.textContent = 'Opened';
             stopped = true;

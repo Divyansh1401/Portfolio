@@ -123,6 +123,27 @@ after(async () => {
   if (server) await new Promise((resolve) => server.close(resolve));
 });
 
+/** POST JSON to the test server. */
+async function postJson(p, payload) {
+  const res = await fetch(`${base}${p}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return { status: res.status, body: await res.json() };
+}
+
+/** Create a live bouquet over the API, paying for non-Rose flowers. */
+async function createLive(payload) {
+  const r = await postJson('/api/bouquet', payload);
+  if (r.status === 201) return r.body.id;
+  assert.equal(r.status, 202);
+  const order = await postJson(`/api/checkout/${r.body.draft_id}`, { currency: 'INR', amount: 30 });
+  const paid = await postJson(`/api/checkout/${r.body.draft_id}/confirm`, { order_id: order.body.order_id, outcome: 'paid' });
+  assert.equal(paid.status, 200);
+  return paid.body.id;
+}
+
 /**
  * Runs the full sender -> recipient -> reply loop once, at a given viewport
  * and reveal method.
@@ -142,6 +163,14 @@ async function runFullLoop(opts) {
   await senderPage.fill('#message-field', message);
   await senderPage.fill('#from-field', fromName);
   await senderPage.click('#create-btn');
+  if (mode !== 'rose') {
+    // Paid flower: pay-what-you-like sheet -> pretend checkout.
+    await senderPage.waitForSelector('#pay-sheet:not([hidden])');
+    await senderPage.click('#amount-group .chip:nth-child(2)');
+    await senderPage.click('#pay-btn');
+    await senderPage.waitForSelector('#checkout-panel:not([hidden])');
+    await senderPage.click('#checkout-pay');
+  }
   await senderPage.waitForURL(/\/b\/[^/]+\/sent$/, { timeout: 10000 });
 
   const sentPath = new URL(senderPage.url()).pathname; // /b/<id>/sent
@@ -270,19 +299,11 @@ test('every mode: html[data-mode] and body background match ui.ground', { timeou
     // Created directly through the API — this loop is about the mode's
     // rendered colors, not the create form (already exercised above).
     // eslint-disable-next-line no-await-in-loop
-    const res = await fetch(`${base}/api/bouquet`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        mode: mode.id,
-        shape: 'full',
-        message: `A ${mode.name} bouquet for the palette check.`,
-        client_nonce: `e2e-mode-check-${mode.id}`,
-      }),
+    const id = await createLive({
+      mode: mode.id,
+      message: `A ${mode.name} bouquet for the palette check.`,
+      client_nonce: `e2e-mode-check-${mode.id}`,
     });
-    assert.equal(res.status, 201);
-    // eslint-disable-next-line no-await-in-loop
-    const { id } = await res.json();
 
     const context = await browser.newContext({ viewport: { width: 1024, height: 768 } });
     const page = await context.newPage();

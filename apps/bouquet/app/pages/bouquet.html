@@ -8,6 +8,7 @@
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="/styles/modes.css" />
   <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/gifts.css" />
   <link rel="stylesheet" href="/styles/bouquet.css" />
 </head>
 <body class="bq-body">
@@ -16,7 +17,15 @@
   <main class="bq-page" id="bq-root">
     <h1 class="visually-hidden">A bouquet for you</h1>
 
-    <div class="bq-stage" data-reveal-stage>
+    <section class="bq-gate" id="bq-gate" aria-labelledby="bq-gate-title" hidden>
+      <p class="bq-gate__from" id="bq-gate-from"></p>
+      <h2 class="bq-gate__title" id="bq-gate-title">A bouquet is waiting for you</h2>
+      <div class="countdown" id="bq-countdown" hidden></div>
+      <div id="bq-secret" hidden></div>
+      <p class="bq-gate__status" id="bq-gate-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="bq-stage" data-reveal-stage id="bq-stage" hidden>
       <canvas class="bq-canvas" data-reveal-canvas aria-hidden="true"></canvas>
 
       <p class="bq-hint" aria-hidden="true">
@@ -40,6 +49,8 @@
       <p class="bq-message__text" id="bq-message-text"></p>
       <p class="note__from" id="bq-message-from" hidden></p>
     </div>
+
+    <div class="gifts bq-gifts" id="bq-gifts"></div>
 
     <div class="bq-after" id="bq-after" hidden>
       <a class="btn btn-primary" id="bq-send-back" href="/">Send one back</a>

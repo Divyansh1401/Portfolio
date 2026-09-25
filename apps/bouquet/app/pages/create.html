@@ -7,6 +7,7 @@
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="/styles/modes.css" />
   <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/gifts.css" />
   <link rel="stylesheet" href="/styles/create.css" />
 </head>
 <body>
@@ -18,16 +19,14 @@
     <div class="create__form-col">
       <p class="create__reply-line" id="reply-line" hidden></p>
       <h1 class="create__title">Send a bouquet</h1>
-      <p class="create__subtitle">Pick your flowers, write a note, and send a link.</p>
+      <p class="create__subtitle">Pick a flower, write a note, tuck in a gift, and send a link.</p>
+
+      <p class="create__banner" id="launch-banner" hidden></p>
 
       <section class="create__section" aria-labelledby="flowers-heading">
-        <h2 id="flowers-heading" class="create__section-title">Pick your flowers</h2>
-        <div class="chip-row" role="radiogroup" aria-label="Flower theme" id="mode-group"></div>
-      </section>
-
-      <section class="create__section" aria-labelledby="shape-heading">
-        <h2 id="shape-heading" class="create__section-title">Shape</h2>
-        <div class="chip-row" role="radiogroup" aria-label="Bouquet shape" id="shape-group"></div>
+        <h2 id="flowers-heading" class="create__section-title">Pick your flower</h2>
+        <div class="chip-row" role="radiogroup" aria-label="Flower" id="mode-group"></div>
+        <p class="create__hint" id="flower-hint"></p>
       </section>
 
       <section class="create__section" aria-labelledby="note-heading">
@@ -52,6 +51,79 @@
           <p class="field__hint create__error" id="from-error" role="alert" hidden></p>
         </div>
       </section>
+
+      <section class="create__section create__extras" aria-labelledby="extras-heading">
+        <h2 id="extras-heading" class="create__section-title">Make it special <span class="create__optional">optional</span></h2>
+
+        <div class="extra" id="extra-gifts">
+          <button type="button" class="extra__toggle" aria-expanded="false" aria-controls="gift-panel" id="gift-toggle">
+            <span class="extra__plus" aria-hidden="true">+</span>
+            <span class="extra__name">Add a gift</span>
+            <span class="extra__meta">Photos, a link, a gift card or a ticket</span>
+          </button>
+          <div class="extra__panel" id="gift-panel" hidden>
+            <div class="gift-adders">
+              <label class="btn btn-ghost gift-adder">
+                Photos
+                <input type="file" id="add-photos" accept="image/*" multiple class="visually-hidden" />
+              </label>
+              <button type="button" class="btn btn-ghost gift-adder" id="add-link">Link</button>
+              <button type="button" class="btn btn-ghost gift-adder" id="add-code">Gift card</button>
+              <label class="btn btn-ghost gift-adder">
+                Ticket or file
+                <input type="file" id="add-file" accept="application/pdf,image/jpeg,image/png,image/webp" class="visually-hidden" />
+              </label>
+            </div>
+            <p class="create__hint" id="gift-count">Up to 8 things, including up to 6 photos.</p>
+            <ul class="gift-list" id="gift-list"></ul>
+            <p class="field__hint create__error" id="gifts-error" role="alert" hidden></p>
+          </div>
+        </div>
+
+        <div class="extra" id="extra-date">
+          <button type="button" class="extra__toggle" aria-expanded="false" aria-controls="date-panel" id="date-toggle">
+            <span class="extra__plus" aria-hidden="true">+</span>
+            <span class="extra__name">Open on a date</span>
+            <span class="extra__meta">A countdown until the moment you pick</span>
+          </button>
+          <div class="extra__panel" id="date-panel" hidden>
+            <div class="extra__row">
+              <div class="field">
+                <label for="unlock-date">Date</label>
+                <input id="unlock-date" type="date" />
+              </div>
+              <div class="field">
+                <label for="unlock-time">Time</label>
+                <input id="unlock-time" type="time" />
+              </div>
+            </div>
+            <p class="create__hint" id="unlock-line" aria-live="polite"></p>
+            <p class="field__hint create__error" id="unlock-error" role="alert" hidden></p>
+            <button type="button" class="extra__remove" id="date-remove">Remove date</button>
+          </div>
+        </div>
+
+        <div class="extra" id="extra-secret">
+          <button type="button" class="extra__toggle" aria-expanded="false" aria-controls="secret-panel" id="secret-toggle">
+            <span class="extra__plus" aria-hidden="true">+</span>
+            <span class="extra__name">Ask a secret question</span>
+            <span class="extra__meta">Only they will know the answer</span>
+          </button>
+          <div class="extra__panel" id="secret-panel" hidden>
+            <div class="field">
+              <label for="secret-q">Question</label>
+              <input id="secret-q" type="text" maxlength="120" placeholder="Where did we first meet?" />
+            </div>
+            <div class="field">
+              <label for="secret-a">Answer</label>
+              <input id="secret-a" type="text" maxlength="60" autocomplete="off" aria-describedby="secret-hint" />
+              <p class="field__hint" id="secret-hint">They'll need this to open it. Capitals and spaces don't matter.</p>
+            </div>
+            <p class="field__hint create__error" id="secret-error" role="alert" hidden></p>
+            <button type="button" class="extra__remove" id="secret-remove">Remove question</button>
+          </div>
+        </div>
+      </section>
     </div>
 
     <div class="create__actions action-bar">
@@ -64,6 +136,7 @@
   <div class="preview-dialog" id="preview-dialog" role="dialog" aria-modal="true" aria-label="Preview your bouquet" hidden>
     <div class="preview-dialog__panel">
       <button type="button" class="btn btn-ghost preview-dialog__close" id="preview-close">Close preview</button>
+      <p class="create__hint preview-dialog__note" id="preview-note" hidden>Preview: the countdown and secret question are skipped.</p>
 
       <div class="preview-stage" id="preview-root">
         <div class="preview-stage__inner" data-reveal-stage>
@@ -79,7 +152,32 @@
           <p class="preview-message__text" id="preview-message-text"></p>
           <p class="note__from" id="preview-message-from" hidden></p>
         </div>
+        <div class="gifts" id="preview-gifts"></div>
       </div>
+    </div>
+  </div>
+
+  <div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-labelledby="pay-title" hidden>
+    <div class="pay-sheet__panel">
+      <h2 class="pay-sheet__title" id="pay-title">Pay what you like for this bouquet</h2>
+      <p class="pay-sheet__text" id="pay-text">Every amount unlocks the same bouquet. One payment covers this one message.</p>
+
+      <div class="pay-sheet__choose" id="pay-choose">
+        <div class="pay-amounts" role="radiogroup" aria-label="Amount" id="amount-group"></div>
+        <button type="button" class="pay-sheet__switch" id="currency-switch">Change currency</button>
+        <button type="button" class="btn btn-primary pay-sheet__pay" id="pay-btn" disabled>Pick an amount</button>
+        <button type="button" class="btn btn-ghost pay-sheet__free" id="as-rose-btn" hidden>Send it as Rose, free</button>
+      </div>
+
+      <div class="pay-sheet__checkout" id="checkout-panel" hidden>
+        <p class="pay-sheet__test">Test checkout: no real money moves.</p>
+        <p class="pay-sheet__total" id="checkout-total"></p>
+        <button type="button" class="btn btn-primary" id="checkout-pay">Pay</button>
+        <button type="button" class="btn btn-ghost" id="checkout-fail">Make it fail</button>
+      </div>
+
+      <p class="pay-sheet__status" id="pay-status" role="status" aria-live="polite"></p>
+      <button type="button" class="pay-sheet__close" id="pay-close">Not now, keep editing</button>
     </div>
   </div>
 

@@ -1,10 +1,10 @@
 /**
  * @file The create page's live bouquet preview (top of page / left column).
- * A landed (p=1, q=0), slowly-turning bouquet reused across the flower and
- * shape pickers. Owns its own rAF loop, throttled to ~20fps by frame
+ * A landed (p=1, q=0), slowly-turning bouquet reused across the flower
+ * picker. Owns its own rAF loop, throttled to ~20fps by frame
  * skipping, paused via visibilitychange. Mode switches cross-fade the
  * material palette over 300ms with `mixPalettes` (instant under reduced
- * motion); shape switches rebuild the geometry in place via `model.params`.
+ * motion).
  * Reduced motion: no idle turn at all.
  */
 
@@ -12,7 +12,6 @@ import { createModel } from '../../../packages/renderer/src/core.js';
 import { paint, assertPaintable } from '../../../packages/renderer/src/painter-canvas.js';
 import { paletteFor } from '../../../packages/modes/modes.js';
 import { mixPalettes } from '../../../packages/renderer/src/palette.js';
-import { SHAPES, DEFAULT_SHAPE } from '../../../packages/renderer/src/shapes.js';
 
 const FRAME_MS = 1000 / 20; // ~20fps
 const TRANSITION_MS = 300;
@@ -25,19 +24,15 @@ function capDpr(raw) {
 
 /**
  * @param {HTMLCanvasElement} canvas
- * @param {{modeId: string, shapeId: string, reducedMotion: boolean}} opts
- * @returns {{setMode: (id: string) => void, setShape: (id: string) => void, destroy: () => void}}
+ * @param {{modeId: string, reducedMotion: boolean}} opts
+ * @returns {{setMode: (id: string) => void, destroy: () => void}}
  */
 export function createHero(canvas, opts) {
   const reducedMotion = !!opts.reducedMotion;
   let currentModeId = opts.modeId;
-  let currentShapeId = opts.shapeId;
 
   let displayedPalette = paletteFor(currentModeId);
-  const model = createModel({
-    palette: displayedPalette,
-    params: SHAPES[currentShapeId] || SHAPES[DEFAULT_SHAPE],
-  });
+  const model = createModel({ palette: displayedPalette });
 
   const ctx = canvas.getContext('2d', { alpha: true });
 
@@ -123,14 +118,6 @@ export function createHero(canvas, opts) {
     }
   }
 
-  /** @param {string} id */
-  function setShape(id) {
-    if (id === currentShapeId) return;
-    currentShapeId = id;
-    model.params(SHAPES[id] || SHAPES[DEFAULT_SHAPE]);
-    paintNow();
-  }
-
   let resizeTimer = null;
   function handleResize() {
     resizeTimer = null;
@@ -158,5 +145,5 @@ export function createHero(canvas, opts) {
     if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVisibility);
   }
 
-  return { setMode, setShape, destroy };
+  return { setMode, destroy };
 }

@@ -262,6 +262,11 @@
 
 .preview-message {
   margin: var(--space-5) 0 0;
+  white-space: normal;
+}
+
+.preview-stage__inner[hidden] {
+  display: none;
 }
 
 .preview-message__text {
@@ -274,4 +279,380 @@
    on-accent colour so it stays visible. */
 .chip[aria-checked='true'] .chip__dot {
   box-shadow: 0 0 0 2px var(--on-accent);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Launch banner, flower price badges, hints                              */
+/* ---------------------------------------------------------------------- */
+
+.create__banner {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+}
+
+.create__banner[hidden] {
+  display: none;
+}
+
+.create__hint {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin: var(--space-2) 0 0;
+}
+
+.create__hint:empty {
+  display: none;
+}
+
+.create__optional {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: var(--space-1);
+}
+
+.chip__price {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.chip[aria-checked='true'] .chip__price {
+  border-color: currentColor;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Extras: gifts / open on a date / secret question                       */
+/* ---------------------------------------------------------------------- */
+
+.extra {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+
+.extra__toggle {
+  display: grid;
+  grid-template-columns: var(--touch-min) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: var(--space-2);
+  align-items: center;
+  width: 100%;
+  min-height: calc(var(--touch-min) + var(--space-4));
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-2);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.extra__plus {
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: auto;
+  border-radius: 50%;
+  border: 1px solid var(--accent-strong);
+  color: var(--accent-strong);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.extra__toggle[aria-expanded='true'] .extra__plus {
+  background: var(--accent);
+  border-color: var(--accent-strong);
+  color: var(--on-accent);
+}
+
+.extra__name {
+  font-weight: 600;
+}
+
+.extra__meta {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.extra__panel {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.extra__panel[hidden] {
+  display: none;
+}
+
+.extra__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.extra__row .field {
+  margin-bottom: 0;
+}
+
+.extra__panel .field input {
+  width: 100%;
+}
+
+.extra__remove {
+  min-height: var(--touch-min);
+  margin-top: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Gift adders: file inputs sit visually hidden inside a label.btn, so show
+   the focus ring on the label when the input inside has keyboard focus. */
+.gift-adders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.gift-adder {
+  padding-inline: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.gift-adder:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.gift-adder:has(input:focus:not(:focus-visible)) {
+  outline: none;
+}
+
+.gift-list {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.gift-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--ground);
+  padding: var(--space-2) var(--space-3);
+}
+
+.gift-item__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+}
+
+.gift-item__thumb {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.gift-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gift-item__title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gift-item__state {
+  flex: none;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.gift-item__state--error {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.gift-item__remove {
+  flex: none;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gift-item__field {
+  margin: var(--space-2) 0;
+}
+
+.preview-dialog__note {
+  margin: 0 var(--space-4) var(--space-3);
+}
+
+.preview-dialog__note[hidden] {
+  display: none;
+}
+
+#preview-gifts {
+  padding: 0 var(--space-4);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Pay sheet — bottom sheet on phones, centred card on desktop            */
+/* ---------------------------------------------------------------------- */
+
+.pay-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: color-mix(in srgb, var(--ink) 40%, transparent);
+}
+
+.pay-sheet[hidden] {
+  display: none;
+}
+
+.pay-sheet__panel {
+  width: 100%;
+  max-width: 480px;
+  max-height: 100dvh;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-4) max(var(--space-5), env(safe-area-inset-bottom));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--ground);
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 640px) {
+  .pay-sheet {
+    align-items: center;
+  }
+  .pay-sheet__panel {
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+}
+
+.pay-sheet__title {
+  font-size: var(--text-xl);
+}
+
+.pay-sheet__text {
+  color: var(--muted);
+}
+
+.pay-sheet__choose,
+.pay-sheet__checkout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pay-sheet__choose[hidden],
+.pay-sheet__checkout[hidden],
+.pay-sheet__free[hidden] {
+  display: none;
+}
+
+.pay-amounts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.pay-amount {
+  justify-content: center;
+  padding-inline: var(--space-2);
+  font-size: var(--text-base);
+}
+
+.pay-sheet__switch,
+.pay-sheet__close {
+  align-self: center;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pay-sheet__close {
+  display: block;
+  margin: var(--space-2) auto 0;
+  color: var(--muted);
+}
+
+.pay-sheet__test {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--accent-strong);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+}
+
+.pay-sheet__total {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  text-align: center;
+}
+
+.pay-sheet__status {
+  min-height: 1.25em;
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-align: center;
+}
+
+.pay-sheet__status:empty {
+  margin: 0;
 }

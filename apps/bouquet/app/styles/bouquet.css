@@ -31,6 +31,10 @@
   background: var(--ground);
 }
 
+.bq-stage[hidden] {
+  display: none;
+}
+
 .bq-stage.is-revealed {
   touch-action: auto;
 }
@@ -96,6 +100,7 @@
 
 .bq-message {
   margin: var(--space-6) var(--space-4) 0;
+  white-space: normal;
 }
 
 .bq-message__text {
@@ -124,4 +129,53 @@
 .bq-make-own {
   font-size: var(--text-sm);
   color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Gate — countdown to the open date, then the secret question            */
+/* ---------------------------------------------------------------------- */
+
+.bq-gate {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.bq-gate[hidden],
+.bq-gate .countdown[hidden],
+.bq-gate #bq-secret[hidden] {
+  display: none;
+}
+
+.bq-gate__from {
+  margin: 0;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.bq-gate__title {
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-3);
+}
+
+.bq-gate #bq-secret {
+  width: 100%;
+  text-align: left;
+}
+
+.bq-gate__status {
+  min-height: 1.25em;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.bq-gifts {
+  margin: var(--space-5) var(--space-4) 0;
 }

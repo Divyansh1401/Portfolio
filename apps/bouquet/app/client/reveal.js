@@ -17,7 +17,6 @@
 import { createModel } from '../../packages/renderer/src/core.js';
 import { paint, assertPaintable } from '../../packages/renderer/src/painter-canvas.js';
 import { paletteFor } from '../../packages/modes/modes.js';
-import { SHAPES, DEFAULT_SHAPE } from '../../packages/renderer/src/shapes.js';
 import { createRevealMachine } from './reveal-machine.js';
 
 const FLY_MS = 4200;
@@ -40,7 +39,6 @@ function defaultReducedMotion() {
 /**
  * @typedef {Object} RevealData
  * @property {string} mode
- * @property {string} shape
  */
 
 /**
@@ -68,8 +66,7 @@ export function mountReveal(root, data, opts = {}) {
   const machine = createRevealMachine({ now });
 
   const palette = paletteFor(data.mode || 'rose');
-  const params = SHAPES[data.shape] || SHAPES[DEFAULT_SHAPE] || {};
-  const model = createModel({ palette, params });
+  const model = createModel({ palette })
 
   const ctx = canvas.getContext('2d', { alpha: true });
 

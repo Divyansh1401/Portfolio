@@ -9,10 +9,12 @@ separate product, not portfolio content.
 ## Status
 
 Built and running locally: the renderer core (exact parity with the
-portfolio loader), five flower colour themes, and the create, recipient and
-sent pages on a local Node + SQLite server. Next: one design per flower,
-then gifts with an open-on-date countdown and a secret question, then four
-new flower designs and paid tiers. See [`docs/ROADMAP.md`](docs/ROADMAP.md)
+portfolio loader), five flower colour themes (one design per flower), and
+the full sender page — gifts (photos, links, gift codes, tickets), an
+open-on-date countdown, a secret question, and pay-what-you-like for the
+paid flowers through a **test checkout** (no real money moves). The
+recipient and sent pages handle all of it on a local Node + SQLite server.
+Next: the four new flower designs, then a real payment provider. See [`docs/ROADMAP.md`](docs/ROADMAP.md)
 for the full order and [`docs/decision-log.md`](docs/decision-log.md) for
 what's decided.
 
@@ -66,7 +68,7 @@ phone on the **same Wi-Fi** to try the real send → open flow on a phone
 screen. `PORT` and `HOST` env vars override the defaults if you need to.
 
 Every bouquet you create is stored in `app/.data/bouquet.sqlite` (plus its
-`-wal`/`-shm` files). That folder is git-ignored — it's your local dev
+`-wal`/`-shm` files), and gift files in `app/.data/uploads/`. That folder is git-ignored — it's your local dev
 database, not sample content. **Delete `app/.data/` to reset to a clean
 slate**; the server recreates it on next start.
 
@@ -77,8 +79,9 @@ npm test
 ```
 
 `npm test` runs `node --test` over every `packages/**/test/**/*.test.mjs`
-and `app/test/**/*.test.mjs` file — the renderer/modes/shapes packages and
-the server/client app together.
+and `app/test/**/*.test.mjs` file — the renderer/modes/pricing packages and
+the server/client app together (including two Chromium suites, `e2e` and
+`a11y`, driven by `playwright-core`).
 
 Other scripts:
 
@@ -111,11 +114,39 @@ See the screenshots below for what each looks like end to end.
 
 ## One design per flower
 
-Each flower has a single bouquet design. The Full / Posy / Single stem
-choice (`packages/renderer/src/shapes.js`) is still in the code today and is
-being removed in the next step. Today all five themes use the rose bloom
-recoloured; each paid flower gets its own bloom design later (Sunflower,
-Lavender, Marigold, and Tulip or Hydrangea).
+Each flower has a single bouquet design (the Full / Posy / Single stem
+picker was removed). Today all five themes use the rose bloom recoloured;
+each paid flower gets its own bloom design later (Sunflower, Lavender,
+Marigold, and Tulip or Hydrangea).
+
+## Pricing and the test checkout
+
+- **Rose is free for the site's first 100 bouquets** (counted site-wide,
+  live bouquets only). After that every bouquet is paid. Set
+  `BQ_FREE_LIMIT` to try the "limit reached" state locally, e.g.
+  `BQ_FREE_LIMIT=0 npm run dev`.
+- **Sunflower, Lavender, Marigold and Hydrangea are paid from day one.**
+- **Pay what you like:** ₹30 / ₹50 / ₹100 / ₹150 in India, $2 / $5 / $10 /
+  $15 elsewhere (guessed from the time zone, switchable, remembered). Every
+  amount unlocks the same thing. One payment = one bouquet.
+- Links last **one year** from when the bouquet goes live.
+- A paid bouquet is saved as a **draft** first (`202 needs_payment`) and is
+  only published once paid. The checkout is a local stand-in with "Pay" and
+  "Make it fail" buttons; Razorpay/Stripe replace it later.
+- While Rose is free, a paid-flower draft can also be sent as Rose, free.
+
+## Gifts, open-on-date and secret question
+
+- Up to 8 gifts: up to 6 photos (re-encoded to JPEG in the browser, ≤5 MB),
+  https links, gift codes (hidden until tapped), and a ticket/file (PDF or
+  image, ≤10 MB). Uploads are identified by their bytes, not their name.
+- **Open on a date:** the recipient sees a countdown (server clock) with an
+  "Add to calendar" file; the note and gifts are not sent to the browser
+  until the time has passed.
+- **Secret question:** the answer is stored only as a salted scrypt hash;
+  capitals and spaces don't matter; 5 wrong tries lock it for 10 minutes.
+  Gift files then need a short-lived signed token.
+- Drafts and unused uploads older than a day are swept hourly.
 
 ## Screenshots
 

@@ -9,11 +9,13 @@ const KEY = 'bouquet-draft';
 /**
  * @typedef {Object} Draft
  * @property {string} mode
- * @property {string} shape
  * @property {string} message
  * @property {string} from_name
  * @property {string} client_nonce
  * @property {string|null} reply_of
+ * @property {Array<object>} gifts gift metadata (upload keys, links, codes)
+ * @property {{on:boolean, date:string, time:string}} unlock
+ * @property {{on:boolean, q:string}} secret the answer is never saved
  */
 
 /**

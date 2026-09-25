@@ -19,11 +19,37 @@ const HAS_SENT_PAGE = existsSync(path.join(PAGES_DIR, 'sent.html'));
 /**
  * @returns {Promise<{server: import('node:http').Server, base: string}>}
  */
-async function startServer() {
-  const server = createServer({ dbPath: ':memory:' });
+async function startServer(opts = {}) {
+  const server = createServer({ dbPath: ':memory:', ...opts });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
   return { server, base: `http://127.0.0.1:${port}` };
+}
+
+/** POST JSON, resolve {status, body, headers}. */
+async function post(base, path, payload) {
+  const res = await fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload ?? {}),
+  });
+  return { status: res.status, body: await res.json().catch(() => ({})), headers: res.headers };
+}
+
+/**
+ * Create a live bouquet. Non-Rose flowers are drafts until paid, so this
+ * runs them through the pretend checkout.
+ * @returns {Promise<string>} id
+ */
+async function createLive(base, payload) {
+  const r = await post(base, '/api/bouquet', payload);
+  if (r.status === 201) return r.body.id;
+  assert.equal(r.status, 202, 'a create is either live (201) or a draft awaiting payment (202)');
+  const order = await post(base, `/api/checkout/${r.body.draft_id}`, { currency: 'INR', amount: 50 });
+  assert.equal(order.status, 201);
+  const paid = await post(base, `/api/checkout/${r.body.draft_id}/confirm`, { order_id: order.body.order_id, outcome: 'paid' });
+  assert.equal(paid.status, 200);
+  return paid.body.id;
 }
 
 /**
@@ -74,7 +100,7 @@ test('POST /api/bouquet: 422 on invalid mode', async () => {
     const res = await fetch(`${base}/api/bouquet`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'not-a-mode', shape: 'full', message: 'hi' }),
+      body: JSON.stringify({ mode: 'not-a-mode', message: 'hi' }),
     });
     assert.equal(res.status, 422);
     const body = await res.json();
@@ -84,17 +110,15 @@ test('POST /api/bouquet: 422 on invalid mode', async () => {
   }
 });
 
-test('POST /api/bouquet: 422 on invalid shape', async () => {
+test('POST /api/bouquet: a paid flower is saved as a draft (202 needs_payment), not published', async () => {
   const { server, base } = await startServer();
   try {
-    const res = await fetch(`${base}/api/bouquet`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'rose', shape: 'not-a-shape', message: 'hi' }),
-    });
-    assert.equal(res.status, 422);
-    const body = await res.json();
-    assert.equal(body.field, 'shape');
+    const r = await post(base, '/api/bouquet', { mode: 'sunflower', message: 'hi' });
+    assert.equal(r.status, 202);
+    assert.equal(r.body.needs_payment, true);
+    assert.equal(r.body.reason, 'paid_flower');
+    const page = await fetch(`${base}/b/${r.body.draft_id}`);
+    assert.equal(page.status, 404, 'a draft must not be reachable at /b/:id');
   } finally {
     await stopServer(server);
   }
@@ -106,7 +130,7 @@ test('POST /api/bouquet: 422 on empty message', async () => {
     const res = await fetch(`${base}/api/bouquet`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'rose', shape: 'full', message: '   ' }),
+      body: JSON.stringify({ mode: 'rose', message: '   ' }),
     });
     assert.equal(res.status, 422);
     const body = await res.json();
@@ -122,7 +146,7 @@ test('POST /api/bouquet: 422 on message over 280 graphemes', async () => {
     const res = await fetch(`${base}/api/bouquet`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'rose', shape: 'full', message: 'a'.repeat(281) }),
+      body: JSON.stringify({ mode: 'rose', message: 'a'.repeat(281) }),
     });
     assert.equal(res.status, 422);
     const body = await res.json();
@@ -138,7 +162,7 @@ test('POST /api/bouquet: 422 on from_name over 24 graphemes', async () => {
     const res = await fetch(`${base}/api/bouquet`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'rose', shape: 'full', message: 'hi', from_name: 'a'.repeat(25) }),
+      body: JSON.stringify({ mode: 'rose', message: 'hi', from_name: 'a'.repeat(25) }),
     });
     assert.equal(res.status, 422);
     const body = await res.json();
@@ -154,7 +178,7 @@ test('POST /api/bouquet: valid input creates a bouquet', async () => {
     const res = await fetch(`${base}/api/bouquet`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'sunflower', shape: 'posy', message: 'hello!', from_name: 'D' }),
+      body: JSON.stringify({ mode: 'rose', message: 'hello!', from_name: 'D' }),
     });
     assert.equal(res.status, 201);
     const body = await res.json();
@@ -170,7 +194,6 @@ test('POST /api/bouquet: idempotent on client_nonce', async () => {
   try {
     const payload = {
       mode: 'rose',
-      shape: 'full',
       message: 'same nonce twice',
       client_nonce: 'nonce-abc',
     };
@@ -197,19 +220,13 @@ test('POST /api/bouquet: idempotent on client_nonce', async () => {
 test('GET /api/bouquet/:id/summary never contains the message', async () => {
   const { server, base } = await startServer();
   try {
-    const createRes = await fetch(`${base}/api/bouquet`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'lavender', shape: 'stem', message: 'a secret message', from_name: 'Alex' }),
-    });
-    const { id } = await createRes.json();
+    const id = await createLive(base, { mode: 'lavender', message: 'a secret message', from_name: 'Alex' });
 
     const res = await fetch(`${base}/api/bouquet/${id}/summary`);
     assert.equal(res.status, 200);
     const body = await res.json();
     assert.equal(body.id, id);
     assert.equal(body.mode, 'lavender');
-    assert.equal(body.shape, 'stem');
     assert.equal(body.from_name, 'Alex');
     assert.equal('message' in body, false);
     assert.equal(JSON.stringify(body).includes('secret'), false);
@@ -231,12 +248,7 @@ test('GET /api/bouquet/:id/summary: 404 for unknown id', async () => {
 test('POST /api/open/:id sets opened_at and increments opens; status reflects it', async () => {
   const { server, base } = await startServer();
   try {
-    const createRes = await fetch(`${base}/api/bouquet`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: 'marigold', shape: 'full', message: 'open me' }),
-    });
-    const { id } = await createRes.json();
+    const id = await createLive(base, { mode: 'marigold', message: 'open me' });
 
     const before = await (await fetch(`${base}/api/bouquet/${id}/status`)).json();
     assert.equal(before.opened_at, null);
@@ -287,12 +299,7 @@ test(
   async () => {
     const { server, base } = await startServer();
     try {
-      const createRes = await fetch(`${base}/api/bouquet`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ mode: 'hydrangea', shape: 'full', message: 'render me' }),
-      });
-      const { id } = await createRes.json();
+      const id = await createLive(base, { mode: 'hydrangea', message: 'render me' });
 
       const res = await fetch(`${base}/b/${id}`);
       assert.equal(res.status, 200);
@@ -313,7 +320,7 @@ test(
       const createRes = await fetch(`${base}/api/bouquet`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ mode: 'rose', shape: 'full', message: 'sent test' }),
+        body: JSON.stringify({ mode: 'rose', message: 'sent test' }),
       });
       const { id } = await createRes.json();
 
