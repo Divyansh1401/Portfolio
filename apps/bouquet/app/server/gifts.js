@@ -18,6 +18,7 @@ export const LIMITS = {
   code: 64,
   question: 120,
   answer: 60,
+  unlockLabel: 40,
   unlockMinAhead: 60,
   unlockMaxAhead: 400 * 24 * 3600,
 };
@@ -150,6 +151,19 @@ export function validateUnlock(raw, now) {
   if (t < now + LIMITS.unlockMinAhead) return { ok: false, error: 'pick a time in the future' };
   if (t > now + LIMITS.unlockMaxAhead) return { ok: false, error: 'pick a date within about 13 months' };
   return { ok: true, value: t };
+}
+
+/**
+ * What the countdown counts down to ("Your birthday"). Optional, one line.
+ * @param {unknown} raw
+ * @returns {{ok:true, value:string|null}|{ok:false, error:string}}
+ */
+export function validateUnlockLabel(raw) {
+  if (raw === undefined || raw === null || raw === '') return { ok: true, value: null };
+  if (typeof raw !== 'string') return { ok: false, error: 'invalid occasion' };
+  const v = normalise(raw).replace(/\n/g, ' ').trim();
+  if (graphemes(v) > LIMITS.unlockLabel) return { ok: false, error: `the occasion is at most ${LIMITS.unlockLabel} characters` };
+  return { ok: true, value: v || null };
 }
 
 /** Normalise an answer so case, spacing and width don't matter. */

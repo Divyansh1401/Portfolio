@@ -320,11 +320,11 @@ test('keyboard-only create flow: arrow keys move selection within the flower rad
   }
 });
 
-test('extras: each toggle is a disclosure button (aria-expanded + aria-controls) that shows its panel', async () => {
+test('extras: gift and quiz toggles are disclosure buttons; the countdown is a switch', async () => {
   const page = await browser.newPage();
   try {
     await page.goto(`${base}/`, { waitUntil: 'load' });
-    for (const [toggle, panel] of [['gift-toggle', 'gift-panel'], ['date-toggle', 'date-panel'], ['secret-toggle', 'secret-panel']]) {
+    for (const [toggle, panel] of [['gift-toggle', 'gift-panel'], ['secret-toggle', 'secret-panel']]) {
       assert.equal(await page.getAttribute(`#${toggle}`, 'aria-controls'), panel);
       assert.equal(await page.getAttribute(`#${toggle}`, 'aria-expanded'), 'false');
       await page.focus(`#${toggle}`);
@@ -332,6 +332,17 @@ test('extras: each toggle is a disclosure button (aria-expanded + aria-controls)
       assert.equal(await page.getAttribute(`#${toggle}`, 'aria-expanded'), 'true');
       assert.equal(await page.$eval(`#${panel}`, (el) => el.hidden), false, `${panel} should be shown`);
     }
+    assert.equal(await page.getAttribute('#date-toggle', 'role'), 'switch');
+    assert.equal(await page.getAttribute('#date-toggle', 'aria-checked'), 'false');
+    const name = await page.$eval('#date-toggle', (el) => document.getElementById(el.getAttribute('aria-labelledby')).textContent);
+    assert.match(name, /Countdown/);
+    await page.focus('#date-toggle');
+    await page.keyboard.press('Space');
+    assert.equal(await page.getAttribute('#date-toggle', 'aria-checked'), 'true');
+    assert.equal(await page.$eval('#date-panel', (el) => el.hidden), false);
+    await page.click('#date-toggle');
+    assert.equal(await page.getAttribute('#date-toggle', 'aria-checked'), 'false');
+    assert.equal(await page.$eval('#date-panel', (el) => el.hidden), true);
   } finally {
     await page.close();
   }
@@ -486,7 +497,9 @@ test('reduced motion: /b/:id lands still (no fly-in) and Open still works', asyn
 // ---------------------------------------------------------------------
 
 test('contrast: ink/ground and primary-button text/background pass 4.5:1 in every mode (computed styles)', async () => {
-  const page = await browser.newPage();
+  // Reduced motion turns the 300ms theme colour transition off, so the
+  // computed styles are the mode's final colours, not a mid-fade blend.
+  const page = await browser.newPage({ reducedMotion: 'reduce' });
   try {
     await page.goto(`${base}/`, { waitUntil: 'load' });
     const failures = [];

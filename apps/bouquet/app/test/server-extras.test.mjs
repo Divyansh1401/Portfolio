@@ -179,6 +179,7 @@ test('open-on-date: nothing locked is in the page; unlock is 425 until the time,
       mode: 'rose',
       message: 'TOP-SECRET-NOTE',
       unlock_at: until,
+      unlock_label: 'Your birthday; party, cake',
       gifts: [{ kind: 'code', code: 'CODE-XYZ' }, { kind: 'photo', upload_key: up.body.key }],
     });
     assert.equal(r.status, 201);
@@ -195,8 +196,15 @@ test('open-on-date: nothing locked is in the page; unlock is 425 until the time,
     assert.equal((await post(s.base, `/api/open/${id}`, { kind: 'input' })).status, 204);
     assert.equal((await (await fetch(`${s.base}/api/bouquet/${id}/status`)).json()).opened_at, null, 'opening early is not counted');
 
+    assert.match(html, /Your birthday; party, cake/, 'the occasion is shown with the countdown');
     const ics = await fetch(`${s.base}/b/${id}/calendar.ics`);
     assert.match(ics.headers.get('content-type') || '', /text\/calendar/);
+    assert.match(await ics.text(), /SUMMARY:Open your bouquet: Your birthday\\; party\\, cake/, 'ICS text is escaped');
+    const st = await (await fetch(`${s.base}/api/bouquet/${id}/status`)).json();
+    assert.equal(st.unlock_label, 'Your birthday; party, cake');
+    const long = await post(s.base, '/api/bouquet', { mode: 'rose', message: 'x', unlock_at: until, unlock_label: 'x'.repeat(41) });
+    assert.equal(long.status, 422);
+    assert.equal(long.body.field, 'unlock_label');
 
     s.clock.t = until;
     const open = await post(s.base, `/api/bouquet/${id}/unlock`);

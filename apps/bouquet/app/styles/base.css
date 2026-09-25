@@ -76,10 +76,14 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* clip, not hidden: overflow-x: hidden on both html and body turns body
+   into a scroll container that never scrolls, which silently breaks every
+   position: sticky on the page (the create page's hero). */
 html,
 body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: hidden; /* fallback: browsers without clip (Safari < 16) */
+  overflow-x: clip;
 }
 
 body {

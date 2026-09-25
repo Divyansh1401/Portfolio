@@ -66,6 +66,7 @@ const ADDED_COLUMNS = [
   ['paid', 'INTEGER NOT NULL DEFAULT 0'],
   ['expires_at', 'INTEGER'],
   ['unlock_at', 'INTEGER'],
+  ['unlock_label', 'TEXT'],
   ['secret_q', 'TEXT'],
   ['secret_hash', 'TEXT'],
   ['secret_salt', 'TEXT'],
@@ -108,6 +109,7 @@ export function openDb(dbPath) {
  * @property {number} paid
  * @property {number} expires_at
  * @property {number|null} unlock_at
+ * @property {string|null} unlock_label what the countdown is counting down to
  * @property {string|null} secret_q
  * @property {string|null} secret_hash
  * @property {string|null} secret_salt
@@ -126,7 +128,7 @@ export function openDb(dbPath) {
 export function insertBouquet(db, input) {
   const {
     id, mode, message, fromName = null, replyOf = null, clientNonce = null,
-    status = 'live', unlockAt = null, secret = null, gifts = [],
+    status = 'live', unlockAt = null, unlockLabel = null, secret = null, gifts = [],
   } = input;
   const now = input.now ?? Math.floor(Date.now() / 1000);
 
@@ -141,11 +143,11 @@ export function insertBouquet(db, input) {
       // shape is legacy (one design per flower now); written as 'full' so
       // databases created before the column got a default still accept rows.
       `INSERT INTO bouquets (id, mode, shape, message, from_name, reply_of, client_nonce, created_at,
-         opened_at, opens, status, paid, expires_at, unlock_at, secret_q, secret_hash, secret_salt)
-       VALUES (?, ?, 'full', ?, ?, ?, ?, ?, NULL, 0, ?, 0, ?, ?, ?, ?, ?)`,
+         opened_at, opens, status, paid, expires_at, unlock_at, unlock_label, secret_q, secret_hash, secret_salt)
+       VALUES (?, ?, 'full', ?, ?, ?, ?, ?, NULL, 0, ?, 0, ?, ?, ?, ?, ?, ?)`,
     ).run(
       id, mode, message, fromName, replyOf, clientNonce, now,
-      status, now + LINK_LIFETIME_S, unlockAt,
+      status, now + LINK_LIFETIME_S, unlockAt, unlockAt ? unlockLabel : null,
       secret ? secret.q : null, secret ? secret.hash : null, secret ? secret.salt : null,
     );
     const insertGift = db.prepare(

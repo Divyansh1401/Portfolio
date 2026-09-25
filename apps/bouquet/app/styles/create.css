@@ -71,6 +71,12 @@
   margin-bottom: var(--space-3);
 }
 
+.create__section-lede {
+  margin: calc(-1 * var(--space-2)) 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
 /* Flower/shape chip swatch dot: literal per-mode colour via --dot,
    falling back to the page's own accent for chips that don't set one
    (the shape chips). */
@@ -134,7 +140,7 @@
 /* Desktop: two columns, hero sticky in the left one                      */
 /* ---------------------------------------------------------------------- */
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .create {
     display: grid;
     grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
@@ -142,10 +148,11 @@
     align-items: start;
   }
 
+  /* The bouquet stays in view while the form column scrolls. */
   .create__hero {
     position: sticky;
     top: var(--space-5);
-    max-height: none;
+    max-height: calc(100vh - 2 * var(--space-5));
   }
 
   .create__form-col {
@@ -285,18 +292,119 @@
 /* Launch banner, flower price badges, hints                              */
 /* ---------------------------------------------------------------------- */
 
-.create__banner {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  margin-bottom: var(--space-5);
+.promo {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--accent-strong);
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 60%),
+    var(--surface);
+  overflow: hidden;
 }
 
-.create__banner[hidden] {
+.promo[hidden] {
   display: none;
+}
+
+/* Three Rose petals in their literal colours (set inline as --petal): the
+   offer is about Rose whatever theme the page is in. */
+.promo__petals {
+  flex: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin-top: 2px;
+}
+
+.promo__petal {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50% 50% 50% 8px;
+  background: var(--petal);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.promo__petal:nth-child(1) { left: 0; top: 14px; }
+.promo__petal:nth-child(2) { left: 16px; top: 0; }
+.promo__petal:nth-child(3) { left: 18px; top: 18px; }
+
+.promo__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.promo__badge {
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.promo__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.promo__sub {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.promo--few .promo__sub {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.promo__meter {
+  height: 8px;
+  margin-top: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent-strong) 14%, var(--ground));
+  overflow: hidden;
+}
+
+.promo__fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: var(--accent-strong);
+  transition: width 600ms var(--motion-ease);
+}
+
+.promo__cta {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.promo__cta[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo__fill {
+    transition: none;
+  }
 }
 
 .create__hint {
@@ -316,18 +424,135 @@
   margin-left: var(--space-1);
 }
 
-.chip__price {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 1px var(--space-2);
-  border-radius: var(--radius-pill);
+/* ---------------------------------------------------------------------- */
+/* Flower catalogue — one picture card per flower                         */
+/* ---------------------------------------------------------------------- */
+
+/* Phones: a swipeable rail that bleeds to the screen edges and snaps card
+   by card. >=640px: all five in one row. Each card shows its bouquet on
+   that flower's own ground colour (literal, set inline as --card-ground /
+   --card-ink), so the catalogue previews every theme at once. */
+.flower-catalogue {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(138px, 42%);
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-4);
+  margin-inline: calc(-1 * var(--space-4));
+  padding: var(--space-1) var(--space-4) var(--space-3);
+  scrollbar-width: none;
+}
+
+.flower-catalogue::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .flower-catalogue {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-columns: auto;
+    overflow: visible;
+    margin-inline: 0;
+    padding: var(--space-1) 0 var(--space-2);
+  }
+}
+
+.flower-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
   border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    transform 160ms var(--motion-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flower-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.flower-card[aria-checked='true'] {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 2px var(--accent-strong), var(--shadow-card);
+}
+
+.flower-card__art {
+  display: block;
+  aspect-ratio: 1 / 1;
+  background: var(--card-ground, var(--ground));
+}
+
+.flower-card__canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.flower-card__check {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+
+.flower-card[aria-checked='true'] .flower-card__check {
+  opacity: 1;
+  transform: none;
+}
+
+.flower-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+
+.flower-card__name {
+  font-weight: 700;
+}
+
+.flower-card__line {
+  font-size: 0.8rem;
+  line-height: 1.3;
   color: var(--muted);
 }
 
-.chip[aria-checked='true'] .chip__price {
-  border-color: currentColor;
-  color: inherit;
+@media (prefers-reduced-motion: reduce) {
+  .flower-card,
+  .flower-card__check {
+    transition: none;
+  }
+  .flower-card:hover {
+    transform: none;
+  }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -423,6 +648,115 @@
   font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Countdown section: on/off switch, occasion, date + time                */
+/* ---------------------------------------------------------------------- */
+
+.switch-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.switch-row .create__section-lede {
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.switch {
+  flex: none;
+  position: relative;
+  width: 52px;
+  height: var(--touch-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.switch::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 30px;
+  transform: translateY(-50%);
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  border: 1px solid var(--muted);
+  transition: background-color var(--motion-fast) var(--motion-ease);
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: left var(--motion-fast) var(--motion-ease);
+}
+
+.switch[aria-checked='true']::before {
+  background: var(--accent);
+  border-color: var(--accent-strong);
+}
+
+.switch[aria-checked='true'] .switch__thumb {
+  left: 26px;
+  background: var(--on-accent);
+}
+
+.countdown-panel {
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.countdown-panel[hidden] {
+  display: none;
+}
+
+.countdown-panel .field input {
+  width: 100%;
+}
+
+.countdown-panel > .field {
+  margin-bottom: var(--space-2);
+}
+
+.occasion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.occasion-chip {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--ground);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.occasion-chip:hover {
+  border-color: var(--accent-strong);
+}
+
+.countdown-panel #unlock-label-hint {
+  margin: var(--space-2) 0 var(--space-4);
 }
 
 /* Gift adders: file inputs sit visually hidden inside a label.btn, so show

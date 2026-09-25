@@ -5,9 +5,7 @@
  */
 
 import { formatAmount } from '../../packages/pricing/pricing.js';
-import { createModel } from '../../packages/renderer/src/core.js';
-import { paint } from '../../packages/renderer/src/painter-canvas.js';
-import { paletteFor } from '../../packages/modes/modes.js';
+import { paintStill } from './still.js';
 
 /** Default poll interval while the tab is visible and unopened. */
 const DEFAULT_POLL_MS = 15000;
@@ -22,28 +20,6 @@ function readData() {
   } catch {
     return {};
   }
-}
-
-/**
- * Paint a single landed (p=1, q=0, yaw=0) still of the bouquet onto `canvas`.
- * @param {HTMLCanvasElement} canvas
- * @param {string} mode
- */
-function paintStill(canvas, mode) {
-  const ctx = canvas.getContext('2d', { alpha: true });
-  if (!ctx) return;
-  const palette = paletteFor(mode);
-  const model = createModel({ palette });
-  const dpr = window.devicePixelRatio || 1;
-  const cssW = canvas.parentNode ? canvas.parentNode.clientWidth || canvas.width : canvas.width;
-  const cssH = cssW;
-  const dims = model.layout({ cssW, cssH, dpr });
-  canvas.style.width = cssW + 'px';
-  canvas.style.height = cssH + 'px';
-  canvas.width = dims.width;
-  canvas.height = dims.height;
-  model.set({ p: 1, q: 0, yaw: 0 });
-  paint(ctx, model.frame());
 }
 
 /**
@@ -92,7 +68,10 @@ function renderDetails(dl, s) {
   if (!dl) return;
   const rows = [];
   if (s.gift_count) rows.push(['Inside', `${s.gift_count} gift${s.gift_count === 1 ? '' : 's'}`]);
-  if (s.unlock_at) rows.push(['Opens', new Date(s.unlock_at * 1000).toLocaleString(undefined, DATE_TIME_FMT)]);
+  if (s.unlock_at) {
+    const when = new Date(s.unlock_at * 1000).toLocaleString(undefined, DATE_TIME_FMT);
+    rows.push(['Opens', s.unlock_label ? `${when} (${s.unlock_label})` : when]);
+  }
   if (s.has_secret) rows.push(['Secret question', "On. Make sure they'll know the answer."]);
   if (s.payment) rows.push(['Paid', `${formatAmount(s.payment.currency, s.payment.amount)} (test payment)`]);
   else rows.push(['Paid', 'Free']);

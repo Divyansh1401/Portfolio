@@ -21,12 +21,22 @@
       <h1 class="create__title">Send a bouquet</h1>
       <p class="create__subtitle">Pick a flower, write a note, tuck in a gift, and send a link.</p>
 
-      <p class="create__banner" id="launch-banner" hidden></p>
+      <aside class="promo" id="launch-banner" aria-labelledby="promo-title" hidden>
+        <span class="promo__petals" id="promo-petals" aria-hidden="true"></span>
+        <div class="promo__body">
+          <p class="promo__badge" id="promo-badge">Launch offer</p>
+          <p class="promo__title" id="promo-title">Rose is free for the first 100 bouquets</p>
+          <p class="promo__sub" id="promo-sub"></p>
+          <div class="promo__meter" id="promo-meter" role="progressbar" aria-label="Free Rose bouquets left" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <span class="promo__fill" id="promo-fill"></span>
+          </div>
+          <button type="button" class="btn btn-primary promo__cta" id="promo-cta">Send a Rose, free</button>
+        </div>
+      </aside>
 
       <section class="create__section" aria-labelledby="flowers-heading">
         <h2 id="flowers-heading" class="create__section-title">Pick your flower</h2>
-        <div class="chip-row" role="radiogroup" aria-label="Flower" id="mode-group"></div>
-        <p class="create__hint" id="flower-hint"></p>
+        <div class="flower-catalogue" role="radiogroup" aria-label="Flower" id="mode-group"></div>
       </section>
 
       <section class="create__section" aria-labelledby="note-heading">
@@ -80,39 +90,53 @@
           </div>
         </div>
 
-        <div class="extra" id="extra-date">
-          <button type="button" class="extra__toggle" aria-expanded="false" aria-controls="date-panel" id="date-toggle">
-            <span class="extra__plus" aria-hidden="true">+</span>
-            <span class="extra__name">Open on a date</span>
-            <span class="extra__meta">A countdown until the moment you pick</span>
-          </button>
-          <div class="extra__panel" id="date-panel" hidden>
-            <div class="extra__row">
-              <div class="field">
-                <label for="unlock-date">Date</label>
-                <input id="unlock-date" type="date" />
-              </div>
-              <div class="field">
-                <label for="unlock-time">Time</label>
-                <input id="unlock-time" type="time" />
-              </div>
-            </div>
-            <p class="create__hint" id="unlock-line" aria-live="polite"></p>
-            <p class="field__hint create__error" id="unlock-error" role="alert" hidden></p>
-            <button type="button" class="extra__remove" id="date-remove">Remove date</button>
-          </div>
-        </div>
+      </section>
 
+      <section class="create__section create__countdown" aria-labelledby="countdown-heading">
+        <div class="switch-row">
+          <div>
+            <h2 id="countdown-heading" class="create__section-title">Countdown <span class="create__optional">optional</span></h2>
+            <p class="create__section-lede" id="countdown-lede">Keep it locked until a moment you pick. They see a live countdown.</p>
+          </div>
+          <button type="button" class="switch" role="switch" aria-checked="false" aria-labelledby="countdown-heading" aria-describedby="countdown-lede" aria-controls="date-panel" id="date-toggle">
+            <span class="switch__thumb" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="countdown-panel" id="date-panel" hidden>
+          <div class="field">
+            <label for="unlock-label">Counting down to</label>
+            <input id="unlock-label" type="text" maxlength="40" placeholder="Your birthday" aria-describedby="unlock-label-hint" />
+          </div>
+          <div class="occasion-chips" role="group" aria-label="Occasion ideas" id="occasion-chips"></div>
+          <p class="field__hint" id="unlock-label-hint">They see this above the countdown. Leave it blank for just "Opens in".</p>
+          <div class="extra__row">
+            <div class="field">
+              <label for="unlock-date">Date</label>
+              <input id="unlock-date" type="date" />
+            </div>
+            <div class="field">
+              <label for="unlock-time">Time</label>
+              <input id="unlock-time" type="time" />
+            </div>
+          </div>
+          <p class="create__hint" id="unlock-line" aria-live="polite"></p>
+          <p class="field__hint create__error" id="unlock-error" role="alert" hidden></p>
+        </div>
+      </section>
+
+      <section class="create__section create__quiz" aria-labelledby="quiz-heading">
+        <h2 id="quiz-heading" class="create__section-title">Quiz them first <span class="create__optional">optional</span></h2>
+        <p class="create__section-lede">One question only they would know. Get it right and the bouquet opens.</p>
         <div class="extra" id="extra-secret">
           <button type="button" class="extra__toggle" aria-expanded="false" aria-controls="secret-panel" id="secret-toggle">
             <span class="extra__plus" aria-hidden="true">+</span>
-            <span class="extra__name">Ask a secret question</span>
-            <span class="extra__meta">Only they will know the answer</span>
+            <span class="extra__name">Ask them a question</span>
+            <span class="extra__meta">The bouquet stays shut until they get it right</span>
           </button>
           <div class="extra__panel" id="secret-panel" hidden>
             <div class="field">
               <label for="secret-q">Question</label>
-              <input id="secret-q" type="text" maxlength="120" placeholder="Where did we first meet?" />
+              <input id="secret-q" type="text" maxlength="120" placeholder="Where did we have our first date?" />
             </div>
             <div class="field">
               <label for="secret-a">Answer</label>

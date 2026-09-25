@@ -215,14 +215,18 @@ export function renderGifts(container, gifts, { token = null } = {}) {
  * clock can't open it early or late). Screen readers get a minute-level
  * update, not every second.
  * @param {HTMLElement} container
- * @param {{until:number, serverNow:number, icsHref?:string, onDone:() => void}} opts
+ * @param {{until:number, serverNow:number, icsHref?:string, label?:string|null, onDone:() => void}} opts
  * @returns {{destroy: () => void}}
  */
-export function renderCountdown(container, { until, serverNow, icsHref, onDone }) {
+export function renderCountdown(container, { until, serverNow, icsHref, label = null, onDone }) {
   container.textContent = '';
   const offset = serverNow * 1000 - Date.now();
   const opens = new Date(until * 1000);
-  container.append(el('p', 'countdown__kicker', 'Opens in'));
+  if (label) {
+    container.append(el('p', 'countdown__kicker', 'Counting down to'), el('p', 'countdown__label-big', label));
+  } else {
+    container.append(el('p', 'countdown__kicker', 'Opens in'));
+  }
   const clock = el('div', 'countdown__clock');
   clock.setAttribute('aria-hidden', 'true');
   const units = ['days', 'hours', 'minutes', 'seconds'].map((name) => {

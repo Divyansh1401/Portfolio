@@ -158,8 +158,8 @@ async function runFullLoop(opts) {
   const senderErrors = trackErrors(senderPage);
 
   await senderPage.goto(`${base}/`);
-  await senderPage.waitForSelector(`#mode-group .chip[data-mode-id="${mode}"]`);
-  await senderPage.click(`#mode-group .chip[data-mode-id="${mode}"]`);
+  await senderPage.waitForSelector(`#mode-group .flower-card[data-mode-id="${mode}"]`);
+  await senderPage.click(`#mode-group .flower-card[data-mode-id="${mode}"]`);
   await senderPage.fill('#message-field', message);
   await senderPage.fill('#from-field', fromName);
   await senderPage.click('#create-btn');
@@ -250,7 +250,7 @@ async function runFullLoop(opts) {
     mode,
     { timeout: 8000 },
   );
-  const chipChecked = await recipientPage.getAttribute(`#mode-group .chip[data-mode-id="${mode}"]`, 'aria-checked');
+  const chipChecked = await recipientPage.getAttribute(`#mode-group .flower-card[data-mode-id="${mode}"]`, 'aria-checked');
   assert.equal(chipChecked, 'true', 'the replied-to bouquet’s mode is preselected on /');
 
   assert.deepEqual(

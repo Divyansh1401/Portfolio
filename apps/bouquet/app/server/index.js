@@ -20,7 +20,7 @@ import {
   markFailed, publishAsFree, sweep,
 } from './db.js';
 import {
-  LIMITS, randomKey, sniffType, safeName, validateGifts, validateUnlock, validateSecret,
+  LIMITS, randomKey, sniffType, safeName, validateGifts, validateUnlock, validateUnlockLabel, validateSecret,
   checkAnswer, createTokenSigner, createLimiter,
 } from './gifts.js';
 import { makeId, isValidId } from './ids.js';
@@ -202,6 +202,7 @@ function publicData(row, gifts, { unlocked, token = null, now }) {
     reply_of: row.reply_of,
     locked: {
       until: row.unlock_at && now < row.unlock_at ? row.unlock_at : null,
+      label: row.unlock_at && now < row.unlock_at ? row.unlock_label || null : null,
       secret: row.secret_q || null,
     },
     server_now: now,
@@ -229,6 +230,11 @@ function contentOf(row, gifts, token) {
       return out;
     }),
   };
+}
+
+/** Escape a TEXT value for an iCalendar line (RFC 5545 §3.3.11). */
+function icsText(s) {
+  return String(s).replace(/[\\;,]/g, (c) => `\\${c}`).replace(/[\r\n]+/g, ' ');
 }
 
 function timeLocked(row, now) {
@@ -377,6 +383,8 @@ export function createServer(opts = {}) {
         if (!gifts.ok) return sendJson(res, 422, { error: gifts.error, field: 'gifts' });
         const unlock = validateUnlock(body.unlock_at, now);
         if (!unlock.ok) return sendJson(res, 422, { error: unlock.error, field: 'unlock_at' });
+        const unlockLabel = validateUnlockLabel(body.unlock_label);
+        if (!unlockLabel.ok) return sendJson(res, 422, { error: unlockLabel.error, field: 'unlock_label' });
         const secret = validateSecret(body.secret);
         if (!secret.ok) return sendJson(res, 422, { error: secret.error, field: 'secret' });
 
@@ -396,6 +404,7 @@ export function createServer(opts = {}) {
           clientNonce,
           status: pay ? 'draft' : 'live',
           unlockAt: unlock.value,
+          unlockLabel: unlockLabel.value,
           secret: secret.value,
           gifts: gifts.gifts,
           now,
@@ -482,6 +491,7 @@ export function createServer(opts = {}) {
           opened_at: row.opened_at,
           opens: row.opens,
           unlock_at: row.unlock_at,
+          unlock_label: row.unlock_label || null,
           has_secret: !!row.secret_q,
           gift_count: getGifts(db, row.id).length,
           expires_at: row.expires_at,
@@ -572,7 +582,7 @@ export function createServer(opts = {}) {
         const ics = [
           'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Bouquet//EN', 'BEGIN:VEVENT',
           `UID:${row.id}@bouquet`, `DTSTAMP:${stamp(now)}`, `DTSTART:${stamp(row.unlock_at)}`,
-          `DTEND:${stamp(row.unlock_at + 900)}`, 'SUMMARY:Open your bouquet',
+          `DTEND:${stamp(row.unlock_at + 900)}`, `SUMMARY:${icsText(row.unlock_label ? `Open your bouquet: ${row.unlock_label}` : 'Open your bouquet')}`,
           `URL:http://${host}/b/${row.id}`, 'END:VEVENT', 'END:VCALENDAR', '',
         ].join('\r\n');
         res.writeHead(200, {

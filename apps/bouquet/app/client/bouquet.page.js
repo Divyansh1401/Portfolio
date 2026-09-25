@@ -178,6 +178,7 @@ function main() {
       until,
       serverNow,
       icsHref: `/b/${idPath}/calendar.ics`,
+      label: data.locked && data.locked.label,
       onDone: afterTime,
     });
   }

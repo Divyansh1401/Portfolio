@@ -17,6 +17,7 @@ import { loadDraft, saveDraft } from './create/draft.js';
 import { reencodeImage, checkFile, uploadBlob } from './gifts/media.js';
 import { validateLink, validateCode, localDateTimeToUnix } from './gifts/validate.js';
 import { collapseStage } from './stage-collapse.js';
+import { paintStill } from './still.js';
 import { renderGifts } from './gifts/view.js';
 import {
   fetchPricing, startCheckout, pretendConfirm, sendAsRose, detectCurrency, saveCurrency, formatAmount,
@@ -165,37 +166,53 @@ function main() {
   let pricing = { freeRemaining: 0, freeLimit: 100, amounts: AMOUNTS };
   let currency = detectCurrency();
   const banner = document.getElementById('launch-banner');
-  const flowerHint = document.getElementById('flower-hint');
 
   function roseIsFree() {
     return pricing.freeRemaining > 0;
   }
 
-  function minPrice() {
-    const list = (pricing.amounts && pricing.amounts[currency]) || AMOUNTS[currency];
-    return formatAmount(currency, list[0]);
+  // The flower catalogue never talks about money (owner's call): the launch
+  // banner covers "Rose is free", and prices appear only in the pay sheet.
+  function refreshPriceLabels() {
+    renderPromo();
   }
 
-  function refreshPriceLabels() {
-    for (const [id, btn] of modeButtons) {
-      const badge = btn.querySelector('.chip__price');
-      if (!badge) continue;
-      badge.textContent = id === FREE_FLOWER && roseIsFree() ? 'Free' : `from ${minPrice()}`;
+  // ---- launch promo: "Rose is free for the first N bouquets" ------------
+  const PROMO_FEW = 10;
+  const promoCta = document.getElementById('promo-cta');
+  const promoPetals = document.getElementById('promo-petals');
+  if (promoPetals) {
+    // Literal Rose petal colours (the offer is about Rose on every theme).
+    const rose = MODES.find((m) => m.id === FREE_FLOWER);
+    for (const c of rose.bouquet.petals) {
+      const petal = el('span', 'promo__petal');
+      petal.style.setProperty('--petal', c);
+      promoPetals.append(petal);
     }
-    if (banner) {
-      if (roseIsFree()) {
-        banner.textContent = `Rose is free for the first ${pricing.freeLimit} bouquets: ${pricing.freeRemaining} left.`;
-        banner.hidden = false;
-      } else {
-        banner.hidden = true;
-      }
+  }
+
+  function renderPromo() {
+    if (!banner) return;
+    if (!roseIsFree()) {
+      banner.hidden = true;
+      return;
     }
-    if (flowerHint) {
-      flowerHint.textContent =
-        draft.mode === FREE_FLOWER && roseIsFree()
-          ? 'Rose is free right now. Gifts, a date and a secret question are free too.'
-          : `Pay what you like, from ${minPrice()}. One payment covers this one bouquet.`;
-    }
+    const limit = pricing.freeLimit || 100;
+    const left = pricing.freeRemaining;
+    const few = left <= PROMO_FEW;
+    banner.hidden = false;
+    banner.classList.toggle('promo--few', few);
+    document.getElementById('promo-badge').textContent = few ? 'Almost gone' : 'Launch offer';
+    document.getElementById('promo-title').textContent = `Rose is free for the first ${limit} bouquets`;
+    document.getElementById('promo-sub').textContent = few
+      ? `Only ${left} free ${left === 1 ? 'bouquet' : 'bouquets'} left. Gifts, a countdown and a quiz included.`
+      : `${left} of ${limit} still free. Gifts, a countdown and a quiz included.`;
+    const meter = document.getElementById('promo-meter');
+    meter.setAttribute('aria-valuemax', String(limit));
+    meter.setAttribute('aria-valuenow', String(left));
+    meter.setAttribute('aria-valuetext', `${left} of ${limit} left`);
+    document.getElementById('promo-fill').style.width = `${Math.max(2, (left / limit) * 100)}%`;
+    if (promoCta) promoCta.hidden = draft.mode === FREE_FLOWER;
   }
 
   fetchPricing().then((r) => {
@@ -215,20 +232,58 @@ function main() {
   // ---- flower chips ------------------------------------------------------
   const modeGroup = document.getElementById('mode-group');
   const modeButtons = new Map();
+  const TAGLINES = {
+    rose: 'For love and big moments',
+    sunflower: 'Sunshine and good cheer',
+    lavender: 'Calm, thanks and care',
+    marigold: 'Festive, bright and warm',
+    hydrangea: 'Gratitude and grace',
+  };
+  const cardStills = [];
   if (modeGroup) {
     for (const mode of MODES) {
-      const btn = el('button', 'chip chip--flower');
+      const btn = el('button', 'flower-card');
       btn.type = 'button';
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-checked', String(mode.id === draft.mode));
       btn.dataset.modeId = mode.id;
-      btn.style.setProperty('--dot', mode.bouquet.petals[1]);
-      const dot = el('span', 'chip__dot');
-      dot.setAttribute('aria-hidden', 'true');
-      btn.append(dot, el('span', 'chip__name', mode.name), el('span', 'chip__price'));
+      // Each card shows its flower on that flower's own ground colour.
+      btn.style.setProperty('--card-ground', mode.ui.ground);
+      btn.style.setProperty('--card-ink', mode.ui.ink);
+      const art = el('span', 'flower-card__art');
+      art.setAttribute('aria-hidden', 'true');
+      const canvas = el('canvas', 'flower-card__canvas');
+      art.append(canvas);
+      const check = el('span', 'flower-card__check', '✓');
+      check.setAttribute('aria-hidden', 'true');
+      const text = el('span', 'flower-card__text');
+      text.append(el('span', 'flower-card__name', mode.name), el('span', 'flower-card__line', TAGLINES[mode.id] || ''));
+      btn.append(art, check, text);
       btn.addEventListener('click', () => selectMode(mode.id));
       modeGroup.append(btn);
       modeButtons.set(mode.id, btn);
+      cardStills.push({ canvas, mode: mode.id, w: 0 });
+    }
+    // Paint each card's still once it has a size, and again if it resizes.
+    const paintCards = () => {
+      for (const c of cardStills) {
+        const w = c.canvas.parentNode.clientWidth;
+        if (!w || w === c.w) continue;
+        c.w = w;
+        try {
+          paintStill(c.canvas, c.mode);
+        } catch {
+          // a card without its picture still works as a choice
+        }
+      }
+    };
+    requestAnimationFrame(paintCards);
+    if (typeof ResizeObserver === 'function') {
+      let t = null;
+      new ResizeObserver(() => {
+        clearTimeout(t);
+        t = setTimeout(paintCards, 150);
+      }).observe(modeGroup);
     }
   }
 
@@ -244,6 +299,13 @@ function main() {
   }
 
   wireRadioArrows(modeGroup, modeButtons, selectMode);
+  if (promoCta) {
+    promoCta.addEventListener('click', () => {
+      selectMode(FREE_FLOWER);
+      const rose = modeButtons.get(FREE_FLOWER);
+      if (rose) rose.focus();
+    });
+  }
   document.documentElement.dataset.mode = draft.mode;
   refreshPriceLabels();
 
@@ -449,11 +511,15 @@ function main() {
   if (draft.gifts.length) setGiftsOpen(true);
   renderGiftList();
 
-  // ---- open on a date ------------------------------------------------------
+  // ---- countdown (open on a date) --------------------------------------------
   const unlockDate = document.getElementById('unlock-date');
   const unlockTime = document.getElementById('unlock-time');
+  const unlockLabel = document.getElementById('unlock-label');
   const unlockLine = document.getElementById('unlock-line');
   const unlockError = document.getElementById('unlock-error');
+  const dateSwitch = document.getElementById('date-toggle');
+  const datePanel = document.getElementById('date-panel');
+  const OCCASIONS = ['Your birthday', 'Our anniversary', 'New Year', 'Diwali', "Valentine's Day", 'Our trip'];
 
   function unlockSeconds() {
     return draft.unlock.on ? localDateTimeToUnix(draft.unlock.date, draft.unlock.time) : null;
@@ -461,26 +527,39 @@ function main() {
 
   function refreshUnlockLine() {
     const t = unlockSeconds();
-    const meta = document.querySelector('#date-toggle .extra__meta');
     if (!draft.unlock.on || !t) {
       unlockLine.textContent = '';
-      if (meta) meta.textContent = 'A countdown until the moment you pick';
       return;
     }
     const when = new Date(t * 1000).toLocaleString(undefined, {
       weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
     });
-    unlockLine.textContent = `Opens ${when}, your time.`;
-    if (meta) meta.textContent = `Opens ${when}`;
+    const label = (draft.unlock.label || '').trim();
+    unlockLine.textContent = label ? `Counting down to ${label}: opens ${when}, your time.` : `Opens ${when}, your time.`;
   }
 
-  const setDateOpen = wireToggle('date-toggle', 'date-panel', () => {
-    if (!draft.unlock.date) Object.assign(draft.unlock, tomorrowMidnight());
-    draft.unlock.on = true;
-    unlockDate.value = draft.unlock.date;
-    unlockTime.value = draft.unlock.time;
+  /** The switch shows/hides the panel; turning it off keeps what was typed. */
+  function setDateOpen(on) {
+    dateSwitch.setAttribute('aria-checked', String(on));
+    datePanel.hidden = !on;
+  }
+
+  function setCountdown(on) {
+    draft.unlock.on = on;
+    if (on && !draft.unlock.date) Object.assign(draft.unlock, tomorrowMidnight());
+    unlockDate.value = draft.unlock.date || '';
+    unlockTime.value = draft.unlock.time || '';
+    unlockLabel.value = draft.unlock.label || '';
+    if (!on) clearError(null, unlockError);
+    setDateOpen(on);
     refreshUnlockLine();
     changed();
+  }
+
+  dateSwitch.addEventListener('click', () => {
+    const on = dateSwitch.getAttribute('aria-checked') !== 'true';
+    setCountdown(on);
+    if (on) unlockLabel.focus();
   });
   for (const input of [unlockDate, unlockTime]) {
     input.addEventListener('input', () => {
@@ -491,17 +570,28 @@ function main() {
       changed();
     });
   }
-  document.getElementById('date-remove').addEventListener('click', () => {
-    draft.unlock = { on: false };
-    setDateOpen(false);
+  unlockLabel.addEventListener('input', () => {
+    draft.unlock.label = unlockLabel.value;
     refreshUnlockLine();
     changed();
-    document.getElementById('date-toggle').focus();
   });
+  const occasionBox = document.getElementById('occasion-chips');
+  for (const o of OCCASIONS) {
+    const chip = el('button', 'occasion-chip', o);
+    chip.type = 'button';
+    chip.addEventListener('click', () => {
+      unlockLabel.value = o;
+      draft.unlock.label = o;
+      refreshUnlockLine();
+      changed();
+    });
+    occasionBox.append(chip);
+  }
   if (draft.unlock.on) {
     setDateOpen(true);
     unlockDate.value = draft.unlock.date || '';
     unlockTime.value = draft.unlock.time || '';
+    unlockLabel.value = draft.unlock.label || '';
     refreshUnlockLine();
   }
 
@@ -617,6 +707,7 @@ function main() {
       client_nonce: draft.client_nonce,
       gifts: g.gifts,
       unlock_at: unlockAt,
+      unlock_label: unlockAt ? (draft.unlock.label || '').trim() || undefined : undefined,
       secret,
     };
   }
@@ -851,7 +942,7 @@ function main() {
         else if (data.field === 'gifts') {
           setGiftsOpen(true);
           showError(null, giftsError, text);
-        } else if (data.field === 'unlock_at') {
+        } else if (data.field === 'unlock_at' || data.field === 'unlock_label') {
           setDateOpen(true);
           showError(null, unlockError, text);
         } else if (data.field === 'secret') {
