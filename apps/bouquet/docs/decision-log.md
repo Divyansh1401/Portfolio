@@ -11,7 +11,9 @@
 | Gifts | decided | Photos (up to 6), link, gift card / code, ticket / file; revealed after the note | 2026-09-25 |
 | Countdown | decided | Date + time lock set by the sender; note and gifts stay on the server until then | 2026-09-25 |
 | Secret question | decided | Optional question the recipient answers before opening | 2026-09-25 |
-| Payments | planned, not built | Rose free; "buy me a tea / coffee / brownie" unlocks other flowers and extras per bouquet; details in the Bouquet Payment Plan page | 2026-09-25 |
+| Payments | decided, not built | Rose free. Other flowers are pay-what-you-want: ₹30, ₹50, ₹100 or ₹150, all unlocking the same thing. One payment = one message. No passes, subscriptions or lifetime access. Details in the Bouquet Payment Plan page | 2026-09-25 |
+| Free features with Rose | default, owner to confirm | Gifts, countdown and secret question free for everyone; payment only unlocks other flowers | 2026-09-25 |
+| Link lifetime | default, owner to confirm | Same for every bouquet, paid or free (proposed 1 year) | 2026-09-25 |
 | Timestamps | default | Epoch seconds | 2026-09-24 |
 | Fly-in constants | default, owner to confirm | `flyMs = 4200`, `yawIn = -540`, `turns = 1` | 2026-09-24 |
 | Fourth flower | blocked-on-owner | Tulip or Hydrangea (default Hydrangea) | 2026-09-25 |
