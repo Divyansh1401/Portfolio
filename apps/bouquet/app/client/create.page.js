@@ -718,11 +718,15 @@ function main() {
   const previewNote = document.getElementById('preview-note');
   let previewTrap = null;
   let previewFrame = null;
+  // An opaque origin ("null") cannot be a postMessage target; fall back to
+  // "*" there. Receivers still check the sending window.
+  const FRAME_TARGET = location.origin === 'null' ? '*' : location.origin;
+  const PREVIEW_URL = '/preview';
 
   function closePreview() {
     if (previewFrame) {
       try {
-        previewFrame.contentWindow.postMessage({ type: 'bq-preview-close' }, location.origin);
+        previewFrame.contentWindow.postMessage({ type: 'bq-preview-close' }, FRAME_TARGET);
       } catch {
         // already gone
       }
@@ -769,7 +773,7 @@ function main() {
   function onPreviewMessage(e) {
     if (e.origin !== location.origin || !previewFrame || e.source !== previewFrame.contentWindow) return;
     if (e.data && e.data.type === 'bq-preview-ready') {
-      previewFrame.contentWindow.postMessage({ type: 'bq-preview', payload: previewPayload() }, location.origin);
+      previewFrame.contentWindow.postMessage({ type: 'bq-preview', payload: previewPayload() }, FRAME_TARGET);
     } else if (e.data && e.data.type === 'bq-preview-escape') {
       closePreview();
     }
@@ -789,7 +793,7 @@ function main() {
     previewFrame = document.createElement('iframe');
     previewFrame.className = 'preview-frame';
     previewFrame.title = 'Preview of your bouquet';
-    previewFrame.src = '/preview';
+    previewFrame.src = PREVIEW_URL;
     previewFrameBox.append(previewFrame);
     if (!previewTrap) previewTrap = createFocusTrap(previewDialog, { onClose: closePreview });
     previewTrap.open();

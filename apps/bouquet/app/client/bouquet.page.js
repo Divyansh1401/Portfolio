@@ -101,15 +101,24 @@ function readData() {
   }
 }
 
+// Same-origin frames talk with their own origin as the target. An opaque
+// origin ("null", e.g. a sandboxed host) cannot be named as a target, so it
+// falls back to "*"; every receiver still checks the sender's window.
+const FRAME_TARGET = location.origin === 'null' ? '*' : location.origin;
+
+function fromParent(e) {
+  return e.source === parent && e.origin === location.origin;
+}
+
 function waitForPreviewData() {
   return new Promise((resolve) => {
     addEventListener('message', function onMsg(e) {
-      if (e.origin !== location.origin || !e.data || e.data.type !== 'bq-preview') return;
+      if (!fromParent(e) || !e.data || e.data.type !== 'bq-preview') return;
       removeEventListener('message', onMsg);
       resolve(e.data.payload);
     });
     try {
-      parent.postMessage({ type: 'bq-preview-ready' }, location.origin);
+      parent.postMessage({ type: 'bq-preview-ready' }, FRAME_TARGET);
     } catch {
       // not framed
     }
@@ -1041,7 +1050,7 @@ function run(data, preview) {
       });
     }
     addEventListener('message', (e) => {
-      if (e.origin === location.origin && e.data && e.data.type === 'bq-preview-close') {
+      if (fromParent(e) && e.data && e.data.type === 'bq-preview-close') {
         clearInterval(clockTimer);
       }
     });
@@ -1049,7 +1058,7 @@ function run(data, preview) {
     addEventListener('keydown', (e) => {
       if (e.key !== 'Escape' || !sheet.hidden || document.querySelector('.gift-lightbox')) return;
       try {
-        parent.postMessage({ type: 'bq-preview-escape' }, location.origin);
+        parent.postMessage({ type: 'bq-preview-escape' }, FRAME_TARGET);
       } catch {
         // not framed
       }
