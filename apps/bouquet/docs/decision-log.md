@@ -6,12 +6,12 @@
 | Build sequencing | decided | Renderer core (P0) first, then the local app | 2026-09-24 |
 | Local first | decided | Build and sign off the whole product locally (Node + SQLite) before any Cloudflare work | 2026-09-25 |
 | Colours work like design-system modes | decided | Picking a flower sets both the page colours and the bouquet colours | 2026-09-25 |
-| Flowers | decided | Five: Rose (free) plus Sunflower, Lavender, Marigold and a fourth (Tulip or Hydrangea), each with its own bloom design | 2026-09-25 |
+| Flowers | decided | Five: Rose (free for the first 100 messages) plus Sunflower, Lavender, Marigold and a fourth (Tulip or Hydrangea), each with its own bloom design | 2026-09-25 |
 | One design per flower | decided | No Full / Posy / Single stem choice; `SHAPES` is being removed | 2026-09-25 |
 | Gifts | decided | Photos (up to 6), link, gift card / code, ticket / file; revealed after the note | 2026-09-25 |
 | Countdown | decided | Date + time lock set by the sender; note and gifts stay on the server until then | 2026-09-25 |
 | Secret question | decided | Optional question the recipient answers before opening | 2026-09-25 |
-| Payments | decided, not built | Rose free. Other flowers are pay-what-you-want: ₹30, ₹50, ₹100 or ₹150, all unlocking the same thing. One payment = one message. No passes, subscriptions or lifetime access. Details in the Bouquet Payment Plan page | 2026-09-25 |
+| Payments | decided, not built | Pay-what-you-want: ₹30, ₹50, ₹100 or ₹150, all unlocking the same thing. One payment = one message. No passes, subscriptions or lifetime access. Details in the Bouquet Payment Plan page | 2026-09-25 |
 | Pricing | decided, not built | Sunflower, Lavender, Marigold and the fifth flower paid from day one. Rose free only for the site's first 100 messages (all messages counted); from message 101 every message costs at least ₹30. Limit is a server setting; never affects bouquets already sent | 2026-09-25 |
 | Free features | decided | Gifts, countdown and secret question free during the first 100 messages; included in every paid message after that | 2026-09-25 |
 | Link lifetime | decided | 1 year for every bouquet | 2026-09-25 |
