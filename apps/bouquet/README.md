@@ -1,16 +1,20 @@
 # Bouquet
 
-This folder is the Bouquet product: a voxel-bouquet renderer and the tooling
-around it. It lives as a subfolder of the `Divyansh1401/Portfolio` repo for
-now, but it is a separate product, not portfolio content.
+This folder is the Bouquet product: send someone a voxel bouquet with a
+note. The sender picks a flower, writes a note and shares a link; the
+recipient opens the bouquet to find the note and sends one back. It lives as
+a subfolder of the `Divyansh1401/Portfolio` repo for now, but it is a
+separate product, not portfolio content.
 
-## What "P0" means here
+## Status
 
-The build starts with **P0 = the renderer core** — the voxel bouquet
-fly-in/dispersal renderer itself (`mount(canvas)`, cell generation, the
-per-frame `draw()` pipeline). Everything else (UI shell, variants, palettes,
-deployment target) is sequenced after P0 is solid and tested. See
-`docs/decision-log.md` for what's been decided vs. still open.
+Built and running locally: the renderer core (exact parity with the
+portfolio loader), five flower colour themes, and the create, recipient and
+sent pages on a local Node + SQLite server. Next: one design per flower,
+then gifts with an open-on-date countdown and a secret question, then four
+new flower designs and paid tiers. See [`docs/ROADMAP.md`](docs/ROADMAP.md)
+for the full order and [`docs/decision-log.md`](docs/decision-log.md) for
+what's decided.
 
 ## It must never be served by the portfolio site
 
@@ -105,16 +109,13 @@ colours. Full token tables are in
 
 See the screenshots below for what each looks like end to end.
 
-## The 3 shapes
+## One design per flower
 
-Defined in `packages/renderer/src/shapes.js`:
-
-- **Full** — today's default bouquet: the full dome of blooms, collar,
-  wrapped handle and bow.
-- **Posy** — a smaller, rounder hand-tied bunch: roughly half the blooms on
-  a smaller dome, with the collar/handle scaled down to match.
-- **Stem** — a single bloom (or a few) on a tall stem, with no collar (or a
-  tiny one).
+Each flower has a single bouquet design. The Full / Posy / Single stem
+choice (`packages/renderer/src/shapes.js`) is still in the code today and is
+being removed in the next step. Today all five themes use the rose bloom
+recoloured; each paid flower gets its own bloom design later (Sunflower,
+Lavender, Marigold, and Tulip or Hydrangea).
 
 ## Screenshots
 
