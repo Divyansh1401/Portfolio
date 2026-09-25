@@ -18,6 +18,18 @@ const full = {};
  * A smaller, rounder hand-tied bunch: roughly half the blooms of `full` on a
  * visibly smaller dome, with every canopy/collar/handle radius scaled down
  * to match so nothing pokes out past the smaller dome's silhouette.
+ *
+ * The bow (`ribY`/`ribR`/`bow*`) is NOT scaled down by the same ~0.75 ratio
+ * as the dome/collar: `bow`'s "loop" is a fixed-footprint voxel ring drawn
+ * by core.js (`RING`, 4 wide × 4 tall, not itself parameterised by size) —
+ * only its position (`bowSpread`, `bowOut`, `bowY`) is. Shrinking
+ * `bowSpread` in step with the smaller dome pulls the two loops closer
+ * together than that fixed ring width allows, and they fuse into one solid
+ * blob with no visible knot/holes (tried during polish, see the render at
+ * `packages/renderer/test/out/render-shapes.mjs`'s output). So `bowSpread`
+ * and `bowOut` stay at `full`'s values — enough for the two loops to read
+ * as separate — while `tailLen` (shorter tails) and `ribR` (a narrower band
+ * matching the narrower `handleR`) scale down normally.
  * @type {ShapeParams}
  */
 const posy = {
@@ -32,7 +44,7 @@ const posy = {
   handleY0: 1, handleY1: 8,
   handleR: 2.2, handleThick: 0.9,
   ribY: 3, ribH: 2, ribR: 2.7,
-  bowY: 5, bowOut: 2.3, bowSpread: 3, tailLen: 7,
+  bowY: 5, bowOut: 3, bowSpread: 4, tailLen: 7,
   stemY0: -5, stemTop: 9, stemR: 1.3,
 };
 

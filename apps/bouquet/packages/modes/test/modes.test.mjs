@@ -33,7 +33,17 @@ test('DEFAULT_MODE is rose', () => {
 
 test('every mode has the contract shape', () => {
   const bouquetKeys = ['petals', 'centres', 'ribbon'];
-  const uiKeys = ['ground', 'surface', 'ink', 'muted', 'accent', 'onAccent', 'focus', 'border'];
+  const uiKeys = [
+    'ground',
+    'surface',
+    'ink',
+    'muted',
+    'accent',
+    'onAccent',
+    'accentStrong',
+    'focus',
+    'border',
+  ];
   for (const mode of MODES) {
     assert.equal(typeof mode.id, 'string');
     assert.equal(typeof mode.name, 'string');
@@ -96,4 +106,19 @@ test("paletteFor('rose') slots 0-9 deep-equal the reference loader palette, slot
 test('non-rose palettes are not aliased to REFERENCE_PALETTE', () => {
   const sunflower = paletteFor('sunflower');
   assert.notDeepEqual(sunflower[0], REFERENCE_PALETTE[0]);
+});
+
+test('every mode: focus equals accentStrong', () => {
+  for (const mode of MODES) {
+    assert.equal(mode.ui.focus, mode.ui.accentStrong, `${mode.id}.ui.focus`);
+  }
+});
+
+test("sunflower's accent is the punchy fill yellow, not a darkened-for-contrast brown", () => {
+  const sunflower = getMode('sunflower');
+  assert.equal(sunflower.ui.accent, '#F5C518');
+  assert.equal(sunflower.ui.onAccent, '#2E2106');
+  // accentStrong (not accent) is what carries the 4.5:1-against-ground
+  // guarantee, since accent is a fill colour only.
+  assert.notEqual(sunflower.ui.accentStrong, sunflower.ui.accent);
 });

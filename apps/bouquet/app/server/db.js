@@ -3,6 +3,8 @@
  * DatabaseSync) so the schema/queries port to D1 later unchanged.
  */
 
+import { mkdirSync } from 'node:fs';
+import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
 const SCHEMA = `
@@ -25,6 +27,11 @@ CREATE TABLE IF NOT EXISTS bouquets (
  * @returns {import('node:sqlite').DatabaseSync}
  */
 export function openDb(dbPath) {
+  // A fresh checkout (or a reset: `rm -rf app/.data`) has no data folder;
+  // SQLite will not create parent directories itself.
+  if (dbPath !== ':memory:' && !dbPath.startsWith('file:')) {
+    mkdirSync(path.dirname(path.resolve(dbPath)), { recursive: true });
+  }
   const db = new DatabaseSync(dbPath);
   db.exec('PRAGMA journal_mode = WAL;');
   db.exec(SCHEMA);

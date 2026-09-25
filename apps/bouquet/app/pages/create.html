@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" data-mode="rose">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Send a bouquet</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/styles/modes.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/create.css" />
+</head>
+<body>
+  <main class="create" id="create-root">
+    <div class="create__hero" data-hero>
+      <canvas class="create__canvas" data-hero-canvas aria-hidden="true"></canvas>
+    </div>
+
+    <div class="create__form-col">
+      <p class="create__reply-line" id="reply-line" hidden></p>
+      <h1 class="create__title">Send a bouquet</h1>
+      <p class="create__subtitle">Pick your flowers, write a note, and send a link.</p>
+
+      <section class="create__section" aria-labelledby="flowers-heading">
+        <h2 id="flowers-heading" class="create__section-title">Pick your flowers</h2>
+        <div class="chip-row" role="radiogroup" aria-label="Flower theme" id="mode-group"></div>
+      </section>
+
+      <section class="create__section" aria-labelledby="shape-heading">
+        <h2 id="shape-heading" class="create__section-title">Shape</h2>
+        <div class="chip-row" role="radiogroup" aria-label="Bouquet shape" id="shape-group"></div>
+      </section>
+
+      <section class="create__section" aria-labelledby="note-heading">
+        <h2 id="note-heading" class="create__section-title">Write your note</h2>
+
+        <div class="field">
+          <label for="message-field">Your note</label>
+          <textarea
+            id="message-field"
+            class="create__note note"
+            rows="6"
+            placeholder="Say something nice&hellip;"
+            aria-describedby="message-counter message-error"
+          ></textarea>
+          <div class="create__counter" id="message-counter" aria-live="polite">0 / 280</div>
+          <p class="field__hint create__error" id="message-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="from-field">From (optional)</label>
+          <input id="from-field" type="text" placeholder="Your name" aria-describedby="from-error" />
+          <p class="field__hint create__error" id="from-error" role="alert" hidden></p>
+        </div>
+      </section>
+    </div>
+
+    <div class="create__actions action-bar">
+      <button type="button" class="btn btn-ghost" id="preview-btn">Preview</button>
+      <button type="button" class="btn btn-primary" id="create-btn">Create link</button>
+    </div>
+    <p class="create__submit-status" id="submit-status" role="status" aria-live="polite"></p>
+  </main>
+
+  <div class="preview-dialog" id="preview-dialog" role="dialog" aria-modal="true" aria-label="Preview your bouquet" hidden>
+    <div class="preview-dialog__panel">
+      <button type="button" class="btn btn-ghost preview-dialog__close" id="preview-close">Close preview</button>
+
+      <div class="preview-stage" id="preview-root">
+        <div class="preview-stage__inner" data-reveal-stage>
+          <canvas class="preview-canvas" data-reveal-canvas aria-hidden="true"></canvas>
+          <p class="preview-hint" aria-hidden="true">
+            <span class="preview-hint--coarse">Hold to open</span>
+            <span class="preview-hint--fine">Scroll to open</span>
+          </p>
+          <button type="button" class="btn btn-primary preview-open" data-reveal-open>Open</button>
+        </div>
+
+        <div class="preview-message note" id="preview-message" role="status" aria-live="polite" dir="auto" hidden>
+          <p class="preview-message__text" id="preview-message-text"></p>
+          <p class="note__from" id="preview-message-from" hidden></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/create.js"></script>
+</body>
+</html>

@@ -1,8 +1,16 @@
 /**
  * Base design system — tokens only, no raw colours. All colour values come
  * from modes.css custom properties (--ground --surface --ink --muted
- * --accent --on-accent --focus --border), so this file renders correctly
- * under every html[data-mode] value.
+ * --accent --on-accent --accent-strong --focus --border), so this file
+ * renders correctly under every html[data-mode] value.
+ *
+ * --accent is a FILL colour only (primary button / selected chip
+ * background) and is not guaranteed to pass 4.5:1 against --ground on its
+ * own (e.g. Sunflower's punchy yellow). --accent-strong is a darker shade
+ * of the same hue that IS guaranteed 4.5:1 against --ground, and is what
+ * everywhere else reads: link text, focus rings (--focus === --accent-strong),
+ * the 1px border on filled buttons and selected chips (the WCAG 1.4.11
+ * non-text 3:1 boundary), and the counter near-limit colour.
  *
  * Warm, calm gift-product feel: generous whitespace, rounded 14px cards,
  * 44px minimum touch targets, pill chips with a colour dot, a serif note
@@ -106,7 +114,7 @@ p {
 }
 
 a {
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 img,
@@ -155,6 +163,7 @@ canvas {
 .btn-primary {
   background: var(--accent);
   color: var(--on-accent);
+  border-color: var(--accent-strong);
 }
 
 .btn-primary:hover {
@@ -213,7 +222,7 @@ canvas {
 .chip[aria-pressed='true'],
 .chip[aria-checked='true'] {
   background: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--accent-strong);
   color: var(--on-accent);
 }
 
@@ -262,7 +271,7 @@ canvas {
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--focus);
 }
 
 .field__hint {
@@ -347,4 +356,18 @@ canvas {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+}
+
+/* Screen-reader-only text (e.g. the recipient page's <h1>). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

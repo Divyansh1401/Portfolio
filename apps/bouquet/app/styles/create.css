@@ -1,0 +1,277 @@
+/**
+ * Styles for / — the sender's page. Layered on modes.css (colour tokens)
+ * and base.css (component primitives). No raw colours here, except the
+ * per-mode swatch dots in the flower picker, which are literal preview
+ * colours (not page chrome) set inline as a `--dot` custom property by
+ * create.page.js and consumed here.
+ *
+ * Mobile-first: single scrolling column, hero on top, form below, a sticky
+ * bottom action bar. >=1024px: a two-column layout, the hero sticky in the
+ * left column while the form scrolls in the right one.
+ */
+
+.create {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: var(--space-8);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Hero — live bouquet preview                                            */
+/* ---------------------------------------------------------------------- */
+
+.create__hero {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 60vh;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  margin-top: var(--space-4);
+  transition: background-color var(--motion-fast) var(--motion-ease);
+}
+
+.create__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Form column                                                            */
+/* ---------------------------------------------------------------------- */
+
+.create__form-col {
+  padding-top: var(--space-5);
+}
+
+.create__reply-line {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-strong);
+  margin-bottom: var(--space-2);
+}
+
+.create__title {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.create__subtitle {
+  color: var(--muted);
+  margin-bottom: var(--space-6);
+}
+
+.create__section {
+  margin-bottom: var(--space-6);
+}
+
+.create__section-title {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-3);
+}
+
+/* Flower/shape chip swatch dot: literal per-mode colour via --dot,
+   falling back to the page's own accent for chips that don't set one
+   (the shape chips). */
+.chip__dot {
+  background: var(--dot, var(--accent));
+}
+
+.chip[aria-pressed='true'] .chip__dot,
+.chip[aria-checked='true'] .chip__dot {
+  background: var(--dot, var(--on-accent));
+}
+
+/* ---------------------------------------------------------------------- */
+/* Note + counter                                                         */
+/* ---------------------------------------------------------------------- */
+
+.create__note {
+  width: 100%;
+  min-height: 8rem;
+}
+
+.create__counter {
+  text-align: right;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-top: var(--space-1);
+}
+
+.create__counter.is-near-limit {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.create__error {
+  color: var(--accent-strong);
+  margin-top: var(--space-1);
+  margin-bottom: 0;
+}
+
+.create__error[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Sticky bottom action bar                                                */
+/* ---------------------------------------------------------------------- */
+
+.create__actions {
+  margin-top: var(--space-2);
+}
+
+.create__submit-status {
+  min-height: 1.25em;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-align: center;
+  margin: var(--space-2) 0 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Desktop: two columns, hero sticky in the left one                      */
+/* ---------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .create {
+    display: grid;
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+    column-gap: var(--space-7);
+    align-items: start;
+  }
+
+  .create__hero {
+    position: sticky;
+    top: var(--space-5);
+    max-height: none;
+  }
+
+  .create__form-col {
+    padding-top: var(--space-6);
+  }
+
+  .create__actions {
+    grid-column: 2;
+  }
+
+  .create__submit-status {
+    grid-column: 2;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Preview dialog — full-screen overlay                                   */
+/* ---------------------------------------------------------------------- */
+
+.preview-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--ground);
+  overflow-y: auto;
+}
+
+.preview-dialog[hidden] {
+  display: none;
+}
+
+.preview-dialog__panel {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100%;
+  padding: var(--space-4) 0 var(--space-7);
+}
+
+.preview-dialog__close {
+  margin: var(--space-4);
+}
+
+.preview-stage {
+  padding: 0 var(--space-4);
+}
+
+.preview-stage__inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.preview-stage__inner.is-revealed {
+  touch-action: auto;
+}
+
+.preview-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.preview-hint[hidden],
+.preview-open[hidden] {
+  display: none;
+}
+
+.preview-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--space-6) + var(--touch-min) + var(--space-3));
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.preview-hint--coarse {
+  display: none;
+}
+
+.preview-hint--fine {
+  display: inline;
+}
+
+@media (pointer: coarse) {
+  .preview-hint--coarse {
+    display: inline;
+  }
+  .preview-hint--fine {
+    display: none;
+  }
+}
+
+.preview-open {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  bottom: var(--space-5);
+  min-width: 160px;
+}
+
+.preview-message {
+  margin: var(--space-5) 0 0;
+}
+
+.preview-message__text {
+  white-space: pre-line;
+  margin: 0;
+}
+
+/* A selected flower chip keeps its petal-colour dot, which can match the
+   chip's own accent fill (Sunflower: yellow on yellow) — ring it in the
+   on-accent colour so it stays visible. */
+.chip[aria-checked='true'] .chip__dot {
+  box-shadow: 0 0 0 2px var(--on-accent);
+}

@@ -4,8 +4,8 @@
  *
  * Writes a `:root` block carrying the default (rose) UI tokens, followed by
  * one `html[data-mode="<id>"] { ... }` block per mode in MODES order, each
- * setting the same 8 custom properties: --ground --surface --ink --muted
- * --accent --on-accent --focus --border.
+ * setting the same 9 custom properties: --ground --surface --ink --muted
+ * --accent --on-accent --accent-strong --focus --border.
  *
  * Run: `node scripts/build-mode-css.mjs` (also wired as `npm run build:css`).
  */
@@ -31,6 +31,7 @@ function declBlock(ui) {
     `  --muted: ${ui.muted};`,
     `  --accent: ${ui.accent};`,
     `  --on-accent: ${ui.onAccent};`,
+    `  --accent-strong: ${ui.accentStrong};`,
     `  --focus: ${ui.focus};`,
     `  --border: ${ui.border};`,
   ].join('\n');

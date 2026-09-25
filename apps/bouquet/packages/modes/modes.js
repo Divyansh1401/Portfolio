@@ -26,9 +26,16 @@
  * @property {HexColor} surface card/panel background
  * @property {HexColor} ink primary text
  * @property {HexColor} muted secondary text
- * @property {HexColor} accent primary action colour
+ * @property {HexColor} accent primary action colour (the FILL of primary
+ *   buttons and selected chips)
  * @property {HexColor} onAccent text/icon colour drawn on `accent`
- * @property {HexColor} focus focus ring colour
+ * @property {HexColor} accentStrong a darker shade of `accent`'s hue, used
+ *   for link text, focus rings, the border of filled buttons/selected chips,
+ *   and the counter near-limit colour — everywhere `accent` is read as TEXT
+ *   or a thin outline rather than a filled area (`accent` itself may not
+ *   pass 4.5:1 against `ground`, e.g. Sunflower's punchy yellow)
+ * @property {HexColor} focus focus ring colour (always equal to
+ *   `accentStrong`)
  * @property {HexColor} border hairline colour
  */
 
@@ -122,7 +129,8 @@ const MODES = [
       muted: '#6E4450',
       accent: '#C41E5A',
       onAccent: '#FFFFFF',
-      focus: '#C41E5A',
+      accentStrong: '#8F1440',
+      focus: '#8F1440',
       border: '#E4CBD1',
     },
   },
@@ -139,9 +147,10 @@ const MODES = [
       surface: '#FBEFC6',
       ink: '#2E2106',
       muted: '#5C4A16',
-      accent: '#8A5A00',
-      onAccent: '#FFFFFF',
-      focus: '#8A5A00',
+      accent: '#F5C518',
+      onAccent: '#2E2106',
+      accentStrong: '#6B4F00',
+      focus: '#6B4F00',
       border: '#E9D9A0',
     },
   },
@@ -160,7 +169,8 @@ const MODES = [
       muted: '#4F3D6E',
       accent: '#6B4AA8',
       onAccent: '#FFFFFF',
-      focus: '#6B4AA8',
+      accentStrong: '#4B3277',
+      focus: '#4B3277',
       border: '#D8CBEC',
     },
   },
@@ -179,7 +189,8 @@ const MODES = [
       muted: '#6B3616',
       accent: '#C4530F',
       onAccent: '#FFFFFF',
-      focus: '#C4530F',
+      accentStrong: '#8A3D0C',
+      focus: '#8A3D0C',
       border: '#EFCFA9',
     },
   },
@@ -198,7 +209,8 @@ const MODES = [
       muted: '#3C5478',
       accent: '#2F5FA8',
       onAccent: '#FFFFFF',
-      focus: '#2F5FA8',
+      accentStrong: '#1E3F73',
+      focus: '#1E3F73',
       border: '#C4D6ED',
     },
   },

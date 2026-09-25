@@ -23,8 +23,16 @@ passes) and doubles as a CLI (`node lint-modes.mjs`) that prints a
 pass/fail table and exits 1 on any failure. It checks:
 
 - WCAG contrast: `ink`/`ground` ≥ 4.5, `ink`/`surface` ≥ 4.5, `muted`/`ground`
-  ≥ 4.5, `onAccent`/`accent` ≥ 4.5, `accent`/`ground` ≥ 3, `focus`/`ground`
-  ≥ 3, `border`/`ground` ≥ 1.3.
+  ≥ 4.5, `onAccent`/`accent` ≥ 4.5, `accentStrong`/`ground` ≥ 4.5,
+  `focus`/`ground` ≥ 3, `border`/`ground` ≥ 1.3. **There is no `accent`/`ground`
+  rule** — `accent` is a FILL colour only (primary button / selected chip
+  background), never read as text or a thin outline on its own, so it is not
+  held to a contrast-against-`ground` minimum. That is what lets Sunflower's
+  `accent` be the actual punchy `#F5C518` yellow instead of a
+  darkened-for-contrast brown: picking yellow now really does turn the site
+  yellow. The WCAG 1.4.11 non-text 3:1 boundary a filled control needs
+  against its background comes from its 1px `accentStrong` border instead.
+- `focus === accentStrong` for every mode.
 - Shading: every rendered material triple (`paletteFor()` output) has
   strictly decreasing luminance top → mid → dark.
 - Every colour slot is a valid `#rrggbb` string.
@@ -69,7 +77,8 @@ and ribbon change.
 | muted | `#6E4450` |
 | accent | `#C41E5A` |
 | onAccent | `#FFFFFF` |
-| focus | `#C41E5A` |
+| accentStrong | `#8F1440` |
+| focus | `#8F1440` |
 | border | `#E4CBD1` |
 
 ### Sunflower
@@ -83,9 +92,10 @@ and ribbon change.
 | surface | `#FBEFC6` |
 | ink | `#2E2106` |
 | muted | `#5C4A16` |
-| accent | `#8A5A00` |
-| onAccent | `#FFFFFF` |
-| focus | `#8A5A00` |
+| accent | `#F5C518` |
+| onAccent | `#2E2106` |
+| accentStrong | `#6B4F00` |
+| focus | `#6B4F00` |
 | border | `#E9D9A0` |
 
 ### Lavender
@@ -101,7 +111,8 @@ and ribbon change.
 | muted | `#4F3D6E` |
 | accent | `#6B4AA8` |
 | onAccent | `#FFFFFF` |
-| focus | `#6B4AA8` |
+| accentStrong | `#4B3277` |
+| focus | `#4B3277` |
 | border | `#D8CBEC` |
 
 ### Marigold
@@ -117,7 +128,8 @@ and ribbon change.
 | muted | `#6B3616` |
 | accent | `#C4530F` |
 | onAccent | `#FFFFFF` |
-| focus | `#C4530F` |
+| accentStrong | `#8A3D0C` |
+| focus | `#8A3D0C` |
 | border | `#EFCFA9` |
 
 ### Hydrangea
@@ -133,7 +145,8 @@ and ribbon change.
 | muted | `#3C5478` |
 | accent | `#2F5FA8` |
 | onAccent | `#FFFFFF` |
-| focus | `#2F5FA8` |
+| accentStrong | `#1E3F73` |
+| focus | `#1E3F73` |
 | border | `#C4D6ED` |
 
 ## Notes for downstream tasks
@@ -145,10 +158,22 @@ and ribbon change.
   centre colour; only the "one centre colour vs three" distinction
   collapses, matching the contract's "derive the three centres from the one
   value (same value is fine)".
-- `ui.muted`/`ui.border`/`ui.focus`/`ui.surface` were the values left free
-  by the contract ("adjust ONLY the ui/muted/border/focus/surface values
-  ... to pass"); the flower/ribbon colours and every other named `ui` value
-  are exactly the contract's draft values, unchanged.
+- `ui.muted`/`ui.border`/`ui.focus`/`ui.surface`/`ui.accentStrong` were the
+  values left free by the contract to pass the lint; the flower/ribbon
+  colours and every other named `ui` value are exactly the contract's draft
+  values, unchanged. Sunflower's `ui.accent` is the one exception to "draft
+  values unchanged": it was reverted from the draft's `#8A5A00` back to the
+  contract's original punchy `#F5C518` fill, per the follow-up contract
+  change that added `accentStrong` (see above) specifically so Sunflower
+  could do this.
+- `ui.accentStrong` — a 9th UI token (`--accent-strong` in CSS): a darker
+  shade of `accent`'s hue, used wherever `accent` would be read as TEXT or a
+  thin outline rather than a filled area — link text, focus rings (`focus`
+  always equals `accentStrong`), the border on filled `.btn-primary` /
+  selected `.chip`, and the message counter's near-limit colour. `accent`
+  itself stays reserved for FILL only (button/chip background), so it can be
+  a mode's true brand colour (Sunflower's yellow) even when that colour
+  can't itself pass 4.5:1 against `ground`.
 - `build-mode-css.mjs` (owned by a different task) is expected to read
   `MODES` and emit `html[data-mode="<id>"] { --ground ... }` blocks from
   `ui`; it should not need any change here.

@@ -11,7 +11,8 @@
   --muted: #6E4450;
   --accent: #C41E5A;
   --on-accent: #FFFFFF;
-  --focus: #C41E5A;
+  --accent-strong: #8F1440;
+  --focus: #8F1440;
   --border: #E4CBD1;
 }
 
@@ -22,7 +23,8 @@ html[data-mode="rose"] {
   --muted: #6E4450;
   --accent: #C41E5A;
   --on-accent: #FFFFFF;
-  --focus: #C41E5A;
+  --accent-strong: #8F1440;
+  --focus: #8F1440;
   --border: #E4CBD1;
 }
 
@@ -31,9 +33,10 @@ html[data-mode="sunflower"] {
   --surface: #FBEFC6;
   --ink: #2E2106;
   --muted: #5C4A16;
-  --accent: #8A5A00;
-  --on-accent: #FFFFFF;
-  --focus: #8A5A00;
+  --accent: #F5C518;
+  --on-accent: #2E2106;
+  --accent-strong: #6B4F00;
+  --focus: #6B4F00;
   --border: #E9D9A0;
 }
 
@@ -44,7 +47,8 @@ html[data-mode="lavender"] {
   --muted: #4F3D6E;
   --accent: #6B4AA8;
   --on-accent: #FFFFFF;
-  --focus: #6B4AA8;
+  --accent-strong: #4B3277;
+  --focus: #4B3277;
   --border: #D8CBEC;
 }
 
@@ -55,7 +59,8 @@ html[data-mode="marigold"] {
   --muted: #6B3616;
   --accent: #C4530F;
   --on-accent: #FFFFFF;
-  --focus: #C4530F;
+  --accent-strong: #8A3D0C;
+  --focus: #8A3D0C;
   --border: #EFCFA9;
 }
 
@@ -66,6 +71,7 @@ html[data-mode="hydrangea"] {
   --muted: #3C5478;
   --accent: #2F5FA8;
   --on-accent: #FFFFFF;
-  --focus: #2F5FA8;
+  --accent-strong: #1E3F73;
+  --focus: #1E3F73;
   --border: #C4D6ED;
 }

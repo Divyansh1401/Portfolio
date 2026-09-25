@@ -129,7 +129,11 @@ export function mountReveal(root, data, opts = {}) {
       yaw = 0;
     }
     paintFrame(p, yaw, state.q);
-    if (state.phase === 'revealed') fireRevealedEffects();
+    // `state.revealed` flips true the instant q crosses 1, even while a
+    // burst is still finishing out its run to 1.2 (phase stays 'bursting'
+    // until then) — the message should appear as soon as the threshold is
+    // crossed, not only once the burst animation has fully settled.
+    if (state.revealed) fireRevealedEffects();
   }
 
   // ---- reduced motion: land still immediately, no fly-in ----

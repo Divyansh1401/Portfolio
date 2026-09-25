@@ -78,7 +78,13 @@ function lintModes(modes) {
     ['ink/surface', (ui) => contrast(ui.ink, ui.surface), 4.5],
     ['muted/ground', (ui) => contrast(ui.muted, ui.ground), 4.5],
     ['onAccent/accent', (ui) => contrast(ui.onAccent, ui.accent), 4.5],
-    ['accent/ground', (ui) => contrast(ui.accent, ui.ground), 3],
+    // `accent` is a FILL colour only (primary button/selected chip
+    // background) and is never read as text or a thin outline by itself, so
+    // it is not held to a contrast-against-ground minimum (e.g. Sunflower's
+    // punchy #F5C518 fails 3:1 against its pale ground on purpose). The
+    // filled button's 1px `accentStrong` border supplies the WCAG 1.4.11
+    // non-text 3:1 boundary instead.
+    ['accentStrong/ground', (ui) => contrast(ui.accentStrong, ui.ground), 4.5],
     ['focus/ground', (ui) => contrast(ui.focus, ui.ground), 3],
     ['border/ground', (ui) => contrast(ui.border, ui.ground), 1.3],
   ];
@@ -95,6 +101,7 @@ function lintModes(modes) {
       mode.ui.muted,
       mode.ui.accent,
       mode.ui.onAccent,
+      mode.ui.accentStrong,
       mode.ui.focus,
       mode.ui.border,
     ];
@@ -107,6 +114,15 @@ function lintModes(modes) {
       const value = fn(mode.ui);
       push(mode.id, check, Number(value.toFixed(3)), `>= ${min}`, value >= min);
     }
+
+    // 2b. focus is always accentStrong (CONTRACT.md: "focus = accentStrong").
+    push(
+      mode.id,
+      'focus===accentStrong',
+      mode.ui.focus,
+      mode.ui.accentStrong,
+      mode.ui.focus === mode.ui.accentStrong
+    );
 
     // 3. shading: within each rendered material triple [top, mid, dark],
     // luminance must strictly decrease (top > mid > dark) so the renderer's

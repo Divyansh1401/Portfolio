@@ -81,3 +81,18 @@ test('markOpened returns false for unknown id', () => {
   assert.equal(markOpened(db, 'ghost001'), false);
   db.close();
 });
+
+test('openDb creates a missing parent folder (fresh checkout / rm -rf app/.data)', async () => {
+  const { mkdtempSync, rmSync, existsSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'bq-db-'));
+  try {
+    const file = join(dir, 'nested', '.data', 'bouquet.sqlite');
+    const db = openDb(file);
+    db.close();
+    assert.ok(existsSync(file));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

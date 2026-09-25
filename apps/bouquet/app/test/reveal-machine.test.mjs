@@ -58,8 +58,8 @@ test('skip-fly: pointerdown during fly lands and sets skipFly, and does NOT star
   assert.equal(afterTick.q, 0);
 });
 
-test('skip-fly: wheel/key/open during fly also just land (no q bump from that same event)', () => {
-  for (const event of [{ type: 'wheel', dy: 1000 }, { type: 'key', key: 'ArrowDown' }, { type: 'open' }]) {
+test('skip-fly: wheel/key during fly also just land (no q bump from that same event)', () => {
+  for (const event of [{ type: 'wheel', dy: 1000 }, { type: 'key', key: 'ArrowDown' }]) {
     const clock = makeClock();
     const machine = createRevealMachine({ now: clock.now });
     const s = machine.send(event);
@@ -67,6 +67,20 @@ test('skip-fly: wheel/key/open during fly also just land (no q bump from that sa
     assert.equal(s.skipFly, true, `skipFly after ${event.type}`);
     assert.equal(s.q, 0, `q after ${event.type}`);
   }
+});
+
+test('open during fly skips the fly-in AND starts the burst in the same event', () => {
+  const clock = makeClock();
+  const machine = createRevealMachine({ now: clock.now });
+  const s = machine.send({ type: 'open' });
+  assert.equal(s.phase, 'bursting');
+  assert.equal(s.skipFly, true);
+  assert.equal(s.q, 0);
+  assert.equal(s.revealed, false);
+
+  const after = tick(machine, clock, 700);
+  assert.equal(after.phase, 'revealed');
+  assert.equal(after.revealed, true);
 });
 
 test('hold 900ms drives q to ~1 and reveals', () => {
@@ -253,25 +267,29 @@ test('revealed is terminal: further events and ticks are ignored', () => {
   assert.equal(s.q, revealedQ);
 });
 
-test('burst keeps advancing q past the revealed latch until it reaches 1.2 over 600ms', () => {
+test('burst stays in "bursting" (reporting revealed:true) until it reaches 1.2 over 600ms, then latches', () => {
   const clock = makeClock();
   const machine = createRevealMachine({ now: clock.now });
   machine.send({ type: 'flyDone' });
 
   let s = machine.send({ type: 'open' }); // bursts from q=0
   assert.equal(s.phase, 'bursting');
+  assert.equal(s.revealed, false);
 
   // q crosses 1 partway through (1 / 1.2 of the way, i.e. 500ms in), well
-  // before 600ms: phase latches to 'revealed' but the burst must keep
-  // running.
+  // before 600ms: `revealed` flips true so the message can appear, but
+  // `phase` stays 'bursting' — the animation keeps running to 1.2.
   s = tick(machine, clock, 550);
-  assert.equal(s.phase, 'revealed');
+  assert.equal(s.phase, 'bursting');
+  assert.equal(s.revealed, true);
   assert.ok(s.q < 1.2, `q should still be mid-burst, got ${s.q}`);
   assert.ok(s.q > 1, `q should already be past the reveal threshold, got ${s.q}`);
 
-  // Tick the remaining time to complete the full 600ms burst.
+  // Tick the remaining time to complete the full 600ms burst: only now does
+  // phase become the terminal 'revealed'.
   s = tick(machine, clock, 50);
   assert.equal(s.phase, 'revealed');
+  assert.equal(s.revealed, true);
   assert.ok(Math.abs(s.q - 1.2) < 1e-9, `q should finish at exactly 1.2, got ${s.q}`);
 
   // Further ticks past the burst's end are a genuine no-op.

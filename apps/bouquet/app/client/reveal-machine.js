@@ -19,8 +19,12 @@
 /**
  * @typedef {Object} RevealState
  * @property {RevealPhase} phase
- * @property {number} q 0..1+ (can exceed 1 mid-burst, but 'revealed' is latched at q>=1)
+ * @property {number} q 0..1.2 (bursts run past 1 up to BURST_TARGET_Q)
  * @property {boolean} skipFly whether the fly-in was cut short by user input
+ * @property {boolean} revealed true from the instant q first reaches 1 (so a
+ *   caller can show the message as soon as the threshold is crossed), even
+ *   while `phase` is still 'bursting' finishing out its run to 1.2. `phase`
+ *   itself only becomes the terminal 'revealed' once that burst completes.
  */
 
 const HOLD_MS = 900;
@@ -48,6 +52,8 @@ export function createRevealMachine({ now }) {
   let phase = 'fly';
   let q = 0;
   let skipFly = false;
+  // true from the instant q first reaches REVEAL_Q; see RevealState.revealed.
+  let revealed = false;
 
   /** id of the pointer currently holding/scrubbing, or null */
   let activePointerId = null;
@@ -78,7 +84,7 @@ export function createRevealMachine({ now }) {
   let trackedT = 0;
 
   function snapshot() {
-    return { phase, q, skipFly };
+    return { phase, q, skipFly, revealed };
   }
 
   function clampQ(v, max = BURST_TARGET_Q) {
@@ -115,9 +121,17 @@ export function createRevealMachine({ now }) {
     }
   }
 
+  // Sets the `revealed` flag the instant q crosses REVEAL_Q, and promotes
+  // `phase` to the terminal 'revealed' too -- UNLESS a burst is under way:
+  // a burst that has crossed 1 must keep animating (in 'bursting') out to
+  // BURST_TARGET_Q over its full BURST_MS course; `phase` only becomes
+  // 'revealed' when that burst actually finishes (see handleTick).
   function applyRevealLatch() {
-    if (phase !== 'revealed' && q >= REVEAL_Q) {
-      phase = 'revealed';
+    if (q >= REVEAL_Q) {
+      revealed = true;
+      if (phase !== 'revealed' && phase !== 'bursting') {
+        phase = 'revealed';
+      }
     }
   }
 
@@ -128,16 +142,20 @@ export function createRevealMachine({ now }) {
   function handleTick(t) {
     const dt = t - trackedT;
     if (burstActive) {
-      // Keep advancing the burst on every tick even after `phase` has
-      // already latched to 'revealed' (q crossed 1) — the animation still
-      // owes the rest of its run out to BURST_TARGET_Q over BURST_MS.
-      const progress = Math.min(1, (t - burstAnchorT) / BURST_MS);
+      // Keep advancing the burst on every tick even after `revealed` has
+      // already flipped true (q crossed 1) — the animation still owes the
+      // rest of its run out to BURST_TARGET_Q over BURST_MS, and `phase`
+      // stays 'bursting' until it does.
+      const progress = Math.min(1, Math.max(0, (t - burstAnchorT) / BURST_MS));
       q = burstStartQ + (BURST_TARGET_Q - burstStartQ) * progress;
-      if (progress >= 1) burstActive = false;
+      if (progress >= 1) {
+        burstActive = false;
+        phase = 'revealed'; // terminal, only now that the burst has finished
+      }
     } else if (phase === 'holding') {
       q = clampQ(q + dt / HOLD_MS);
     } else if (phase === 'landed' && springActive) {
-      const progress = Math.min(1, (t - springAnchorT) / SPRING_MS);
+      const progress = Math.min(1, Math.max(0, (t - springAnchorT) / SPRING_MS));
       q = springStartQ * (1 - progress);
       if (progress >= 1) {
         springActive = false;
@@ -243,10 +261,18 @@ export function createRevealMachine({ now }) {
     // normal handler (so a pointerdown that skips does not start a hold).
     // 'flyDone' is the natural completion signal, not user input, so it
     // takes the normal landing path instead (no skipFly).
+    //
+    // EXCEPTION: 'open' (the Open button) during 'fly' both skips the fly-in
+    // AND starts the burst in the same event, so a keyboard user pressing
+    // Open once during the fly-in doesn't have to press it again once
+    // landed.
     if (phase === 'fly' && event.type !== 'flyDone') {
       skipFly = true;
       phase = 'landed';
       trackedT = t;
+      if (event.type === 'open') {
+        startBurst(t);
+      }
       applyRevealLatch();
       return snapshot();
     }
