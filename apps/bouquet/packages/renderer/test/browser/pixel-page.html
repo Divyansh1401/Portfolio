@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>bouquet pixel harness</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      This page does nothing on its own: pixel-harness.mjs drives everything
+      via page.evaluate() — creating the two sibling containers, mounting
+      the reference (and optional candidate) renderer into each, applying
+      state, reading back pixels and diffing. All this file needs to provide
+      is window.BouquetLoader, loaded as a classic script exactly like the
+      portfolio does.
+    -->
+    <script src="../../reference/bouquet-loader.ref.js"></script>
+  </body>
+</html>

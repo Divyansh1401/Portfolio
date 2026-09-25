@@ -1,0 +1,770 @@
+{
+  "generatedBy": "capture-goldens.mjs",
+  "runs": [
+    {
+      "viewport": "desktop",
+      "state": "p0",
+      "opsSha256": "d1813779acc70e3108eb168e7be8da3235cab57191ce0411302f18d36e7f011d",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 0,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "p015",
+      "opsSha256": "56e158c6da344c788d6e4df6f54f8034263385b8c16edd7f8ee65955082d7184",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 340,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 0.15,
+        "q": 0,
+        "yaw": -99,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "p05-yaw-270",
+      "opsSha256": "a50c41766c01f515e95ccb9d8090a57247ca0ad9266a5337bd314c4067ac45ed",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1027,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 0.5,
+        "q": 0,
+        "yaw": 90,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "landed",
+      "opsSha256": "c39bbb80617a10575f0aa72c68f423e8eb6d1ccdea45ff95969dce6b7b4517c5",
+      "opCount": 3613,
+      "fillCount": 1806,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 602,
+        "onscreen": 602,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "yaw30",
+      "opsSha256": "7442090c1a5961bc84cf6fbec57d478a55c07d0ea178046d6a20ca1df2f3e073",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 0,
+        "yaw": 30,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "q0001",
+      "opsSha256": "5160be0b7adb965750c335050126309c8eb6b2fbf8e3c8e230f479c110d83821",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 0.001,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "q05",
+      "opsSha256": "46439b786cbbed4b846b4c70e5b0bd9c27cb8fcb30bca3e4369da4938539755c",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 359,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 0.5,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "q1",
+      "opsSha256": "a148c5057e644d40f813325f6cf65daf0956b482fa94526a2d34e9565c612104",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 1,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "q22",
+      "opsSha256": "64aad67af2626debf1e699762b4197a26d16fc8804d679313595628453966dfe",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 28.836761187849426,
+        "DPR": 2,
+        "p": 1,
+        "q": 2.2,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "desktop",
+      "state": "__viewport_facts__",
+      "paths": {
+        "0": "d4803eecd9bd0b48e07c926f3199b20b37fcc0abd341808974557ca136ccf582",
+        "100": "26e2fb6aca8936e25fcf1b4cbf39fe37ae3710dc3b9aee15e472db1f8d2bd12f",
+        "500": "67ecfdad1e02a80bff520f1a2b56cc5ac821f2ae8b27da200aa6566695024f72",
+        "1000": "c62a3ef7b9a85e7e3e5e36c585036286b54b6808987043db2499a3e7dc97a6f3",
+        "1288": "cbad86c6cd93a87be983803f5563de1ca48c077506d4122e6fae61c6987b6244"
+      },
+      "landedCellsCount": 3259
+    },
+    {
+      "viewport": "phone",
+      "state": "p0",
+      "opsSha256": "2ac8ccdf670ba0a6512a11f97b9891ecee9f92b92b61231547c58557789ce651",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 0,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "p015",
+      "opsSha256": "a5bc0dd5453e7f90c9de638776109b2a7e46aeadae47745aa79efd44772ed0e2",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 686,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 0.15,
+        "q": 0,
+        "yaw": -99,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "p05-yaw-270",
+      "opsSha256": "bfdee42698647a71b065b90d752f2a9a969118a59e2b3584e885e293f3aa898f",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1046,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 0.5,
+        "q": 0,
+        "yaw": 90,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "landed",
+      "opsSha256": "184200582bc3291c341ef6e56eeb42d4f082ba55c723d72cc1b01554d66f51b7",
+      "opCount": 3613,
+      "fillCount": 1806,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 602,
+        "onscreen": 602,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "yaw30",
+      "opsSha256": "18ea173ce1b322c9be76850b1484505782cecc43a7fa0edf13c67eba73a47593",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 0,
+        "yaw": 30,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "q0001",
+      "opsSha256": "007c5d2a142304595619685c34d4ca16843c23ea87f584ec9da999098775457d",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 0.001,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "q05",
+      "opsSha256": "6631973c654738fa7077d6271c8a2e3743d7512619bad35eda73f006a5376d3b",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 677,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 0.5,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "q1",
+      "opsSha256": "2ca5b08064fbaf2f67ba4bf0c044194ad418d4cc7fb7ac52b35c2d2fc7b67063",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 1,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "q22",
+      "opsSha256": "6f18ba2c70c6b6eab336d90f6adab19e20713942d1717210f1c41320e66f9de1",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 12.780835268391357,
+        "DPR": 1.5,
+        "p": 1,
+        "q": 2.2,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "phone",
+      "state": "__viewport_facts__",
+      "paths": {
+        "0": "a730487b7f465f487cb9f78da866aee05f7fa4420d2a4824ca00a916bc114c78",
+        "100": "c79732719c4cf891454c571d10508df9c3308a7551474df13225c7c9d6645287",
+        "500": "8792aac686ab4023553376c44996a5dcf4178e55d67a219c2982cd8adb73ec67",
+        "1000": "cecb5727ac380fbb832a74133a6c9b7b1e0762ec6ba6858b4f8f0a080eca8264",
+        "1288": "396632deba50f89470d3b59245408f48cadc3e9ca5d958a41aa07cd0c71a1307"
+      },
+      "landedCellsCount": 3259
+    },
+    {
+      "viewport": "og",
+      "state": "p0",
+      "opsSha256": "a7778c39403da3b44cbbedeba3852562973c554a97670149f58931f72d3732e8",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 0,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "p015",
+      "opsSha256": "3c6629299ce340984902cea9ec1cc9360640b48b06d36ede8d53b96c7ca0790d",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 176,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 0.15,
+        "q": 0,
+        "yaw": -99,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "p05-yaw-270",
+      "opsSha256": "35c9c720b877aa7b63452ffd6c96169cb351a4f09d7cb3e9465820f4ce94dd62",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1000,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 0.5,
+        "q": 0,
+        "yaw": 90,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "landed",
+      "opsSha256": "ddc11a15927ee3f75d059c07d373ded5a108dea15fcff260013ddaabc122c76a",
+      "opCount": 3613,
+      "fillCount": 1806,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 602,
+        "onscreen": 602,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 0,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "yaw30",
+      "opsSha256": "01e793ebd47c3f2b210344fb75376b44431e1cd92db211f7a308d0d37185daff",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 0,
+        "yaw": 30,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "q0001",
+      "opsSha256": "6aeda3b64f6a4864bdce8acb2346c064792a7973f4c4822611593feeae75bec3",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 1289,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 0.001,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "q05",
+      "opsSha256": "44f8705422406c3ed2162d4ab38ef039d738e2a3a93cd75caedf9978a5836b63",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 306,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 0.5,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "q1",
+      "opsSha256": "ea4a317e7f308ebfe12f5b24df5a07ec71ef1cab303cc51642224e5cd20d9cb8",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 1,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "q22",
+      "opsSha256": "4c1044d8365b76ddcf1e2508660c1f996f8f4f6a074f9f0b581f7cc6f4a9a70d",
+      "opCount": 7735,
+      "fillCount": 3867,
+      "rendererState": {
+        "N": 1289,
+        "surface": 1289,
+        "voxels": 3259,
+        "drawn": 1289,
+        "onscreen": 0,
+        "S": 10.092866415747299,
+        "DPR": 1,
+        "p": 1,
+        "q": 2.2,
+        "yaw": 0,
+        "show": "auto",
+        "limit": null,
+        "sortInFlight": false
+      },
+      "sets": {
+        "all": 3259,
+        "surface": 1289,
+        "visible": 602
+      }
+    },
+    {
+      "viewport": "og",
+      "state": "__viewport_facts__",
+      "paths": {
+        "0": "d4803eecd9bd0b48e07c926f3199b20b37fcc0abd341808974557ca136ccf582",
+        "100": "062777a8c4dc58ace6568bdc50f4b66c54c0d642892f1688fb14dee916b22966",
+        "500": "67ecfdad1e02a80bff520f1a2b56cc5ac821f2ae8b27da200aa6566695024f72",
+        "1000": "0d3a60799698074461cf8c1fa8757d53d3123cc016f29100e3bbe491513ffd7a",
+        "1288": "cbad86c6cd93a87be983803f5563de1ca48c077506d4122e6fae61c6987b6244"
+      },
+      "landedCellsCount": 3259
+    }
+  ]
+}

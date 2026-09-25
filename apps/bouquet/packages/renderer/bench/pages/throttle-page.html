@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>bouquet throttle bench</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        overflow: hidden;
+      }
+      #stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 390px;
+        height: 844px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"><canvas></canvas></div>
+    <!--
+      throttle.mjs drives everything from here: it mounts the reference onto
+      #stage's canvas, applies CDP CPU throttling, then walks fly-in/reveal/
+      landed-idle frame-by-frame via page.evaluate(), timing each frame's
+      renderer calls with performance.now().
+    -->
+    <script src="../../reference/bouquet-loader.ref.js"></script>
+  </body>
+</html>

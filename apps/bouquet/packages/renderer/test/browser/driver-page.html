@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>bouquet driver harness</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        overflow: hidden;
+      }
+      .stage {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      This page does nothing on its own: driver-browser.test.mjs drives
+      everything via page.evaluate() — creating the two sibling stages,
+      running createPlayer() to completion on one and compat.mount() on the
+      other, then diffing their landed frames pixel-for-pixel. All this file
+      needs to provide is window.__bouquetDriverTest with the two ES module
+      exports the test needs, loaded exactly as the product will load them
+      (native ESM, relative imports, no bundling).
+    -->
+    <script type="module">
+      import { createPlayer } from '../../src/driver.js';
+      import { mount } from '../../src/compat.js';
+      window.__bouquetDriverTest = { createPlayer, mount };
+    </script>
+  </body>
+</html>

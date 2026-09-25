@@ -1,0 +1,42 @@
+[
+  {
+    "viewport": "desktop-1440x900@2",
+    "state": "landed",
+    "refSha256": "8db8d944eadfea91d818576e16b9bdcdb1652837489059f682e99d9f244ee798"
+  },
+  {
+    "viewport": "desktop-1440x900@2",
+    "state": "landed-yaw30",
+    "refSha256": "a0d3049d9c2c78ad9de6356d60fc06347977eced90541a8fdcb28c722456df60"
+  },
+  {
+    "viewport": "desktop-1440x900@2",
+    "state": "flying-mid",
+    "refSha256": "01bc71ff556f5805198e591e048930751587ca54919b112dfb2f869eb8febf23"
+  },
+  {
+    "viewport": "desktop-1440x900@2",
+    "state": "disperse-mid",
+    "refSha256": "df0aaa636a5b55a577da62a8ba44167e60c0349e01706befbb546de7164cf8bb"
+  },
+  {
+    "viewport": "desktop-1728x1080@2",
+    "state": "landed",
+    "refSha256": "866dddcd61765bf21e987b1f8e5806a51497351b981e7c3d62718a8af10e5afe"
+  },
+  {
+    "viewport": "laptop-1280x800@1",
+    "state": "landed",
+    "refSha256": "05f0d44b182c36b02de55ae6876030d6077f16e16e7e9f745bd12e19bf835e66"
+  },
+  {
+    "viewport": "tablet-1024x900@2",
+    "state": "flying-start",
+    "refSha256": "bd80018aa690211d7c659c2831a6b29205cd33bf510b64831f3aedbe0cd230b3"
+  },
+  {
+    "viewport": "desktop-1440x900@2",
+    "state": "zero",
+    "refSha256": "1e2ffcb8a2d4d221a435eff8c516970a06d2548e9d5a67d8169c26d5de4f27d3"
+  }
+]

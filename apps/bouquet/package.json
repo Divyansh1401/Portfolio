@@ -1,0 +1,18 @@
+{
+  "name": "bouquet",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"packages/renderer/test/**/*.test.mjs\"",
+    "goldens": "node packages/renderer/scripts/capture-goldens.mjs",
+    "secrets": "node scripts/check-secrets.mjs",
+    "size": "node packages/renderer/scripts/size.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.1",
+    "esbuild": "0.28.2"
+  }
+}

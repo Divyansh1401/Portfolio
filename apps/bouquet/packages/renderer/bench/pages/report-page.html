@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>bouquet P0 perf report bench</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        overflow: hidden;
+      }
+      .stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 390px;
+        height: 844px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      report.mjs drives everything from here: it mounts (a) the REFERENCE
+      loader onto #stage-ref's canvas the way the loader's own run() drives
+      it (two setter calls -> two internal draw()s per fly-in frame) and
+      (b) the NEW driver/core stack onto #stage-new's canvas the way
+      driver.js's tick() drives it (one model.set() + one paint() per
+      frame), then walks fly-in/reveal/landed-idle frame-by-frame via
+      page.evaluate(), timing each frame's renderer calls with
+      performance.now(). Both stages are positioned at 0,0 and overlap —
+      nothing here is ever visually inspected.
+    -->
+    <div id="stage-ref" class="stage"><canvas></canvas></div>
+    <div id="stage-new" class="stage"><canvas></canvas></div>
+    <script src="../../reference/bouquet-loader.ref.js"></script>
+    <script type="module">
+      import { createModel } from '../../src/core.js';
+      import { paint } from '../../src/painter-canvas.js';
+      window.__new = { createModel, paint };
+    </script>
+  </body>
+</html>

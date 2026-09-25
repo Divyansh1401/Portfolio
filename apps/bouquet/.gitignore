@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars*
+*.sqlite*
+coverage/
+test-results/
+packages/renderer/test/out/
+
+# The root .gitignore ignores any components/ or docs/ folder at any depth;
+# re-include them here since this app needs to track its own.
+!components/
+!docs/
+# The root .gitignore also ignores any reference/ folder; the pinned renderer
+# reference copy (packages/renderer/reference/) must be tracked.
+!reference/
